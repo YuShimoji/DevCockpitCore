@@ -1,21 +1,23 @@
 {
   "schema_version": "status_snapshot.v1",
-  "generated_at": "2026-06-26T04:59:36Z",
+  "generated_at": "2026-06-26T15:05:56Z",
   "producer": "dev_cockpit.status_snapshot",
   "adapter": {
+    "schema_version": "adapter_manifest.v1",
     "project": "NLMYTGen",
+    "project_key": "nlmytgen",
     "adapter_path": "adapters/nlmytgen.json",
     "default_branch": "master",
     "read_only": true
   },
   "repo": {
-    "path": "../NLMYTGen",
+    "path": "..\\NLMYTGen",
     "exists": true,
     "is_git_repo": true,
-    "branch": "master",
-    "head": "25514a1",
-    "upstream": "origin/master",
-    "latest_commit": "25514a1 feat: prepare newsroom post-refinement render smoke",
+    "branch": "codex/baseball-bn08-script-beat-linkage",
+    "head": "4abb199",
+    "upstream": "origin/codex/baseball-bn08-script-beat-linkage",
+    "latest_commit": "4abb199 test: validate baseball BN-08 script beat linkage",
     "remote_parity": {
       "ahead": 0,
       "behind": 0,
@@ -23,19 +25,8 @@
       "status": "in_sync"
     },
     "worktree": {
-      "state": "dirty",
-      "short_status": [
-        " M samples/_probe/newsroom_handoff/visual_cards_v1/contact_sheet.html",
-        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_01_v1.svg",
-        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_02_v1.svg",
-        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_01_v1.svg",
-        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_02_v1.svg",
-        "?? docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REFINEMENT_V1_2026-06-25.md",
-        "?? docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REVIEW_READBACK_V1_2026-06-25.md",
-        "?? samples/_probe/newsroom_handoff/visual_card_audience_fit_refinement_v1.json",
-        "?? samples/_probe/newsroom_handoff/visual_card_audience_fit_review_readback_v1.json",
-        "?? src/pipeline/newsroom_visual_card_audience_fit_refinement.py"
-      ]
+      "state": "clean",
+      "short_status": []
     }
   },
   "project_state": {
@@ -53,7 +44,7 @@
       {
         "path": "samples/_probe/newsroom_handoff",
         "exists": true,
-        "latest_candidate_count": 10
+        "latest_candidate_count": 0
       },
       {
         "path": "docs/verification",
@@ -63,54 +54,54 @@
     ],
     "latest_candidates": [
       {
-        "path": "samples/_probe/newsroom_handoff/visual_card_audience_fit_refinement_v1.json",
-        "modified_at": "2026-06-26T04:59:35Z",
-        "size_bytes": 19218
+        "path": "docs/verification/G28-CARRIER-ARCHETYPE-TOOLBOX-2026-06-05.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 8117
       },
       {
-        "path": "docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REFINEMENT_V1_2026-06-25.md",
-        "modified_at": "2026-06-26T04:59:35Z",
-        "size_bytes": 8618
+        "path": "docs/verification/G28-CHAT-FIRST-VISUAL-REVIEW-PROTOCOL-2026-06-11.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 7138
       },
       {
-        "path": "samples/_probe/newsroom_handoff/visual_card_audience_fit_review_readback_v1.json",
-        "modified_at": "2026-06-26T04:59:34Z",
-        "size_bytes": 6118
+        "path": "docs/verification/G28-MAP-EVIDENCE-YMMP-DIAGNOSTIC-CARRIER-PROBE-2026-06-11.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 7460
       },
       {
-        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/contact_sheet.html",
-        "modified_at": "2026-06-26T04:59:34Z",
-        "size_bytes": 2523
+        "path": "docs/verification/G28-REFERENCE-LAYOUT-PROTOTYPE-PACK-2026-06-11.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 10640
       },
       {
-        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_01_v1.svg",
-        "modified_at": "2026-06-26T04:59:34Z",
-        "size_bytes": 4362
+        "path": "docs/verification/G28-REFERENCE-STYLE-BRIEF-2026-06-05.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 20019
       },
       {
-        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_02_v1.svg",
-        "modified_at": "2026-06-26T04:59:34Z",
-        "size_bytes": 4558
+        "path": "docs/verification/G28-YMMP-CARRIER-GENERATION-METHOD-BLOCKER-2026-06-11.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 3566
       },
       {
-        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_01_v1.svg",
-        "modified_at": "2026-06-26T04:59:34Z",
-        "size_bytes": 3709
+        "path": "docs/verification/THUMBNAIL-GENERATION-CAPABILITY-AUDIT-2026-04-28.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 8314
       },
       {
-        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_02_v1.svg",
-        "modified_at": "2026-06-26T04:59:34Z",
-        "size_bytes": 4536
+        "path": "docs/verification/THUMBNAIL-VARIATION-AND-IR-PLAN-2026-04-28.md",
+        "modified_at": "2026-06-19T21:57:10Z",
+        "size_bytes": 10934
       },
       {
-        "path": "docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REVIEW_READBACK_V1_2026-06-25.md",
-        "modified_at": "2026-06-26T04:59:34Z",
-        "size_bytes": 4077
+        "path": "docs/verification/COMMON-FOUNDATION-REVIEW-INDEX-2026-06-15.md",
+        "modified_at": "2026-06-15T17:31:16Z",
+        "size_bytes": 5381
       },
       {
-        "path": "samples/_probe/newsroom_handoff/card_placement_post_refinement_render_smoke_v1.json",
-        "modified_at": "2026-06-26T01:59:37Z",
-        "size_bytes": 20736
+        "path": "docs/verification/COMMON-FOUNDATION-STATUS-INPUT-AUDIT-DESIGN-2026-06-15.md",
+        "modified_at": "2026-06-14T19:21:34Z",
+        "size_bytes": 13390
       }
     ]
   },
@@ -125,7 +116,7 @@
     "status": "yellow",
     "stop_class": "INTEGRATE_AND_CONTINUE",
     "notes": [
-      "worktree is dirty"
+      "current branch 'codex/baseball-bn08-script-beat-linkage' differs from adapter default 'master'"
     ]
   }
 }

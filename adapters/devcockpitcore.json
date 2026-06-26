@@ -1,11 +1,11 @@
 {
   "schema_version": "adapter_manifest.v1",
-  "project": "WritingPage",
-  "project_key": "writingpage",
+  "project": "DevCockpitCore",
+  "project_key": "devcockpitcore",
   "default_branch": "main",
   "repo_hints": {
     "preferred_relative_paths": [
-      "../WritingPage"
+      "."
     ]
   },
   "documents": {
@@ -13,8 +13,8 @@
     "project_context": "docs/project-context.md"
   },
   "artifact_roots": [
-    "artifacts",
-    "docs/verification"
+    "docs/handoffs",
+    "samples/status_snapshots"
   ],
   "status_hints": {
     "active_artifact_patterns": [
@@ -37,6 +37,8 @@
   },
   "forbidden_stage_patterns": [],
   "default_validation": [
+    "python -m compileall src tests",
+    "PYTHONPATH=src python -m unittest discover",
     "git diff --check",
     "git diff --cached --check"
   ],

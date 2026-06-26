@@ -1,12 +1,40 @@
 {
+  "schema_version": "adapter_manifest.v1",
   "project": "ClipPipeGen",
+  "project_key": "clippipegen",
   "default_branch": "main",
-  "runtime_state": "docs/runtime-state.md",
-  "project_context": "docs/project-context.md",
+  "repo_hints": {
+    "preferred_relative_paths": [
+      "../ClipPipeGen"
+    ]
+  },
+  "documents": {
+    "runtime_state": "docs/runtime-state.md",
+    "project_context": "docs/project-context.md"
+  },
   "artifact_roots": [
     "artifacts",
     "docs/verification"
   ],
+  "status_hints": {
+    "active_artifact_patterns": [
+      "artifact_current:",
+      "artifact_next:",
+      "active_artifact"
+    ],
+    "next_action_patterns": [
+      "next:",
+      "next_action"
+    ],
+    "user_work_patterns": [
+      "user_work:"
+    ],
+    "gate_patterns": [
+      "render_gate:",
+      "stop_class:",
+      "health="
+    ]
+  },
   "forbidden_stage_patterns": [],
   "default_validation": [
     "git diff --check",

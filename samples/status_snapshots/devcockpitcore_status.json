@@ -1,0 +1,108 @@
+{
+  "schema_version": "status_snapshot.v1",
+  "generated_at": "2026-06-26T15:05:56Z",
+  "producer": "dev_cockpit.status_snapshot",
+  "adapter": {
+    "schema_version": "adapter_manifest.v1",
+    "project": "DevCockpitCore",
+    "project_key": "devcockpitcore",
+    "adapter_path": "adapters/devcockpitcore.json",
+    "default_branch": "main",
+    "read_only": true
+  },
+  "repo": {
+    "path": ".",
+    "exists": true,
+    "is_git_repo": true,
+    "branch": "main",
+    "head": "7de8ad1",
+    "upstream": "origin/main",
+    "latest_commit": "7de8ad1 docs: add resume handoff context",
+    "remote_parity": {
+      "ahead": 0,
+      "behind": 0,
+      "raw": "0\t0",
+      "status": "in_sync"
+    },
+    "worktree": {
+      "state": "dirty",
+      "short_status": [
+        " M README.md",
+        " M adapters/clippipegen.json",
+        " M adapters/nlmytgen.json",
+        " M adapters/writingpage.json",
+        " M docs/design/STATUS_PRODUCER_V1.md",
+        " M samples/status_snapshots/example_nlmytgen_status.json",
+        " M src/dev_cockpit/adapters.py",
+        " M src/dev_cockpit/status_snapshot.py",
+        " M tests/test_adapters.py",
+        " M tests/test_status_snapshot.py",
+        "?? adapters/devcockpitcore.json",
+        "?? docs/design/ADAPTER_MANIFEST_V1.md",
+        "?? samples/status_snapshots/devcockpitcore_status.json"
+      ]
+    }
+  },
+  "project_state": {
+    "runtime_state_path": "docs/runtime-state.md",
+    "runtime_state_exists": true,
+    "project_context_path": "docs/project-context.md",
+    "project_context_exists": true,
+    "active_artifact": "status-producer-v1",
+    "next_action": "choose the next common foundation slice, preferably adapter-manifest-v1 or report-normalizer-v1",
+    "user_work": "unknown",
+    "render_gate": "not_applicable"
+  },
+  "artifacts": {
+    "roots": [
+      {
+        "path": "docs/handoffs",
+        "exists": true,
+        "latest_candidate_count": 1
+      },
+      {
+        "path": "samples/status_snapshots",
+        "exists": true,
+        "latest_candidate_count": 3
+      }
+    ],
+    "latest_candidates": [
+      {
+        "path": "samples/status_snapshots/devcockpitcore_status.json",
+        "modified_at": "2026-06-26T15:03:50Z",
+        "size_bytes": 3119
+      },
+      {
+        "path": "samples/status_snapshots/example_nlmytgen_status.json",
+        "modified_at": "2026-06-26T15:02:51Z",
+        "size_bytes": 3651
+      },
+      {
+        "path": "docs/handoffs/2026-06-26-status-producer-v1.md",
+        "modified_at": "2026-06-26T14:53:49Z",
+        "size_bytes": 5752
+      },
+      {
+        "path": "samples/status_snapshots/README.md",
+        "modified_at": "2026-06-26T14:53:49Z",
+        "size_bytes": 324
+      }
+    ]
+  },
+  "validation": {
+    "default_commands": [
+      "python -m compileall src tests",
+      "PYTHONPATH=src python -m unittest discover",
+      "git diff --check",
+      "git diff --cached --check"
+    ],
+    "not_run_reason": "observer_only_slice"
+  },
+  "health": {
+    "status": "yellow",
+    "stop_class": "INTEGRATE_AND_CONTINUE",
+    "notes": [
+      "worktree is dirty"
+    ]
+  }
+}

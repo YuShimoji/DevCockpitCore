@@ -68,24 +68,50 @@ dev-cockpit-status --repo ../NLMYTGen --adapter adapters/nlmytgen.json --output 
 
 ## Adapter manifests
 
-Adapters are small JSON files that describe safe project-local expectations:
+Adapters are small JSON files that follow `adapter_manifest.v1` and describe
+safe project-local expectations:
 
 - project name
+- stable project key
 - default branch hint
-- runtime state and project context document paths
+- preferred relative repository locations
+- runtime state and project context document paths under `documents`
 - artifact roots to inspect
+- status hint patterns for shallow label extraction
 - forbidden staged artifact patterns
 - default validation commands to report but not run
 - `read_only: true`
 
 The first adapters live under `adapters/`:
 
+- `adapters/devcockpitcore.json`
 - `adapters/nlmytgen.json`
 - `adapters/writingpage.json`
 - `adapters/clippipegen.json`
 
 Adapter data is intentionally conservative. The status producer reports what it
 can observe and leaves uncertain fields as `unknown` or `null`.
+
+Validate adapters with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.adapters --validate adapters/*.json
+```
+
+Generate a self-smoke snapshot for this repository with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.status_snapshot \
+  --repo . \
+  --adapter adapters/devcockpitcore.json \
+  --output samples/status_snapshots/devcockpitcore_status.json \
+  --pretty
+```
+
+To add a project adapter, copy an existing manifest, keep all paths relative,
+set a stable lowercase `project_key`, keep `read_only: true`, then run the
+adapter validation command. See `docs/design/ADAPTER_MANIFEST_V1.md` for the
+full field contract.
 
 ## Safety boundary
 

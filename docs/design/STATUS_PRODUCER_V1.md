@@ -15,8 +15,8 @@ Execution Automation Readiness.
 The producer emits JSON with `schema_version: status_snapshot.v1`. Required
 sections are:
 
-- `adapter`: project name, adapter path, default branch hint, and read-only
-  state
+- `adapter`: adapter schema version, project name, project key, adapter path,
+  default branch hint, and read-only state
 - `repo`: target path, existence, git repo detection, branch, HEAD, upstream,
   remote parity, and worktree status
 - `project_state`: existence of configured runtime and context documents plus
@@ -30,7 +30,11 @@ Unknown or not confidently extractable values remain `null` or `unknown`.
 
 ## Command behavior
 
-The module entry point is:
+Adapters must validate as `adapter_manifest.v1`; see
+`docs/design/ADAPTER_MANIFEST_V1.md` for the adapter field contract and safety
+boundary.
+
+The status snapshot module entry point is:
 
 ```bash
 python -m dev_cockpit.status_snapshot --repo <repo> --adapter <adapter.json> --output <status.json>
@@ -72,7 +76,6 @@ write files in the target repository.
 
 ## Future extension points
 
-- adapter manifest schema versioning
 - report normalizer
 - gate classifier
 - validation pack planner

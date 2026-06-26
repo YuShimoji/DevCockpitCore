@@ -69,7 +69,7 @@ def inspect_project_state(repo: Path, adapter: AdapterConfig) -> dict[str, Any]:
     labels: dict[str, str] = {}
     for candidate in (runtime_file, context_file):
         if candidate and candidate.is_file():
-            labels.update(_extract_labels(candidate))
+            labels.update(_extract_labels(candidate, adapter.status_hints))
 
     active_artifact = (
         labels.get("active_artifact")
@@ -249,14 +249,63 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
-def _extract_labels(path: Path) -> dict[str, str]:
+def _extract_labels(path: Path, status_hints: dict[str, tuple[str, ...]]) -> dict[str, str]:
     text = path.read_text(encoding="utf-8", errors="replace")[:PROJECT_TEXT_LIMIT]
     labels: dict[str, str] = {}
     for match in _LABEL_RE.finditer(text):
         value = _normalize_label_value(match.group("value"))
         if value is not None:
             labels[match.group("label").lower()] = value
+    labels.update(_extract_hint_labels(text, status_hints, labels.keys()))
     return labels
+
+
+def _extract_hint_labels(
+    text: str,
+    status_hints: dict[str, tuple[str, ...]],
+    existing_keys: Any,
+) -> dict[str, str]:
+    output_map = {
+        "active_artifact_patterns": "active_artifact",
+        "next_action_patterns": "next_action",
+        "user_work_patterns": "user_work",
+        "gate_patterns": "render_gate",
+    }
+    existing = set(existing_keys)
+    labels: dict[str, str] = {}
+    for line in text.splitlines():
+        cleaned_line = re.sub(r"^\s*[-*]\s*", "", line).strip()
+        if not cleaned_line:
+            continue
+        for hint_key, label_key in output_map.items():
+            if label_key in existing or label_key in labels:
+                continue
+            for pattern in status_hints.get(hint_key, ()):
+                if hint_key == "gate_patterns" and "render_gate" not in pattern.lower():
+                    continue
+                value = _value_after_hint(cleaned_line, pattern)
+                if value is not None:
+                    labels[label_key] = value
+                    break
+    return labels
+
+
+def _value_after_hint(line: str, pattern: str) -> str | None:
+    cleaned_pattern = pattern.strip()
+    if not cleaned_pattern:
+        return None
+
+    line_lower = line.lower()
+    pattern_lower = cleaned_pattern.lower()
+    if not line_lower.startswith(pattern_lower):
+        return None
+
+    remainder = line[len(cleaned_pattern) :]
+    if cleaned_pattern[-1:] not in {":", "="} and remainder[:1] not in {":", "=", " ", "\t"}:
+        return None
+
+    value = remainder.lstrip(":= \t").split("|", 1)[0].rstrip("]").strip()
+    return _normalize_label_value(value)
 
 
 def _normalize_label_value(value: str) -> str | None:

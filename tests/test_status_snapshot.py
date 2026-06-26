@@ -74,10 +74,26 @@ class StatusSnapshotTests(unittest.TestCase):
 
             payload = dumps_snapshot(snapshot, pretty=True)
             self.assertEqual(json.loads(payload)["schema_version"], "status_snapshot.v1")
+            self.assertEqual(
+                json.loads(payload)["adapter"]["schema_version"],
+                "adapter_manifest.v1",
+            )
+            self.assertEqual(json.loads(payload)["adapter"]["project_key"], "example")
 
             output = tmp / "out" / "status.json"
             write_snapshot(snapshot, output, pretty=True)
             self.assertEqual(json.loads(output.read_text(encoding="utf-8"))["producer"], "dev_cockpit.status_snapshot")
+
+    def test_current_repo_self_adapter_can_snapshot(self) -> None:
+        snapshot = build_status_snapshot(
+            ROOT,
+            ROOT / "adapters" / "devcockpitcore.json",
+            generated_at="2026-01-01T00:00:00Z",
+        )
+        self.assertEqual(snapshot["adapter"]["schema_version"], "adapter_manifest.v1")
+        self.assertEqual(snapshot["adapter"]["project_key"], "devcockpitcore")
+        self.assertTrue(snapshot["repo"]["exists"])
+        self.assertTrue(snapshot["repo"]["is_git_repo"])
 
 
 def _init_repo(path: Path) -> Path:
@@ -98,11 +114,26 @@ def _write_adapter(path: Path) -> Path:
     path.write_text(
         json.dumps(
             {
+                "schema_version": "adapter_manifest.v1",
                 "project": "Example",
-                "default_branch": None,
-                "runtime_state": "docs/runtime-state.md",
-                "project_context": "docs/project-context.md",
+                "project_key": "example",
+                "default_branch": "main",
+                "repo_hints": {
+                    "preferred_relative_paths": [
+                        "../Example",
+                    ],
+                },
+                "documents": {
+                    "runtime_state": "docs/runtime-state.md",
+                    "project_context": "docs/project-context.md",
+                },
                 "artifact_roots": ["docs"],
+                "status_hints": {
+                    "active_artifact_patterns": ["artifact_current:"],
+                    "next_action_patterns": ["next:"],
+                    "user_work_patterns": ["user_work:"],
+                    "gate_patterns": ["render_gate:"],
+                },
                 "forbidden_stage_patterns": ["*.mp4"],
                 "default_validation": ["git diff --check"],
                 "read_only": True,
