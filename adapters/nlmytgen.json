@@ -1,0 +1,22 @@
+{
+  "project": "NLMYTGen",
+  "default_branch": "master",
+  "runtime_state": "docs/runtime-state.md",
+  "project_context": "docs/project-context.md",
+  "artifact_roots": [
+    "samples/_probe/newsroom_handoff",
+    "docs/verification"
+  ],
+  "forbidden_stage_patterns": [
+    "*.ymmp",
+    "*.mp4",
+    "*.wav",
+    "*.mp3",
+    "*.m4a"
+  ],
+  "default_validation": [
+    "git diff --check",
+    "git diff --cached --check"
+  ],
+  "read_only": true
+}

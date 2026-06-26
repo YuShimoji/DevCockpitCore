@@ -1,0 +1,131 @@
+{
+  "schema_version": "status_snapshot.v1",
+  "generated_at": "2026-06-26T04:59:36Z",
+  "producer": "dev_cockpit.status_snapshot",
+  "adapter": {
+    "project": "NLMYTGen",
+    "adapter_path": "adapters/nlmytgen.json",
+    "default_branch": "master",
+    "read_only": true
+  },
+  "repo": {
+    "path": "../NLMYTGen",
+    "exists": true,
+    "is_git_repo": true,
+    "branch": "master",
+    "head": "25514a1",
+    "upstream": "origin/master",
+    "latest_commit": "25514a1 feat: prepare newsroom post-refinement render smoke",
+    "remote_parity": {
+      "ahead": 0,
+      "behind": 0,
+      "raw": "0\t0",
+      "status": "in_sync"
+    },
+    "worktree": {
+      "state": "dirty",
+      "short_status": [
+        " M samples/_probe/newsroom_handoff/visual_cards_v1/contact_sheet.html",
+        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_01_v1.svg",
+        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_02_v1.svg",
+        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_01_v1.svg",
+        " M samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_02_v1.svg",
+        "?? docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REFINEMENT_V1_2026-06-25.md",
+        "?? docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REVIEW_READBACK_V1_2026-06-25.md",
+        "?? samples/_probe/newsroom_handoff/visual_card_audience_fit_refinement_v1.json",
+        "?? samples/_probe/newsroom_handoff/visual_card_audience_fit_review_readback_v1.json",
+        "?? src/pipeline/newsroom_visual_card_audience_fit_refinement.py"
+      ]
+    }
+  },
+  "project_state": {
+    "runtime_state_path": "docs/runtime-state.md",
+    "runtime_state_exists": true,
+    "project_context_path": "docs/project-context.md",
+    "project_context_exists": true,
+    "active_artifact": null,
+    "next_action": null,
+    "user_work": "unknown",
+    "render_gate": "unknown"
+  },
+  "artifacts": {
+    "roots": [
+      {
+        "path": "samples/_probe/newsroom_handoff",
+        "exists": true,
+        "latest_candidate_count": 10
+      },
+      {
+        "path": "docs/verification",
+        "exists": true,
+        "latest_candidate_count": 10
+      }
+    ],
+    "latest_candidates": [
+      {
+        "path": "samples/_probe/newsroom_handoff/visual_card_audience_fit_refinement_v1.json",
+        "modified_at": "2026-06-26T04:59:35Z",
+        "size_bytes": 19218
+      },
+      {
+        "path": "docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REFINEMENT_V1_2026-06-25.md",
+        "modified_at": "2026-06-26T04:59:35Z",
+        "size_bytes": 8618
+      },
+      {
+        "path": "samples/_probe/newsroom_handoff/visual_card_audience_fit_review_readback_v1.json",
+        "modified_at": "2026-06-26T04:59:34Z",
+        "size_bytes": 6118
+      },
+      {
+        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/contact_sheet.html",
+        "modified_at": "2026-06-26T04:59:34Z",
+        "size_bytes": 2523
+      },
+      {
+        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_01_v1.svg",
+        "modified_at": "2026-06-26T04:59:34Z",
+        "size_bytes": 4362
+      },
+      {
+        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_claim_001_02_v1.svg",
+        "modified_at": "2026-06-26T04:59:34Z",
+        "size_bytes": 4558
+      },
+      {
+        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_01_v1.svg",
+        "modified_at": "2026-06-26T04:59:34Z",
+        "size_bytes": 3709
+      },
+      {
+        "path": "samples/_probe/newsroom_handoff/visual_cards_v1/visual_card_cap_beat_fake_intro_001_02_v1.svg",
+        "modified_at": "2026-06-26T04:59:34Z",
+        "size_bytes": 4536
+      },
+      {
+        "path": "docs/verification/NEWSROOM_VISUAL_CARD_AUDIENCE_FIT_REVIEW_READBACK_V1_2026-06-25.md",
+        "modified_at": "2026-06-26T04:59:34Z",
+        "size_bytes": 4077
+      },
+      {
+        "path": "samples/_probe/newsroom_handoff/card_placement_post_refinement_render_smoke_v1.json",
+        "modified_at": "2026-06-26T01:59:37Z",
+        "size_bytes": 20736
+      }
+    ]
+  },
+  "validation": {
+    "default_commands": [
+      "git diff --check",
+      "git diff --cached --check"
+    ],
+    "not_run_reason": "observer_only_slice"
+  },
+  "health": {
+    "status": "yellow",
+    "stop_class": "INTEGRATE_AND_CONTINUE",
+    "notes": [
+      "worktree is dirty"
+    ]
+  }
+}
