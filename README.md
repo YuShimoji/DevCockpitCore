@@ -98,6 +98,17 @@ only carries their names into the snapshot with
 Missing upstreams, missing sibling repositories, and missing optional project
 documents are structured warnings rather than true stop conditions.
 
+## Resume context
+
+When resuming from another terminal or agent, start with:
+
+- `docs/runtime-state.md`
+- `docs/project-context.md`
+- `docs/handoffs/2026-06-26-status-producer-v1.md`
+
+These files preserve the current artifact, validation evidence, safety boundary,
+and recommended next entrances.
+
 ## Roadmap
 
 1. status producer
