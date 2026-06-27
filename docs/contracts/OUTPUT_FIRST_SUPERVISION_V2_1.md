@@ -53,3 +53,13 @@ should include `done`, `total`, `unknown`, `meter`, and `missing`. Meters must
 use ASCII-safe symbols only: `#` for done, `-` for missing, `?` for unknown, `~`
 for partial or warning, and `!` for risk. Current-lane readiness and next-slice
 gates should remain separate.
+
+## v2.3 Gate And Transport Anchor
+
+Reports should distinguish the completed slice from the next slice. Use
+`current_slice_gates` for the slice being reported, and leave `next_slice_gates`
+empty, such as `[--------] 0/8`, when the next slice has not started.
+
+UI copy-transport markers appended outside the authored report body should be
+classified separately from report residue. Authored reports and committed
+samples should still avoid unexplained pseudo action markers.

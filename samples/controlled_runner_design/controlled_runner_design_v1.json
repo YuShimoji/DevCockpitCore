@@ -1,0 +1,426 @@
+{
+  "schema_version": "controlled_runner_design.v1",
+  "identity": {
+    "design_id": "devcockpitcore-controlled-runner-design-v1",
+    "generated_at": "2026-06-28T00:00:00Z",
+    "project_key": "devcockpitcore",
+    "artifact": "controlled-runner-design-v1",
+    "implementation_status": "design_only",
+    "execution_automation_readiness": "locked"
+  },
+  "capability_ladder": [
+    {
+      "capability": "C0",
+      "name": "observer_only",
+      "description": "Read repository state and existing artifacts without running project validation or writing target repositories.",
+      "current_status": "current",
+      "allowed_now": true,
+      "required_gates": [
+        "adapter_manifest.v1",
+        "status_snapshot.v1"
+      ],
+      "forbidden_actions": [
+        "target_repo_writeback",
+        "destructive_git",
+        "network_or_external_service"
+      ],
+      "evidence_required": [
+        "status_snapshot.v1",
+        "before_after_git_status_when_target_repo_exists"
+      ],
+      "rollback_expectation": "No rollback should be needed because no target write is allowed.",
+      "user_approval_required": false
+    },
+    {
+      "capability": "C1",
+      "name": "fixed_validation_pack",
+      "description": "Run fixed DevCockpitCore-local validation checks selected by allowlisted keys.",
+      "current_status": "current",
+      "allowed_now": true,
+      "required_gates": [
+        "validation_pack.v1",
+        "validation_pack_result.v1"
+      ],
+      "forbidden_actions": [
+        "arbitrary_command_strings",
+        "adapter_default_validation_execution",
+        "target_repo_writeback"
+      ],
+      "evidence_required": [
+        "validation_pack_result.v1",
+        "redacted_output_snippets"
+      ],
+      "rollback_expectation": "Generated DevCockpitCore sample outputs can be reverted by normal git review if needed.",
+      "user_approval_required": false
+    },
+    {
+      "capability": "C2",
+      "name": "command_proposal_only",
+      "description": "Classify and propose a command without executing it.",
+      "current_status": "design_only",
+      "allowed_now": true,
+      "required_gates": [
+        "accepted_controlled_runner_design",
+        "gate_classifier_safety_boundary_check"
+      ],
+      "forbidden_actions": [
+        "execution",
+        "credential_access",
+        "target_repo_writeback"
+      ],
+      "evidence_required": [
+        "command_classification",
+        "owner_decision",
+        "stop_class_if_requested_now"
+      ],
+      "rollback_expectation": "Proposal records are documentation only.",
+      "user_approval_required": false
+    },
+    {
+      "capability": "C3",
+      "name": "guarded_single_command_probe",
+      "description": "A future probe may run one fixed repo-local no-op or help/read-only command after explicit Supervisor approval.",
+      "current_status": "locked",
+      "allowed_now": false,
+      "required_gates": [
+        "next_supervisor_prompt_approval",
+        "fixed_command_key",
+        "cwd_confinement",
+        "timeout_required",
+        "output_redaction",
+        "before_after_git_status"
+      ],
+      "forbidden_actions": [
+        "arbitrary_command_strings",
+        "target_repo_writeback",
+        "network_or_external_service",
+        "credentials"
+      ],
+      "evidence_required": [
+        "evidence_contract",
+        "rollback_note",
+        "safety_gates"
+      ],
+      "rollback_expectation": "Probe must be no-op or read-only; if artifacts are written, they must be DevCockpitCore-local and declared.",
+      "user_approval_required": false
+    },
+    {
+      "capability": "C4",
+      "name": "scoped_repo_local_runner",
+      "description": "A future bounded runner for DevCockpitCore-local fixed commands only.",
+      "current_status": "locked",
+      "allowed_now": false,
+      "required_gates": [
+        "accepted_probe_results",
+        "expanded_safety_review",
+        "fixed_command_registry"
+      ],
+      "forbidden_actions": [
+        "target_repo_writeback",
+        "destructive_git",
+        "scheduler_or_background_loop"
+      ],
+      "evidence_required": [
+        "run_id",
+        "command_key",
+        "before_state",
+        "after_state",
+        "artifacts_written"
+      ],
+      "rollback_expectation": "Every write must be repo-local, declared, and reviewable by git diff.",
+      "user_approval_required": false
+    },
+    {
+      "capability": "C5",
+      "name": "cross_project_runner",
+      "description": "A future runner that could coordinate across project repositories.",
+      "current_status": "locked",
+      "allowed_now": false,
+      "required_gates": [
+        "separate_design",
+        "user_approval",
+        "per_project_write_contract",
+        "target_repo_rollback_plan"
+      ],
+      "forbidden_actions": [
+        "implicit_multi_repo_writeback",
+        "credentials",
+        "publishing"
+      ],
+      "evidence_required": [
+        "per_repo_before_after_state",
+        "explicit_owner_approval",
+        "rollback_plan"
+      ],
+      "rollback_expectation": "Cross-project writes require a project-specific rollback plan before execution.",
+      "user_approval_required": true
+    },
+    {
+      "capability": "C6",
+      "name": "scheduler_or_autonomy_loop",
+      "description": "Recurring or autonomous execution.",
+      "current_status": "locked",
+      "allowed_now": false,
+      "required_gates": [
+        "separate_product_decision",
+        "user_approval",
+        "monitoring_and_stop_controls",
+        "credential_policy"
+      ],
+      "forbidden_actions": [
+        "background_loop_without_user_approval",
+        "external_notification_without_policy",
+        "production_public_action"
+      ],
+      "evidence_required": [
+        "schedule_contract",
+        "stop_controls",
+        "audit_log",
+        "owner_approval"
+      ],
+      "rollback_expectation": "Autonomy requires explicit disable and audit mechanisms before any implementation.",
+      "user_approval_required": true
+    }
+  ],
+  "command_classification": [
+    {
+      "class": "read_only_observation",
+      "examples": [
+        "git status --short --branch",
+        "status_snapshot no-write"
+      ],
+      "risk": "low",
+      "allowed_in_current_slice": true,
+      "future_unlock_gate": "already_available_as_observer_behavior",
+      "required_owner": "Agent",
+      "stop_class_if_requested_now": "NONE"
+    },
+    {
+      "class": "fixed_repo_local_validation",
+      "examples": [
+        "compileall src tests",
+        "unittest discover",
+        "validation_pack default"
+      ],
+      "risk": "medium",
+      "allowed_in_current_slice": true,
+      "future_unlock_gate": "fixed_allowlist_key",
+      "required_owner": "Agent",
+      "stop_class_if_requested_now": "NONE"
+    },
+    {
+      "class": "repo_local_writeback",
+      "examples": [
+        "write DevCockpitCore sample JSON",
+        "update docs"
+      ],
+      "risk": "medium",
+      "allowed_in_current_slice": true,
+      "future_unlock_gate": "normal_current_slice_review",
+      "required_owner": "Agent",
+      "stop_class_if_requested_now": "NONE"
+    },
+    {
+      "class": "target_repo_read_only_observation",
+      "examples": [
+        "cross_project_smoke status snapshot",
+        "read configured project docs"
+      ],
+      "risk": "medium",
+      "allowed_in_current_slice": true,
+      "future_unlock_gate": "adapter_manifest.v1 plus read_only status snapshot",
+      "required_owner": "Agent",
+      "stop_class_if_requested_now": "NONE"
+    },
+    {
+      "class": "target_repo_writeback",
+      "examples": [
+        "write sibling repo file",
+        "stage target repo change"
+      ],
+      "risk": "high",
+      "allowed_in_current_slice": false,
+      "future_unlock_gate": "separate explicit approval and rollback plan",
+      "required_owner": "User",
+      "stop_class_if_requested_now": "SAFETY_BOUNDARY"
+    },
+    {
+      "class": "destructive_git",
+      "examples": [
+        "force push",
+        "reset",
+        "rebase",
+        "stash"
+      ],
+      "risk": "critical",
+      "allowed_in_current_slice": false,
+      "future_unlock_gate": "explicit user request and separate safety review",
+      "required_owner": "User",
+      "stop_class_if_requested_now": "TRUE_STOP"
+    },
+    {
+      "class": "network_or_external_service",
+      "examples": [
+        "webhook",
+        "external notification",
+        "remote API call"
+      ],
+      "risk": "high",
+      "allowed_in_current_slice": false,
+      "future_unlock_gate": "user-approved integration policy",
+      "required_owner": "User",
+      "stop_class_if_requested_now": "USER_AUTH_REQUIRED"
+    },
+    {
+      "class": "credential_or_secret_access",
+      "examples": [
+        "API key read",
+        "token storage",
+        "secret manager"
+      ],
+      "risk": "critical",
+      "allowed_in_current_slice": false,
+      "future_unlock_gate": "explicit user authorization and secret handling policy",
+      "required_owner": "User",
+      "stop_class_if_requested_now": "USER_AUTH_REQUIRED"
+    },
+    {
+      "class": "render_or_media_generation",
+      "examples": [
+        "video render",
+        "YMM4 export",
+        "auto-render workflow"
+      ],
+      "risk": "high",
+      "allowed_in_current_slice": false,
+      "future_unlock_gate": "project-specific approval and artifact policy",
+      "required_owner": "Supervisor",
+      "stop_class_if_requested_now": "SAFETY_BOUNDARY"
+    },
+    {
+      "class": "publish_or_public_action",
+      "examples": [
+        "publish",
+        "public upload",
+        "production release"
+      ],
+      "risk": "critical",
+      "allowed_in_current_slice": false,
+      "future_unlock_gate": "explicit user approval",
+      "required_owner": "User",
+      "stop_class_if_requested_now": "TRUE_STOP"
+    },
+    {
+      "class": "scheduler_or_background_loop",
+      "examples": [
+        "cron",
+        "recurring automation",
+        "autonomy loop"
+      ],
+      "risk": "critical",
+      "allowed_in_current_slice": false,
+      "future_unlock_gate": "separate autonomy design and user approval",
+      "required_owner": "User",
+      "stop_class_if_requested_now": "SAFETY_BOUNDARY"
+    }
+  ],
+  "authority_boundaries": {
+    "supervisor_owned": [
+      "select next slice",
+      "approve or reject controlled-runner-probe-v1",
+      "decide whether warning-only evidence is acceptable"
+    ],
+    "agent_owned": [
+      "maintain design docs",
+      "run DevCockpitCore validation",
+      "produce design-only samples",
+      "refuse unsafe implementation drift"
+    ],
+    "user_owned": [
+      "approve credentials",
+      "approve external services",
+      "approve destructive git",
+      "approve production or public action",
+      "approve cross-repo writeback"
+    ],
+    "forbidden_until_explicit_unlock": [
+      "arbitrary command execution",
+      "subprocess runner",
+      "scheduler or background loop",
+      "target repo writeback",
+      "credential access",
+      "publishing"
+    ],
+    "copy_transport_residue_handling": "Codex UI transport markers copied at the pasted tail are classified separately from Agent-authored report residue.",
+    "prompt_report_separation": "AGENT_REPORT output must not include a paste-ready next-agent prompt."
+  },
+  "runner_preconditions_for_future_probe": {
+    "accepted_design_packet": true,
+    "validation_pack_green_or_warning_only": true,
+    "gate_classifier_can_identify_safety_boundary_violations": true,
+    "no_arbitrary_command_strings_from_config": true,
+    "subprocess_shell_option_must_remain_false": true,
+    "fixed_command_keys_only": true,
+    "cwd_confinement": true,
+    "timeout_required": true,
+    "output_truncation_and_redaction_required": true,
+    "before_after_git_status_required": true,
+    "rollback_note_required": true,
+    "no_cross_repo_writeback": true,
+    "no_credentials": true,
+    "no_network_or_external_service": true,
+    "no_scheduler_or_background_loop": true
+  },
+  "evidence_contract": {
+    "run_id": "required",
+    "command_key": "required",
+    "command_class": "required",
+    "cwd": "required",
+    "args_policy": "fixed_args_only",
+    "allowlist_source": "required",
+    "start_time": "required",
+    "end_time": "required",
+    "duration": "required",
+    "exit_code": "required",
+    "stdout_excerpt": "required_redacted_truncated",
+    "stderr_excerpt": "required_redacted_truncated",
+    "redactions_applied": "required",
+    "before_state": "required",
+    "after_state": "required",
+    "artifacts_written": "required",
+    "safety_gates": "required",
+    "stop_class": "required"
+  },
+  "forbidden_now": [
+    "arbitrary command execution",
+    "subprocess runner",
+    "Codex exec loop",
+    "scheduler",
+    "auto-render",
+    "auto-commit beyond normal current-slice manual commit and push",
+    "force push",
+    "reset",
+    "rebase",
+    "stash",
+    "target repo writeback",
+    "credentials",
+    "network or external service",
+    "publishing",
+    "production action"
+  ],
+  "future_probe_candidate": {
+    "slice_id": "common-foundation-controlled-runner-probe-v1",
+    "status": "not_approved_by_this_slice",
+    "allowed_scope_if_later_approved": "one fixed repo-local no-op or help/read-only command only",
+    "required_supervisor_decision": true,
+    "user_work_expected": "none unless credentials or local permission appear",
+    "implementation_must_wait_for_next_supervisor_prompt": true
+  },
+  "report_template_corrections": {
+    "current_slice_gates_and_next_slice_gates_must_not_be_conflated": true,
+    "next_slice_gates_when_not_started": "[--------] 0/8",
+    "completion_matrix_meter_example": "[#] 1/1",
+    "visual_summary_spacing_rule": "Use compact meters such as [~~~~~] 5/5, not spaced meter forms.",
+    "copy_transport_residue_rule": "Codex UI copy-transport residue at pasted tail is classified separately from Agent-authored report residue."
+  }
+}

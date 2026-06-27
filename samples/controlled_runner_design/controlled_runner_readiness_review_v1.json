@@ -1,0 +1,57 @@
+{
+  "schema_version": "controlled_runner_readiness_review.v1",
+  "generated_at": "2026-06-28T00:00:00Z",
+  "project_key": "devcockpitcore",
+  "artifact": "controlled-runner-design-v1",
+  "result": "warn",
+  "done": 7,
+  "total": 7,
+  "unknown": 0,
+  "meter": "#######",
+  "missing": 0,
+  "readiness": {
+    "controlled_runner_design_readiness": "available",
+    "execution_automation_readiness": "locked",
+    "future_probe_approved": false,
+    "next_supervisor_decision_required": true
+  },
+  "gate_input": {
+    "recommended_gate_decision": "supervisor_review_required",
+    "stop_class": "NONE",
+    "user_work": "none",
+    "supervisor_should_generate_prompt": true
+  },
+  "checks": [
+    {
+      "gate": "design packet exists",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    {
+      "gate": "implementation remains locked",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    {
+      "gate": "future probe requires supervisor decision",
+      "result": "warn",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "~",
+      "missing": 0
+    }
+  ],
+  "notes": [
+    "This review is design-only and does not approve controlled-runner-probe-v1.",
+    "No executable runner module is part of this artifact."
+  ]
+}

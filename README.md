@@ -223,6 +223,24 @@ The smoke does not run tests, builds, renders, adapter `default_validation`, or
 writeback in target repositories. The next roadmap step is
 `controlled-runner-design`, still without execution automation in this slice.
 
+## Controlled runner design
+
+Controlled Runner Design V1 defines the capability ladder, command taxonomy,
+authority boundaries, evidence contract, and future unlock gates for a possible
+controlled runner. It is design-only.
+
+The design packet lives at
+`samples/controlled_runner_design/controlled_runner_design_v1.json`; the
+readiness review lives at
+`samples/controlled_runner_design/controlled_runner_readiness_review_v1.json`.
+The supporting docs are `docs/design/CONTROLLED_RUNNER_DESIGN_V1.md` and
+`docs/design/COPY_TRANSPORT_RESIDUE_V1.md`.
+
+Execution automation is still locked. There is no runner implementation, no
+adapter `default_validation` execution, no scheduler, no credential handling, no
+target-repository writeback, and no controlled-runner probe approval in this
+slice. The next step requires a Supervisor decision.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
