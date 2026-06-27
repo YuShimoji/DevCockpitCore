@@ -1,0 +1,40 @@
+{
+  "schema_version": "cross_project_smoke.v1",
+  "smoke_key": "devcockpitcore_cross_project_observer",
+  "project_key": "devcockpitcore",
+  "description": "Read-only smoke observations for DevCockpitCore and configured sibling adapters.",
+  "adapters": [
+    {
+      "adapter_path": "adapters/devcockpitcore.json",
+      "required": true,
+      "expected_default_branch": "main",
+      "notes": [
+        "Required self-smoke; writes only happen in DevCockpitCore sample output."
+      ]
+    },
+    {
+      "adapter_path": "adapters/nlmytgen.json",
+      "required": false,
+      "expected_default_branch": "master",
+      "notes": [
+        "Optional sibling observation through adapter repo hints."
+      ]
+    },
+    {
+      "adapter_path": "adapters/writingpage.json",
+      "required": false,
+      "expected_default_branch": "main",
+      "notes": [
+        "Optional sibling observation through adapter repo hints."
+      ]
+    },
+    {
+      "adapter_path": "adapters/clippipegen.json",
+      "required": false,
+      "expected_default_branch": "main",
+      "notes": [
+        "Optional sibling observation through adapter repo hints."
+      ]
+    }
+  ]
+}

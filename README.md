@@ -192,6 +192,37 @@ The validation pack is not a general runner. It does not execute adapter
 commands. The next roadmap step is `cross-project-smoke`; controlled runner
 design remains later and out of scope for this slice.
 
+## Cross-project smoke
+
+The cross-project smoke observes configured project adapters with read-only
+status snapshots and emits `cross_project_smoke_result.v1` JSON. DevCockpitCore
+self-smoke is required; NLMYTGen, WritingPage, and ClipPipeGen are best-effort
+sibling observations that become warnings or skipped rows when absent.
+
+Generate the sample result with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.cross_project_smoke \
+  --smoke samples/cross_project_smokes/devcockpitcore_cross_project_smoke.json \
+  --output samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json \
+  --pretty
+```
+
+Or use the built-in default smoke:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.cross_project_smoke --default --pretty
+```
+
+The sample input lives at
+`samples/cross_project_smokes/devcockpitcore_cross_project_smoke.json`; the
+sample result lives at
+`samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json`.
+
+The smoke does not run tests, builds, renders, adapter `default_validation`, or
+writeback in target repositories. The next roadmap step is
+`controlled-runner-design`, still without execution automation in this slice.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it

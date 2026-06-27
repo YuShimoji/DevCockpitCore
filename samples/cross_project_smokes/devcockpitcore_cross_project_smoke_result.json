@@ -1,0 +1,292 @@
+{
+  "schema_version": "cross_project_smoke_result.v1",
+  "generated_at": "2026-06-27T15:29:52Z",
+  "producer": "dev_cockpit.cross_project_smoke",
+  "smoke": {
+    "smoke_key": "devcockpitcore_cross_project_observer",
+    "smoke_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke.json",
+    "project_key": "devcockpitcore"
+  },
+  "summary": {
+    "result": "warn",
+    "done": 5,
+    "total": 5,
+    "unknown": 0,
+    "meter": "~~~~~",
+    "passed": 0,
+    "warnings": 5,
+    "failed": 0,
+    "skipped": 0,
+    "missing": 0
+  },
+  "projects": [
+    {
+      "project_key": "devcockpitcore",
+      "project": "DevCockpitCore",
+      "adapter_path": "adapters/devcockpitcore.json",
+      "required": true,
+      "repo_resolution": {
+        "candidates": [
+          {
+            "candidate": ".",
+            "exists": true,
+            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore"
+          }
+        ],
+        "selected": ".",
+        "exists": true,
+        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore"
+      },
+      "adapter_validation": {
+        "result": "pass",
+        "warnings": []
+      },
+      "status_snapshot": {
+        "generated": true,
+        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
+        "schema_version": "status_snapshot.v1",
+        "branch": "main",
+        "head": "52aa3de",
+        "worktree": {
+          "state": "dirty",
+          "short_status": [
+            " M README.md",
+            "?? .serena/",
+            "?? docs/design/CROSS_PROJECT_SMOKE_V1.md",
+            "?? samples/cross_project_smokes/",
+            "?? src/dev_cockpit/cross_project_smoke.py",
+            "?? tests/test_cross_project_smoke.py"
+          ]
+        },
+        "remote_parity": {
+          "ahead": 0,
+          "behind": 0,
+          "raw": "0\t0",
+          "status": "in_sync"
+        },
+        "health": "yellow",
+        "warnings": [
+          "worktree is dirty"
+        ]
+      },
+      "scope_boundary": {
+        "target_repo_modified": false,
+        "target_repo_commands": "read_only_git_status_only",
+        "default_validation_executed": false
+      },
+      "result": "warn",
+      "done": 4,
+      "total": 4,
+      "unknown": 0,
+      "meter": "###~",
+      "missing": 0
+    },
+    {
+      "project_key": "nlmytgen",
+      "project": "NLMYTGen",
+      "adapter_path": "adapters/nlmytgen.json",
+      "required": false,
+      "repo_resolution": {
+        "candidates": [
+          {
+            "candidate": "../NLMYTGen",
+            "exists": true,
+            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\NLMYTGen"
+          }
+        ],
+        "selected": "../NLMYTGen",
+        "exists": true,
+        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\NLMYTGen"
+      },
+      "adapter_validation": {
+        "result": "pass",
+        "warnings": []
+      },
+      "status_snapshot": {
+        "generated": true,
+        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\NLMYTGen",
+        "schema_version": "status_snapshot.v1",
+        "branch": "codex/baseball-bn08-script-beat-linkage",
+        "head": "4abb199",
+        "worktree": {
+          "state": "clean",
+          "short_status": []
+        },
+        "remote_parity": {
+          "ahead": 0,
+          "behind": 0,
+          "raw": "0\t0",
+          "status": "in_sync"
+        },
+        "health": "yellow",
+        "warnings": [
+          "current branch 'codex/baseball-bn08-script-beat-linkage' differs from adapter default 'master'"
+        ]
+      },
+      "scope_boundary": {
+        "target_repo_modified": false,
+        "target_repo_commands": "read_only_git_status_only",
+        "default_validation_executed": false
+      },
+      "result": "warn",
+      "done": 4,
+      "total": 4,
+      "unknown": 0,
+      "meter": "###~",
+      "missing": 0
+    },
+    {
+      "project_key": "writingpage",
+      "project": "WritingPage",
+      "adapter_path": "adapters/writingpage.json",
+      "required": false,
+      "repo_resolution": {
+        "candidates": [
+          {
+            "candidate": "../WritingPage",
+            "exists": true,
+            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\WritingPage"
+          }
+        ],
+        "selected": "../WritingPage",
+        "exists": true,
+        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\WritingPage"
+      },
+      "adapter_validation": {
+        "result": "pass",
+        "warnings": []
+      },
+      "status_snapshot": {
+        "generated": true,
+        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\WritingPage",
+        "schema_version": "status_snapshot.v1",
+        "branch": "main",
+        "head": "735bc71",
+        "worktree": {
+          "state": "clean",
+          "short_status": []
+        },
+        "remote_parity": {
+          "ahead": 0,
+          "behind": 0,
+          "raw": "0\t0",
+          "status": "in_sync"
+        },
+        "health": "yellow",
+        "warnings": [
+          "runtime state document is absent"
+        ]
+      },
+      "scope_boundary": {
+        "target_repo_modified": false,
+        "target_repo_commands": "read_only_git_status_only",
+        "default_validation_executed": false
+      },
+      "result": "warn",
+      "done": 4,
+      "total": 4,
+      "unknown": 0,
+      "meter": "###~",
+      "missing": 0
+    },
+    {
+      "project_key": "clippipegen",
+      "project": "ClipPipeGen",
+      "adapter_path": "adapters/clippipegen.json",
+      "required": false,
+      "repo_resolution": {
+        "candidates": [
+          {
+            "candidate": "../ClipPipeGen",
+            "exists": true,
+            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\ClipPipeGen"
+          }
+        ],
+        "selected": "../ClipPipeGen",
+        "exists": true,
+        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\ClipPipeGen"
+      },
+      "adapter_validation": {
+        "result": "pass",
+        "warnings": []
+      },
+      "status_snapshot": {
+        "generated": true,
+        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\ClipPipeGen",
+        "schema_version": "status_snapshot.v1",
+        "branch": "main",
+        "head": "c2af4b9",
+        "worktree": {
+          "state": "clean",
+          "short_status": []
+        },
+        "remote_parity": {
+          "ahead": 0,
+          "behind": 0,
+          "raw": "0\t0",
+          "status": "in_sync"
+        },
+        "health": "yellow",
+        "warnings": [
+          "runtime state document is absent",
+          "project context document is absent"
+        ]
+      },
+      "scope_boundary": {
+        "target_repo_modified": false,
+        "target_repo_commands": "read_only_git_status_only",
+        "default_validation_executed": false
+      },
+      "result": "warn",
+      "done": 4,
+      "total": 4,
+      "unknown": 0,
+      "meter": "###~",
+      "missing": 0
+    }
+  ],
+  "hygiene": {
+    "pseudo_git_tags": [
+      {
+        "path": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+        "pseudo_git_tag": [
+          "::git-commit",
+          "::git-push",
+          "::git-stage"
+        ]
+      }
+    ],
+    "weak_meter_cells": [],
+    "paste_ready_prompt_residue": [],
+    "raw_local_paths": [],
+    "mojibake_tokens": [],
+    "forbidden_implementation_terms": []
+  },
+  "readiness": {
+    "foundation_automation_readiness": "cross_project_smoke_available",
+    "execution_automation_readiness": "out_of_scope",
+    "notes": [
+      "status producer, adapters, report normalizer, gate classifier, validation pack, and cross-project smoke are foundation tooling",
+      "target repositories are observed through read-only status snapshots only",
+      "controlled execution automation remains a future design slice"
+    ]
+  },
+  "gate_input": {
+    "recommended_gate_decision": "integrate_and_continue",
+    "stop_class": "INTEGRATE_AND_CONTINUE",
+    "user_work": "none",
+    "supervisor_should_generate_prompt": false
+  },
+  "health": {
+    "status": "yellow",
+    "warnings": [
+      "devcockpitcore: warn",
+      "nlmytgen: warn",
+      "writingpage: warn",
+      "clippipegen: warn",
+      "report hygiene warnings present"
+    ],
+    "blockers": [],
+    "stop_class": "INTEGRATE_AND_CONTINUE"
+  }
+}
