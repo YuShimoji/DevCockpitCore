@@ -45,3 +45,11 @@ recommended next slice, but it must not generate a paste-ready next-agent prompt
 `gate_classification.v1` is a decision readback over normalized reports. It may
 set `supervisor_should_generate_prompt: true` and a minimal next task, but it
 must not write the prompt body or convert an AGENT_REPORT into a SUPERVISOR_PROMPT.
+
+## v2.3 Meter Coverage Anchor
+
+For v2.3-compatible AGENT_REPORTs, every progress-like summary or gate matrix
+should include `done`, `total`, `unknown`, `meter`, and `missing`. Meters must
+use ASCII-safe symbols only: `#` for done, `-` for missing, `?` for unknown, `~`
+for partial or warning, and `!` for risk. Current-lane readiness and next-slice
+gates should remain separate.

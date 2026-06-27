@@ -1,0 +1,386 @@
+{
+  "schema_version": "validation_pack_result.v1",
+  "generated_at": "2026-06-27T15:04:57Z",
+  "producer": "dev_cockpit.validation_pack",
+  "pack": {
+    "pack_key": "devcockpitcore_default",
+    "pack_path": "samples/validation_packs/devcockpitcore_validation_pack.json",
+    "project_key": "devcockpitcore"
+  },
+  "repo": {
+    "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
+    "branch": "main",
+    "head": "3e16f52",
+    "worktree": {
+      "state": "dirty",
+      "short_status": [
+        " M README.md",
+        " M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md",
+        "?? docs/design/VALIDATION_PACK_V1.md",
+        "?? samples/validation_packs/",
+        "?? src/dev_cockpit/validation_pack.py",
+        "?? tests/test_validation_pack.py"
+      ]
+    },
+    "remote_parity": {
+      "ahead": 0,
+      "behind": 0,
+      "raw": "0\t0",
+      "status": "in_sync"
+    }
+  },
+  "summary": {
+    "result": "warn",
+    "done": 16,
+    "total": 16,
+    "unknown": 0,
+    "meter": "############~###",
+    "missing": 0,
+    "passed": 15,
+    "warnings": 1,
+    "failed": 0,
+    "skipped": 0
+  },
+  "checks": [
+    {
+      "check_key": "python_compile",
+      "kind": "python",
+      "result": "pass",
+      "done": 2,
+      "total": 2,
+      "unknown": 0,
+      "meter": "##",
+      "severity": "required",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": []
+    },
+    {
+      "check_key": "unittest_discover",
+      "kind": "python",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": [
+        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover"
+      ],
+      "exit_code": 0,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "exit=0 duration_seconds=2.538 stdout='' stderr='.................................................\\n----------------------------------------------------------------------\\nRan 49 tests in 2.364s\\n\\nOK\\n'"
+      ]
+    },
+    {
+      "check_key": "adapter_manifest_validation",
+      "kind": "schema",
+      "result": "pass",
+      "done": 4,
+      "total": 4,
+      "unknown": 0,
+      "meter": "####",
+      "severity": "required",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": []
+    },
+    {
+      "check_key": "status_snapshot_help",
+      "kind": "cli",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": [
+        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "dev_cockpit.status_snapshot",
+        "--help"
+      ],
+      "exit_code": 0,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "exit=0 duration_seconds=0.135 stdout='usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\\n                          [--pretty] [--no-write]\\n\\nProduce a read-only repository status snapshot.\\n\\noptions:\\n  -h, --help         show this help message and exit\\n  --repo REPO        Target repository path to inspect.\\n  --adapter ADAPTER  Adapter JSON path.\\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\\n  --pretty           Write indented JSON.\\n  --no-write         Print JSON and skip output file writes.\\n' stderr=''"
+      ]
+    },
+    {
+      "check_key": "report_normalizer_help",
+      "kind": "cli",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": [
+        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "dev_cockpit.report_normalizer",
+        "--help"
+      ],
+      "exit_code": 0,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "exit=0 duration_seconds=0.082 stdout='usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\\n                            [--pretty]\\n\\nNormalize an AGENT_REPORT-like text report.\\n\\noptions:\\n  -h, --help       show this help message and exit\\n  --input INPUT    Input report text path.\\n  --stdin          Read report text from stdin.\\n  --output OUTPUT  Output JSON path. Omit to write to stdout.\\n  --pretty         Write indented JSON.\\n' stderr=''"
+      ]
+    },
+    {
+      "check_key": "gate_classifier_help",
+      "kind": "cli",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": [
+        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "-m",
+        "dev_cockpit.gate_classifier",
+        "--help"
+      ],
+      "exit_code": 0,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "exit=0 duration_seconds=0.078 stdout='usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\\n                          [--status-snapshot STATUS_SNAPSHOT]\\n                          [--adapter ADAPTER] [--output OUTPUT] [--pretty]\\n\\nClassify a report_normalization.v1 JSON readback.\\n\\noptions:\\n  -h, --help            show this help message and exit\\n  --report-normalization REPORT_NORMALIZATION\\n                        Required report normalization JSON path.\\n  --status-snapshot STATUS_SNAPSHOT\\n                        Optional status_snapshot.v1 JSON path.\\n  --adapter ADAPTER     Optional adapter_manifest.v1 JSON path.\\n  --output OUTPUT       Output JSON path. Omit to write to stdout.\\n  --pretty              Write indented JSON.\\n' stderr=''"
+      ]
+    },
+    {
+      "check_key": "json_parse",
+      "kind": "json",
+      "result": "pass",
+      "done": 10,
+      "total": 10,
+      "unknown": 0,
+      "meter": "##########",
+      "severity": "required",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": []
+    },
+    {
+      "check_key": "git_diff_check",
+      "kind": "git",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "exit=0 duration_seconds=0.038 stdout='' stderr=\"warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it\\nwarning: in the working copy of 'docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md', LF will be replaced by CRLF the next time Git touches it\\n\""
+      ]
+    },
+    {
+      "check_key": "git_diff_cached_check",
+      "kind": "git",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "warning",
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "exit=0 duration_seconds=0.031 stdout='' stderr=''"
+      ]
+    },
+    {
+      "check_key": "git_status",
+      "kind": "git",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "warning",
+      "command": [
+        "git",
+        "status",
+        "--short",
+        "--branch"
+      ],
+      "exit_code": 0,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "Observational only; a dirty worktree is recorded, not executed against.",
+        "exit=0 duration_seconds=0.044 stdout='## main...origin/main\\n M README.md\\n M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md\\n?? docs/design/VALIDATION_PACK_V1.md\\n?? samples/validation_packs/\\n?? src/dev_cockpit/validation_pack.py\\n?? tests/test_validation_pack.py\\n' stderr=''",
+        "## main...origin/main\n M README.md\n M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md\n?? docs/design/VALIDATION_PACK_V1.md\n?? samples/validation_packs/\n?? src/dev_cockpit/validation_pack.py\n?? tests/test_validation_pack.py\n"
+      ]
+    },
+    {
+      "check_key": "conflict_marker_scan",
+      "kind": "scan",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": []
+    },
+    {
+      "check_key": "prompt_residue_scan",
+      "kind": "scan",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "warning",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "Historical fixture hits are hygiene warnings, not true stops."
+      ]
+    },
+    {
+      "check_key": "pseudo_git_tag_scan",
+      "kind": "scan",
+      "result": "warn",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "~",
+      "severity": "warning",
+      "command": null,
+      "exit_code": null,
+      "findings": [
+        {
+          "path": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+          "pseudo_git_tag": [
+            "::git-commit",
+            "::git-push",
+            "::git-stage"
+          ]
+        }
+      ],
+      "missing": 0,
+      "notes": [
+        "Historical AGENT_REPORT fixtures may contain pseudo git tags as residue examples."
+      ]
+    },
+    {
+      "check_key": "raw_local_path_scan",
+      "kind": "scan",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "Raw local user paths fail; redacted local paths are allowed.",
+        "redacted local path references observed: 1"
+      ]
+    },
+    {
+      "check_key": "mojibake_scan",
+      "kind": "scan",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "warning",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "Mojibake in historical report headers is a hygiene warning."
+      ]
+    },
+    {
+      "check_key": "forbidden_implementation_scan",
+      "kind": "scan",
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "severity": "required",
+      "command": null,
+      "exit_code": null,
+      "findings": [],
+      "missing": 0,
+      "notes": [
+        "Detector and boundary language in docs/tests is out of scope for this source scan."
+      ]
+    }
+  ],
+  "hygiene": {
+    "pseudo_git_tags": [
+      {
+        "path": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+        "pseudo_git_tag": [
+          "::git-commit",
+          "::git-push",
+          "::git-stage"
+        ]
+      }
+    ],
+    "paste_ready_prompt_residue": [],
+    "raw_local_paths": [],
+    "mojibake_tokens": [],
+    "forbidden_implementation_terms": []
+  },
+  "gate_input": {
+    "recommended_gate_decision": "integrate_and_continue",
+    "stop_class": "INTEGRATE_AND_CONTINUE",
+    "user_work": "none",
+    "supervisor_should_generate_prompt": false
+  },
+  "health": {
+    "status": "yellow",
+    "warnings": [
+      "pseudo_git_tag_scan: findings present"
+    ],
+    "blockers": [],
+    "stop_class": "INTEGRATE_AND_CONTINUE"
+  }
+}

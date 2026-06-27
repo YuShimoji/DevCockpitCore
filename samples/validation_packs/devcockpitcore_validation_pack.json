@@ -1,0 +1,200 @@
+{
+  "schema_version": "validation_pack.v1",
+  "pack_key": "devcockpitcore_default",
+  "project_key": "devcockpitcore",
+  "description": "Default fixed safe validation checks for DevCockpitCore.",
+  "checks": [
+    {
+      "check_key": "python_compile",
+      "kind": "python",
+      "severity": "required",
+      "enabled": true,
+      "paths": [
+        "src",
+        "tests"
+      ],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "unittest_discover",
+      "kind": "python",
+      "severity": "required",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "adapter_manifest_validation",
+      "kind": "schema",
+      "severity": "required",
+      "enabled": true,
+      "paths": [
+        "adapters"
+      ],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "status_snapshot_help",
+      "kind": "cli",
+      "severity": "required",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "report_normalizer_help",
+      "kind": "cli",
+      "severity": "required",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "gate_classifier_help",
+      "kind": "cli",
+      "severity": "required",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "json_parse",
+      "kind": "json",
+      "severity": "required",
+      "enabled": true,
+      "paths": [
+        "adapters",
+        "samples"
+      ],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "git_diff_check",
+      "kind": "git",
+      "severity": "required",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "git_diff_cached_check",
+      "kind": "git",
+      "severity": "warning",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "git_status",
+      "kind": "git",
+      "severity": "warning",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": [
+        "Observational only; a dirty worktree is recorded, not executed against."
+      ]
+    },
+    {
+      "check_key": "conflict_marker_scan",
+      "kind": "scan",
+      "severity": "required",
+      "enabled": true,
+      "paths": [],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": []
+    },
+    {
+      "check_key": "prompt_residue_scan",
+      "kind": "scan",
+      "severity": "warning",
+      "enabled": true,
+      "paths": [
+        "samples/reports"
+      ],
+      "targets": [],
+      "allow_fixture_hits": true,
+      "notes": [
+        "Historical fixture hits are hygiene warnings, not true stops."
+      ]
+    },
+    {
+      "check_key": "pseudo_git_tag_scan",
+      "kind": "scan",
+      "severity": "warning",
+      "enabled": true,
+      "paths": [
+        "samples/reports"
+      ],
+      "targets": [],
+      "allow_fixture_hits": true,
+      "notes": [
+        "Historical AGENT_REPORT fixtures may contain pseudo git tags as residue examples."
+      ]
+    },
+    {
+      "check_key": "raw_local_path_scan",
+      "kind": "scan",
+      "severity": "required",
+      "enabled": true,
+      "paths": [
+        "samples/reports",
+        "samples/report_normalizations",
+        "samples/gate_classifications"
+      ],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": [
+        "Raw local user paths fail; redacted local paths are allowed."
+      ]
+    },
+    {
+      "check_key": "mojibake_scan",
+      "kind": "scan",
+      "severity": "warning",
+      "enabled": true,
+      "paths": [
+        "samples/reports"
+      ],
+      "targets": [],
+      "allow_fixture_hits": true,
+      "notes": [
+        "Mojibake in historical report headers is a hygiene warning."
+      ]
+    },
+    {
+      "check_key": "forbidden_implementation_scan",
+      "kind": "scan",
+      "severity": "required",
+      "enabled": true,
+      "paths": [
+        "src"
+      ],
+      "targets": [],
+      "allow_fixture_hits": false,
+      "notes": [
+        "Detector and boundary language in docs/tests is out of scope for this source scan."
+      ]
+    }
+  ]
+}

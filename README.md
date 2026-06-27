@@ -160,6 +160,38 @@ The sample output lives at
 `samples/gate_classifications/adapter_manifest_v1_gate.json`. The next roadmap
 step is `validation-pack-v1`; there is still no execution automation.
 
+## Validation pack
+
+The validation pack runs a fixed allowlist of safe checks for this repository and
+emits `validation_pack_result.v1` JSON. It validates source compilation, unit
+tests, adapters, JSON samples, CLI help surfaces, git whitespace checks, repo
+status, and report hygiene scans.
+
+Generate the sample result with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.validation_pack \
+  --pack samples/validation_packs/devcockpitcore_validation_pack.json \
+  --output samples/validation_packs/devcockpitcore_validation_pack_result.json \
+  --pretty
+```
+
+Or use the built-in default pack:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.validation_pack --default --pretty
+```
+
+The sample input lives at
+`samples/validation_packs/devcockpitcore_validation_pack.json`; the sample
+result lives at
+`samples/validation_packs/devcockpitcore_validation_pack_result.json`.
+
+The validation pack is not a general runner. It does not execute adapter
+`default_validation`, user-provided commands, report text, or arbitrary config
+commands. The next roadmap step is `cross-project-smoke`; controlled runner
+design remains later and out of scope for this slice.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
