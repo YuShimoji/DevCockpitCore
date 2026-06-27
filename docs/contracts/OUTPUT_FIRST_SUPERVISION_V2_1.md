@@ -39,3 +39,9 @@ execution automation readiness.
 `report_normalization.v1` is a readback artifact for AGENT_REPORT-like text. It
 may identify route, progress, action, status, residue, handoff state, and a
 recommended next slice, but it must not generate a paste-ready next-agent prompt.
+
+## Gate classification
+
+`gate_classification.v1` is a decision readback over normalized reports. It may
+set `supervisor_should_generate_prompt: true` and a minimal next task, but it
+must not write the prompt body or convert an AGENT_REPORT into a SUPERVISOR_PROMPT.

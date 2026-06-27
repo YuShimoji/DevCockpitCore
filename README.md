@@ -138,6 +138,28 @@ readback lives at
 The normalizer does not emit paste-ready next-Agent Prompts. The next roadmap
 step is `gate-classifier-v1`.
 
+## Gate classifier
+
+The gate classifier reads `report_normalization.v1` JSON and emits
+`gate_classification.v1` JSON. It classifies push, handoff, user-work, residue,
+validation, readiness, execution-automation, production/public, destructive
+action, and form-burden gates without executing commands.
+
+Generate the sample classification with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.gate_classifier \
+  --report-normalization samples/report_normalizations/adapter_manifest_v1_readback.json \
+  --status-snapshot samples/status_snapshots/devcockpitcore_status.json \
+  --adapter adapters/devcockpitcore.json \
+  --output samples/gate_classifications/adapter_manifest_v1_gate.json \
+  --pretty
+```
+
+The sample output lives at
+`samples/gate_classifications/adapter_manifest_v1_gate.json`. The next roadmap
+step is `validation-pack-v1`; there is still no execution automation.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it

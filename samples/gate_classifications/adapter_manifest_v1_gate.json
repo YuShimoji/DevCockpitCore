@@ -1,0 +1,150 @@
+{
+  "schema_version": "gate_classification.v1",
+  "producer": "dev_cockpit.gate_classifier",
+  "generated_at": "2026-06-27T06:17:50Z",
+  "source": {
+    "report_normalization_path": "samples/report_normalizations/adapter_manifest_v1_readback.json",
+    "status_snapshot_path": "samples/status_snapshots/devcockpitcore_status.json",
+    "adapter_path": "adapters/devcockpitcore.json",
+    "input_kind": "report_normalization_json",
+    "warnings": []
+  },
+  "routing": {
+    "route": "DevCockpitCore",
+    "slice": "common-foundation-adapter-manifest-v1",
+    "artifact_current": "adapter-manifest-v1",
+    "artifact_next": "report-normalizer-v1",
+    "confidence": "high",
+    "direction": "AGENT->SUPERVISOR"
+  },
+  "input_summary": {
+    "agent_decision": "completed",
+    "report_health": "yellow",
+    "normalized_outcome_decision": "completed",
+    "pushed": true,
+    "worktree": "clean",
+    "remote_parity": "0 0",
+    "tests_summary": {
+      "reported": true,
+      "counts": [
+        10
+      ],
+      "total": 10
+    },
+    "handoff_gate": false,
+    "user_work": "none",
+    "blocker": "none",
+    "stop_class": "NONE"
+  },
+  "classification": {
+    "decision": "supervisor_prompt_needed",
+    "health": "yellow",
+    "stop_class": "NONE",
+    "next_owner": "Supervisor",
+    "user_work_required": false,
+    "supervisor_should_generate_prompt": true,
+    "handoff_required": false,
+    "continue_allowed": true,
+    "commit_push_accepted": true,
+    "review_required": true,
+    "execution_automation_scope_violation": false
+  },
+  "gates": {
+    "push_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "committed, pushed, clean, and in sync",
+      "notes": []
+    },
+    "handoff_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "handoff gate passed",
+      "notes": []
+    },
+    "user_work_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no user action required by classification terms",
+      "notes": []
+    },
+    "residue_gate": {
+      "status": "yellow",
+      "passed": false,
+      "summary": "pseudo git tags are present as hygiene residue; local user paths are redacted",
+      "notes": []
+    },
+    "validation_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "validation reported passing",
+      "notes": []
+    },
+    "readiness_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "readiness lanes remain separated",
+      "notes": []
+    },
+    "execution_automation_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no execution automation instruction",
+      "notes": []
+    },
+    "production_public_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no production/public readiness claim",
+      "notes": []
+    },
+    "destructive_action_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no destructive action required",
+      "notes": []
+    },
+    "form_burden_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "freeform user input remains acceptable",
+      "notes": []
+    }
+  },
+  "residue_findings": {
+    "contains_paste_ready_prompt": false,
+    "contains_pseudo_git_tags": true,
+    "contains_absolute_user_paths": true,
+    "contains_runner_or_scheduler_instruction": false,
+    "readiness_overclaim": false,
+    "severity": "yellow",
+    "recommended_handling": "hygiene warning; do not treat pseudo tags as a true blocker"
+  },
+  "readiness": {
+    "foundation_observer_readiness": "available",
+    "foundation_automation_readiness": "gate_classifier_available",
+    "execution_automation_readiness": "out_of_scope",
+    "project_product_readiness": "not_evaluated",
+    "notes": [
+      "status producer, adapter manifest, report normalizer, and gate classifier are foundation tooling",
+      "execution automation readiness is not advanced by this classification",
+      "readiness lanes remain separated"
+    ]
+  },
+  "next": {
+    "recommended_next_slice": "report-normalizer-v1",
+    "minimal_next_task": "Next artifact is report-normalizer-v1.",
+    "next_owner": "Supervisor",
+    "supervisor_should_generate_prompt": true,
+    "user_side_work": "none",
+    "agent_side_work": "none"
+  },
+  "health": {
+    "classification_status": "yellow",
+    "warnings": [
+      "pseudo git tags are present as hygiene residue; local user paths are redacted"
+    ],
+    "blockers": [],
+    "stop_class": "NONE"
+  }
+}
