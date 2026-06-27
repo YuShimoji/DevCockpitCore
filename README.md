@@ -113,6 +113,31 @@ set a stable lowercase `project_key`, keep `read_only: true`, then run the
 adapter validation command. See `docs/design/ADAPTER_MANIFEST_V1.md` for the
 full field contract.
 
+## Report normalizer
+
+The report normalizer reads AGENT_REPORT-like text and emits
+`report_normalization.v1` JSON. It extracts route, progress, action, status,
+sections, commits, validation evidence, continuation state, and handoff state.
+It also audits residue such as pseudo git tags, paste-ready supervisor prompt
+markers, local user paths, risky automation wording, and readiness overclaims.
+
+Generate the sample normalization with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.report_normalizer \
+  --input samples/reports/agent_report_adapter_manifest_v1_redacted.txt \
+  --output samples/report_normalizations/adapter_manifest_v1_readback.json \
+  --pretty
+```
+
+The sample input lives at
+`samples/reports/agent_report_adapter_manifest_v1_redacted.txt`; the normalized
+readback lives at
+`samples/report_normalizations/adapter_manifest_v1_readback.json`.
+
+The normalizer does not emit paste-ready next-Agent Prompts. The next roadmap
+step is `gate-classifier-v1`.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it

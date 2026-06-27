@@ -33,3 +33,9 @@ first observer slice.
 Stop classes, gate separation, and readiness lanes are future classifier
 targets. The status producer should preserve those concepts without claiming
 execution automation readiness.
+
+## Report normalization
+
+`report_normalization.v1` is a readback artifact for AGENT_REPORT-like text. It
+may identify route, progress, action, status, residue, handoff state, and a
+recommended next slice, but it must not generate a paste-ready next-agent prompt.

@@ -1,0 +1,139 @@
+{
+  "schema_version": "report_normalization.v1",
+  "generated_at": "2026-06-27T05:51:43Z",
+  "producer": "dev_cockpit.report_normalizer",
+  "source": {
+    "input_path": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+    "input_kind": "agent_report_text",
+    "bytes": 2965,
+    "lines": 59
+  },
+  "routing": {
+    "route": "DevCockpitCore",
+    "direction": "AGENT->SUPERVISOR",
+    "slice": "common-foundation-adapter-manifest-v1",
+    "turn": "T+3",
+    "target": "ChatGPT Common Foundation supervisor thread",
+    "artifact_current": "adapter-manifest-v1",
+    "artifact_next": "report-normalizer-v1",
+    "reply": "User/Supervisor",
+    "confidence": "high"
+  },
+  "progress": {
+    "lane": "FOUNDATION OBSERVER READINESS",
+    "meter": "########",
+    "done": 8,
+    "total": 8,
+    "current": "adapter manifest v1 committed and pushed",
+    "next": "report-normalizer-v1",
+    "blocker": "none",
+    "user_work": "none"
+  },
+  "action": {
+    "decision": "completed",
+    "now_owner": "Supervisor",
+    "deliverable": "adapter-manifest-v1",
+    "trigger": "none"
+  },
+  "status": {
+    "health": "green",
+    "gates_done": 8,
+    "gates_total": 8,
+    "stop_class": "NONE",
+    "estimate_agent": "none",
+    "estimate_user": "none"
+  },
+  "sections": {
+    "outcome": "Completed adapter manifest v1, committed f5aa1c2 feat: define adapter manifest v1, and pushed to origin/main. Final repo state was clean with remote parity 0 0.",
+    "what_changed": "Defined adapter_manifest.v1 validation and CLI, upgraded shipped adapters, added the DevCockpitCore self adapter, and generated self/NLMYTGen sample status snapshots.",
+    "artifacts": [
+      "adapters/devcockpitcore.json",
+      "adapters/nlmytgen.json",
+      "adapters/writingpage.json",
+      "adapters/clippipegen.json",
+      "docs/design/ADAPTER_MANIFEST_V1.md",
+      "samples/status_snapshots/devcockpitcore_status.json",
+      "samples/status_snapshots/example_nlmytgen_status.json",
+      "src/dev_cockpit/adapters.py",
+      "src/dev_cockpit/status_snapshot.py",
+      "tests/test_adapters.py",
+      "tests/test_status_snapshot.py"
+    ],
+    "commands_and_results": [
+      "compileall passed.",
+      "unittest discover passed with 10 tests.",
+      "adapter validation passed for all shipped adapters.",
+      "self-smoke and NLMYTGen smoke generated JSON.",
+      "git diff --check passed.",
+      "final parity check returned 0 0."
+    ],
+    "validation": [
+      "JSON validation passed for generated status snapshots.",
+      "conflict marker scan returned no matches.",
+      "forbidden implementation scan found only safety-boundary wording and residue detection terms, not an execution implementation."
+    ],
+    "completion_matrix": "Slice Completion 8/8: current repo verified; schema defined; shipped adapters upgraded; self adapter added; validator implemented; status producer includes adapter schema version; snapshots generated; tests/docs/commit/push completed.",
+    "continuation_state": "Next artifact is report-normalizer-v1. Next owner is Supervisor.",
+    "user_side_work": "none",
+    "agent_side_work": "none",
+    "handoff_gate": "pass; no blocked handoff required.\n\nThe local workspace path was C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore.",
+    "extra": {
+      "adapter_manifest_v1_summary": "All adapters declare schema_version adapter_manifest.v1, stable project_key, relative paths, read_only true, status_hints, validation hints, and no credentials or production endpoints."
+    }
+  },
+  "normalized_outcome": {
+    "decision": "completed",
+    "summary": "Completed adapter manifest v1, committed f5aa1c2 feat: define adapter manifest v1, and pushed to origin/main.",
+    "commits": [
+      {
+        "sha": "f5aa1c2",
+        "message": "feat: define adapter manifest v1"
+      }
+    ],
+    "pushed": true,
+    "worktree": "clean",
+    "remote_parity": "0 0",
+    "tests": [
+      {
+        "count": 10
+      }
+    ]
+  },
+  "handoff": {
+    "handoff_gate": false,
+    "handoff_reason": null,
+    "supervisor_should_generate_prompt": false
+  },
+  "next": {
+    "artifact_next": "report-normalizer-v1",
+    "recommended_next_slice": "report-normalizer-v1",
+    "next_owner": "Supervisor",
+    "minimal_next_task": "Next artifact is report-normalizer-v1."
+  },
+  "residue_audit": {
+    "contains_paste_ready_prompt": false,
+    "contains_pseudo_git_tags": true,
+    "pseudo_git_tags": [
+      "::git-commit",
+      "::git-push",
+      "::git-stage"
+    ],
+    "contains_absolute_user_paths": true,
+    "absolute_user_paths_redacted": true,
+    "absolute_user_path_count": 4,
+    "contains_runner_or_scheduler_instruction": false,
+    "risky_automation_residues": [],
+    "contains_execution_automation_overclaim": false,
+    "contains_production_readiness_overclaim": false,
+    "notes": [
+      "pseudo git tags detected"
+    ]
+  },
+  "health": {
+    "normalization_status": "yellow",
+    "warnings": [
+      "pseudo git tags detected"
+    ],
+    "stop_class": "INTEGRATE_AND_CONTINUE"
+  }
+}
