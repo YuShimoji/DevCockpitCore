@@ -77,6 +77,10 @@ command runner.
 probe evidence. It reads probe result JSON and classifies C3 acceptance without
 running commands or unlocking C4-C6.
 
+`c3_probe_hardening.v1` identifies the canonical post-commit clean probe result
+as the C3 acceptance surface. Dirty during-work samples remain explanatory
+context, not command side-effect proof.
+
 ## What This Does Not Do
 
 Controlled Runner Probe V1 does not execute arbitrary commands, load a command

@@ -402,7 +402,7 @@ def _acceptance(
         "c4_unlocked": False,
         "c5_unlocked": False,
         "c6_unlocked": False,
-        "recommended_next_slice": "c3-probe-hardening-v1" if c3_accepted else "controlled-runner-stop",
+        "recommended_next_slice": "supervisor-decision-needed" if c3_accepted else "controlled-runner-stop",
         "supervisor_should_generate_prompt": True,
         "summary_result": summary["result"],
     }

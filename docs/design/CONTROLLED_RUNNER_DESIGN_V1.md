@@ -199,6 +199,9 @@ before/after repo state.
 `controlled-runner-probe-review-v1` may accept or reject that C3 evidence, but
 acceptance does not unlock C4, C5, C6, or a generalized runner.
 
+`c3-probe-hardening-v1` may canonicalize clean C3 evidence, but it still keeps
+C4, C5, and C6 locked until a separate Supervisor decision.
+
 ## What This Does Not Do
 
 Controlled Runner Design V1 does not implement a runner, execute arbitrary

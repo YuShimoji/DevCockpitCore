@@ -62,12 +62,17 @@ shows the same C3 probe passing with clean before/after worktree state.
 
 The post-commit clean sample is
 `samples/controlled_runner_probes/controlled_runner_probe_result_v1_post_commit.json`.
+The hardened canonical sample is
+`samples/controlled_runner_probes/controlled_runner_probe_result_v1_canonical.json`.
 
 ## Relationship To Probe V1
 
 Probe V1 runs the single fixed command and emits evidence. Probe Review V1 reads
 that evidence and classifies it. The review CLI does not run the probe command
 itself.
+
+`c3_probe_hardening.v1` uses the canonical review result to remove ambiguity
+from the prior `accepted_with_constraints` state without unlocking C4-C6.
 
 ## Relationship To Gate Classification And Validation Pack
 

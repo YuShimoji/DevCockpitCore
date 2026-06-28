@@ -16,20 +16,20 @@
     ]
   },
   "source": {
-    "probe_result_path": "samples/controlled_runner_probes/controlled_runner_probe_result_v1_post_commit.json",
+    "probe_result_path": "samples/controlled_runner_probes/controlled_runner_probe_result_v1_canonical.json",
     "probe_schema_version": "controlled_runner_probe_result.v1",
     "command_key": "status_snapshot_help",
     "capability_level": "C3_guarded_single_command_probe"
   },
   "acceptance": {
-    "decision": "accepted_with_constraints",
+    "decision": "accepted",
     "c3_accepted": true,
     "c4_unlocked": false,
     "c5_unlocked": false,
     "c6_unlocked": false,
     "recommended_next_slice": "supervisor-decision-needed",
     "supervisor_should_generate_prompt": true,
-    "summary_result": "warn"
+    "summary_result": "pass"
   },
   "evidence_checks": {
     "probe_schema_valid": {
@@ -216,10 +216,10 @@
     }
   },
   "sample_interpretation": {
-    "during_work_sample_path": "samples/controlled_runner_probes/controlled_runner_probe_result_v1.json",
-    "during_work_sample_dirty_warning": true,
+    "during_work_sample_path": null,
+    "during_work_sample_dirty_warning": false,
     "post_commit_clean_probe_available": true,
-    "dirty_warning_handling": "accepted_as_expected_artifact_generation"
+    "dirty_warning_handling": "unknown"
   },
   "readiness": {
     "c0_observer_only": "available",
@@ -231,22 +231,20 @@
     "c6_scheduler_or_autonomy_loop": "locked"
   },
   "summary": {
-    "result": "warn",
+    "result": "pass",
     "done": 18,
     "total": 18,
     "unknown": 0,
-    "meter": "#################~",
+    "meter": "##################",
     "passed": 18,
-    "warnings": 1,
+    "warnings": 0,
     "failed": 0,
     "missing": 0
   },
   "health": {
-    "status": "yellow",
-    "warnings": [
-      "during-work sample has dirty warning but post-commit clean evidence is available"
-    ],
+    "status": "green",
+    "warnings": [],
     "blockers": [],
-    "stop_class": "INTEGRATE_AND_CONTINUE"
+    "stop_class": "NONE"
   }
 }

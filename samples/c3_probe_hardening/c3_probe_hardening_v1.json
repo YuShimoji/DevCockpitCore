@@ -1,0 +1,57 @@
+{
+  "schema_version": "c3_probe_hardening.v1",
+  "generated_at": "2026-06-28T06:06:33Z",
+  "project_key": "devcockpitcore",
+  "source_probe_result": "samples/controlled_runner_probes/controlled_runner_probe_result_v1.json",
+  "source_review_result": "samples/controlled_runner_probe_reviews/controlled_runner_probe_review_result_v1.json",
+  "canonical_probe_result": "samples/controlled_runner_probes/controlled_runner_probe_result_v1_canonical.json",
+  "canonical_review_result": "samples/controlled_runner_probe_reviews/controlled_runner_probe_review_result_v1_canonical.json",
+  "decision": "accepted",
+  "remaining_constraints": [],
+  "dirty_sample_interpretation": {
+    "during_work_sample": "samples/controlled_runner_probes/controlled_runner_probe_result_v1.json",
+    "canonical_acceptance_surface": "samples/controlled_runner_probes/controlled_runner_probe_result_v1_canonical.json",
+    "command_side_effect_note": "Dirty during-work sample state is from artifact-generation timing; the fixed probe command itself created no artifacts.",
+    "result": "documented_non_blocking_context"
+  },
+  "c3_status": "accepted",
+  "c4_status": "locked",
+  "c5_status": "locked",
+  "c6_status": "locked",
+  "safety_invariants": {
+    "exactly_one_command_key": true,
+    "arbitrary_command_blocked": true,
+    "config_args_blocked": true,
+    "shell_false": true,
+    "timeout_present": true,
+    "output_truncation_present": true,
+    "redaction_present": true,
+    "before_after_state_present": true,
+    "target_repo_writeback_false": true,
+    "credentials_false": true,
+    "network_false": true,
+    "destructive_git_false": true
+  },
+  "summary": {
+    "result": "pass",
+    "done": 12,
+    "total": 12,
+    "unknown": 0,
+    "meter": "############",
+    "passed": 12,
+    "warnings": 0,
+    "failed": 0,
+    "missing": 0
+  },
+  "next": {
+    "recommended_next_slice": "supervisor-decision-needed",
+    "supervisor_should_generate_prompt": true,
+    "user_work": "none"
+  },
+  "health": {
+    "status": "green",
+    "warnings": [],
+    "blockers": [],
+    "stop_class": "NONE"
+  }
+}

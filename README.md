@@ -281,6 +281,17 @@ PYTHONPATH=src python -m dev_cockpit.controlled_runner_probe_review \
 C3 acceptance does not unlock C4-C6. The next step still requires a Supervisor
 decision.
 
+## C3 probe hardening
+
+C3 Probe Hardening V1 defines the canonical C3 acceptance package. It uses the
+post-commit clean probe result and canonical review result as the review surface,
+while keeping the earlier dirty during-work sample as non-canonical context.
+
+The hardening artifact lives at
+`samples/c3_probe_hardening/c3_probe_hardening_v1.json`. C3 remains the only
+execution capability; C4-C6 stay locked and any next step requires a Supervisor
+decision.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -314,3 +325,4 @@ and recommended next entrances.
 7. controlled runner design
 8. controlled runner probe
 9. controlled runner probe review
+10. C3 probe hardening
