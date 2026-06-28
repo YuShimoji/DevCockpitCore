@@ -1,0 +1,218 @@
+{
+  "schema_version": "controlled_runner_probe_result.v1",
+  "generated_at": "2026-06-28T04:07:33Z",
+  "producer": "dev_cockpit.controlled_runner_probe",
+  "probe": {
+    "probe_key": "devcockpitcore_status_snapshot_help_probe",
+    "probe_path": "samples/controlled_runner_probes/controlled_runner_probe_v1.json",
+    "project_key": "devcockpitcore",
+    "command_key": "status_snapshot_help",
+    "command_class": "fixed_repo_local_help"
+  },
+  "authority": {
+    "capability_level": "C3_guarded_single_command_probe",
+    "allowed_by_design": true,
+    "arbitrary_command_execution": false,
+    "shell": false,
+    "command_source": "hardcoded_allowlist",
+    "config_can_supply_args": false,
+    "target_repo_writeback": false,
+    "credentials_required": false,
+    "network_required": false
+  },
+  "repo": {
+    "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
+    "branch": "main",
+    "head": "f605dc4",
+    "worktree_before": {
+      "state": "dirty",
+      "short_status": [
+        " M README.md",
+        " M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md",
+        " M docs/design/CONTROLLED_RUNNER_DESIGN_V1.md",
+        "?? docs/design/CONTROLLED_RUNNER_PROBE_V1.md",
+        "?? samples/controlled_runner_probes/",
+        "?? src/dev_cockpit/controlled_runner_probe.py",
+        "?? tests/test_controlled_runner_probe.py"
+      ]
+    },
+    "worktree_after": {
+      "state": "dirty",
+      "short_status": [
+        " M README.md",
+        " M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md",
+        " M docs/design/CONTROLLED_RUNNER_DESIGN_V1.md",
+        "?? docs/design/CONTROLLED_RUNNER_PROBE_V1.md",
+        "?? samples/controlled_runner_probes/",
+        "?? src/dev_cockpit/controlled_runner_probe.py",
+        "?? tests/test_controlled_runner_probe.py"
+      ]
+    },
+    "remote_parity_before": {
+      "ahead": 0,
+      "behind": 0,
+      "raw": "0\t0",
+      "status": "in_sync"
+    },
+    "remote_parity_after": {
+      "ahead": 0,
+      "behind": 0,
+      "raw": "0\t0",
+      "status": "in_sync"
+    }
+  },
+  "command": {
+    "command_key": "status_snapshot_help",
+    "argv_redacted": [
+      "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+      "-m",
+      "dev_cockpit.status_snapshot",
+      "--help"
+    ],
+    "cwd_redacted": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
+    "timeout_seconds": 10,
+    "exit_code": 0,
+    "duration_ms": 137,
+    "stdout_excerpt": "usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\n                          [--pretty] [--no-write]\n\nProduce a read-only repository status snapshot.\n\noptions:\n  -h, --help         show this help message and exit\n  --repo REPO        Target repository path to inspect.\n  --adapter ADAPTER  Adapter JSON path.\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\n  --pretty           Write indented JSON.\n  --no-write         Print JSON and skip output file writes.\n",
+    "stderr_excerpt": "",
+    "stdout_truncated": false,
+    "stderr_truncated": false,
+    "redactions_applied": [
+      "local_user_path"
+    ]
+  },
+  "artifacts": {
+    "written": true,
+    "paths": [
+      "samples/controlled_runner_probes/controlled_runner_probe_result_v1.json"
+    ],
+    "command_created_artifacts": false,
+    "expected_write_scope": "DevCockpitCore samples only"
+  },
+  "safety_gates": {
+    "allowlist_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "command key is hardcoded and allowed",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "arbitrary_args_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "config cannot supply argv or args",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "shell_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "subprocess shell option is false",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "cwd_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "cwd is confined to DevCockpitCore repo",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "timeout_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "timeout is configured and command completed in time",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "write_scope_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "command writes no artifacts; CLI may write declared sample result",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "target_repo_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "target repository writeback is forbidden and not attempted",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "credential_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "credentials are not required",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "network_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "network and external services are not required",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    },
+    "destructive_git_gate": {
+      "result": "pass",
+      "passed": true,
+      "summary": "destructive git actions are not part of the command",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0
+    }
+  },
+  "summary": {
+    "result": "warn",
+    "done": 11,
+    "total": 11,
+    "unknown": 0,
+    "meter": "##########~",
+    "passed": 11,
+    "warnings": 1,
+    "failed": 0,
+    "missing": 0
+  },
+  "health": {
+    "status": "yellow",
+    "warnings": [
+      "worktree was dirty before probe"
+    ],
+    "blockers": [],
+    "stop_class": "INTEGRATE_AND_CONTINUE"
+  },
+  "next": {
+    "recommended_next_slice": "controlled-runner-probe-review-v1",
+    "supervisor_should_generate_prompt": true,
+    "execution_automation_readiness_note": "C3 probe evidence exists; C4-C6 remain locked."
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "controlled_runner_probe.v1",
+  "probe_key": "devcockpitcore_status_snapshot_help_probe",
+  "project_key": "devcockpitcore",
+  "command_key": "status_snapshot_help",
+  "command_class": "fixed_repo_local_help",
+  "description": "Run the fixed status_snapshot --help probe with guarded evidence capture.",
+  "expected_write_scope": "DevCockpitCore samples only",
+  "timeout_seconds": 10,
+  "enabled": true,
+  "notes": [
+    "This config selects one hardcoded command key and cannot supply argv.",
+    "The command writes no target repository artifacts."
+  ]
+}

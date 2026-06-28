@@ -236,10 +236,29 @@ readiness review lives at
 The supporting docs are `docs/design/CONTROLLED_RUNNER_DESIGN_V1.md` and
 `docs/design/COPY_TRANSPORT_RESIDUE_V1.md`.
 
-Execution automation is still locked. There is no runner implementation, no
-adapter `default_validation` execution, no scheduler, no credential handling, no
-target-repository writeback, and no controlled-runner probe approval in this
-slice. The next step requires a Supervisor decision.
+In that design slice, execution automation remained locked. It did not add a
+runner implementation, adapter `default_validation` execution, scheduler,
+credential handling, target-repository writeback, or controlled-runner probe
+approval.
+
+## Controlled runner probe
+
+Controlled Runner Probe V1 implements one guarded C3 probe for the fixed
+`status_snapshot_help` command key. It records before/after repo state, fixed
+argv evidence, safety gates, timeout, redacted output excerpts, and a
+`controlled_runner_probe_result.v1` sample.
+
+Run the sample probe with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.controlled_runner_probe \
+  --probe samples/controlled_runner_probes/controlled_runner_probe_v1.json \
+  --output samples/controlled_runner_probes/controlled_runner_probe_result_v1.json \
+  --pretty
+```
+
+This is still not a general runner. Config cannot supply argv, shell flags,
+executable paths, or arbitrary command strings, and C4-C6 remain locked.
 
 ## Safety boundary
 

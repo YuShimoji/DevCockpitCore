@@ -188,6 +188,14 @@ scope should be one fixed DevCockpitCore-local no-op or help/read-only command.
 It must not include target-repository writeback, credentials, network calls,
 scheduler/background loops, destructive git, or production/public action.
 
+## Accepted First Probe Boundary
+
+`controlled-runner-probe-v1` is allowed to implement only `C3
+guarded_single_command_probe` for the hardcoded `status_snapshot_help` command
+key. The probe must keep `C4`, `C5`, and `C6` locked, reject config-supplied
+argv or executable fields, use `shell=False`, require a timeout, and record
+before/after repo state.
+
 ## What This Does Not Do
 
 Controlled Runner Design V1 does not implement a runner, execute arbitrary

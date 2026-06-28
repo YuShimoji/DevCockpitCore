@@ -63,3 +63,15 @@ empty, such as `[--------] 0/8`, when the next slice has not started.
 UI copy-transport markers appended outside the authored report body should be
 classified separately from report residue. Authored reports and committed
 samples should still avoid unexplained pseudo action markers.
+
+## v2.5 Clipboard Transport Anchor
+
+For v2.5-compatible AGENT_REPORTs, clipboard or paste-pack state is metadata
+about the transport, not a next-agent prompt. A report may declare that no
+clipboard pack is included, but the authored body must still avoid paste-ready
+`SUPERVISOR_PROMPT` content.
+
+If a UI appends action markers after the authored report, classifiers should
+read them as copy-transport residue. They must not convert an AGENT_REPORT into
+a next prompt, and they must not count as project evidence unless the authored
+report explicitly cites the produced artifact.
