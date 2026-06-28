@@ -196,6 +196,9 @@ key. The probe must keep `C4`, `C5`, and `C6` locked, reject config-supplied
 argv or executable fields, use `shell=False`, require a timeout, and record
 before/after repo state.
 
+`controlled-runner-probe-review-v1` may accept or reject that C3 evidence, but
+acceptance does not unlock C4, C5, C6, or a generalized runner.
+
 ## What This Does Not Do
 
 Controlled Runner Design V1 does not implement a runner, execute arbitrary

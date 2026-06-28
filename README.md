@@ -260,6 +260,27 @@ PYTHONPATH=src python -m dev_cockpit.controlled_runner_probe \
 This is still not a general runner. Config cannot supply argv, shell flags,
 executable paths, or arbitrary command strings, and C4-C6 remain locked.
 
+## Controlled runner probe review
+
+Controlled Runner Probe Review V1 reviews existing
+`controlled_runner_probe_result.v1` evidence and emits
+`controlled_runner_probe_review_result.v1`. The review can accept the C3 probe
+or require a scoped fix without expanding runner capability.
+
+Run the sample review with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.controlled_runner_probe_review \
+  --review samples/controlled_runner_probe_reviews/controlled_runner_probe_review_v1.json \
+  --probe-result samples/controlled_runner_probes/controlled_runner_probe_result_v1_post_commit.json \
+  --dirty-sample samples/controlled_runner_probes/controlled_runner_probe_result_v1.json \
+  --output samples/controlled_runner_probe_reviews/controlled_runner_probe_review_result_v1.json \
+  --pretty
+```
+
+C3 acceptance does not unlock C4-C6. The next step still requires a Supervisor
+decision.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -292,3 +313,4 @@ and recommended next entrances.
 6. cross-project smoke
 7. controlled runner design
 8. controlled runner probe
+9. controlled runner probe review

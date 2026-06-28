@@ -1,0 +1,252 @@
+{
+  "schema_version": "controlled_runner_probe_review_result.v1",
+  "generated_at": "2026-06-28T05:31:38Z",
+  "producer": "dev_cockpit.controlled_runner_probe_review",
+  "review": {
+    "review_key": "devcockpitcore_c3_probe_acceptance_review",
+    "project_key": "devcockpitcore",
+    "required_capability_level": "C3_guarded_single_command_probe",
+    "accepted_command_keys": [
+      "status_snapshot_help"
+    ],
+    "locked_capability_levels": [
+      "C4_scoped_repo_local_runner",
+      "C5_cross_project_runner",
+      "C6_scheduler_or_autonomy_loop"
+    ]
+  },
+  "source": {
+    "probe_result_path": "samples/controlled_runner_probes/controlled_runner_probe_result_v1_post_commit.json",
+    "probe_schema_version": "controlled_runner_probe_result.v1",
+    "command_key": "status_snapshot_help",
+    "capability_level": "C3_guarded_single_command_probe"
+  },
+  "acceptance": {
+    "decision": "accepted_with_constraints",
+    "c3_accepted": true,
+    "c4_unlocked": false,
+    "c5_unlocked": false,
+    "c6_unlocked": false,
+    "recommended_next_slice": "c3-probe-hardening-v1",
+    "supervisor_should_generate_prompt": true,
+    "summary_result": "warn"
+  },
+  "evidence_checks": {
+    "probe_schema_valid": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "probe result schema is controlled_runner_probe_result.v1",
+      "details": {}
+    },
+    "command_key_fixed": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "only status_snapshot_help is accepted and argv ends with the fixed module help call",
+      "details": {}
+    },
+    "arbitrary_command_blocked": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "authority reports no arbitrary command execution and a hardcoded allowlist source",
+      "details": {}
+    },
+    "config_args_blocked": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "config cannot supply argv or args",
+      "details": {}
+    },
+    "shell_false": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "shell execution is false and shell gate passed",
+      "details": {}
+    },
+    "timeout_present": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "positive timeout is present and timeout gate passed",
+      "details": {}
+    },
+    "output_truncation_present": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "stdout/stderr truncation flags are present",
+      "details": {}
+    },
+    "redaction_present": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "redaction field is present and no raw local user path is visible",
+      "details": {}
+    },
+    "before_after_state_present": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "before/after worktree and remote parity state are present",
+      "details": {}
+    },
+    "target_repo_writeback_false": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "target repository writeback is false",
+      "details": {}
+    },
+    "credentials_false": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "credentials are not required",
+      "details": {}
+    },
+    "network_false": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "network is not required",
+      "details": {}
+    },
+    "destructive_git_false": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "destructive git gate passed",
+      "details": {}
+    },
+    "write_scope_explained": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "command writes no artifacts and expected write scope is explained",
+      "details": {}
+    },
+    "post_commit_clean_evidence_present": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "probe result shows clean worktree before and after with passing summary",
+      "details": {}
+    },
+    "required_safety_gates_present": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "all required safety gates are present and passing",
+      "details": {
+        "missing_safety_gates": []
+      }
+    },
+    "c4_c5_c6_locked": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "C4, C5, and C6 are not unlocked by the probe result",
+      "details": {}
+    },
+    "paste_ready_prompt_absent": {
+      "result": "pass",
+      "done": 1,
+      "total": 1,
+      "unknown": 0,
+      "meter": "#",
+      "missing": 0,
+      "summary": "probe result contains no paste-ready next-agent prompt markers",
+      "details": {}
+    }
+  },
+  "sample_interpretation": {
+    "during_work_sample_path": "samples/controlled_runner_probes/controlled_runner_probe_result_v1.json",
+    "during_work_sample_dirty_warning": true,
+    "post_commit_clean_probe_available": true,
+    "dirty_warning_handling": "accepted_as_expected_artifact_generation"
+  },
+  "readiness": {
+    "c0_observer_only": "available",
+    "c1_fixed_validation_pack": "available",
+    "c2_command_proposal_only": "design_available",
+    "c3_guarded_single_command_probe": "accepted",
+    "c4_scoped_repo_local_runner": "locked",
+    "c5_cross_project_runner": "locked",
+    "c6_scheduler_or_autonomy_loop": "locked"
+  },
+  "summary": {
+    "result": "warn",
+    "done": 18,
+    "total": 18,
+    "unknown": 0,
+    "meter": "#################~",
+    "passed": 18,
+    "warnings": 1,
+    "failed": 0,
+    "missing": 0
+  },
+  "health": {
+    "status": "yellow",
+    "warnings": [
+      "during-work sample has dirty warning but post-commit clean evidence is available"
+    ],
+    "blockers": [],
+    "stop_class": "INTEGRATE_AND_CONTINUE"
+  }
+}

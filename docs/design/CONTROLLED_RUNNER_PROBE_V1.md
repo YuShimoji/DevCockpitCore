@@ -73,6 +73,10 @@ Controlled Runner Probe V1 consumes the governance constraints from
 the validation pack, execute adapter `default_validation`, or add a general
 command runner.
 
+`controlled_runner_probe_review.v1` is the acceptance-review layer for this
+probe evidence. It reads probe result JSON and classifies C3 acceptance without
+running commands or unlocking C4-C6.
+
 ## What This Does Not Do
 
 Controlled Runner Probe V1 does not execute arbitrary commands, load a command

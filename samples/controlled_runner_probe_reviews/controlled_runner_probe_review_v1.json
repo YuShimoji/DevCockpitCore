@@ -1,0 +1,30 @@
+{
+  "schema_version": "controlled_runner_probe_review.v1",
+  "review_key": "devcockpitcore_c3_probe_acceptance_review",
+  "project_key": "devcockpitcore",
+  "required_capability_level": "C3_guarded_single_command_probe",
+  "accepted_command_keys": [
+    "status_snapshot_help"
+  ],
+  "locked_capability_levels": [
+    "C4_scoped_repo_local_runner",
+    "C5_cross_project_runner",
+    "C6_scheduler_or_autonomy_loop"
+  ],
+  "required_safety_gates": [
+    "allowlist_gate",
+    "arbitrary_args_gate",
+    "shell_gate",
+    "cwd_gate",
+    "timeout_gate",
+    "write_scope_gate",
+    "target_repo_gate",
+    "credential_gate",
+    "network_gate",
+    "destructive_git_gate"
+  ],
+  "notes": [
+    "Review existing controlled_runner_probe_result.v1 evidence only.",
+    "C3 acceptance does not unlock C4, C5, or C6."
+  ]
+}
