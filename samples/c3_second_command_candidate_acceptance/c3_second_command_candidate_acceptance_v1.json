@@ -1,0 +1,103 @@
+{
+  "schema_version": "c3_second_command_candidate_acceptance.v1",
+  "generated_at": "2026-06-29T00:00:00Z",
+  "project_key": "devcockpitcore",
+  "slice": "common-foundation-c3-second-command-candidate-acceptance-v1",
+  "artifact": "c3-second-command-candidate-acceptance-v1",
+  "decision_status": "option_b_selected",
+  "implementation_status": "candidate_state_only",
+  "decision_source": {
+    "review_doc": "docs/design/C3_SECOND_COMMAND_ACCEPTANCE_REVIEW_V1.md",
+    "review_sample": "samples/c3_second_command_acceptance/c3_second_command_acceptance_review_v1.json",
+    "review_status": "completed",
+    "review_recommended_option": "B",
+    "user_request": "analyze_latest_state_choose_work_and_continue",
+    "work_judgment": "select_option_b_from_passed_acceptance_review",
+    "rationale": "The completed review recommends carrying adapters_validate_help forward as a help-only candidate, and validation has no blocking findings."
+  },
+  "candidate_state": {
+    "accepted_help_only_candidate_keys": [
+      "adapters_validate_help"
+    ],
+    "candidate_command_key": "adapters_validate_help",
+    "candidate_fixed_argv_suffix": [
+      "-m",
+      "dev_cockpit.adapters",
+      "--help"
+    ],
+    "production_accepted_c3_command_keys": [
+      "status_snapshot_help"
+    ],
+    "production_allowlist_expanded": false,
+    "production_command_implemented": false,
+    "broad_adapter_validation_approved": false,
+    "candidate_acceptance_meaning": "Evidence is sufficient to preserve adapters_validate_help as a future help-only C3 command candidate.",
+    "not_a_production_command": true
+  },
+  "evidence_links": {
+    "design_doc": "docs/design/C3_SECOND_COMMAND_DESIGN_V1.md",
+    "design_sample": "samples/c3_second_command_design/c3_second_command_design_v1.json",
+    "help_probe_doc": "docs/design/C3_SECOND_COMMAND_HELP_PROBE_V1.md",
+    "help_probe_sample": "samples/c3_second_command_probe/c3_second_command_help_probe_v1.json",
+    "acceptance_review_doc": "docs/design/C3_SECOND_COMMAND_ACCEPTANCE_REVIEW_V1.md",
+    "acceptance_review_sample": "samples/c3_second_command_acceptance/c3_second_command_acceptance_review_v1.json"
+  },
+  "scope_boundary": {
+    "docs_and_test_state_update": true,
+    "source_allowlist_change": false,
+    "runner_registry_added": false,
+    "adapter_validation_executed": false,
+    "adapter_default_validation_executed": false,
+    "target_repo_writeback": false,
+    "credentials_required": false,
+    "network_required": false
+  },
+  "no_approval_boundary": {
+    "production_second_command_implementation": false,
+    "broad_adapter_validation": false,
+    "adapter_default_validation": false,
+    "arbitrary_command_execution": false,
+    "config_supplied_command_or_argv": false,
+    "target_repo_writeback": false,
+    "credentials": false,
+    "network": false,
+    "external_services": false,
+    "paid_apis": false,
+    "scheduler_or_autonomy_loop": false,
+    "c4": false,
+    "c5": false,
+    "c6": false
+  },
+  "next_routes": {
+    "recommended_next_slice": "supervisor-prompt-needed",
+    "if_second_command_implementation_is_requested": "common-foundation-c3-second-command-production-probe-v1",
+    "if_c3_is_frozen": "move only to C4 design after separate decision",
+    "if_c4_is_requested": "separate C4 design prompt required",
+    "user_work": "none",
+    "production_probe_preconditions": [
+      "hardcoded command key only",
+      "fixed dev_cockpit.adapters --help argv only",
+      "shell false",
+      "DevCockpitCore cwd confinement",
+      "timeout and output truncation",
+      "redaction",
+      "before and after git status evidence",
+      "post-probe review",
+      "C4-C6 lock state preserved"
+    ]
+  },
+  "summary": {
+    "result": "pass",
+    "done": 8,
+    "total": 8,
+    "unknown": 0,
+    "meter": "########",
+    "missing": 0
+  },
+  "health": {
+    "status": "green",
+    "warnings": [],
+    "blockers": [],
+    "stop_class": "NONE"
+  }
+}

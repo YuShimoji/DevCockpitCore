@@ -1,25 +1,26 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-29
-active_artifact: c3-second-command-acceptance-review-v1
-artifact_current: c3-second-command-acceptance-review-v1
-artifact_next: supervisor-decision-needed
-next: Supervisor review of c3-second-command-acceptance-review-v1 and decision among options A/B/C
+active_artifact: c3-second-command-candidate-acceptance-v1
+artifact_current: c3-second-command-candidate-acceptance-v1
+artifact_next: supervisor-prompt-needed
+next: Separate prompt required before any production second-command probe or C4 design
 user_work: none
 render_gate: not_applicable
-handoff: docs/handoffs/2026-06-29-c3-second-command-acceptance-review-v1.md
+handoff: docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md
 
 ## Current State
 
-DevCockpitCore has committed and pushed slices through
-`common-foundation-c3-probe-hardening-v1` before this working slice. The current
-working slice adds a decision packet for
-`common-foundation-c3-second-command-acceptance-review-v1`.
+DevCockpitCore has completed observer and foundation automation slices, the
+bounded C3 probe/hardening path, C3 second-command design and help-probe
+evidence, and the C3 second-command acceptance review. The current working slice
+records the option-B continuation state for
+`common-foundation-c3-second-command-candidate-acceptance-v1`.
 
-The latest pulled remote commit before this acceptance-review slice is:
+The latest pulled remote commit before this candidate-acceptance slice is:
 
 ```text
-d216419 test: add c3 second command help probe
+a38751a docs: add c3 second command acceptance review
 ```
 
 `main` tracks `origin/main`.
@@ -50,6 +51,9 @@ d216419 test: add c3 second command help probe
 - Review the second-command evidence and recommend option B: accept
   `adapters_validate_help` as a help-only second C3 command candidate, not as a
   production command implementation.
+- Record option B as the selected continuation state: `adapters_validate_help`
+  is a help-only accepted candidate, while production C3 command execution still
+  accepts only `status_snapshot_help`.
 
 ## Safety Boundary
 
@@ -57,9 +61,9 @@ This project still has no general execution loop, arbitrary command runner,
 scheduler, external notification integration, auto-render workflow, web server,
 database, credential handling, or target-repository writeback system.
 
-C3 remains limited to the already accepted `status_snapshot_help` command key.
-`c3-second-command-acceptance-review-v1` recommends carrying
-`adapters_validate_help` forward as a help-only accepted candidate, but it does
-not accept that command key in the production controlled runner. Broad adapter
-validation, adapter `default_validation`, target repo writeback, and C4-C6
-remain locked until a separate Supervisor decision authorizes a new slice.
+C3 production execution remains limited to the already accepted
+`status_snapshot_help` command key. `adapters_validate_help` is now preserved as
+a help-only accepted candidate, but it is not implemented in the production
+controlled runner. Broad adapter validation, adapter `default_validation`,
+target repo writeback, production second-command execution, and C4-C6 remain
+locked until a separate prompt authorizes a new slice.

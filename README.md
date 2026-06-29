@@ -337,6 +337,21 @@ The recommendation is option B: accept `adapters_validate_help` as a help-only
 second C3 command candidate. This still does not implement it as a production
 command key, does not execute adapter validation, and does not unlock C4-C6.
 
+## C3 second command candidate acceptance
+
+C3 Second Command Candidate Acceptance V1 records option B as the selected
+continuation state after the acceptance review. It preserves
+`adapters_validate_help` as a help-only accepted candidate while keeping
+`status_snapshot_help` as the only production accepted C3 command key.
+
+The candidate-acceptance packet lives at
+`samples/c3_second_command_candidate_acceptance/c3_second_command_candidate_acceptance_v1.json`;
+supporting docs live at
+`docs/design/C3_SECOND_COMMAND_CANDIDATE_ACCEPTANCE_V1.md`.
+
+This state update does not implement `adapters_validate_help`, does not execute
+adapter validation, does not add a command registry, and does not unlock C4-C6.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -354,6 +369,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-acceptance-review-v1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-help-probe-v1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-design-v1.md`
@@ -378,3 +394,4 @@ and recommended next entrances.
 11. C3 second command design
 12. C3 second command help probe
 13. C3 second command acceptance review
+14. C3 second command candidate acceptance
