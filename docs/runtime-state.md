@@ -1,13 +1,13 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c4-scoped-runner-design-v1
-artifact_current: c4-scoped-runner-design-v1
-artifact_next: common-foundation-c4-scoped-runner-design-review-v1
-next: Supervisor decision for C4 design acceptance review, stop, or design correction
+active_artifact: c4-scoped-runner-design-review-v1
+artifact_current: c4-scoped-runner-design-review-v1
+artifact_next: common-foundation-c4-scoped-runner-design-hardening-v1
+next: Supervisor decision for C4 design hardening, C4 probe decision packet, controlled-runner stop, or C4 design fix
 user_work: none
 render_gate: not_applicable
-handoff: docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md
+handoff: docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md
 
 ## Current State
 
@@ -16,12 +16,13 @@ bounded C3 probe/hardening path, C3 second-command design and help-probe
 evidence, the C3 second-command acceptance review, option-B candidate
 acceptance, and the production C3 help-only probe for `adapters_validate_help`.
 The current working slice records a C4 scoped runner design-only boundary while
-preserving C3 as the executable ceiling.
+preserving C3 as the executable ceiling, and the follow-up review accepts that
+boundary as design-only evidence.
 
-The latest pulled remote commit before this C4 design slice is:
+The latest reviewed remote commit before this C4 design review slice is:
 
 ```text
-4a9526e docs: decide c3 command set freeze route
+7964c31 docs: design c4 scoped runner boundary
 ```
 
 `main` tracks `origin/main`.
@@ -69,6 +70,10 @@ The latest pulled remote commit before this C4 design slice is:
 - Define the C4 scoped runner boundary as design-only. The recommended next
   route is `common-foundation-c4-scoped-runner-design-review-v1`; implementation
   remains forbidden.
+- Review and accept the C4 scoped runner design boundary as design-only
+  evidence. C4 implementation remains unauthorized, C3 remains the executable
+  ceiling, and the recommended next route is
+  `common-foundation-c4-scoped-runner-design-hardening-v1`.
 
 ## Safety Boundary
 
@@ -81,10 +86,10 @@ C3 production execution is limited to exactly two help-only command keys:
 `python -m dev_cockpit.adapters --help`. Broad adapter validation, adapter
 `default_validation`, target repo writeback, a generalized runner, and C4-C6
 remain locked until a separate prompt authorizes a new slice. The current
-decision state is freeze-ready and recommends C4 design-only as the next useful
-route, but still requires Supervisor decision before C4 design starts. C4
-implementation and any further command expansion remain forbidden.
+decision state accepts C4 design as design-only evidence and recommends C4
+design hardening as the next useful route. C4 implementation and any further
+command expansion remain forbidden.
 
-The current C4 design artifact does not add execution behavior. C3 remains the
-executable ceiling until a later Supervisor prompt authorizes and reviews a
-separate C4 probe slice.
+The current C4 design review accepts the design boundary only. It does not add
+execution behavior. C3 remains the executable ceiling until a later Supervisor
+prompt authorizes and reviews a separate C4 probe slice.

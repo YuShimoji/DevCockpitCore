@@ -8,6 +8,13 @@ possible future C4 scoped repo-local runner. This slice is design-only.
 It does not implement C4, create a runner, add command execution behavior, add a
 third C3 command, generalize `controlled_runner_probe`, or unlock C5/C6.
 
+## Review Status
+
+`docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md` accepts this boundary as
+design-only evidence. That acceptance does not authorize C4 implementation. C3
+remains the executable ceiling, and the recommended next route is
+`common-foundation-c4-scoped-runner-design-hardening-v1`.
+
 ## Current C3 Executable Ceiling
 
 The current executable ceiling remains C3. The only production C3 command keys
