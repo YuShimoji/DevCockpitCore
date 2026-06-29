@@ -1,0 +1,198 @@
+{
+  "schema_version": "c3_second_command_acceptance_review.v1",
+  "generated_at": "2026-06-29T00:00:00Z",
+  "project_key": "devcockpitcore",
+  "slice": "common-foundation-c3-second-command-acceptance-review-v1",
+  "artifact": "c3-second-command-acceptance-review-v1",
+  "review_status": "completed",
+  "implementation_status": "decision_packet_only",
+  "current_accepted_state": {
+    "accepted_c3_command_keys": [
+      "status_snapshot_help"
+    ],
+    "only_accepted_c3_command": "status_snapshot_help",
+    "candidate_under_review": "adapters_validate_help",
+    "candidate_status_before_review": "design_and_help_probe_evidence",
+    "production_allowlist_expanded": false,
+    "broad_adapter_validation_approved": false,
+    "c4_status": "locked",
+    "c5_status": "locked",
+    "c6_status": "locked"
+  },
+  "evidence_summary": {
+    "design_evidence": {
+      "docs": "docs/design/C3_SECOND_COMMAND_DESIGN_V1.md",
+      "sample": "samples/c3_second_command_design/c3_second_command_design_v1.json",
+      "decision": "recommend_second_command",
+      "selected_candidate": "adapters_validate_help",
+      "implementation_allowed_now": false
+    },
+    "help_probe_evidence": {
+      "docs": "docs/design/C3_SECOND_COMMAND_HELP_PROBE_V1.md",
+      "sample": "samples/c3_second_command_probe/c3_second_command_help_probe_v1.json",
+      "probe_status": "bounded_help_readback",
+      "fixed_argv_suffix": [
+        "-m",
+        "dev_cockpit.adapters",
+        "--help"
+      ],
+      "exit_code": 0,
+      "adapter_validation_executed": false,
+      "target_repo_required": false,
+      "input_file_required": false,
+      "output_file_written": false,
+      "credentials_required": false,
+      "network_required": false
+    },
+    "validation_evidence": {
+      "required_checks": [
+        "python_compile",
+        "unittest_discover",
+        "targeted_acceptance_review_tests",
+        "json_parse",
+        "git_diff_check",
+        "conflict_marker_scan",
+        "src_allowlist_scan",
+        "validation_pack_default"
+      ],
+      "known_warning": {
+        "source": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+        "kind": "pseudo_git_tag_fixture",
+        "blocking": false
+      }
+    },
+    "absence_of_broad_adapter_validation": true
+  },
+  "decision_options": [
+    {
+      "id": "A",
+      "name": "freeze C3 at one accepted command",
+      "meaning": "Keep status_snapshot_help as the only accepted C3 command and do not adopt a second command.",
+      "required_evidence": [
+        "current C3 hardening remains accepted",
+        "no production allowlist expansion",
+        "C4-C6 remain locked"
+      ],
+      "risk": "lowest execution-surface risk, but no second-command learning",
+      "what_remains_locked": [
+        "adapters_validate_help production command",
+        "broad adapter validation",
+        "C4",
+        "C5",
+        "C6"
+      ],
+      "future_slice_allowed": "C4 design only, or a later explicit reopen of C3 second-command review",
+      "not_approved": [
+        "second C3 command implementation",
+        "adapter validation execution",
+        "command registry",
+        "C4-C6 unlock"
+      ]
+    },
+    {
+      "id": "B",
+      "name": "accept adapters_validate_help as help-only second C3 command candidate",
+      "meaning": "Accept the evidence as sufficient to carry adapters_validate_help forward as a help-only candidate, without implementing it as production command behavior in this slice.",
+      "required_evidence": [
+        "design packet recommends adapters_validate_help",
+        "help-probe packet shows fixed dev_cockpit.adapters --help behavior",
+        "adapter validation execution is absent",
+        "status_snapshot_help remains the only currently accepted production C3 command",
+        "C4-C6 remain locked"
+      ],
+      "risk": "low, because it expands candidate status rather than executable production behavior",
+      "what_remains_locked": [
+        "production second-command implementation",
+        "broad adapter validation",
+        "adapter default_validation execution",
+        "arbitrary command execution",
+        "C4",
+        "C5",
+        "C6"
+      ],
+      "future_slice_allowed": "bounded docs/test update for help-only accepted candidate, still no broad adapter execution",
+      "not_approved": [
+        "production allowlist execution of adapters_validate_help",
+        "adapter validation execution",
+        "config-supplied argv or shell",
+        "target repository writeback",
+        "C4-C6 unlock"
+      ]
+    },
+    {
+      "id": "C",
+      "name": "defer second-command adoption until C4 design",
+      "meaning": "Preserve the evidence but do not adopt adapters_validate_help in C3; revisit command expansion during C4 design only.",
+      "required_evidence": [
+        "help-probe evidence preserved",
+        "C3 remains single-command accepted state",
+        "C4 design has not started in this slice"
+      ],
+      "risk": "low current risk, but may defer useful C3 boundary learning",
+      "what_remains_locked": [
+        "adapters_validate_help candidate adoption",
+        "production second-command implementation",
+        "broad adapter validation",
+        "C4",
+        "C5",
+        "C6"
+      ],
+      "future_slice_allowed": "C4 design only; second-command adoption deferred",
+      "not_approved": [
+        "second C3 command adoption",
+        "adapter validation execution",
+        "command registry",
+        "C4-C6 implementation"
+      ]
+    }
+  ],
+  "recommendation": {
+    "recommended_option": "B",
+    "decision": "accept_help_only_second_c3_command_candidate",
+    "reason": "Design and help-probe evidence support carrying adapters_validate_help forward as a help-only candidate while preserving the production allowlist and C4-C6 locks.",
+    "production_command_implemented": false,
+    "production_allowlist_expanded": false,
+    "broad_adapter_validation_approved": false,
+    "c4_unlocked": false,
+    "c5_unlocked": false,
+    "c6_unlocked": false
+  },
+  "no_approval_boundary": {
+    "broad_adapter_validation": false,
+    "adapter_default_validation": false,
+    "production_second_command_implementation": false,
+    "arbitrary_command_execution": false,
+    "config_supplied_command_or_argv": false,
+    "target_repo_writeback": false,
+    "credentials": false,
+    "network": false,
+    "external_services": false,
+    "paid_apis": false,
+    "scheduler_or_autonomy_loop": false,
+    "c4": false,
+    "c5": false,
+    "c6": false
+  },
+  "next_routes": {
+    "if_A": "C3 frozen at one accepted command; move to C4 design only",
+    "if_B": "bounded docs/test update for help-only accepted candidate, still no broad adapter execution",
+    "if_C": "defer second command and keep C3 single-command accepted state",
+    "recommended_next_slice": "supervisor-decision-needed",
+    "supervisor_should_generate_prompt": true,
+    "user_work": "none"
+  },
+  "summary": {
+    "result": "pass",
+    "done": 10,
+    "total": 10,
+    "unknown": 0,
+    "meter": "##########",
+    "missing": 0
+  },
+  "health": {
+    "status": "green",
+    "warnings": [],
+    "blockers": [],
+    "stop_class": "NONE"
+  }
+}

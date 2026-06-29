@@ -17,12 +17,12 @@ read-only snapshots of target repositories.
 
 The current repository has completed observer and foundation automation slices,
 plus a bounded C3 probe evidence package, a design-only C3 second-command
-candidate packet, and a bounded help-probe packet for that candidate. It still
-does not unlock general execution automation.
+candidate packet, a bounded help-probe packet for that candidate, and an
+acceptance review packet. It still does not unlock general execution automation.
 
 ## Current Artifact Stack
 
-The current active artifact is `c3-second-command-help-probe-v1`.
+The current active artifact is `c3-second-command-acceptance-review-v1`.
 
 Completed artifacts include:
 
@@ -38,6 +38,7 @@ Completed artifacts include:
 - `c3-probe-hardening-v1`
 - `c3-second-command-design-v1`
 - `c3-second-command-help-probe-v1`
+- `c3-second-command-acceptance-review-v1`
 
 The implementation remains a standard-library Python package named
 `dev_cockpit`.
@@ -64,6 +65,10 @@ The second-command help-probe packet records fixed help/readback evidence for
 `python -m dev_cockpit.adapters --help`. It still does not add
 `adapters_validate_help` to the production controlled runner allowlist or accept
 it as a completed C3 command.
+
+The acceptance review packet recommends option B: accept
+`adapters_validate_help` as a help-only second C3 command candidate. This is not
+production command implementation, and C4-C6 remain locked.
 
 ## Design Bias
 
