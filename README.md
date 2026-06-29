@@ -400,6 +400,23 @@ C4 implementation, third C3 commands, C5, C6, arbitrary execution, adapter
 validation as controlled command behavior, schedulers, and target repository
 writeback remain forbidden until separately authorized.
 
+## C4 scoped runner design
+
+C4 Scoped Runner Design V1 defines a design-only boundary for a possible future
+scoped DevCockpitCore-local runner. It preserves C3 as the executable ceiling
+and recommends `common-foundation-c4-scoped-runner-design-review-v1` as the next
+review route.
+
+The design artifact lives at
+`samples/c4_scoped_runner_design/c4_scoped_runner_design_v1.json`; the companion
+decision packet lives at
+`samples/c4_scoped_runner_design/c4_scoped_runner_decision_packet_v1.json`;
+supporting docs live at `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`.
+
+This design adds no runner implementation, command execution, command keys,
+target repository writeback, scheduler, cross-project runner, credentials,
+external service handling, web UI, or C5/C6 unlock.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -417,6 +434,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
 - `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
 - `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md`
@@ -448,3 +466,4 @@ and recommended next entrances.
 15. C3 second command production probe
 16. C3 second command hardening
 17. C3 command set freeze and C4 design decision
+18. C4 scoped runner design

@@ -1,0 +1,45 @@
+{
+  "schema_version": "c4_scoped_runner_decision_packet.v1",
+  "generated_at": "2026-06-29T17:06:23Z",
+  "project_key": "devcockpitcore",
+  "source_design_artifact": "samples/c4_scoped_runner_design/c4_scoped_runner_design_v1.json",
+  "design_only_acceptance": {
+    "recommended": true,
+    "meaning": "The C4 scoped runner boundary is ready for design acceptance review only.",
+    "recommended_next_slice": "common-foundation-c4-scoped-runner-design-review-v1"
+  },
+  "implementation_authorization": {
+    "implementation_allowed_now": false,
+    "execution_added": false,
+    "command_keys_added": [],
+    "requires_future_supervisor_prompt": true,
+    "requires_future_probe_review": true
+  },
+  "forbidden_direct_implementation": {
+    "direct_c4_implementation": true,
+    "new_command_execution": true,
+    "third_c3_command": true,
+    "command_registry_from_config": true,
+    "arbitrary_execution": true,
+    "adapter_validation_as_controlled_command": true,
+    "target_repo_writeback": true,
+    "scheduler_or_autonomy": true,
+    "c5_c6_unlock": true
+  },
+  "current_executable_ceiling": {
+    "capability_level": "C3",
+    "production_command_keys": [
+      "status_snapshot_help",
+      "adapters_validate_help"
+    ],
+    "production_command_count": 2
+  },
+  "summary": {
+    "result": "pass",
+    "done": 4,
+    "total": 4,
+    "unknown": 0,
+    "meter": "####",
+    "missing": 0
+  }
+}

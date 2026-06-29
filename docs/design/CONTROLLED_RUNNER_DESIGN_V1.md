@@ -202,6 +202,9 @@ acceptance does not unlock C4, C5, C6, or a generalized runner.
 `c3-probe-hardening-v1` may canonicalize clean C3 evidence, but it still keeps
 C4, C5, and C6 locked until a separate Supervisor decision.
 
+`c4-scoped-runner-design-v1` defines the later C4 boundary in design-only form.
+It does not implement a runner or unlock C4 execution.
+
 ## What This Does Not Do
 
 Controlled Runner Design V1 does not implement a runner, execute arbitrary

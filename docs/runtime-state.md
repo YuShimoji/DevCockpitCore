@@ -1,13 +1,13 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c3-command-set-freeze-and-c4-design-decision-v1
-artifact_current: c3-command-set-freeze-and-c4-design-decision-v1
-artifact_next: common-foundation-c4-scoped-runner-design-v1
-next: Supervisor decision for C4 design-only, freeze-only, stop, or C3 follow-up
+active_artifact: c4-scoped-runner-design-v1
+artifact_current: c4-scoped-runner-design-v1
+artifact_next: common-foundation-c4-scoped-runner-design-review-v1
+next: Supervisor decision for C4 design acceptance review, stop, or design correction
 user_work: none
 render_gate: not_applicable
-handoff: docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md
+handoff: docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md
 
 ## Current State
 
@@ -15,13 +15,13 @@ DevCockpitCore has completed observer and foundation automation slices, the
 bounded C3 probe/hardening path, C3 second-command design and help-probe
 evidence, the C3 second-command acceptance review, option-B candidate
 acceptance, and the production C3 help-only probe for `adapters_validate_help`.
-The current working slice records the hardened C3 command set as freeze-ready
-and recommends a separate C4 design-only next route.
+The current working slice records a C4 scoped runner design-only boundary while
+preserving C3 as the executable ceiling.
 
-The latest pulled remote commit before this decision slice is:
+The latest pulled remote commit before this C4 design slice is:
 
 ```text
-5d91bcc test: harden c3 second command state
+4a9526e docs: decide c3 command set freeze route
 ```
 
 `main` tracks `origin/main`.
@@ -66,6 +66,9 @@ The latest pulled remote commit before this decision slice is:
 - Record the C3 command set as freeze-ready and recommend
   `common-foundation-c4-scoped-runner-design-v1` only as a separate design-only
   route. C4 implementation remains forbidden.
+- Define the C4 scoped runner boundary as design-only. The recommended next
+  route is `common-foundation-c4-scoped-runner-design-review-v1`; implementation
+  remains forbidden.
 
 ## Safety Boundary
 
@@ -81,3 +84,7 @@ remain locked until a separate prompt authorizes a new slice. The current
 decision state is freeze-ready and recommends C4 design-only as the next useful
 route, but still requires Supervisor decision before C4 design starts. C4
 implementation and any further command expansion remain forbidden.
+
+The current C4 design artifact does not add execution behavior. C3 remains the
+executable ceiling until a later Supervisor prompt authorizes and reviews a
+separate C4 probe slice.

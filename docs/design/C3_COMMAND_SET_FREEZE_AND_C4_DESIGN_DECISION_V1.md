@@ -132,3 +132,6 @@ Supervisor decision is required before any further capability expansion.
 Until a later prompt explicitly opens design-only C4 work, C4 implementation,
 C5, C6, third C3 commands, arbitrary execution, adapter validation as controlled
 command behavior, schedulers, and target repository writeback remain forbidden.
+
+The C4 design-only successor is
+`docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`.

@@ -1,0 +1,123 @@
+{
+  "schema_version": "c4_scoped_runner_design.v1",
+  "generated_at": "2026-06-29T17:06:23Z",
+  "project_key": "devcockpitcore",
+  "source_decision_artifact": "samples/c3_command_set_freeze_and_c4_design_decision/c3_command_set_freeze_and_c4_design_decision_v1.json",
+  "current_executable_ceiling": {
+    "capability_level": "C3",
+    "production_command_keys": [
+      "status_snapshot_help",
+      "adapters_validate_help"
+    ],
+    "production_command_count": 2,
+    "c3_status": "freeze_ready"
+  },
+  "c4_scope": {
+    "design_status": "design_only",
+    "implementation_allowed": false,
+    "execution_added": false,
+    "command_keys_added": [],
+    "target_repo_writeback_allowed": false,
+    "cross_project_execution_allowed": false,
+    "scheduler_allowed": false
+  },
+  "c4_candidate_capability": {
+    "description": "A possible future scoped DevCockpitCore-local runner for a very small hardcoded command class, subject to separate design review, probe authorization, probe review, and hardening.",
+    "allowed_command_classes_if_later_approved": [
+      "single_hardcoded_devcockpitcore_local_read_only_or_validation_probe",
+      "single_hardcoded_devcockpitcore_local_no_write_diagnostic_probe"
+    ],
+    "forbidden_command_classes": [
+      "config_supplied_command",
+      "config_supplied_argv",
+      "arbitrary_command",
+      "adapter_validation_through_controlled_runner_probe",
+      "adapter_default_validation_through_controlled_runner_probe",
+      "target_repo_writeback",
+      "cross_project_execution",
+      "scheduler_or_autonomy_loop",
+      "credentials_or_external_service",
+      "destructive_git",
+      "force_push",
+      "publish_or_production_action"
+    ],
+    "config_policy": "Config may identify only an approved source-hardcoded key; it must not supply command strings, executables, argv, args, shell flags, cwd overrides, credentials, network endpoints, retries, or write targets.",
+    "cwd_policy": "Any future C4 probe must run from the DevCockpitCore repository unless a later design review explicitly narrows a different repo-local cwd.",
+    "timeout_policy": "Timeout must be required, bounded, and recorded in evidence.",
+    "output_policy": "stdout and stderr must be captured as bounded excerpts with truncation flags.",
+    "redaction_policy": "Local user paths and sensitive-looking values must be redacted before artifact write.",
+    "before_after_state_policy": "Before and after repository state must include worktree, HEAD, branch, and remote parity.",
+    "validation_policy": "Adapter validation remains ordinary validation evidence outside controlled_runner_probe unless a later accepted design and probe explicitly define a fixed safe path.",
+    "push_policy": "Controlled runner behavior must not push, force push, merge, rebase, reset, stash, or otherwise mutate git history."
+  },
+  "safety_gates": {
+    "hardcoded_allowlist_required": true,
+    "no_config_supplied_command": true,
+    "no_config_supplied_argv": true,
+    "shell_false_required": true,
+    "timeout_required": true,
+    "output_truncation_required": true,
+    "redaction_required": true,
+    "before_after_repo_state_required": true,
+    "no_target_repo_writeback": true,
+    "no_credentials": true,
+    "no_network_unless_explicitly_approved": true,
+    "no_destructive_git": true,
+    "no_force_push": true,
+    "no_scheduler": true,
+    "no_c5_c6_unlock": true
+  },
+  "required_future_artifacts": {
+    "design_acceptance_review": "common-foundation-c4-scoped-runner-design-review-v1",
+    "c4_probe_prompt": "required_before_any_c4_probe",
+    "c4_probe_result": "required_before_acceptance",
+    "c4_probe_review": "required_before_hardening",
+    "c4_hardening": "required_before_any_c4_state_is_canonical"
+  },
+  "decision": {
+    "recommendation": "recommend_design_acceptance_review",
+    "recommended_next_slice": "common-foundation-c4-scoped-runner-design-review-v1",
+    "implementation_allowed_now": false,
+    "supervisor_should_generate_prompt": true
+  },
+  "invariants": {
+    "c3_command_set_unchanged": {
+      "result": "pass",
+      "value": true,
+      "summary": "C3 remains the executable ceiling"
+    },
+    "exact_two_c3_command_keys": {
+      "result": "pass",
+      "value": true,
+      "summary": "status_snapshot_help and adapters_validate_help are the only production C3 keys"
+    },
+    "no_third_c3_command": {
+      "result": "pass",
+      "value": true,
+      "summary": "no third C3 command is introduced or proposed"
+    },
+    "no_c4_implementation": {
+      "result": "pass",
+      "value": true,
+      "summary": "this design adds no C4 implementation"
+    },
+    "no_c5_c6_unlock": {
+      "result": "pass",
+      "value": true,
+      "summary": "C5 and C6 remain locked"
+    },
+    "no_generalized_runner": {
+      "result": "pass",
+      "value": true,
+      "summary": "no generalized runner or config command registry is introduced"
+    }
+  },
+  "summary": {
+    "result": "pass",
+    "done": 6,
+    "total": 6,
+    "unknown": 0,
+    "meter": "######",
+    "missing": 0
+  }
+}
