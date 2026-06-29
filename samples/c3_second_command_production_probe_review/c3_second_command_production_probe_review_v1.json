@@ -1,0 +1,160 @@
+{
+  "schema_version": "c3_second_command_production_probe_review.v1",
+  "generated_at": "2026-06-29T16:20:00Z",
+  "reviewed_commit": "37e520246c485c484be6b4dc39d428083c994f3f",
+  "project_key": "devcockpitcore",
+  "reviewed_artifact": "c3-second-command-production-probe-v1",
+  "production_command_keys": [
+    "status_snapshot_help",
+    "adapters_validate_help"
+  ],
+  "production_command_count": 2,
+  "expected_command_keys": [
+    "status_snapshot_help",
+    "adapters_validate_help"
+  ],
+  "decision": "accepted",
+  "c3_status": "accepted",
+  "c4_status": "locked",
+  "c5_status": "locked",
+  "c6_status": "locked",
+  "evidence_sources": {
+    "source": "src/dev_cockpit/controlled_runner_probe.py",
+    "probe_config": "samples/controlled_runner_probes/controlled_runner_probe_adapters_validate_help_v1.json",
+    "committed_probe_result": "samples/controlled_runner_probes/controlled_runner_probe_adapters_validate_help_result_v1.json",
+    "design_doc": "docs/design/C3_SECOND_COMMAND_PRODUCTION_PROBE_V1.md",
+    "live_probe_readback": "python -m dev_cockpit.controlled_runner_probe --probe samples/controlled_runner_probes/controlled_runner_probe_adapters_validate_help_v1.json --pretty"
+  },
+  "live_probe_readback": {
+    "reviewed_commit_short": "37e5202",
+    "worktree_before": "clean",
+    "worktree_after": "clean",
+    "remote_parity_before": "in_sync",
+    "remote_parity_after": "in_sync",
+    "command_key": "adapters_validate_help",
+    "argv_suffix": [
+      "-m",
+      "dev_cockpit.adapters",
+      "--help"
+    ],
+    "exit_code": 0,
+    "summary_result": "pass"
+  },
+  "evidence_notes": [
+    "The committed production probe result records clean pre-amend probe evidence; live review re-ran the probe at reviewed commit 37e5202 with clean before and after state.",
+    "The adapters help text mentions --validate as an option, but the controlled command argv does not include --validate."
+  ],
+  "evidence_checks": {
+    "exact_two_command_keys": {
+      "result": "pass",
+      "summary": "production command count is exactly two"
+    },
+    "status_snapshot_help_present": {
+      "result": "pass",
+      "summary": "status_snapshot_help remains present"
+    },
+    "adapters_validate_help_present": {
+      "result": "pass",
+      "summary": "adapters_validate_help is present"
+    },
+    "no_third_key": {
+      "result": "pass",
+      "summary": "no third production command key is present"
+    },
+    "adapters_validate_help_help_only": {
+      "result": "pass",
+      "summary": "argv suffix is fixed module help"
+    },
+    "adapters_validate_help_does_not_validate": {
+      "result": "pass",
+      "summary": "controlled command does not include adapters --validate"
+    },
+    "config_command_override_blocked": {
+      "result": "pass",
+      "summary": "command fields are rejected by probe validation"
+    },
+    "config_executable_override_blocked": {
+      "result": "pass",
+      "summary": "executable fields are rejected by probe validation"
+    },
+    "config_argv_args_override_blocked": {
+      "result": "pass",
+      "summary": "argv and args fields are rejected by probe validation"
+    },
+    "shell_false_enforced": {
+      "result": "pass",
+      "summary": "subprocess shell is false and shell override is rejected"
+    },
+    "timeout_required": {
+      "result": "pass",
+      "summary": "timeout_seconds is required and bounded"
+    },
+    "output_truncation_present": {
+      "result": "pass",
+      "summary": "stdout and stderr truncation flags are emitted"
+    },
+    "redaction_present": {
+      "result": "pass",
+      "summary": "local user path redaction is emitted"
+    },
+    "before_after_repo_state_present": {
+      "result": "pass",
+      "summary": "worktree and remote parity are recorded before and after"
+    },
+    "target_repo_writeback_false": {
+      "result": "pass",
+      "summary": "target_repo_writeback is false"
+    },
+    "adapter_default_validation_executed_false": {
+      "result": "pass",
+      "summary": "adapter_default_validation_executed is false"
+    },
+    "no_generalized_runner": {
+      "result": "pass",
+      "summary": "no generalized runner module is present"
+    },
+    "c4_c5_c6_locked": {
+      "result": "pass",
+      "summary": "C4, C5, and C6 remain locked"
+    }
+  },
+  "known_warnings": [
+    {
+      "warning_key": "pseudo_git_tag_fixture_warning",
+      "source": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+      "blocking": false,
+      "interpretation": "historical report fixture residue, not controlled probe behavior"
+    }
+  ],
+  "summary": {
+    "result": "pass",
+    "done": 18,
+    "total": 18,
+    "unknown": 0,
+    "meter": "##################",
+    "missing": 0
+  },
+  "next": {
+    "recommended_next_slice": "c3-second-command-hardening-v1",
+    "allowed_next_actions": [
+      "c3-second-command-hardening-v1",
+      "c3-command-set-freeze-and-c4-design-decision-v1",
+      "controlled-runner-stop"
+    ],
+    "forbidden_next_actions": [
+      "direct C4 implementation",
+      "C5 or C6 implementation",
+      "third C3 command key",
+      "adapter validation as controlled runner command",
+      "generalized runner",
+      "scheduler or autonomy loop"
+    ],
+    "supervisor_decision_required": true
+  },
+  "health": {
+    "status": "green",
+    "warnings": [],
+    "blockers": [],
+    "stop_class": "NONE"
+  }
+}

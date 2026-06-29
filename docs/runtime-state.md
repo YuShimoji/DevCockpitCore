@@ -1,26 +1,26 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-06-29
-active_artifact: c3-second-command-production-probe-v1
-artifact_current: c3-second-command-production-probe-v1
-artifact_next: c3-second-command-production-probe-review-v1
-next: Supervisor review of the adapters_validate_help production C3 help-only probe evidence
+updated_at: 2026-06-30
+active_artifact: c3-second-command-production-probe-review-v1
+artifact_current: c3-second-command-production-probe-review-v1
+artifact_next: c3-second-command-hardening-v1
+next: Supervisor decision for c3-second-command-hardening-v1, command-set freeze, or stop
 user_work: none
 render_gate: not_applicable
-handoff: docs/design/C3_SECOND_COMMAND_PRODUCTION_PROBE_V1.md
+handoff: docs/design/C3_SECOND_COMMAND_PRODUCTION_PROBE_REVIEW_V1.md
 
 ## Current State
 
 DevCockpitCore has completed observer and foundation automation slices, the
 bounded C3 probe/hardening path, C3 second-command design and help-probe
-evidence, the C3 second-command acceptance review, and option-B candidate
-acceptance. The current working slice adds the production C3 help-only probe for
-`adapters_validate_help`.
+evidence, the C3 second-command acceptance review, option-B candidate
+acceptance, and the production C3 help-only probe for `adapters_validate_help`.
+The current working slice reviews and accepts that production probe.
 
-The latest pulled remote commit before this production-probe slice is:
+The latest pulled remote commit before this production-probe-review slice is:
 
 ```text
-ab187af docs: accept c3 second command candidate
+37e5202 feat: add c3 adapters help probe
 ```
 
 `main` tracks `origin/main`.
@@ -57,6 +57,8 @@ ab187af docs: accept c3 second command candidate
 - Execute the production C3 help-only probe for `adapters_validate_help`, mapped
   only to `python -m dev_cockpit.adapters --help`, with hardcoded argv and
   before/after repo-state evidence.
+- Review and accept the production C3 help-only probe evidence for
+  `adapters_validate_help`; exactly two production C3 command keys are accepted.
 
 ## Safety Boundary
 
