@@ -309,6 +309,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/handoffs/2026-06-29-c3-probe-hardening-v1.md`
 - `docs/handoffs/2026-06-26-status-producer-v1.md`
 
 These files preserve the current artifact, validation evidence, safety boundary,

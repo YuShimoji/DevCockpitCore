@@ -15,11 +15,28 @@ read-only snapshots of target repositories.
 - Project/Product Readiness: project-specific readiness for repositories such
   as NLMYTGen, WritingPage, and ClipPipeGen.
 
-The current repository only advances Foundation Observer Readiness.
+The current repository has completed observer and foundation automation slices,
+plus a bounded C3 probe evidence package. It still does not unlock general
+execution automation.
 
-## Current Artifact
+## Current Artifact Stack
 
-`status-producer-v1` is implemented as a standard-library Python package named
+The current active artifact is `c3-probe-hardening-v1`.
+
+Completed artifacts include:
+
+- `status-producer-v1`
+- `adapter-manifest-v1`
+- `report-normalizer-v1`
+- `gate-classifier-v1`
+- `validation-pack-v1`
+- `cross-project-smoke-v1`
+- `controlled-runner-design-v1`
+- `controlled-runner-probe-v1`
+- `controlled-runner-probe-review-v1`
+- `c3-probe-hardening-v1`
+
+The implementation remains a standard-library Python package named
 `dev_cockpit`.
 
 Primary entry point:
@@ -31,6 +48,10 @@ python -m dev_cockpit.status_snapshot --repo <repo> --adapter <adapter.json> --o
 The producer reads adapter metadata, git branch and worktree state, upstream
 parity when available, lightweight project-state labels, artifact-root
 candidates, and validation hints.
+
+The current C3 package uses only the hardcoded `status_snapshot_help` command
+key. It records canonical clean probe and review evidence while keeping C4-C6
+locked.
 
 ## Design Bias
 
