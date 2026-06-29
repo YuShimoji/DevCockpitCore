@@ -1,0 +1,152 @@
+{
+  "schema_version": "c3_command_set_freeze_and_c4_design_decision.v1",
+  "generated_at": "2026-06-29T16:53:11Z",
+  "project_key": "devcockpitcore",
+  "source_hardening_artifact": "samples/c3_second_command_hardening/c3_second_command_hardening_v1.json",
+  "latest_verified_commit": "5d91bccfee2ed2c0d64661f5792565edfe04adbc",
+  "command_set": {
+    "production_command_keys": [
+      "status_snapshot_help",
+      "adapters_validate_help"
+    ],
+    "production_command_count": 2,
+    "expected_command_keys": [
+      "status_snapshot_help",
+      "adapters_validate_help"
+    ],
+    "no_third_command": true,
+    "status": "freeze_ready"
+  },
+  "c3_freeze_readiness": {
+    "freeze_ready": true,
+    "blockers": [],
+    "warnings": [
+      {
+        "warning_key": "pseudo_git_tag_fixture_warning",
+        "blocking": false,
+        "interpretation": "historical report fixture residue, not controlled runner behavior"
+      },
+      {
+        "warning_key": "optional_sibling_repo_warnings",
+        "blocking": false,
+        "interpretation": "optional sibling warnings do not affect the DevCockpitCore C3 command set"
+      }
+    ],
+    "evidence": [
+      "c3_second_command_hardening.v1 records accepted_hardened with 18/18 invariants passing",
+      "controlled_runner_probe ALLOWED_COMMAND_KEYS is exactly status_snapshot_help and adapters_validate_help",
+      "adapters_validate_help maps only to dev_cockpit.adapters --help",
+      "C4, C5, and C6 remain locked"
+    ]
+  },
+  "c4_design_readiness": {
+    "design_only_allowed": true,
+    "implementation_allowed": false,
+    "required_preconditions": [
+      "separate Supervisor prompt explicitly opens C4 design-only work",
+      "C3 command set remains frozen at exactly two command keys",
+      "design artifacts preserve implementation_allowed false",
+      "design work defines scope, non-goals, stop conditions, and validation evidence before implementation"
+    ],
+    "non_goals": [
+      "runner implementation",
+      "new command execution",
+      "third C3 command",
+      "command registry loaded from config",
+      "adapter validation through controlled_runner_probe",
+      "adapter default_validation through controlled_runner_probe",
+      "target repository writeback",
+      "scheduler or autonomy loop",
+      "cross-project runner",
+      "credentials or external service handling",
+      "web UI or dashboard"
+    ],
+    "risks": [
+      "C4 design-only could be misread as implementation approval",
+      "future work could blur C3 command expansion with C4 design",
+      "ordinary adapter validation evidence must remain outside controlled_runner_probe"
+    ]
+  },
+  "route_options": {
+    "controlled-runner-stop": {
+      "allowed": true,
+      "meaning": "stop with hardened C3 command set accepted and no further capability work"
+    },
+    "c3-command-set-freeze": {
+      "allowed": true,
+      "meaning": "freeze the current two-command C3 surface without opening C4"
+    },
+    "c4-scoped-runner-design-only": {
+      "allowed": true,
+      "meaning": "open a future C4 design-only slice with implementation forbidden"
+    },
+    "c3-followup-fix-v1": {
+      "allowed": true,
+      "meaning": "return to C3 only if a material C3 issue appears"
+    }
+  },
+  "recommended_decision": {
+    "decision": "recommend_c4_design_only",
+    "recommended_next_slice": "common-foundation-c4-scoped-runner-design-v1",
+    "rationale": "The hardened C3 command set has no current blockers, so the next useful route is a separate C4 design-only prompt while implementation remains forbidden.",
+    "supervisor_should_generate_prompt": true
+  },
+  "forbidden_next_actions": [
+    "direct C4 implementation",
+    "C5",
+    "C6",
+    "third C3 command",
+    "arbitrary execution",
+    "adapter validation as controlled command"
+  ],
+  "invariants": {
+    "exact_two_command_keys": {
+      "result": "pass",
+      "value": true,
+      "summary": "production command keys are exactly status_snapshot_help and adapters_validate_help"
+    },
+    "no_third_command": {
+      "result": "pass",
+      "value": true,
+      "summary": "no third C3 command is present or recommended"
+    },
+    "help_only_boundary": {
+      "result": "pass",
+      "value": true,
+      "summary": "both accepted C3 commands are fixed help/readback probes"
+    },
+    "adapters_validate_help_does_not_validate": {
+      "result": "pass",
+      "value": true,
+      "summary": "adapters_validate_help does not invoke adapters --validate"
+    },
+    "c4_c5_c6_locked": {
+      "result": "pass",
+      "value": true,
+      "summary": "C4 implementation, C5, and C6 remain locked"
+    },
+    "no_generalized_runner": {
+      "result": "pass",
+      "value": true,
+      "summary": "no generalized runner or config command registry is present"
+    },
+    "no_target_repo_writeback": {
+      "result": "pass",
+      "value": true,
+      "summary": "target repository writeback remains forbidden"
+    },
+    "no_scheduler": {
+      "result": "pass",
+      "value": true,
+      "summary": "no scheduler or autonomy loop is present"
+    }
+  },
+  "summary": {
+    "result": "pass",
+    "done": 8,
+    "total": 8,
+    "unknown": 0,
+    "meter": "########",
+    "missing": 0
+  }
+}

@@ -1,13 +1,13 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c3-second-command-hardening-v1
-artifact_current: c3-second-command-hardening-v1
-artifact_next: c3-command-set-freeze-and-c4-design-decision-v1
-next: Supervisor decision for controlled-runner-stop, C3 follow-up, or C4 design-only decision
+active_artifact: c3-command-set-freeze-and-c4-design-decision-v1
+artifact_current: c3-command-set-freeze-and-c4-design-decision-v1
+artifact_next: common-foundation-c4-scoped-runner-design-v1
+next: Supervisor decision for C4 design-only, freeze-only, stop, or C3 follow-up
 user_work: none
 render_gate: not_applicable
-handoff: docs/design/C3_SECOND_COMMAND_HARDENING_V1.md
+handoff: docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md
 
 ## Current State
 
@@ -15,13 +15,13 @@ DevCockpitCore has completed observer and foundation automation slices, the
 bounded C3 probe/hardening path, C3 second-command design and help-probe
 evidence, the C3 second-command acceptance review, option-B candidate
 acceptance, and the production C3 help-only probe for `adapters_validate_help`.
-The current working slice hardens and canonicalizes the accepted two-command C3
-production state.
+The current working slice records the hardened C3 command set as freeze-ready
+and recommends a separate C4 design-only next route.
 
-The latest pulled remote commit before this hardening slice is:
+The latest pulled remote commit before this decision slice is:
 
 ```text
-11d62eb test: review c3 adapters help probe
+5d91bcc test: harden c3 second command state
 ```
 
 `main` tracks `origin/main`.
@@ -63,6 +63,9 @@ The latest pulled remote commit before this hardening slice is:
 - Canonicalize the accepted two-command C3 production state as
   `c3_second_command_hardening.v1`, preserving the exact command set, no-third
   rule, help-only boundary, and C4-C6 locks.
+- Record the C3 command set as freeze-ready and recommend
+  `common-foundation-c4-scoped-runner-design-v1` only as a separate design-only
+  route. C4 implementation remains forbidden.
 
 ## Safety Boundary
 
@@ -75,5 +78,6 @@ C3 production execution is limited to exactly two help-only command keys:
 `python -m dev_cockpit.adapters --help`. Broad adapter validation, adapter
 `default_validation`, target repo writeback, a generalized runner, and C4-C6
 remain locked until a separate prompt authorizes a new slice. The current
-hardening state is freeze-ready but still requires Supervisor decision before
-C4 design or any further command expansion.
+decision state is freeze-ready and recommends C4 design-only as the next useful
+route, but still requires Supervisor decision before C4 design starts. C4
+implementation and any further command expansion remain forbidden.

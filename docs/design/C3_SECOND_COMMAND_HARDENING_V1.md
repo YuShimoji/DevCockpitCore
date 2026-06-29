@@ -98,6 +98,9 @@ Allowed next routes are:
 
 Supervisor decision is required before any next route starts.
 
+The freeze and route decision successor is
+`docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`.
+
 ## Forbidden Next Paths
 
 This hardening forbids treating the accepted state as authorization for:

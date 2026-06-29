@@ -384,6 +384,22 @@ The hardened command set remains exactly `status_snapshot_help` and
 remains help-only, adapter validation remains outside `controlled_runner_probe`,
 and C4-C6 remain locked until a separate Supervisor decision.
 
+## C3 command set freeze and C4 design decision
+
+C3 Command Set Freeze And C4 Design Decision V1 records the hardened two-command
+C3 state as freeze-ready and recommends
+`common-foundation-c4-scoped-runner-design-v1` only as a future design-only
+route.
+
+The decision packet lives at
+`samples/c3_command_set_freeze_and_c4_design_decision/c3_command_set_freeze_and_c4_design_decision_v1.json`;
+supporting docs live at
+`docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`.
+
+C4 implementation, third C3 commands, C5, C6, arbitrary execution, adapter
+validation as controlled command behavior, schedulers, and target repository
+writeback remain forbidden until separately authorized.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -401,6 +417,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
 - `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-acceptance-review-v1.md`
@@ -430,3 +447,4 @@ and recommended next entrances.
 14. C3 second command candidate acceptance
 15. C3 second command production probe
 16. C3 second command hardening
+17. C3 command set freeze and C4 design decision
