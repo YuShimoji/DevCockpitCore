@@ -1,25 +1,25 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-29
-active_artifact: c3-second-command-design-v1
-artifact_current: c3-second-command-design-v1
+active_artifact: c3-second-command-help-probe-v1
+artifact_current: c3-second-command-help-probe-v1
 artifact_next: supervisor-decision-needed
-next: Supervisor review of c3-second-command-design-v1; if accepted, emit a separate c3-second-command-probe-v1 prompt
+next: Supervisor review of c3-second-command-help-probe-v1; if accepted, decide whether to create a separate acceptance-review slice
 user_work: none
 render_gate: not_applicable
-handoff: docs/handoffs/2026-06-29-c3-second-command-design-v1.md
+handoff: docs/handoffs/2026-06-29-c3-second-command-help-probe-v1.md
 
 ## Current State
 
 DevCockpitCore has committed and pushed slices through
 `common-foundation-c3-probe-hardening-v1` before this working slice. The current
-working slice adds the design-only packet for
-`common-foundation-c3-second-command-design-v1`.
+working slice adds a bounded help-probe packet for
+`common-foundation-c3-second-command-help-probe-v1`.
 
-The latest pulled remote commit before this design slice is:
+The latest pulled remote commit before this help-probe slice is:
 
 ```text
-fca8170 docs: refresh c3 hardening handoff state
+a206781 docs: add c3 second command design
 ```
 
 `main` tracks `origin/main`.
@@ -45,6 +45,8 @@ fca8170 docs: refresh c3 hardening handoff state
 - Evaluate C3 second-command candidates in design-only form.
 - Recommend `adapters_validate_help` only as a future Supervisor-approved probe
   candidate; no second command key is implemented in this slice.
+- Record bounded help/readback evidence for `adapters_validate_help` without
+  adding it to the production controlled runner allowlist.
 
 ## Safety Boundary
 
@@ -52,8 +54,9 @@ This project still has no general execution loop, arbitrary command runner,
 scheduler, external notification integration, auto-render workflow, web server,
 database, credential handling, or target-repository writeback system.
 
-C3 remains limited to the already implemented `status_snapshot_help` command
-key. `c3-second-command-design-v1` does not implement `adapters_validate_help`;
-it only recommends it for a possible later prompt. C4 scoped repo-local runner,
-C5 cross-project runner, and C6 scheduler or autonomy loop remain locked until a
+C3 remains limited to the already accepted `status_snapshot_help` command key.
+`c3-second-command-help-probe-v1` proves `adapters_validate_help` can be
+represented as fixed help/readback behavior, but it does not accept that command
+key in the production controlled runner. C4 scoped repo-local runner, C5
+cross-project runner, and C6 scheduler or autonomy loop remain locked until a
 separate Supervisor decision authorizes a new slice.

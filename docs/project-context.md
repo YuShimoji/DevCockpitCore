@@ -16,12 +16,13 @@ read-only snapshots of target repositories.
   as NLMYTGen, WritingPage, and ClipPipeGen.
 
 The current repository has completed observer and foundation automation slices,
-plus a bounded C3 probe evidence package and a design-only C3 second-command
-candidate packet. It still does not unlock general execution automation.
+plus a bounded C3 probe evidence package, a design-only C3 second-command
+candidate packet, and a bounded help-probe packet for that candidate. It still
+does not unlock general execution automation.
 
 ## Current Artifact Stack
 
-The current active artifact is `c3-second-command-design-v1`.
+The current active artifact is `c3-second-command-help-probe-v1`.
 
 Completed artifacts include:
 
@@ -36,6 +37,7 @@ Completed artifacts include:
 - `controlled-runner-probe-review-v1`
 - `c3-probe-hardening-v1`
 - `c3-second-command-design-v1`
+- `c3-second-command-help-probe-v1`
 
 The implementation remains a standard-library Python package named
 `dev_cockpit`.
@@ -57,6 +59,11 @@ locked.
 The second-command design packet recommends `adapters_validate_help` only as a
 future Supervisor-reviewed candidate. It does not add that command key or run a
 second probe.
+
+The second-command help-probe packet records fixed help/readback evidence for
+`python -m dev_cockpit.adapters --help`. It still does not add
+`adapters_validate_help` to the production controlled runner allowlist or accept
+it as a completed C3 command.
 
 ## Design Bias
 

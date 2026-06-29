@@ -306,6 +306,21 @@ The recommendation is `adapters_validate_help` as a future Supervisor-reviewed
 candidate only. The implemented C3 allowlist still contains exactly
 `status_snapshot_help`, and C4-C6 remain locked.
 
+## C3 second command help probe
+
+C3 Second Command Help Probe V1 records bounded help/readback evidence for the
+`adapters_validate_help` candidate. It proves the candidate can be represented as
+fixed `python -m dev_cockpit.adapters --help` behavior without executing adapter
+validation.
+
+The help-probe packet lives at
+`samples/c3_second_command_probe/c3_second_command_help_probe_v1.json`;
+supporting docs live at `docs/design/C3_SECOND_COMMAND_HELP_PROBE_V1.md`.
+
+This evidence still does not accept `adapters_validate_help` as a production C3
+command key. The accepted controlled runner allowlist remains
+`status_snapshot_help`, and C4-C6 remain locked.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -323,6 +338,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/handoffs/2026-06-29-c3-second-command-help-probe-v1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-design-v1.md`
 - `docs/handoffs/2026-06-29-c3-probe-hardening-v1.md`
 - `docs/handoffs/2026-06-26-status-producer-v1.md`
@@ -343,3 +359,4 @@ and recommended next entrances.
 9. controlled runner probe review
 10. C3 probe hardening
 11. C3 second command design
+12. C3 second command help probe
