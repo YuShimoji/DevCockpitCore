@@ -372,6 +372,18 @@ The production C3 command-key set is exactly `status_snapshot_help` and
 `adapters_validate_help`. Config-supplied command strings, executable paths,
 argv, args, and shell overrides remain rejected. C4-C6 remain locked.
 
+## C3 second command hardening
+
+C3 Second Command Hardening V1 canonicalizes the accepted two-command C3 state
+without adding capability. The hardening packet lives at
+`samples/c3_second_command_hardening/c3_second_command_hardening_v1.json`;
+supporting docs live at `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`.
+
+The hardened command set remains exactly `status_snapshot_help` and
+`adapters_validate_help`. No third command key is accepted, `adapters_validate_help`
+remains help-only, adapter validation remains outside `controlled_runner_probe`,
+and C4-C6 remain locked until a separate Supervisor decision.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -389,6 +401,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-acceptance-review-v1.md`
 - `docs/handoffs/2026-06-29-c3-second-command-help-probe-v1.md`
@@ -416,3 +429,4 @@ and recommended next entrances.
 13. C3 second command acceptance review
 14. C3 second command candidate acceptance
 15. C3 second command production probe
+16. C3 second command hardening

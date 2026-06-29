@@ -1,0 +1,157 @@
+{
+  "schema_version": "c3_second_command_hardening.v1",
+  "generated_at": "2026-06-29T16:32:08Z",
+  "project_key": "devcockpitcore",
+  "source_review_artifact": "samples/c3_second_command_production_probe_review/c3_second_command_production_probe_review_v1.json",
+  "reviewed_commit": "37e520246c485c484be6b4dc39d428083c994f3f",
+  "review_commit": "11d62ebf45b73d38e1687878282ad9fdc802034f",
+  "production_command_keys": [
+    "status_snapshot_help",
+    "adapters_validate_help"
+  ],
+  "production_command_count": 2,
+  "expected_command_keys": [
+    "status_snapshot_help",
+    "adapters_validate_help"
+  ],
+  "command_set_status": "accepted_hardened",
+  "c3_status": "accepted_hardened",
+  "c4_status": "locked",
+  "c5_status": "locked",
+  "c6_status": "locked",
+  "invariants": {
+    "exact_two_command_keys": {
+      "result": "pass",
+      "value": true,
+      "summary": "production command keys equal the expected two-key set"
+    },
+    "no_third_command_key": {
+      "result": "pass",
+      "value": true,
+      "summary": "no third production command key is present or accepted"
+    },
+    "status_snapshot_help_present": {
+      "result": "pass",
+      "value": true,
+      "summary": "status_snapshot_help remains present"
+    },
+    "adapters_validate_help_present": {
+      "result": "pass",
+      "value": true,
+      "summary": "adapters_validate_help remains present"
+    },
+    "adapters_validate_help_help_only": {
+      "result": "pass",
+      "value": true,
+      "summary": "adapters_validate_help maps only to module help"
+    },
+    "adapters_validate_help_does_not_validate": {
+      "result": "pass",
+      "value": true,
+      "summary": "controlled argv does not include adapters --validate"
+    },
+    "adapter_default_validation_not_executed": {
+      "result": "pass",
+      "value": true,
+      "summary": "adapter default_validation execution remains outside the C3 command set"
+    },
+    "config_command_override_blocked": {
+      "result": "pass",
+      "value": true,
+      "summary": "probe config command fields are rejected"
+    },
+    "config_executable_override_blocked": {
+      "result": "pass",
+      "value": true,
+      "summary": "probe config executable fields are rejected"
+    },
+    "config_argv_args_override_blocked": {
+      "result": "pass",
+      "value": true,
+      "summary": "probe config argv and args fields are rejected"
+    },
+    "shell_false_enforced": {
+      "result": "pass",
+      "value": true,
+      "summary": "subprocess shell remains false and shell override is rejected"
+    },
+    "timeout_required": {
+      "result": "pass",
+      "value": true,
+      "summary": "timeout_seconds is required and bounded"
+    },
+    "output_truncation_present": {
+      "result": "pass",
+      "value": true,
+      "summary": "probe output emits truncation fields"
+    },
+    "redaction_present": {
+      "result": "pass",
+      "value": true,
+      "summary": "local user path redaction is present"
+    },
+    "before_after_repo_state_present": {
+      "result": "pass",
+      "value": true,
+      "summary": "worktree and remote parity are captured before and after"
+    },
+    "target_repo_writeback_false": {
+      "result": "pass",
+      "value": true,
+      "summary": "target_repo_writeback remains false"
+    },
+    "c4_c5_c6_locked": {
+      "result": "pass",
+      "value": true,
+      "summary": "C4, C5, and C6 remain locked"
+    },
+    "no_generalized_runner": {
+      "result": "pass",
+      "value": true,
+      "summary": "no generalized runner module or command registry is present"
+    }
+  },
+  "known_warnings": [
+    {
+      "warning_key": "pseudo_git_tag_fixture_warning",
+      "source": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+      "blocking": false,
+      "interpretation": "historical report fixture residue, not controlled probe behavior"
+    },
+    {
+      "warning_key": "optional_sibling_repo_warnings",
+      "source": "cross_project_smoke default run",
+      "blocking": false,
+      "interpretation": "optional sibling repository warnings do not affect the DevCockpitCore C3 command set"
+    }
+  ],
+  "next_decision": {
+    "recommended_next_slice": "c3-command-set-freeze-and-c4-design-decision-v1",
+    "allowed_next_actions": [
+      "controlled-runner-stop",
+      "c3-command-set-freeze-and-c4-design-decision-v1",
+      "c3-followup-fix-v1"
+    ],
+    "forbidden_next_actions": [
+      "direct C4 implementation",
+      "third C3 command key",
+      "C5 or C6 implementation",
+      "arbitrary execution",
+      "adapter validation as controlled runner command",
+      "adapter default_validation as controlled runner behavior",
+      "generalized runner",
+      "command registry loaded from config",
+      "scheduler or autonomy loop",
+      "target repository writeback"
+    ],
+    "supervisor_decision_required": true
+  },
+  "summary": {
+    "result": "pass",
+    "done": 18,
+    "total": 18,
+    "unknown": 0,
+    "meter": "##################",
+    "missing": 0
+  }
+}

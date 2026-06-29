@@ -92,6 +92,9 @@ It extends `controlled_runner_probe.v1` by adding one fixed command key while
 preserving the same C3 safety model. The earlier `status_snapshot_help` probe
 remains valid and remains the built-in default probe.
 
+The accepted two-command state is canonicalized by
+`docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`.
+
 ## What This Does Not Do
 
 This production probe does not create a generalized runner, load a command

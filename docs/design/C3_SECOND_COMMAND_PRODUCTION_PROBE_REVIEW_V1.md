@@ -83,6 +83,9 @@ Allowed next routes after acceptance are:
 
 Supervisor decision is required before any next route.
 
+The canonical hardening successor is
+`docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`.
+
 ## Forbidden Next Recommendations
 
 This review does not authorize direct C4 implementation, C5, C6, a third C3

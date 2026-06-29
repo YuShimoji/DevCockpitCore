@@ -1,13 +1,13 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c3-second-command-production-probe-review-v1
-artifact_current: c3-second-command-production-probe-review-v1
-artifact_next: c3-second-command-hardening-v1
-next: Supervisor decision for c3-second-command-hardening-v1, command-set freeze, or stop
+active_artifact: c3-second-command-hardening-v1
+artifact_current: c3-second-command-hardening-v1
+artifact_next: c3-command-set-freeze-and-c4-design-decision-v1
+next: Supervisor decision for controlled-runner-stop, C3 follow-up, or C4 design-only decision
 user_work: none
 render_gate: not_applicable
-handoff: docs/design/C3_SECOND_COMMAND_PRODUCTION_PROBE_REVIEW_V1.md
+handoff: docs/design/C3_SECOND_COMMAND_HARDENING_V1.md
 
 ## Current State
 
@@ -15,12 +15,13 @@ DevCockpitCore has completed observer and foundation automation slices, the
 bounded C3 probe/hardening path, C3 second-command design and help-probe
 evidence, the C3 second-command acceptance review, option-B candidate
 acceptance, and the production C3 help-only probe for `adapters_validate_help`.
-The current working slice reviews and accepts that production probe.
+The current working slice hardens and canonicalizes the accepted two-command C3
+production state.
 
-The latest pulled remote commit before this production-probe-review slice is:
+The latest pulled remote commit before this hardening slice is:
 
 ```text
-37e5202 feat: add c3 adapters help probe
+11d62eb test: review c3 adapters help probe
 ```
 
 `main` tracks `origin/main`.
@@ -59,6 +60,9 @@ The latest pulled remote commit before this production-probe-review slice is:
   before/after repo-state evidence.
 - Review and accept the production C3 help-only probe evidence for
   `adapters_validate_help`; exactly two production C3 command keys are accepted.
+- Canonicalize the accepted two-command C3 production state as
+  `c3_second_command_hardening.v1`, preserving the exact command set, no-third
+  rule, help-only boundary, and C4-C6 locks.
 
 ## Safety Boundary
 
@@ -70,4 +74,6 @@ C3 production execution is limited to exactly two help-only command keys:
 `status_snapshot_help` and `adapters_validate_help`. The second key maps only to
 `python -m dev_cockpit.adapters --help`. Broad adapter validation, adapter
 `default_validation`, target repo writeback, a generalized runner, and C4-C6
-remain locked until a separate prompt authorizes a new slice.
+remain locked until a separate prompt authorizes a new slice. The current
+hardening state is freeze-ready but still requires Supervisor decision before
+C4 design or any further command expansion.
