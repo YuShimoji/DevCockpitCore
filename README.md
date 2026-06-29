@@ -292,6 +292,20 @@ The hardening artifact lives at
 execution capability; C4-C6 stay locked and any next step requires a Supervisor
 decision.
 
+## C3 second command design
+
+C3 Second Command Design V1 evaluates whether a second fixed help/read-only C3
+command should be proposed later. It is design-only and does not implement a
+second command key.
+
+The design packet lives at
+`samples/c3_second_command_design/c3_second_command_design_v1.json`; supporting
+docs live at `docs/design/C3_SECOND_COMMAND_DESIGN_V1.md`.
+
+The recommendation is `adapters_validate_help` as a future Supervisor-reviewed
+candidate only. The implemented C3 allowlist still contains exactly
+`status_snapshot_help`, and C4-C6 remain locked.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -309,6 +323,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/handoffs/2026-06-29-c3-second-command-design-v1.md`
 - `docs/handoffs/2026-06-29-c3-probe-hardening-v1.md`
 - `docs/handoffs/2026-06-26-status-producer-v1.md`
 
@@ -327,3 +342,4 @@ and recommended next entrances.
 8. controlled runner probe
 9. controlled runner probe review
 10. C3 probe hardening
+11. C3 second command design

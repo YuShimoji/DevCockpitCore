@@ -1,27 +1,28 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-29
-active_artifact: c3-probe-hardening-v1
-artifact_current: c3-probe-hardening-v1
+active_artifact: c3-second-command-design-v1
+artifact_current: c3-second-command-design-v1
 artifact_next: supervisor-decision-needed
-next: choose the next Supervisor-approved slice; C4-C6 remain locked unless explicitly authorized
+next: Supervisor review of c3-second-command-design-v1; if accepted, emit a separate c3-second-command-probe-v1 prompt
 user_work: none
 render_gate: not_applicable
-handoff: docs/handoffs/2026-06-29-c3-probe-hardening-v1.md
+handoff: docs/handoffs/2026-06-29-c3-second-command-design-v1.md
 
 ## Current State
 
 DevCockpitCore has committed and pushed slices through
-`common-foundation-c3-probe-hardening-v1`.
+`common-foundation-c3-probe-hardening-v1` before this working slice. The current
+working slice adds the design-only packet for
+`common-foundation-c3-second-command-design-v1`.
 
-The latest implementation commit before this handoff refresh is:
+The latest pulled remote commit before this design slice is:
 
 ```text
-43d8737 test: harden controlled runner probe evidence
+fca8170 docs: refresh c3 hardening handoff state
 ```
 
-`main` tracks `origin/main`. Before this handoff refresh, local and remote
-parity was verified with `HEAD...origin/main = 0 0`.
+`main` tracks `origin/main`.
 
 ## Verified Capabilities
 
@@ -41,6 +42,9 @@ parity was verified with `HEAD...origin/main = 0 0`.
 - Preserve controlled runner design boundaries without unlocking automation.
 - Execute and review the single fixed C3 `status_snapshot_help` probe.
 - Record the canonical C3 hardening package with C4, C5, and C6 still locked.
+- Evaluate C3 second-command candidates in design-only form.
+- Recommend `adapters_validate_help` only as a future Supervisor-approved probe
+  candidate; no second command key is implemented in this slice.
 
 ## Safety Boundary
 
@@ -48,6 +52,8 @@ This project still has no general execution loop, arbitrary command runner,
 scheduler, external notification integration, auto-render workflow, web server,
 database, credential handling, or target-repository writeback system.
 
-C3 is limited to one hardcoded help-command probe. C4 scoped repo-local runner,
-C5 cross-project runner, and C6 scheduler or autonomy loop remain locked until
-a separate Supervisor decision authorizes a new slice.
+C3 remains limited to the already implemented `status_snapshot_help` command
+key. `c3-second-command-design-v1` does not implement `adapters_validate_help`;
+it only recommends it for a possible later prompt. C4 scoped repo-local runner,
+C5 cross-project runner, and C6 scheduler or autonomy loop remain locked until a
+separate Supervisor decision authorizes a new slice.
