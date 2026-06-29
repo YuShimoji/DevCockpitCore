@@ -11,8 +11,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from dev_cockpit.controlled_runner_probe import (
+    ADAPTERS_VALIDATE_HELP_KEY,
     ALLOWED_COMMAND_KEY,
+    ALLOWED_COMMAND_KEYS,
     RESULT_SCHEMA_VERSION,
+    STATUS_SNAPSHOT_HELP_KEY,
     ControlledRunnerProbeError,
     default_probe,
     load_probe,
@@ -25,6 +28,7 @@ from dev_cockpit.controlled_runner_probe import (
 
 SAMPLE_PROBE = ROOT / "samples" / "controlled_runner_probes" / "controlled_runner_probe_v1.json"
 SAMPLE_RESULT = ROOT / "samples" / "controlled_runner_probes" / "controlled_runner_probe_result_v1.json"
+ADAPTERS_PROBE = ROOT / "samples" / "controlled_runner_probes" / "controlled_runner_probe_adapters_validate_help_v1.json"
 
 
 class ControlledRunnerProbeTests(unittest.TestCase):
@@ -37,6 +41,10 @@ class ControlledRunnerProbeTests(unittest.TestCase):
         probe = validate_probe(default_probe())
         self.assertEqual(probe["probe_key"], "devcockpitcore_status_snapshot_help_probe")
         self.assertEqual(probe["command_class"], "fixed_repo_local_help")
+
+    def test_allowed_production_command_keys_are_exactly_two(self) -> None:
+        self.assertEqual(ALLOWED_COMMAND_KEY, STATUS_SNAPSHOT_HELP_KEY)
+        self.assertEqual(ALLOWED_COMMAND_KEYS, (STATUS_SNAPSHOT_HELP_KEY, ADAPTERS_VALIDATE_HELP_KEY))
 
     def test_result_contains_required_top_level_keys(self) -> None:
         result = run_probe(validate_probe(default_probe()), repo_path=ROOT, generated_at="2026-01-01T00:00:00Z")
@@ -61,6 +69,16 @@ class ControlledRunnerProbeTests(unittest.TestCase):
         result = run_probe(validate_probe(default_probe()), repo_path=ROOT, generated_at="2026-01-01T00:00:00Z")
         self.assertEqual(result["probe"]["command_key"], ALLOWED_COMMAND_KEY)
         self.assertEqual(result["command"]["exit_code"], 0)
+
+    def test_adapters_validate_help_command_key_is_accepted(self) -> None:
+        probe = load_probe(ADAPTERS_PROBE)
+        result = run_probe(probe, repo_path=ROOT, generated_at="2026-01-01T00:00:00Z")
+        self.assertEqual(result["probe"]["command_key"], ADAPTERS_VALIDATE_HELP_KEY)
+        self.assertEqual(result["command"]["exit_code"], 0)
+        self.assertEqual(result["command"]["argv_redacted"][1:], ["-m", "dev_cockpit.adapters", "--help"])
+        self.assertIn("Validate DevCockpitCore adapter manifests.", result["command"]["stdout_excerpt"])
+        self.assertFalse(result["authority"]["adapter_default_validation_executed"])
+        self.assertFalse(result["authority"]["target_repo_writeback"])
 
     def test_unknown_command_key_fails_cleanly(self) -> None:
         data = default_probe()
@@ -160,6 +178,18 @@ class ControlledRunnerProbeTests(unittest.TestCase):
         probe = validate_probe(data)
         result = run_probe(probe, repo_path=ROOT, generated_at="2026-01-01T00:00:00Z")
         self.assertEqual(result["command"]["argv_redacted"][1:], ["-m", "dev_cockpit.status_snapshot", "--help"])
+
+    def test_adapters_validate_help_does_not_run_adapter_validation(self) -> None:
+        result = run_probe(load_probe(ADAPTERS_PROBE), repo_path=ROOT, generated_at="2026-01-01T00:00:00Z")
+        argv = result["command"]["argv_redacted"]
+        self.assertEqual(argv[1:], ["-m", "dev_cockpit.adapters", "--help"])
+        self.assertNotIn("--validate", argv)
+        self.assertNotIn(": OK (", result["command"]["stdout_excerpt"])
+        self.assertNotIn(": ERROR:", result["command"]["stdout_excerpt"])
+        self.assertFalse(result["authority"]["adapter_default_validation_executed"])
+        self.assertFalse(result["authority"]["config_can_supply_command"])
+        self.assertFalse(result["authority"]["config_can_supply_executable"])
+        self.assertFalse(result["authority"]["config_can_supply_argv"])
 
     def test_no_target_repo_writeback_is_attempted(self) -> None:
         before = _short_status(ROOT)

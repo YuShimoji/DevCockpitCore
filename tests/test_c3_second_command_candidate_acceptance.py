@@ -9,7 +9,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEY, default_probe, validate_probe
+from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEYS, default_probe, validate_probe
 from dev_cockpit.controlled_runner_probe_review import default_review, validate_review
 
 
@@ -39,10 +39,10 @@ class C3SecondCommandCandidateAcceptanceTests(unittest.TestCase):
         self.assertFalse(state["production_command_implemented"])
         self.assertTrue(state["not_a_production_command"])
 
-    def test_production_c3_surface_is_still_single_command(self) -> None:
-        self.assertEqual(ALLOWED_COMMAND_KEY, "status_snapshot_help")
+    def test_default_probe_still_uses_original_command(self) -> None:
         self.assertEqual(validate_probe(default_probe())["command_key"], "status_snapshot_help")
         self.assertEqual(validate_review(default_review())["accepted_command_keys"], ["status_snapshot_help"])
+        self.assertEqual(ALLOWED_COMMAND_KEYS, ("status_snapshot_help", "adapters_validate_help"))
 
     def test_scope_boundary_rejects_runner_and_adapter_expansion(self) -> None:
         scope = _packet()["scope_boundary"]
@@ -65,10 +65,11 @@ class C3SecondCommandCandidateAcceptanceTests(unittest.TestCase):
         self.assertIn("separate C4 design prompt required", next_routes["if_c4_is_requested"])
         self.assertEqual(next_routes["user_work"], "none")
 
-    def test_source_does_not_implement_candidate_key(self) -> None:
-        source_payload = "\n".join(path.read_text(encoding="utf-8") for path in (ROOT / "src" / "dev_cockpit").glob("*.py"))
-        self.assertNotIn("adapters_validate_help", source_payload)
-        self.assertIn('ALLOWED_COMMAND_KEY = "status_snapshot_help"', source_payload)
+    def test_successor_state_pointer_tracks_production_probe(self) -> None:
+        successor = _packet()["successor_state"]
+        self.assertEqual(successor["artifact"], "c3-second-command-production-probe-v1")
+        self.assertEqual(successor["production_accepted_c3_command_keys"], ["status_snapshot_help", "adapters_validate_help"])
+        self.assertTrue(successor["candidate_promoted_to_production_help_probe"])
 
     def test_docs_and_packet_do_not_contain_paste_ready_prompt(self) -> None:
         payload = PACKET.read_text(encoding="utf-8") + "\n" + DOC.read_text(encoding="utf-8")

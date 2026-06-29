@@ -352,6 +352,26 @@ supporting docs live at
 This state update does not implement `adapters_validate_help`, does not execute
 adapter validation, does not add a command registry, and does not unlock C4-C6.
 
+## C3 second command production probe
+
+C3 Second Command Production Probe V1 adds `adapters_validate_help` as the
+second production C3 help-only probe key. It maps only to fixed
+`python -m dev_cockpit.adapters --help` behavior and does not run
+`adapters --validate`.
+
+Run the sample probe with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.controlled_runner_probe \
+  --probe samples/controlled_runner_probes/controlled_runner_probe_adapters_validate_help_v1.json \
+  --output samples/controlled_runner_probes/controlled_runner_probe_adapters_validate_help_result_v1.json \
+  --pretty
+```
+
+The production C3 command-key set is exactly `status_snapshot_help` and
+`adapters_validate_help`. Config-supplied command strings, executable paths,
+argv, args, and shell overrides remain rejected. C4-C6 remain locked.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -395,3 +415,4 @@ and recommended next entrances.
 12. C3 second command help probe
 13. C3 second command acceptance review
 14. C3 second command candidate acceptance
+15. C3 second command production probe

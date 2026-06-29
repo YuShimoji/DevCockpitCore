@@ -9,7 +9,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEY, default_probe, validate_probe
+from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEYS, default_probe, validate_probe
 from dev_cockpit.controlled_runner_probe_review import default_review, validate_review
 
 
@@ -31,7 +31,6 @@ class C3SecondCommandAcceptanceReviewTests(unittest.TestCase):
         self.assertEqual(state["candidate_under_review"], "adapters_validate_help")
         self.assertFalse(state["production_allowlist_expanded"])
         self.assertFalse(state["broad_adapter_validation_approved"])
-        self.assertEqual(ALLOWED_COMMAND_KEY, "status_snapshot_help")
         self.assertEqual(validate_probe(default_probe())["command_key"], "status_snapshot_help")
         self.assertEqual(validate_review(default_review())["accepted_command_keys"], ["status_snapshot_help"])
 
@@ -92,10 +91,8 @@ class C3SecondCommandAcceptanceReviewTests(unittest.TestCase):
         self.assertEqual(next_routes["recommended_next_slice"], "supervisor-decision-needed")
         self.assertTrue(next_routes["supervisor_should_generate_prompt"])
 
-    def test_src_does_not_implement_adapters_validate_help(self) -> None:
-        source_payload = "\n".join(path.read_text(encoding="utf-8") for path in (ROOT / "src" / "dev_cockpit").glob("*.py"))
-        self.assertNotIn("adapters_validate_help", source_payload)
-        self.assertIn('ALLOWED_COMMAND_KEY = "status_snapshot_help"', source_payload)
+    def test_successor_production_probe_expands_current_allowlist_only_to_two_keys(self) -> None:
+        self.assertEqual(ALLOWED_COMMAND_KEYS, ("status_snapshot_help", "adapters_validate_help"))
 
     def test_artifacts_do_not_contain_paste_ready_prompt(self) -> None:
         payload = REVIEW.read_text(encoding="utf-8") + "\n" + DOC.read_text(encoding="utf-8")

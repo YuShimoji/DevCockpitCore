@@ -22,7 +22,10 @@ RESULT_SCHEMA_VERSION = "controlled_runner_probe_result.v1"
 PRODUCER = "dev_cockpit.controlled_runner_probe"
 DEFAULT_PROBE_KEY = "devcockpitcore_status_snapshot_help_probe"
 DEFAULT_PROJECT_KEY = "devcockpitcore"
-ALLOWED_COMMAND_KEY = "status_snapshot_help"
+STATUS_SNAPSHOT_HELP_KEY = "status_snapshot_help"
+ADAPTERS_VALIDATE_HELP_KEY = "adapters_validate_help"
+ALLOWED_COMMAND_KEY = STATUS_SNAPSHOT_HELP_KEY
+ALLOWED_COMMAND_KEYS = (STATUS_SNAPSHOT_HELP_KEY, ADAPTERS_VALIDATE_HELP_KEY)
 ALLOWED_COMMAND_CLASS = "fixed_repo_local_help"
 DEFAULT_TIMEOUT_SECONDS = 10
 MAX_TIMEOUT_SECONDS = 30
@@ -44,7 +47,7 @@ class ControlledRunnerProbeError(ValueError):
 
 
 def default_probe() -> dict[str, Any]:
-    """Return the built-in single-command probe config."""
+    """Return the built-in default probe config."""
 
     return {
         "schema_version": PROBE_SCHEMA_VERSION,
@@ -83,7 +86,7 @@ def validate_probe(data: dict[str, Any]) -> dict[str, Any]:
         raise ControlledRunnerProbeError(f"schema_version must be {PROBE_SCHEMA_VERSION!r}")
 
     command_key = _required_string(data, "command_key")
-    if command_key != ALLOWED_COMMAND_KEY:
+    if command_key not in ALLOWED_COMMAND_KEYS:
         raise ControlledRunnerProbeError(f"unsupported command_key: {command_key}")
     command_class = _required_string(data, "command_class")
     if command_class != ALLOWED_COMMAND_CLASS:
@@ -172,7 +175,7 @@ def run_probe(
         "summary": summary,
         "health": health,
         "next": {
-            "recommended_next_slice": "controlled-runner-probe-review-v1",
+            "recommended_next_slice": _recommended_next_slice(probe["command_key"]),
             "supervisor_should_generate_prompt": True,
             "execution_automation_readiness_note": "C3 probe evidence exists; C4-C6 remain locked.",
         },
@@ -295,22 +298,33 @@ def _run_fixed_command(repo: Path, argv: list[str], timeout_seconds: int) -> dic
 
 
 def _argv_for_command_key(command_key: str) -> list[str]:
-    if command_key != ALLOWED_COMMAND_KEY:
-        raise ControlledRunnerProbeError(f"unsupported command_key: {command_key}")
-    return [sys.executable, "-m", "dev_cockpit.status_snapshot", "--help"]
+    if command_key == STATUS_SNAPSHOT_HELP_KEY:
+        return [sys.executable, "-m", "dev_cockpit.status_snapshot", "--help"]
+    if command_key == ADAPTERS_VALIDATE_HELP_KEY:
+        return [sys.executable, "-m", "dev_cockpit.adapters", "--help"]
+    raise ControlledRunnerProbeError(f"unsupported command_key: {command_key}")
 
 
 def _authority() -> dict[str, Any]:
     return {
         "capability_level": "C3_guarded_single_command_probe",
         "allowed_by_design": True,
+        "production_command_keys": list(ALLOWED_COMMAND_KEYS),
+        "production_command_count": len(ALLOWED_COMMAND_KEYS),
         "arbitrary_command_execution": False,
         "shell": False,
         "command_source": "hardcoded_allowlist",
+        "config_can_supply_command": False,
+        "config_can_supply_executable": False,
+        "config_can_supply_argv": False,
         "config_can_supply_args": False,
         "target_repo_writeback": False,
+        "adapter_default_validation_executed": False,
         "credentials_required": False,
         "network_required": False,
+        "c4_unlocked": False,
+        "c5_unlocked": False,
+        "c6_unlocked": False,
     }
 
 
@@ -328,7 +342,7 @@ def _repo_summary(repo: Path, before: dict[str, Any], after: dict[str, Any]) -> 
 
 def _safety_gates(probe: dict[str, Any], repo: Path, command_result: dict[str, Any]) -> dict[str, Any]:
     return {
-        "allowlist_gate": _gate(probe["command_key"] == ALLOWED_COMMAND_KEY, "command key is hardcoded and allowed"),
+        "allowlist_gate": _gate(probe["command_key"] in ALLOWED_COMMAND_KEYS, "command key is hardcoded and allowed"),
         "arbitrary_args_gate": _gate(True, "config cannot supply argv or args"),
         "shell_gate": _gate(True, "subprocess shell option is false"),
         "cwd_gate": _gate(repo.exists(), "cwd is confined to DevCockpitCore repo"),
@@ -474,11 +488,17 @@ def _skipped_result(
         },
         "health": {"status": "yellow", "warnings": ["probe disabled"], "blockers": [], "stop_class": "INTEGRATE_AND_CONTINUE"},
         "next": {
-            "recommended_next_slice": "controlled-runner-probe-review-v1",
+            "recommended_next_slice": _recommended_next_slice(probe["command_key"]),
             "supervisor_should_generate_prompt": True,
             "execution_automation_readiness_note": "Probe disabled; C4-C6 remain locked.",
         },
     }
+
+
+def _recommended_next_slice(command_key: str) -> str:
+    if command_key == ADAPTERS_VALIDATE_HELP_KEY:
+        return "c3-second-command-production-probe-review-v1"
+    return "controlled-runner-probe-review-v1"
 
 
 def _worktree_state(status: dict[str, Any]) -> str:

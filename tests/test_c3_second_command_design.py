@@ -9,7 +9,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEY, default_probe, validate_probe
+from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEYS, default_probe, validate_probe
 from dev_cockpit.controlled_runner_probe_review import default_review, validate_review
 
 
@@ -58,10 +58,10 @@ class C3SecondCommandDesignTests(unittest.TestCase):
         self.assertFalse(requirements["c5_unlocked"])
         self.assertFalse(requirements["c6_unlocked"])
 
-    def test_current_probe_still_allows_exactly_status_snapshot_help(self) -> None:
-        self.assertEqual(ALLOWED_COMMAND_KEY, "status_snapshot_help")
+    def test_design_default_probe_still_uses_status_snapshot_help(self) -> None:
         probe = validate_probe(default_probe())
         self.assertEqual(probe["command_key"], "status_snapshot_help")
+        self.assertEqual(ALLOWED_COMMAND_KEYS, ("status_snapshot_help", "adapters_validate_help"))
 
     def test_probe_review_still_accepts_exactly_one_command_key(self) -> None:
         review = validate_review(default_review())

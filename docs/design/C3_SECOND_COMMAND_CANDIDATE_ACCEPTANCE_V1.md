@@ -43,6 +43,13 @@ Candidate acceptance means the evidence is sufficient to preserve the option for
 a later hardcoded allowlist/probe slice. It does not mean the command key exists
 in production runner code.
 
+## Subsequent State
+
+`common-foundation-c3-second-command-production-probe-v1` is the successor slice
+that implements the later hardcoded help-only probe. After that slice,
+`adapters_validate_help` is a production C3 help-only probe key, while broad
+adapter validation and C4-C6 remain locked.
+
 ## Current Boundary
 
 This slice confirms:

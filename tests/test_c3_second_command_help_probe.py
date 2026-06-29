@@ -11,7 +11,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEY, default_probe, validate_probe
+from dev_cockpit.controlled_runner_probe import ALLOWED_COMMAND_KEYS, default_probe, validate_probe
 from dev_cockpit.controlled_runner_probe_review import default_review, validate_review
 
 
@@ -66,20 +66,17 @@ class C3SecondCommandHelpProbeTests(unittest.TestCase):
         self.assertNotIn(": OK (", completed.stdout)
         self.assertNotIn(": ERROR:", completed.stdout)
 
-    def test_current_c3_boundary_remains_single_accepted_command(self) -> None:
+    def test_help_probe_artifact_preserves_pre_production_boundary(self) -> None:
         boundary = _probe()["current_c3_boundary"]
         self.assertEqual(boundary["accepted_command_keys"], ["status_snapshot_help"])
         self.assertFalse(boundary["production_allowlist_expanded"])
         self.assertFalse(boundary["controlled_runner_probe_changed"])
         self.assertFalse(boundary["controlled_runner_review_changed"])
-        self.assertEqual(ALLOWED_COMMAND_KEY, "status_snapshot_help")
         self.assertEqual(validate_probe(default_probe())["command_key"], "status_snapshot_help")
         self.assertEqual(validate_review(default_review())["accepted_command_keys"], ["status_snapshot_help"])
 
-    def test_adapters_validate_help_not_added_to_source_allowlist(self) -> None:
-        source_payload = "\n".join(path.read_text(encoding="utf-8") for path in (ROOT / "src" / "dev_cockpit").glob("*.py"))
-        self.assertNotIn("adapters_validate_help", source_payload)
-        self.assertIn('ALLOWED_COMMAND_KEY = "status_snapshot_help"', source_payload)
+    def test_successor_production_probe_adds_only_adapters_validate_help(self) -> None:
+        self.assertEqual(ALLOWED_COMMAND_KEYS, ("status_snapshot_help", "adapters_validate_help"))
 
     def test_future_requirements_keep_c4_c5_c6_locked(self) -> None:
         requirements = _probe()["future_acceptance_requirements"]

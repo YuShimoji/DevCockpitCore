@@ -34,13 +34,29 @@
     "candidate_acceptance_meaning": "Evidence is sufficient to preserve adapters_validate_help as a future help-only C3 command candidate.",
     "not_a_production_command": true
   },
+  "successor_state": {
+    "slice": "common-foundation-c3-second-command-production-probe-v1",
+    "artifact": "c3-second-command-production-probe-v1",
+    "candidate_promoted_to_production_help_probe": true,
+    "production_accepted_c3_command_keys": [
+      "status_snapshot_help",
+      "adapters_validate_help"
+    ],
+    "production_command_count": 2,
+    "broad_adapter_validation_approved": false,
+    "c4_unlocked": false,
+    "c5_unlocked": false,
+    "c6_unlocked": false
+  },
   "evidence_links": {
     "design_doc": "docs/design/C3_SECOND_COMMAND_DESIGN_V1.md",
     "design_sample": "samples/c3_second_command_design/c3_second_command_design_v1.json",
     "help_probe_doc": "docs/design/C3_SECOND_COMMAND_HELP_PROBE_V1.md",
     "help_probe_sample": "samples/c3_second_command_probe/c3_second_command_help_probe_v1.json",
     "acceptance_review_doc": "docs/design/C3_SECOND_COMMAND_ACCEPTANCE_REVIEW_V1.md",
-    "acceptance_review_sample": "samples/c3_second_command_acceptance/c3_second_command_acceptance_review_v1.json"
+    "acceptance_review_sample": "samples/c3_second_command_acceptance/c3_second_command_acceptance_review_v1.json",
+    "production_probe_doc": "docs/design/C3_SECOND_COMMAND_PRODUCTION_PROBE_V1.md",
+    "production_probe_sample": "samples/controlled_runner_probes/controlled_runner_probe_adapters_validate_help_result_v1.json"
   },
   "scope_boundary": {
     "docs_and_test_state_update": true,

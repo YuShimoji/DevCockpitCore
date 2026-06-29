@@ -1,0 +1,15 @@
+{
+  "schema_version": "controlled_runner_probe.v1",
+  "probe_key": "devcockpitcore_adapters_validate_help_probe",
+  "project_key": "devcockpitcore",
+  "command_key": "adapters_validate_help",
+  "command_class": "fixed_repo_local_help",
+  "description": "Run the fixed adapters --help probe with guarded evidence capture.",
+  "expected_write_scope": "DevCockpitCore samples only",
+  "timeout_seconds": 10,
+  "enabled": true,
+  "notes": [
+    "This config selects the hardcoded adapters_validate_help command key and cannot supply argv.",
+    "The command is help-only and does not execute adapter validation."
+  ]
+}
