@@ -432,6 +432,19 @@ This review does not authorize C4 implementation. C3 remains the executable
 ceiling, the production C3 command-key set remains exactly
 `status_snapshot_help` and `adapters_validate_help`, and C5/C6 remain locked.
 
+## C4 scoped runner design hardening
+
+C4 Scoped Runner Design Hardening V1 canonicalizes the accepted C4 design-only
+state without adding implementation. The hardening artifact lives at
+`samples/c4_scoped_runner_design_hardening/c4_scoped_runner_design_hardening_v1.json`;
+supporting docs live at
+`docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`.
+
+C3 remains the executable ceiling, C4 implementation remains unauthorized, and
+the recommended next route is
+`common-foundation-c4-probe-decision-packet-v1` as a decision-only packet, not a
+probe implementation.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -449,6 +462,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
 - `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
@@ -484,3 +498,4 @@ and recommended next entrances.
 17. C3 command set freeze and C4 design decision
 18. C4 scoped runner design
 19. C4 scoped runner design review
+20. C4 scoped runner design hardening

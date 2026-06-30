@@ -1,0 +1,99 @@
+{
+  "schema_version": "c4_scoped_runner_design_hardening.v1",
+  "generated_at": "2026-06-30T01:59:03Z",
+  "project_key": "devcockpitcore",
+  "source_design_artifact": "samples/c4_scoped_runner_design/c4_scoped_runner_design_v1.json",
+  "source_design_review_artifact": "samples/c4_scoped_runner_design_review/c4_scoped_runner_design_review_v1.json",
+  "reviewed_design_commit": "7964c31946bd56a243a35a6538c55efc7b2ce2f4",
+  "design_review_commit": "0598beedfc22300a8515794bc8d92603037dbf22",
+  "current_executable_ceiling": {
+    "capability_level": "C3",
+    "production_command_keys": [
+      "status_snapshot_help",
+      "adapters_validate_help"
+    ],
+    "production_command_count": 2,
+    "c3_status": "freeze_ready"
+  },
+  "c4_design_state": {
+    "design_accepted": true,
+    "design_only": true,
+    "implementation_authorized": false,
+    "execution_added": false,
+    "command_keys_added": [],
+    "target_repo_writeback_allowed": false,
+    "scheduler_allowed": false,
+    "c5_c6_locked": true
+  },
+  "hardening_status": {
+    "status": "accepted_hardened",
+    "blockers": [],
+    "warnings": [
+      {
+        "warning_key": "pseudo_git_tag_fixture_warning",
+        "blocking": false,
+        "interpretation": "historical report fixture residue, not C4 design or runner behavior"
+      },
+      {
+        "warning_key": "optional_sibling_repo_warnings",
+        "blocking": false,
+        "interpretation": "best-effort sibling observation warnings do not affect the DevCockpitCore C4 design boundary"
+      }
+    ],
+    "evidence": [
+      "C4 design artifact records implementation_allowed=false, execution_added=false, and command_keys_added=[]",
+      "C4 design review accepts only the design boundary and recommends hardening, not implementation",
+      "controlled_runner_probe exposes exactly two C3 production command keys",
+      "no generalized runner module, command registry module, target repo writeback, scheduler, or C5/C6 unlock is present",
+      "docs/project-context.md is synchronized to carry the hardened design-only state"
+    ]
+  },
+  "context_sync": {
+    "docs_project_context_checked": true,
+    "docs_project_context_updated": true,
+    "stale_context_debt_remaining": false,
+    "rationale": "docs/project-context.md now records the C3 executable ceiling, the accepted and hardened C4 design-only state, and the continuing prohibition on C4 implementation."
+  },
+  "invariants": {
+    "c3_executable_ceiling_preserved": true,
+    "exact_two_c3_command_keys": true,
+    "no_third_c3_command": true,
+    "no_c4_implementation": true,
+    "no_generalized_runner": true,
+    "no_target_repo_writeback": true,
+    "no_scheduler_autonomy": true,
+    "no_c5_c6_unlock": true,
+    "no_adapter_validation_controlled_command": true,
+    "no_arbitrary_execution": true
+  },
+  "next_decision": {
+    "recommended_next_slice": "common-foundation-c4-probe-decision-packet-v1",
+    "allowed_next_actions": [
+      "common-foundation-c4-probe-decision-packet-v1",
+      "controlled-runner-stop",
+      "common-foundation-c4-design-followup-fix-v1"
+    ],
+    "forbidden_next_actions": [
+      "direct C4 implementation",
+      "C4 probe implementation without a prior decision packet",
+      "third C3 command key",
+      "C5 or C6 unlock",
+      "arbitrary execution",
+      "adapter validation as controlled runner command behavior",
+      "adapter default_validation as controlled runner behavior",
+      "generalized runner",
+      "command registry loaded from config",
+      "target repository writeback",
+      "scheduler or autonomy loop"
+    ],
+    "supervisor_decision_required": true
+  },
+  "summary": {
+    "result": "pass",
+    "done": 14,
+    "total": 14,
+    "unknown": 0,
+    "meter": "##############",
+    "missing": 0
+  }
+}

@@ -19,12 +19,13 @@ read-only snapshots of target repositories.
 
 The current axis is common-foundation execution-readiness governance. The repo
 has moved through read-only observation, report interpretation, validation
-packaging, cross-project smoke observation, a bounded C3 help-probe surface, and
-C4 design-only boundary review.
+packaging, cross-project smoke observation, a bounded C3 help-probe surface,
+C4 design-only boundary review, and C4 design-state hardening.
 
-The active artifact is `c4-scoped-runner-design-review-v1`. It accepts the C4
-scoped runner design as design-only evidence and recommends
-`common-foundation-c4-scoped-runner-design-hardening-v1` as the next safe route.
+The active artifact is `c4-scoped-runner-design-hardening-v1`. It accepts the
+C4 scoped runner design as design-only evidence, keeps C4 implementation
+unauthorized, and recommends `common-foundation-c4-probe-decision-packet-v1` as
+a decision-only next route.
 
 ## Completed Artifact Stack
 
@@ -48,6 +49,7 @@ scoped runner design as design-only evidence and recommends
 - `c3-command-set-freeze-and-c4-design-decision-v1`
 - `c4-scoped-runner-design-v1`
 - `c4-scoped-runner-design-review-v1`
+- `c4-scoped-runner-design-hardening-v1`
 
 ## Current Capability Boundary
 
@@ -78,9 +80,10 @@ It does not execute `adapters --validate`, adapter `default_validation`, target
 repository writeback, scheduler/autonomy behavior, credentials, external
 services, or arbitrary command execution.
 
-C4 is accepted only as a design boundary. C4 implementation, a third C3 command,
-C5, C6, arbitrary execution, adapter validation as controlled command behavior,
-and target repository writeback remain unauthorized.
+C4 is accepted and hardened only as a design boundary. C3 remains the executable
+ceiling. C4 implementation remains unauthorized, and a third C3 command, C5,
+C6, arbitrary execution, adapter validation as controlled command behavior, and
+target repository writeback remain unauthorized.
 
 ## Current Restart Surface
 
@@ -90,12 +93,14 @@ Start a new terminal or agent from:
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
 4. `docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md`
-5. `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
-6. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
-7. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
-8. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
-9. `docs/decision-log.md`
-10. `docs/idea-ledger.md`
+5. `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
+6. `samples/c4_scoped_runner_design_hardening/c4_scoped_runner_design_hardening_v1.json`
+7. `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
+8. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
+9. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
+10. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
+11. `docs/decision-log.md`
+12. `docs/idea-ledger.md`
 
 Then verify live state with:
 

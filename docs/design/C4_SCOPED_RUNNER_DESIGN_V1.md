@@ -15,6 +15,11 @@ design-only evidence. That acceptance does not authorize C4 implementation. C3
 remains the executable ceiling, and the recommended next route is
 `common-foundation-c4-scoped-runner-design-hardening-v1`.
 
+`docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md` canonicalizes the
+accepted design-only state. It keeps C4 implementation unauthorized and
+recommends `common-foundation-c4-probe-decision-packet-v1` only as a
+decision-only next route.
+
 ## Current C3 Executable Ceiling
 
 The current executable ceiling remains C3. The only production C3 command keys

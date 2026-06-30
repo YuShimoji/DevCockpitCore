@@ -1,15 +1,16 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c4-scoped-runner-design-review-v1
-artifact_current: c4-scoped-runner-design-review-v1
-artifact_next: common-foundation-c4-scoped-runner-design-hardening-v1
-next: Supervisor decision for C4 design hardening, C4 probe decision packet, controlled-runner stop, or C4 design fix
+active_artifact: c4-scoped-runner-design-hardening-v1
+artifact_current: c4-scoped-runner-design-hardening-v1
+artifact_next: common-foundation-c4-probe-decision-packet-v1
+next: Supervisor decision for a decision-only C4 probe packet, controlled-runner stop, or C4 design follow-up fix
 user_work: none
 render_gate: not_applicable
 handoff: docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md
-latest_accepted_slice_commit: 0598bee test: review c4 scoped runner design
-remote_sync_state_at_handoff_start: main == origin/main, parity 0 0
+latest_source_design_review_commit: 0598bee test: review c4 scoped runner design
+latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
+remote_sync_state_at_hardening_start: main == origin/main, parity 0 0
 
 ## Current State
 
@@ -17,11 +18,11 @@ DevCockpitCore has completed observer and foundation automation slices, the
 bounded C3 probe/hardening path, C3 second-command design and help-probe
 evidence, the C3 second-command acceptance review, option-B candidate
 acceptance, and the production C3 help-only probe for `adapters_validate_help`.
-The current working slice records a C4 scoped runner design-only boundary while
-preserving C3 as the executable ceiling, and the follow-up review accepts that
-boundary as design-only evidence.
+The current state records a C4 scoped runner design-only boundary, accepts that
+boundary as design-only evidence, and hardens it as the canonical policy state
+without authorizing implementation.
 
-The latest accepted slice commit before this handoff refresh is:
+The source design review commit hardened by this slice is:
 
 ```text
 0598bee test: review c4 scoped runner design
@@ -74,8 +75,11 @@ The latest accepted slice commit before this handoff refresh is:
   remains forbidden.
 - Review and accept the C4 scoped runner design boundary as design-only
   evidence. C4 implementation remains unauthorized, C3 remains the executable
-  ceiling, and the recommended next route is
-  `common-foundation-c4-scoped-runner-design-hardening-v1`.
+  ceiling, and the review route is complete.
+- Canonicalize the accepted C4 design-only state as
+  `c4_scoped_runner_design_hardening.v1`, resolve the stale
+  `docs/project-context.md` review-state debt, and constrain the next useful
+  route to `common-foundation-c4-probe-decision-packet-v1` as decision-only.
 
 ## Safety Boundary
 
@@ -88,20 +92,20 @@ C3 production execution is limited to exactly two help-only command keys:
 `python -m dev_cockpit.adapters --help`. Broad adapter validation, adapter
 `default_validation`, target repo writeback, a generalized runner, and C4-C6
 remain locked until a separate prompt authorizes a new slice. The current
-decision state accepts C4 design as design-only evidence and recommends C4
-design hardening as the next useful route. C4 implementation and any further
-command expansion remain forbidden.
+decision state accepts and hardens C4 design as design-only evidence and
+recommends a decision-only C4 probe packet as the next useful route. C4
+implementation and any further command expansion remain forbidden.
 
-The current C4 design review accepts the design boundary only. It does not add
+The current C4 hardening accepts the design boundary only. It does not add
 execution behavior. C3 remains the executable ceiling until a later Supervisor
 prompt authorizes and reviews a separate C4 probe slice.
 
 ## Handoff Snapshot
 
-This handoff refresh keeps all current re-entry context in project docs. The
-next terminal should start from this file and
-`docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md`, then
-verify current remote parity before making decisions.
+This hardening keeps all current re-entry context in project docs. The next
+terminal should start from this file, `docs/project-context.md`, and
+`docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`, then verify current
+remote parity before making decisions.
 
 First live checks:
 

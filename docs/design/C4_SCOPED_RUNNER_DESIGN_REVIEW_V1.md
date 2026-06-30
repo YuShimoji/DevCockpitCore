@@ -33,6 +33,10 @@ The recommended next route is
 `common-foundation-c4-scoped-runner-design-hardening-v1`, not direct C4
 implementation.
 
+The hardening successor is
+`docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`. It canonicalizes this
+accepted design-only state without adding implementation.
+
 ## Why This Is Still Design-Only
 
 The design defines a possible future C4 boundary, but it does not create
@@ -129,3 +133,6 @@ keys, create a command registry, run adapter validation through
 repositories, run across projects, schedule work, handle credentials, call
 external services, create a web UI, render, publish, unlock C5/C6, or provide a
 successor prompt.
+
+The hardening successor preserves the same limits and recommends only a
+decision packet, stop route, or follow-up design fix.
