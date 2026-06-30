@@ -7,7 +7,9 @@ artifact_next: common-foundation-c4-scoped-runner-design-hardening-v1
 next: Supervisor decision for C4 design hardening, C4 probe decision packet, controlled-runner stop, or C4 design fix
 user_work: none
 render_gate: not_applicable
-handoff: docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md
+handoff: docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md
+latest_accepted_slice_commit: 0598bee test: review c4 scoped runner design
+remote_sync_state_at_handoff_start: main == origin/main, parity 0 0
 
 ## Current State
 
@@ -19,10 +21,10 @@ The current working slice records a C4 scoped runner design-only boundary while
 preserving C3 as the executable ceiling, and the follow-up review accepts that
 boundary as design-only evidence.
 
-The latest reviewed remote commit before this C4 design review slice is:
+The latest accepted slice commit before this handoff refresh is:
 
 ```text
-7964c31 docs: design c4 scoped runner boundary
+0598bee test: review c4 scoped runner design
 ```
 
 `main` tracks `origin/main`.
@@ -93,3 +95,31 @@ command expansion remain forbidden.
 The current C4 design review accepts the design boundary only. It does not add
 execution behavior. C3 remains the executable ceiling until a later Supervisor
 prompt authorizes and reviews a separate C4 probe slice.
+
+## Handoff Snapshot
+
+This handoff refresh keeps all current re-entry context in project docs. The
+next terminal should start from this file and
+`docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md`, then
+verify current remote parity before making decisions.
+
+First live checks:
+
+```bash
+git status --short --branch
+git fetch --prune origin
+git pull --ff-only origin main
+git rev-list --left-right --count HEAD...origin/main
+```
+
+Last known full validation before this handoff refresh:
+
+- `python -m unittest discover`: 221 tests OK.
+- C3 `adapters_validate_help` probe: pass 11/11, green.
+- `validation_pack --default`: warn only for historical pseudo-git-tag fixture
+  residue.
+- `cross_project_smoke --default`: DevCockpitCore pass; optional sibling
+  warnings only.
+
+This handoff intentionally does not change production source, C3 command keys,
+C4 implementation status, adapters, or sibling repositories.
