@@ -7,13 +7,14 @@ artifact_next: common-foundation-c4-probe-minimal-implementation-review-v1
 next: Review the single bounded C4 validation-pack probe, validation fixture hygiene, C4 design follow-up fix, or controlled-runner stop
 user_work: none
 render_gate: not_applicable
-handoff: docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md
+handoff: docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md
 latest_source_design_review_commit: 0598bee test: review c4 scoped runner design
 latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
 remote_sync_state_at_hardening_start: main == origin/main, parity 0 0
 latest_hardening_commit: 763f9e9 test: harden c4 scoped runner design
 latest_decision_packet_commit: 8f3312b docs: decide c4 probe authorization path
 latest_authorization_review_commit: 53b3f45 test: review c4 probe authorization path
+latest_minimal_implementation_commit: ed870bf feat: add minimal c4 validation-pack probe
 
 ## Current State
 
@@ -125,8 +126,8 @@ prompt authorizes and reviews it.
 
 This minimal implementation keeps all current re-entry context in project docs. The
 next terminal should start from this file, `docs/project-context.md`, and
-`docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`, then verify current remote
-parity before making decisions.
+`docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`, then
+verify current remote parity before making decisions.
 
 First live checks:
 

@@ -110,7 +110,7 @@ Start a new terminal or agent from:
 1. `AGENTS.md`
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
-4. `docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md`
+4. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
 5. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
 6. `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
 7. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
