@@ -114,6 +114,10 @@ The recommended next route is
 That route is decision-only. It may decide whether a future C4 probe should be
 authorized later, but it must not implement a probe.
 
+The decision-packet successor is
+`docs/design/C4_PROBE_DECISION_PACKET_V1.md`. It recommends a later
+authorization review before any future probe implementation prompt.
+
 ## Allowed Next Routes
 
 Allowed next routes are:

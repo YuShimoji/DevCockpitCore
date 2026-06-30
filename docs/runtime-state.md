@@ -1,16 +1,17 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c4-scoped-runner-design-hardening-v1
-artifact_current: c4-scoped-runner-design-hardening-v1
-artifact_next: common-foundation-c4-probe-decision-packet-v1
-next: Supervisor decision for a decision-only C4 probe packet, controlled-runner stop, or C4 design follow-up fix
+active_artifact: c4-probe-decision-packet-v1
+artifact_current: c4-probe-decision-packet-v1
+artifact_next: common-foundation-c4-probe-authorization-review-v1
+next: Supervisor review of the C4 probe decision packet, controlled-runner stop, validation fixture hygiene, or C4 design follow-up fix
 user_work: none
 render_gate: not_applicable
 handoff: docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md
 latest_source_design_review_commit: 0598bee test: review c4 scoped runner design
 latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
 remote_sync_state_at_hardening_start: main == origin/main, parity 0 0
+latest_hardening_commit: 763f9e9 test: harden c4 scoped runner design
 
 ## Current State
 
@@ -20,7 +21,9 @@ evidence, the C3 second-command acceptance review, option-B candidate
 acceptance, and the production C3 help-only probe for `adapters_validate_help`.
 The current state records a C4 scoped runner design-only boundary, accepts that
 boundary as design-only evidence, and hardens it as the canonical policy state
-without authorizing implementation.
+without authorizing implementation. The current decision packet recommends
+reviewing whether a future single fixed safe C4 probe should be authorized
+later; it does not authorize implementation now.
 
 The source design review commit hardened by this slice is:
 
@@ -80,6 +83,10 @@ The source design review commit hardened by this slice is:
   `c4_scoped_runner_design_hardening.v1`, resolve the stale
   `docs/project-context.md` review-state debt, and constrain the next useful
   route to `common-foundation-c4-probe-decision-packet-v1` as decision-only.
+- Record `c4_probe_decision_packet.v1` with recommendation
+  `recommend_c4_probe_authorization_later` and next route
+  `common-foundation-c4-probe-authorization-review-v1`. This packet is
+  decision-only and does not implement a C4 probe.
 
 ## Safety Boundary
 
@@ -93,7 +100,7 @@ C3 production execution is limited to exactly two help-only command keys:
 `default_validation`, target repo writeback, a generalized runner, and C4-C6
 remain locked until a separate prompt authorizes a new slice. The current
 decision state accepts and hardens C4 design as design-only evidence and
-recommends a decision-only C4 probe packet as the next useful route. C4
+recommends reviewing the C4 probe decision packet as the next useful route. C4
 implementation and any further command expansion remain forbidden.
 
 The current C4 hardening accepts the design boundary only. It does not add
@@ -102,10 +109,10 @@ prompt authorizes and reviews a separate C4 probe slice.
 
 ## Handoff Snapshot
 
-This hardening keeps all current re-entry context in project docs. The next
-terminal should start from this file, `docs/project-context.md`, and
-`docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`, then verify current
-remote parity before making decisions.
+This decision packet keeps all current re-entry context in project docs. The
+next terminal should start from this file, `docs/project-context.md`, and
+`docs/design/C4_PROBE_DECISION_PACKET_V1.md`, then verify current remote parity
+before making decisions.
 
 First live checks:
 
@@ -116,14 +123,14 @@ git pull --ff-only origin main
 git rev-list --left-right --count HEAD...origin/main
 ```
 
-Last known full validation before this handoff refresh:
+Last known full validation during this decision-packet slice:
 
-- `python -m unittest discover`: 221 tests OK.
-- C3 `adapters_validate_help` probe: pass 11/11, green.
+- `python -m unittest discover`: 244 tests OK.
+- C3 `adapters_validate_help` probe: pass 11/11, green, clean worktree.
 - `validation_pack --default`: warn only for historical pseudo-git-tag fixture
   residue.
-- `cross_project_smoke --default`: DevCockpitCore pass; optional sibling
+- `cross_project_smoke --default`: DevCockpitCore passed; optional sibling
   warnings only.
 
-This handoff intentionally does not change production source, C3 command keys,
-C4 implementation status, adapters, or sibling repositories.
+This decision packet intentionally does not change production source, C3 command
+keys, C4 implementation status, adapters, or sibling repositories.

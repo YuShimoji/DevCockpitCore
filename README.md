@@ -445,6 +445,18 @@ the recommended next route is
 `common-foundation-c4-probe-decision-packet-v1` as a decision-only packet, not a
 probe implementation.
 
+## C4 probe decision packet
+
+C4 Probe Decision Packet V1 recommends
+`recommend_c4_probe_authorization_later` and routes next to
+`common-foundation-c4-probe-authorization-review-v1`. The packet lives at
+`samples/c4_probe_decision_packet/c4_probe_decision_packet_v1.json`; supporting
+docs live at `docs/design/C4_PROBE_DECISION_PACKET_V1.md`.
+
+This packet does not implement a C4 probe. C3 remains the executable ceiling,
+C4 implementation remains unauthorized, and any future probe requires review
+acceptance plus a separate Supervisor prompt.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -462,6 +474,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
@@ -499,3 +512,4 @@ and recommended next entrances.
 18. C4 scoped runner design
 19. C4 scoped runner design review
 20. C4 scoped runner design hardening
+21. C4 probe decision packet
