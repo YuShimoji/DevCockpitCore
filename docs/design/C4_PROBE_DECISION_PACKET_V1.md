@@ -43,6 +43,11 @@ The next slice should review this decision packet. It should not implement a
 probe. Any actual C4 probe implementation would require a later separate
 Supervisor prompt after review acceptance.
 
+The authorization review successor is
+`docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`. It accepts eligibility for a
+future separate minimal C4 probe prompt, but it still does not implement a
+probe.
+
 ## Why This Is Not Probe Implementation
 
 This slice records a policy decision and a minimum future shape. It does not

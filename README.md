@@ -135,7 +135,7 @@ The sample input lives at
 readback lives at
 `samples/report_normalizations/adapter_manifest_v1_readback.json`.
 
-The normalizer does not emit paste-ready next-Agent Prompts. The next roadmap
+The normalizer does not emit paste-ready follow-up prompts. The next roadmap
 step is `gate-classifier-v1`.
 
 ## Gate classifier
@@ -457,6 +457,16 @@ This packet does not implement a C4 probe. C3 remains the executable ceiling,
 C4 implementation remains unauthorized, and any future probe requires review
 acceptance plus a separate Supervisor prompt.
 
+## C4 probe authorization review
+
+C4 Probe Authorization Review V1 reviews the decision packet and accepts future
+eligibility for a separate minimal C4 probe prompt. The review artifact lives at
+`samples/c4_probe_authorization_review/c4_probe_authorization_review_v1.json`;
+supporting docs live at `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`.
+
+This review does not implement a C4 probe. C3 remains the executable ceiling,
+C4 implementation remains unauthorized in this slice, and C5/C6 remain locked.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -474,6 +484,7 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
 - `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
@@ -513,3 +524,4 @@ and recommended next entrances.
 19. C4 scoped runner design review
 20. C4 scoped runner design hardening
 21. C4 probe decision packet
+22. C4 probe authorization review

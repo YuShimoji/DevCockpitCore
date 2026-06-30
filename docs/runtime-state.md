@@ -1,10 +1,10 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c4-probe-decision-packet-v1
-artifact_current: c4-probe-decision-packet-v1
-artifact_next: common-foundation-c4-probe-authorization-review-v1
-next: Supervisor review of the C4 probe decision packet, controlled-runner stop, validation fixture hygiene, or C4 design follow-up fix
+active_artifact: c4-probe-authorization-review-v1
+artifact_current: c4-probe-authorization-review-v1
+artifact_next: common-foundation-c4-probe-minimal-implementation-v1
+next: Separate Supervisor prompt for minimal C4 probe implementation, validation fixture hygiene, C4 design follow-up fix, or controlled-runner stop
 user_work: none
 render_gate: not_applicable
 handoff: docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md
@@ -12,6 +12,7 @@ latest_source_design_review_commit: 0598bee test: review c4 scoped runner design
 latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
 remote_sync_state_at_hardening_start: main == origin/main, parity 0 0
 latest_hardening_commit: 763f9e9 test: harden c4 scoped runner design
+latest_decision_packet_commit: 8f3312b docs: decide c4 probe authorization path
 
 ## Current State
 
@@ -23,7 +24,9 @@ The current state records a C4 scoped runner design-only boundary, accepts that
 boundary as design-only evidence, and hardens it as the canonical policy state
 without authorizing implementation. The current decision packet recommends
 reviewing whether a future single fixed safe C4 probe should be authorized
-later; it does not authorize implementation now.
+later, and the authorization review accepts eligibility for a future separate
+minimal C4 probe implementation prompt. This review still does not authorize
+implementation now.
 
 The source design review commit hardened by this slice is:
 
@@ -87,6 +90,12 @@ The source design review commit hardened by this slice is:
   `recommend_c4_probe_authorization_later` and next route
   `common-foundation-c4-probe-authorization-review-v1`. This packet is
   decision-only and does not implement a C4 probe.
+- Review the C4 probe decision packet as
+  `c4_probe_authorization_review.v1`, decide
+  `accepted_for_future_probe_prompt`, and recommend
+  `common-foundation-c4-probe-minimal-implementation-v1` only as a future
+  separate Supervisor-prompted slice. This review does not implement a C4
+  probe.
 
 ## Safety Boundary
 
@@ -100,8 +109,9 @@ C3 production execution is limited to exactly two help-only command keys:
 `default_validation`, target repo writeback, a generalized runner, and C4-C6
 remain locked until a separate prompt authorizes a new slice. The current
 decision state accepts and hardens C4 design as design-only evidence and
-recommends reviewing the C4 probe decision packet as the next useful route. C4
-implementation and any further command expansion remain forbidden.
+accepts future minimal C4 probe prompt eligibility after Supervisor acceptance.
+C4 implementation in this slice and any further command expansion remain
+forbidden.
 
 The current C4 hardening accepts the design boundary only. It does not add
 execution behavior. C3 remains the executable ceiling until a later Supervisor
@@ -109,10 +119,10 @@ prompt authorizes and reviews a separate C4 probe slice.
 
 ## Handoff Snapshot
 
-This decision packet keeps all current re-entry context in project docs. The
+This authorization review keeps all current re-entry context in project docs. The
 next terminal should start from this file, `docs/project-context.md`, and
-`docs/design/C4_PROBE_DECISION_PACKET_V1.md`, then verify current remote parity
-before making decisions.
+`docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`, then verify current remote
+parity before making decisions.
 
 First live checks:
 
@@ -123,14 +133,15 @@ git pull --ff-only origin main
 git rev-list --left-right --count HEAD...origin/main
 ```
 
-Last known full validation during this decision-packet slice:
+Last known full validation during this authorization-review slice:
 
-- `python -m unittest discover`: 244 tests OK.
-- C3 `adapters_validate_help` probe: pass 11/11, green, clean worktree.
+- `python -m unittest discover`: 255 tests OK.
+- C3 `adapters_validate_help` probe: pass 11/11, green, clean worktree after
+  commit.
 - `validation_pack --default`: warn only for historical pseudo-git-tag fixture
   residue.
 - `cross_project_smoke --default`: DevCockpitCore passed; optional sibling
   warnings only.
 
-This decision packet intentionally does not change production source, C3 command
-keys, C4 implementation status, adapters, or sibling repositories.
+This authorization review intentionally does not change production source, C3
+command keys, C4 implementation status, adapters, or sibling repositories.
