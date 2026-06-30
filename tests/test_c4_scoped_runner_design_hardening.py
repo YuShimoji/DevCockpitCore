@@ -112,7 +112,7 @@ class C4ScopedRunnerDesignHardeningTests(unittest.TestCase):
         normalized = " ".join(context.split())
         self.assertIn("c4-scoped-runner-design-hardening-v1", context)
         self.assertIn("C3 remains the executable ceiling", normalized)
-        self.assertIn("C4 implementation remains unauthorized", normalized)
+        self.assertIn("C4 is limited to one repo-local validation-pack probe", normalized)
 
     def test_next_decision_is_decision_packet_stop_or_fix_not_implementation(self) -> None:
         next_decision = _hardening()["next_decision"]
@@ -168,8 +168,8 @@ class C4ScopedRunnerDesignHardeningTests(unittest.TestCase):
             "[" + "PASTE TARGET:",
             "Goal " + "Stack:",
             "Allowed " + "scope:",
-            "BEGIN_COPY_BLOCK" + "_FOR_CHATGPT",
-            "next-Agent Prompt",
+            "BEGIN" + "_COPY_BLOCK" + "_FOR_CHATGPT",
+            "next-" + "Agent Prompt",
         ):
             self.assertNotIn(marker, payload)
 

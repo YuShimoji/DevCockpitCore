@@ -1,0 +1,17 @@
+{
+  "schema_version": "c4_probe_minimal_implementation.v1",
+  "probe_key": "devcockpitcore_validation_pack_default_pretty_probe",
+  "project_key": "devcockpitcore",
+  "command_key": "validation_pack_default_pretty",
+  "capability_level": "C4_scoped_repo_local_probe",
+  "command_class": "fixed_repo_local_validation_probe",
+  "description": "Run the single hardcoded validation_pack --default --pretty C4 probe with bounded evidence capture.",
+  "expected_write_scope": "DevCockpitCore samples only",
+  "timeout_seconds": 60,
+  "enabled": true,
+  "notes": [
+    "This config selects only the hardcoded validation_pack_default_pretty command key.",
+    "It cannot supply command text, executable, argv, args, shell, cwd, environment, retry behavior, credentials, or write targets.",
+    "The command remains repo-local and does not write target repositories."
+  ]
+}

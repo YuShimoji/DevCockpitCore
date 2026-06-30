@@ -28,6 +28,11 @@ Recommended next slice:
 This means the Supervisor may later consider a separate implementation prompt.
 It does not authorize implementation in this slice.
 
+The implementation successor is
+`docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`. It implements only the
+single bounded `validation_pack_default_pretty` C4 probe and routes next to a
+separate implementation review.
+
 ## Why This Is Authorization Review, Not Implementation
 
 This slice reviews policy, evidence, and constraints. It does not add source

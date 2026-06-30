@@ -440,8 +440,8 @@ state without adding implementation. The hardening artifact lives at
 supporting docs live at
 `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`.
 
-C3 remains the executable ceiling, C4 implementation remains unauthorized, and
-the recommended next route is
+At that hardening point, C3 remained the executable ceiling, C4 implementation
+remained unauthorized, and the recommended next route was
 `common-foundation-c4-probe-decision-packet-v1` as a decision-only packet, not a
 probe implementation.
 
@@ -467,6 +467,22 @@ supporting docs live at `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`.
 This review does not implement a C4 probe. C3 remains the executable ceiling,
 C4 implementation remains unauthorized in this slice, and C5/C6 remain locked.
 
+## C4 probe minimal implementation
+
+C4 Probe Minimal Implementation V1 adds exactly one bounded C4 probe command
+key: `validation_pack_default_pretty`. The implementation artifact lives at
+`samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`;
+the captured result lives at
+`samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`;
+supporting docs live at `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`.
+
+The command is hardcoded to run
+`python -m dev_cockpit.validation_pack --default --pretty` with shell disabled,
+a bounded timeout, output truncation, redaction, and before/after repo state.
+C3 command keys remain exactly `status_snapshot_help` and
+`adapters_validate_help`; no third C3 key, generalized runner, target repo
+writeback, scheduler/autonomy behavior, C5, or C6 is added.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -484,6 +500,9 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
+- `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
+- `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
 - `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
 - `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
 - `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
@@ -525,3 +544,4 @@ and recommended next entrances.
 20. C4 scoped runner design hardening
 21. C4 probe decision packet
 22. C4 probe authorization review
+23. C4 probe minimal implementation

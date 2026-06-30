@@ -1,10 +1,10 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-06-30
-active_artifact: c4-probe-authorization-review-v1
-artifact_current: c4-probe-authorization-review-v1
-artifact_next: common-foundation-c4-probe-minimal-implementation-v1
-next: Separate Supervisor prompt for minimal C4 probe implementation, validation fixture hygiene, C4 design follow-up fix, or controlled-runner stop
+active_artifact: c4-probe-minimal-implementation-v1
+artifact_current: c4-probe-minimal-implementation-v1
+artifact_next: common-foundation-c4-probe-minimal-implementation-review-v1
+next: Review the single bounded C4 validation-pack probe, validation fixture hygiene, C4 design follow-up fix, or controlled-runner stop
 user_work: none
 render_gate: not_applicable
 handoff: docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md
@@ -13,6 +13,7 @@ latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff st
 remote_sync_state_at_hardening_start: main == origin/main, parity 0 0
 latest_hardening_commit: 763f9e9 test: harden c4 scoped runner design
 latest_decision_packet_commit: 8f3312b docs: decide c4 probe authorization path
+latest_authorization_review_commit: 53b3f45 test: review c4 probe authorization path
 
 ## Current State
 
@@ -24,9 +25,9 @@ The current state records a C4 scoped runner design-only boundary, accepts that
 boundary as design-only evidence, and hardens it as the canonical policy state
 without authorizing implementation. The current decision packet recommends
 reviewing whether a future single fixed safe C4 probe should be authorized
-later, and the authorization review accepts eligibility for a future separate
-minimal C4 probe implementation prompt. This review still does not authorize
-implementation now.
+later, the authorization review accepts eligibility for a future separate
+minimal C4 probe implementation prompt, and the current slice implements only
+that single bounded C4 validation-pack probe.
 
 The source design review commit hardened by this slice is:
 
@@ -96,6 +97,10 @@ The source design review commit hardened by this slice is:
   `common-foundation-c4-probe-minimal-implementation-v1` only as a future
   separate Supervisor-prompted slice. This review does not implement a C4
   probe.
+- Implement the single bounded C4 `validation_pack_default_pretty` probe as
+  `c4_probe_minimal_result.v1`, with hardcoded argv, shell disabled, timeout,
+  output truncation, redaction, before/after repo state, no target repo
+  writeback, no adapter validation controlled command, and C5/C6 locked.
 
 ## Safety Boundary
 
@@ -107,21 +112,20 @@ C3 production execution is limited to exactly two help-only command keys:
 `status_snapshot_help` and `adapters_validate_help`. The second key maps only to
 `python -m dev_cockpit.adapters --help`. Broad adapter validation, adapter
 `default_validation`, target repo writeback, a generalized runner, and C4-C6
-remain locked until a separate prompt authorizes a new slice. The current
-decision state accepts and hardens C4 design as design-only evidence and
-accepts future minimal C4 probe prompt eligibility after Supervisor acceptance.
-C4 implementation in this slice and any further command expansion remain
-forbidden.
+remain locked outside the single C4 probe. The current C4 implementation is
+limited to exactly one command key, `validation_pack_default_pretty`, mapped
+only to `python -m dev_cockpit.validation_pack --default --pretty`.
 
-The current C4 hardening accepts the design boundary only. It does not add
-execution behavior. C3 remains the executable ceiling until a later Supervisor
-prompt authorizes and reviews a separate C4 probe slice.
+C3 remains the executable ceiling for the prior command set. C4 is unlocked
+only for this one repo-local validation-pack probe. Any further C4 command,
+general runner behavior, C5, or C6 remains forbidden until a later Supervisor
+prompt authorizes and reviews it.
 
 ## Handoff Snapshot
 
-This authorization review keeps all current re-entry context in project docs. The
+This minimal implementation keeps all current re-entry context in project docs. The
 next terminal should start from this file, `docs/project-context.md`, and
-`docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`, then verify current remote
+`docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`, then verify current remote
 parity before making decisions.
 
 First live checks:
@@ -133,15 +137,18 @@ git pull --ff-only origin main
 git rev-list --left-right --count HEAD...origin/main
 ```
 
-Last known full validation during this authorization-review slice:
+Last known full validation during this minimal-implementation slice:
 
-- `python -m unittest discover`: 255 tests OK.
-- C3 `adapters_validate_help` probe: pass 11/11, green, clean worktree after
-  commit.
+- `python -m unittest discover`: 270 tests OK.
+- C4 `validation_pack_default_pretty` probe: warn 18/18 with clean before/after
+  worktree; known pseudo-git-tag fixture warning only.
+- C3 `adapters_validate_help` probe: pass 11/11 after commit; dirty warning
+  only while the implementation patch was uncommitted.
 - `validation_pack --default`: warn only for historical pseudo-git-tag fixture
   residue.
-- `cross_project_smoke --default`: DevCockpitCore passed; optional sibling
-  warnings only.
+- `cross_project_smoke --default`: DevCockpitCore passed after commit; optional
+  sibling warnings only.
 
-This authorization review intentionally does not change production source, C3
-command keys, C4 implementation status, adapters, or sibling repositories.
+This minimal implementation intentionally changes only the single bounded C4
+probe surface, docs, tests, and samples. It does not change C3 command keys,
+adapters, target repositories, or sibling repositories.

@@ -1,0 +1,129 @@
+{
+  "schema_version": "c4_probe_minimal_result.v1",
+  "generated_at": "2026-06-30T09:13:29Z",
+  "producer": "dev_cockpit.c4_scoped_runner_probe",
+  "project_key": "devcockpitcore",
+  "probe_key": "devcockpitcore_validation_pack_default_pretty_probe",
+  "probe_path": "samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json",
+  "command_key": "validation_pack_default_pretty",
+  "capability_level": "C4_scoped_repo_local_probe",
+  "command_class": "fixed_repo_local_validation_probe",
+  "command_source": "hardcoded_allowlist",
+  "config_command_override_allowed": false,
+  "config_executable_override_allowed": false,
+  "config_argv_args_override_allowed": false,
+  "shell": false,
+  "timeout_seconds": 60,
+  "output_truncation_present": true,
+  "redaction_present": true,
+  "before_repo_state": {
+    "path": "C:\\Users\\<redacted>\\DevCockpitCore",
+    "exists": true,
+    "is_git_repo": true,
+    "branch": "main",
+    "head": "9d1d9b2",
+    "upstream": "origin/main",
+    "latest_commit": "9d1d9b2 feat: add minimal c4 validation-pack probe",
+    "remote_parity": {
+      "ahead": 1,
+      "behind": 0,
+      "raw": "1\t0",
+      "status": "ahead"
+    },
+    "worktree": {
+      "state": "clean",
+      "short_status": []
+    }
+  },
+  "after_repo_state": {
+    "path": "C:\\Users\\<redacted>\\DevCockpitCore",
+    "exists": true,
+    "is_git_repo": true,
+    "branch": "main",
+    "head": "9d1d9b2",
+    "upstream": "origin/main",
+    "latest_commit": "9d1d9b2 feat: add minimal c4 validation-pack probe",
+    "remote_parity": {
+      "ahead": 1,
+      "behind": 0,
+      "raw": "1\t0",
+      "status": "ahead"
+    },
+    "worktree": {
+      "state": "clean",
+      "short_status": []
+    }
+  },
+  "target_repo_writeback": false,
+  "cross_project_execution": false,
+  "scheduler_or_autonomy": false,
+  "credentials_required": false,
+  "adapter_default_validation_executed": false,
+  "adapters_validate_as_controlled_command": false,
+  "destructive_git": false,
+  "force_push": false,
+  "c3_command_set": [
+    "status_snapshot_help",
+    "adapters_validate_help"
+  ],
+  "c4_command_set": [
+    "validation_pack_default_pretty"
+  ],
+  "c5_c6_locked": true,
+  "exit_code": 0,
+  "duration_ms": 12561,
+  "captured_stdout_preview": "{\n  \"schema_version\": \"validation_pack_result.v1\",\n  \"generated_at\": \"2026-06-30T09:13:29Z\",\n  \"producer\": \"dev_cockpit.validation_pack\",\n  \"pack\": {\n    \"pack_key\": \"devcockpitcore_default\",\n    \"pack_path\": \"default\",\n    \"project_key\": \"devcockpitcore\"\n  },\n  \"repo\": {\n    \"path\": \"C:\\\\Users\\\\<redacted>\\\\DevCockpitCore\",\n    \"branch\": \"main\",\n    \"head\": \"9d1d9b2\",\n    \"worktree\": {\n      \"state\": \"clean\",\n      \"short_status\": []\n    },\n    \"remote_parity\": {\n      \"ahead\": 1,\n      \"behind\": 0,\n      \"raw\": \"1\\t0\",\n      \"status\": \"ahead\"\n    }\n  },\n  \"summary\": {\n    \"result\": \"warn\",\n    \"done\": 16,\n    \"total\": 16,\n    \"unknown\": 0,\n    \"meter\": \"############~###\",\n    \"missing\": 0,\n    \"passed\": 15,\n    \"warnings\": 1,\n    \"failed\": 0,\n    \"skipped\": 0\n  },\n  \"checks\": [\n    {\n      \"check_key\": \"python_compile\",\n      \"kind\": \"python\",\n      \"result\": \"pass\",\n      \"done\": 2,\n      \"total\": 2,\n      \"unknown\": 0,\n      \"meter\": \"##\",\n      \"severity\": \"required\",\n      \"command\": null,\n      \"exit_code\": null,\n      \"findings\": [],\n      \"missing\": 0,\n      \"notes\": []\n    },\n    {\n      \"check_key\": \"unittest_discover\",\n      \"kind\": \"python\",\n      \"result\": \"pass\",\n      \"done\": 1,\n      \"total\": 1,\n      \"unknown\": 0,\n      \"meter\": \"#\",\n      \"severity\": \"required\",\n      \"command\": [\n        \"C:\\\\Users\\\\<redacted>\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\python.exe\",\n        \"-m\",\n        \"unittest\",\n        \"discover\"\n      ],\n      \"exit_code\": 0,\n      \"findings\": [],\n      \"missing\": 0,\n      \"notes\": [\n        \"exit=0 duration_seconds=11.857 stdout='' stderr='..............................................................................................................................................................................................................................................................................\\\\n----------------------------------------------------------------------\\\\nRan 270 tests in 11.717s\\\\n\\\\nOK\\\\n'\"\n      ]\n    },\n    {\n      \"check_key\": \"adapter_manifest_validation\",\n      \"kind\": \"schema\",\n      \"result\": \"pass\",\n      \"done\": 4,\n      \"total\": 4,\n      \"unknown\": 0,\n      \"meter\": \"####\",\n      \"severity\": \"required\",\n      \"command\": null,\n      \"exit_code\": null,\n      \"findings\": [],\n      \"missing\": 0,\n      \"notes\": []\n    },\n    {\n      \"check_key\": \"status_snapshot_help\",\n      \"kind\": \"cli\",\n      \"result\": \"pass\",\n      \"done\": 1,\n      \"total\": 1,\n      \"unknown\": 0,\n      \"meter\": \"#\",\n      \"severity\": \"required\",\n      \"command\": [\n        \"C:\\\\Users\\\\<redacted>\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\python.exe\",\n        \"-m\",\n        \"dev_cockpit.status_snapshot\",\n        \"--help\"\n      ],\n      \"exit_code\": 0,\n      \"findings\": [],\n      \"missing\": 0,\n      \"notes\": [\n        \"exit=0 duration_seconds=0.092 stdout='usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\\\\n                          [--pretty] [--no-write]\\\\n\\\\nProduce a read-only repository status snapshot.\\\\n\\\\noptions:\\\\n  -h, --help         show this help message and exit\\\\n  --repo REPO        Target repository path to inspect.\\\\n  --adapter ADAPTER  Adapter JSON path.\\\\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\\\\n  --pretty           Write indented JSON.\\\\n  --no-write         Print JSON and skip output file writes.\\\\n' stderr=''\"\n      ]\n    },\n    {\n      \"check_key\": \"report_normalizer_help\",\n      \"kind\": \"cli\",\n      \"result\": \"pass\",\n      \"done\": 1,\n      \"total\": 1,\n      \"unknown\": 0,\n      \"meter\": \"#\",\n      \"severity\": \"required\",\n      \"command\": [\n        \"C:\\\\Users\\\\<redacted>\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python311\\\\python.exe\",\n        \"-m\",\n        \"dev_cockpit.report_normalizer\",\n        \"--help\"\n      ],\n      \"exit_code\": 0,\n      \"findings\": [],\n      \"missing\": 0,\n      \"notes\": [\n        \"exit=0 duration_seconds=0.066 stdout='usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--",
+  "captured_stderr_preview": "",
+  "captured_stdout_truncated": true,
+  "captured_stderr_truncated": false,
+  "redactions_applied": [
+    "local_user_path"
+  ],
+  "known_warnings": {
+    "validation_pack_summary_result": "warn",
+    "pseudo_git_tag_fixture_warning": {
+      "present": true,
+      "blocking": false,
+      "interpretation": "Known validation-pack report fixture warning; not a C4 probe blocker."
+    },
+    "worktree_warning": {
+      "present": false,
+      "blocking": false,
+      "interpretation": "Worktree state is recorded as evidence and is blocking only if it changes during the command."
+    },
+    "git_notes": []
+  },
+  "safety": {
+    "single_c4_command_key": true,
+    "hardcoded_allowlist_only": true,
+    "config_command_override_allowed": false,
+    "config_executable_override_allowed": false,
+    "config_argv_args_override_allowed": false,
+    "shell_false": true,
+    "timeout_required": true,
+    "output_truncation_present": true,
+    "redaction_present": true,
+    "before_after_repo_state_present": true,
+    "target_repo_writeback": false,
+    "cross_project_execution": false,
+    "scheduler_or_autonomy": false,
+    "credentials_required": false,
+    "adapter_default_validation_executed": false,
+    "adapters_validate_as_controlled_command": false,
+    "destructive_git": false,
+    "c5_c6_locked": true,
+    "blockers": []
+  },
+  "summary": {
+    "result": "warn",
+    "done": 18,
+    "total": 18,
+    "unknown": 0,
+    "meter": "#################~",
+    "missing": 0
+  },
+  "next": {
+    "recommended_next_slice": "common-foundation-c4-probe-minimal-implementation-review-v1",
+    "supervisor_should_generate_prompt": true
+  }
+}

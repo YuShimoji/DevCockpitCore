@@ -20,15 +20,15 @@ read-only snapshots of target repositories.
 The current axis is common-foundation execution-readiness governance. The repo
 has moved through read-only observation, report interpretation, validation
 packaging, cross-project smoke observation, a bounded C3 help-probe surface,
-C4 design-only boundary review, C4 design-state hardening, and a decision-only
-C4 probe authorization packet plus authorization review.
+C4 design-only boundary review, C4 design-state hardening, a decision-only C4
+probe authorization packet plus authorization review, and a single bounded C4
+validation-pack probe implementation.
 
-The active artifact is `c4-probe-authorization-review-v1`. It decides
-`accepted_for_future_probe_prompt` and recommends
-`common-foundation-c4-probe-minimal-implementation-v1` only as a future
-separate Supervisor-prompted route. C3 remains the executable ceiling, C4
-implementation remains unauthorized in this review slice, and any future C4
-probe must remain a single bounded probe.
+The active artifact is `c4-probe-minimal-implementation-v1`. It implements only
+the `validation_pack_default_pretty` C4 command key and recommends
+`common-foundation-c4-probe-minimal-implementation-review-v1` as the next route.
+C3 remains the executable ceiling for the prior command set, and C4 is limited
+to one repo-local validation-pack probe.
 
 ## Completed Artifact Stack
 
@@ -55,6 +55,7 @@ probe must remain a single bounded probe.
 - `c4-scoped-runner-design-hardening-v1`
 - `c4-probe-decision-packet-v1`
 - `c4-probe-authorization-review-v1`
+- `c4-probe-minimal-implementation-v1`
 
 ## Current Capability Boundary
 
@@ -67,8 +68,7 @@ Primary observer entry point:
 python -m dev_cockpit.status_snapshot --repo <repo> --adapter <adapter.json> --output <status.json>
 ```
 
-The current production controlled-runner probe surface is C3 only. The accepted
-production C3 command keys are exactly:
+The accepted production C3 command keys are exactly:
 
 ```text
 status_snapshot_help
@@ -85,11 +85,23 @@ It does not execute `adapters --validate`, adapter `default_validation`, target
 repository writeback, scheduler/autonomy behavior, credentials, external
 services, or arbitrary command execution.
 
-C4 is accepted and hardened only as a design boundary. C3 remains the executable
-ceiling. The C4 probe authorization review is review-only: C4 implementation
-remains unauthorized in this slice, and a third C3 command, C5, C6, arbitrary
-execution, adapter validation as controlled command behavior, and target
-repository writeback remain unauthorized.
+C4 is implemented only as a single bounded probe in
+`src/dev_cockpit/c4_scoped_runner_probe.py`. The C4 command set is exactly:
+
+```text
+validation_pack_default_pretty
+```
+
+That key maps only to:
+
+```text
+python -m dev_cockpit.validation_pack --default --pretty
+```
+
+It uses hardcoded argv, shell disabled, timeout, output truncation, redaction,
+and before/after repository state evidence. A third C3 command, multiple C4
+commands, C5, C6, arbitrary execution, adapter validation as controlled command
+behavior, and target repository writeback remain unauthorized.
 
 ## Current Restart Surface
 
@@ -99,18 +111,21 @@ Start a new terminal or agent from:
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
 4. `docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md`
-5. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-6. `samples/c4_probe_authorization_review/c4_probe_authorization_review_v1.json`
-7. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-8. `samples/c4_probe_decision_packet/c4_probe_decision_packet_v1.json`
-9. `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
-10. `samples/c4_scoped_runner_design_hardening/c4_scoped_runner_design_hardening_v1.json`
-11. `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
-12. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
-13. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
-14. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
-15. `docs/decision-log.md`
-16. `docs/idea-ledger.md`
+5. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
+6. `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
+7. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
+8. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
+9. `samples/c4_probe_authorization_review/c4_probe_authorization_review_v1.json`
+10. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
+11. `samples/c4_probe_decision_packet/c4_probe_decision_packet_v1.json`
+12. `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
+13. `samples/c4_scoped_runner_design_hardening/c4_scoped_runner_design_hardening_v1.json`
+14. `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
+15. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
+16. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
+17. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
+18. `docs/decision-log.md`
+19. `docs/idea-ledger.md`
 
 Then verify live state with:
 
