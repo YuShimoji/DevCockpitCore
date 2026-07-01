@@ -1,0 +1,112 @@
+{
+  "schema_version": "c4_probe_minimal_implementation_review.v1",
+  "generated_at": "2026-07-01T02:05:00Z",
+  "project_key": "devcockpitcore",
+  "reviewed_commit": "d655fb5aadb00b219e949f2390f82f9c6af0f710",
+  "reviewed_artifact": "c4-probe-minimal-implementation-v1",
+  "source_implementation_artifact": "samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json",
+  "source_result_artifact": "samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json",
+  "source_design_doc": "docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md",
+  "source_authorization_review": "samples/c4_probe_authorization_review/c4_probe_authorization_review_v1.json",
+  "live_readback": {
+    "command": "python -m dev_cockpit.c4_scoped_runner_probe --probe samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json --pretty",
+    "head": "d655fb5",
+    "remote_parity": "in_sync",
+    "exit_code": 0,
+    "result": "warn",
+    "worktree_before": "clean",
+    "worktree_after": "clean",
+    "warning_basis": "validation_pack returned warn only because of the known pseudo-git-tag fixture warning."
+  },
+  "current_capability_state": {
+    "c3_command_set": [
+      "status_snapshot_help",
+      "adapters_validate_help"
+    ],
+    "c3_command_count": 2,
+    "c4_command_set": [
+      "validation_pack_default_pretty"
+    ],
+    "c4_command_count": 1,
+    "current_executable_capability_level": "C4_minimal_repo_local_probe_review_accepted",
+    "c5_c6_locked": true
+  },
+  "review_decision": {
+    "decision": "accepted",
+    "rationale": "The implementation evidence shows one hardcoded C4 validation-pack probe, clean before/after repository state, exit code 0, no safety blockers, no target repository writeback, no generalized runner, and no C3 command expansion. The remaining warning is the known pseudo-git-tag fixture hygiene warning and does not block acceptance.",
+    "recommended_next_slice": "common-foundation-c4-probe-minimal-implementation-hardening-v1",
+    "implementation_fix_required": false,
+    "fixture_hygiene_required_before_acceptance": false,
+    "supervisor_should_generate_prompt": true
+  },
+  "evidence_checks": {
+    "implementation_artifact_present": true,
+    "result_artifact_present": true,
+    "c4_module_present": true,
+    "exactly_one_c4_command_key": true,
+    "c4_command_key_validation_pack_default_pretty": true,
+    "c3_command_set_exactly_two": true,
+    "no_third_c3_command": true,
+    "no_second_c4_command": true,
+    "command_hardcoded": true,
+    "no_config_supplied_command": true,
+    "no_config_supplied_executable": true,
+    "no_config_supplied_argv_args": true,
+    "shell_false_enforced": true,
+    "timeout_required": true,
+    "output_truncation_present": true,
+    "redaction_present": true,
+    "before_after_repo_state_present": true,
+    "target_repo_writeback_false": true,
+    "cross_project_execution_false": true,
+    "scheduler_or_autonomy_false": true,
+    "credentials_required_false": true,
+    "adapter_default_validation_executed_false": true,
+    "adapters_validate_as_controlled_command_false": true,
+    "no_generalized_runner": true,
+    "no_arbitrary_execution": true,
+    "no_c5_c6_unlock": true,
+    "no_raw_host_path_as_artifact_identity": true,
+    "no_paste_ready_prompt_in_artifacts": true
+  },
+  "known_warnings": {
+    "pseudo_git_tag_fixture_warning": {
+      "present": true,
+      "blocking": false,
+      "interpretation": "Historical report fixture residue still makes validation_pack report warn, but the C4 probe exits 0 and records no safety blocker."
+    },
+    "validation_pack_warn_result": {
+      "present": true,
+      "blocking": false,
+      "interpretation": "The validation_pack warn result is accepted only because it is tied to the known pseudo-git-tag fixture warning and no C4 probe safety blocker is present."
+    },
+    "optional_sibling_warnings": {
+      "present": true,
+      "blocking": false,
+      "interpretation": "Best-effort sibling repository warnings remain outside this repo-local C4 probe review."
+    }
+  },
+  "allowed_next_routes": [
+    "common-foundation-c4-probe-minimal-implementation-hardening-v1",
+    "common-foundation-validation-fixture-hygiene-v1",
+    "common-foundation-c4-probe-minimal-fix-v1",
+    "controlled-runner-stop"
+  ],
+  "forbidden_next_routes": [
+    "second C4 command",
+    "third C3 command",
+    "generalized runner implementation",
+    "C5",
+    "C6",
+    "target repo writeback",
+    "arbitrary execution"
+  ],
+  "summary": {
+    "result": "accepted",
+    "done": 28,
+    "total": 28,
+    "unknown": 0,
+    "meter": "############################",
+    "missing": 0
+  }
+}

@@ -3,6 +3,43 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-01 - C4 Probe Minimal Implementation Review Accepted
+
+Purpose: decide whether the single bounded C4 validation-pack probe implemented
+as `validation_pack_default_pretty` is acceptable.
+
+Decision: accepted.
+
+Effect: `c4-probe-minimal-implementation-review-v1` becomes the current
+artifact. Recommended next route is
+`common-foundation-c4-probe-minimal-implementation-hardening-v1`.
+
+Requirements preserved:
+
+- The C3 command set remains exactly two.
+- Production C3 command keys remain exactly `status_snapshot_help` and
+  `adapters_validate_help`.
+- C4 remains exactly one repo-local validation-pack probe:
+  `validation_pack_default_pretty`.
+- The C4 command is hardcoded, shell-disabled, timeout-bound, redacted, and
+  records before/after repository state.
+- Adapter validation remains outside controlled runner command behavior.
+- A second C4 command, third C3 command, arbitrary execution, target repository
+  writeback, scheduler/autonomy behavior, C5, and C6 remain forbidden.
+
+State: live C4 probe readback on commit `d655fb5` exited 0, `main` was in sync
+with `origin/main`, before/after worktree state was clean, and the only warning
+was the known pseudo-git-tag fixture warning.
+
+Owner: Supervisor decides the next route; Agent may execute a hardening,
+fixture-hygiene, narrow fix, or stop slice only when selected by prompt.
+
+Next move: prefer
+`common-foundation-c4-probe-minimal-implementation-hardening-v1`. Allowed
+alternatives are `common-foundation-validation-fixture-hygiene-v1`,
+`common-foundation-c4-probe-minimal-fix-v1`, or
+`controlled-runner-stop`.
+
 ## 2026-06-30 - C4 Design Review Accepted As Design-Only
 
 Purpose: decide whether `c4-scoped-runner-design-v1` is safe to accept as a

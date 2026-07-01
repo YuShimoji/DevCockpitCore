@@ -163,7 +163,7 @@ class C4ProbeAuthorizationReviewTests(unittest.TestCase):
         context = PROJECT_CONTEXT.read_text(encoding="utf-8")
         normalized = " ".join(context.split())
         self.assertIn("c4-probe-authorization-review-v1", context)
-        self.assertIn("C3 remains the executable ceiling", normalized)
+        self.assertIn("C3 command set remains exactly two", normalized)
         self.assertIn("C4 is limited to one repo-local validation-pack probe", normalized)
         self.assertNotIn("C4 implementation is authorized", normalized)
 

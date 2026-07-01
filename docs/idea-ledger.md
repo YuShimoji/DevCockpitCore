@@ -5,40 +5,46 @@ into the current slice.
 
 ## Active Seeds
 
-### C4 Design Hardening
+### C4 Probe Minimal Implementation Hardening
 
-Purpose: make the accepted C4 design-only boundary canonical and easier to
-review later.
+Purpose: make the accepted single C4 validation-pack probe review canonical and
+easier to resume later.
 
-Effect: should tighten docs/tests/samples only; it must not create C4 runtime
-behavior.
+Effect: should tighten docs/tests/samples and restart context only; it must not
+add another C4 command or change the existing probe implementation.
 
-Requirements: preserve C3 as the executable ceiling, keep exact two production
-C3 keys, keep C4/C5/C6 locked, and keep adapter validation outside
-`controlled_runner_probe`.
+Requirements: preserve the exact two-key C3 command set, keep exactly one
+accepted C4 key, keep C5/C6 locked, and keep adapter validation outside
+controlled runner behavior.
 
-State: recommended next route after `c4-scoped-runner-design-review-v1`.
+State: recommended next route after
+`c4-probe-minimal-implementation-review-v1`.
 
 Owner: Supervisor must authorize; Agent may implement only after a matching
 prompt.
 
 Next move: generate and execute
-`common-foundation-c4-scoped-runner-design-hardening-v1` if selected.
+`common-foundation-c4-probe-minimal-implementation-hardening-v1` if selected.
 
-### C4 Probe Decision Packet
+### Validation Fixture Hygiene
 
-Purpose: decide whether a future C4 probe is worth proposing.
+Purpose: remove or reclassify the historical pseudo-git-tag fixture warning so
+the validation pack can return pass instead of warn when no current issue is
+present.
 
-Effect: should remain a decision artifact, not implementation.
+Effect: should improve validation signal quality without changing controlled
+runner capability.
 
-Requirements: no direct C4 implementation, no command registry from config, no
-third C3 command, and no target repository writeback.
+Requirements: keep report-normalizer and validation-pack semantics explicit;
+do not hide real copy-transport residue or weaken hygiene gates.
 
-State: allowed alternative route, not selected as the default.
+State: allowed alternative route after the C4 probe review, not required before
+acceptance.
 
 Owner: Supervisor decision.
 
-Next move: use only if hardening is not the best next step.
+Next move: use only if clean validation signal is more valuable than hardening
+the accepted C4 probe state.
 
 ## Parked Or Forbidden Paths
 
@@ -51,11 +57,13 @@ Effect: expands capability beyond accepted evidence.
 Requirements: forbidden until a later prompt authorizes a scoped probe route and
 the evidence is reviewed.
 
-State: parked as forbidden.
+State: parked as forbidden except for the already reviewed single
+`validation_pack_default_pretty` C4 probe.
 
 Owner: User/Supervisor approval required before any reconsideration.
 
-Next move: do not implement from the current state.
+Next move: do not add any second C4 command or generalized runner from the
+current state.
 
 ### Third C3 Command
 
@@ -85,4 +93,4 @@ State: locked.
 
 Owner: User/Supervisor approval required.
 
-Next move: do not pursue from current common-foundation C4 design-review state.
+Next move: do not pursue from current common-foundation C4 probe-review state.

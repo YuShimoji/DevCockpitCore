@@ -483,6 +483,21 @@ C3 command keys remain exactly `status_snapshot_help` and
 `adapters_validate_help`; no third C3 key, generalized runner, target repo
 writeback, scheduler/autonomy behavior, C5, or C6 is added.
 
+## C4 probe minimal implementation review
+
+C4 Probe Minimal Implementation Review V1 accepts the single bounded C4 probe
+implementation as evidence, with the known pseudo-git-tag fixture warning
+treated as non-blocking. The review artifact lives at
+`samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`;
+supporting docs live at
+`docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`.
+
+The accepted C4 command-key set is still exactly
+`validation_pack_default_pretty`. The C3 command set remains exactly two,
+current executable capability includes one accepted minimal C4 probe, C5/C6
+remain locked, and the recommended next route is
+`common-foundation-c4-probe-minimal-implementation-hardening-v1`.
+
 ## Safety boundary
 
 The status producer is a read-only observer. Against the target repository it
@@ -500,6 +515,9 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
+- `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
+- `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
 - `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
 - `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
 - `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
@@ -545,3 +563,4 @@ and recommended next entrances.
 21. C4 probe decision packet
 22. C4 probe authorization review
 23. C4 probe minimal implementation
+24. C4 probe minimal implementation review

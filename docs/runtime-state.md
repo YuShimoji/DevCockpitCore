@@ -1,13 +1,13 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-06-30
-active_artifact: c4-probe-minimal-implementation-v1
-artifact_current: c4-probe-minimal-implementation-v1
-artifact_next: common-foundation-c4-probe-minimal-implementation-review-v1
-next: Review the single bounded C4 validation-pack probe, validation fixture hygiene, C4 design follow-up fix, or controlled-runner stop
+updated_at: 2026-07-01
+active_artifact: c4-probe-minimal-implementation-review-v1
+artifact_current: c4-probe-minimal-implementation-review-v1
+artifact_next: common-foundation-c4-probe-minimal-implementation-hardening-v1
+next: Harden the accepted single bounded C4 validation-pack probe, run validation fixture hygiene, make a narrow C4 probe fix, or controlled-runner stop
 user_work: none
 render_gate: not_applicable
-handoff: docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md
+handoff: docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md
 latest_source_design_review_commit: 0598bee test: review c4 scoped runner design
 latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
 remote_sync_state_at_hardening_start: main == origin/main, parity 0 0
@@ -15,6 +15,7 @@ latest_hardening_commit: 763f9e9 test: harden c4 scoped runner design
 latest_decision_packet_commit: 8f3312b docs: decide c4 probe authorization path
 latest_authorization_review_commit: 53b3f45 test: review c4 probe authorization path
 latest_minimal_implementation_commit: ed870bf feat: add minimal c4 validation-pack probe
+latest_minimal_implementation_review_base_commit: d655fb5 docs: refresh c4 minimal implementation handoff
 
 ## Current State
 
@@ -27,8 +28,10 @@ boundary as design-only evidence, and hardens it as the canonical policy state
 without authorizing implementation. The current decision packet recommends
 reviewing whether a future single fixed safe C4 probe should be authorized
 later, the authorization review accepts eligibility for a future separate
-minimal C4 probe implementation prompt, and the current slice implements only
-that single bounded C4 validation-pack probe.
+minimal C4 probe implementation prompt, the implementation slice adds only that
+single bounded C4 validation-pack probe, and the current slice reviews and
+accepts the implementation evidence with only the known fixture warning
+remaining.
 
 The source design review commit hardened by this slice is:
 
@@ -102,6 +105,11 @@ The source design review commit hardened by this slice is:
   `c4_probe_minimal_result.v1`, with hardcoded argv, shell disabled, timeout,
   output truncation, redaction, before/after repo state, no target repo
   writeback, no adapter validation controlled command, and C5/C6 locked.
+- Review and accept that single bounded C4 probe implementation as
+  `c4_probe_minimal_implementation_review.v1`. The live readback exits 0 on
+  `d655fb5`, records clean before/after repo state, keeps C3 at exactly two
+  help-only keys, keeps C4 at exactly one validation-pack key, and treats the
+  historical pseudo-git-tag fixture warning as non-blocking.
 
 ## Safety Boundary
 
@@ -117,17 +125,18 @@ remain locked outside the single C4 probe. The current C4 implementation is
 limited to exactly one command key, `validation_pack_default_pretty`, mapped
 only to `python -m dev_cockpit.validation_pack --default --pretty`.
 
-C3 remains the executable ceiling for the prior command set. C4 is unlocked
-only for this one repo-local validation-pack probe. Any further C4 command,
-general runner behavior, C5, or C6 remains forbidden until a later Supervisor
-prompt authorizes and reviews it.
+The C3 command set remains exactly two. Current executable capability includes
+one accepted minimal C4 repo-local validation-pack probe. Any further C4
+command, general runner behavior, C5, or C6 remains forbidden until a later
+Supervisor prompt authorizes and reviews it.
 
 ## Handoff Snapshot
 
-This minimal implementation keeps all current re-entry context in project docs. The
-next terminal should start from this file, `docs/project-context.md`, and
-`docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`, then
-verify current remote parity before making decisions.
+This minimal implementation review keeps all current re-entry context in
+project docs. The next terminal should start from this file,
+`docs/project-context.md`, and
+`docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`,
+then verify current remote parity before making decisions.
 
 First live checks:
 
@@ -138,11 +147,15 @@ git pull --ff-only origin main
 git rev-list --left-right --count HEAD...origin/main
 ```
 
-Last known full validation during this minimal-implementation slice:
+Last known validation during this minimal-implementation review slice:
 
-- `python -m unittest discover`: 270 tests OK.
-- C4 `validation_pack_default_pretty` probe: warn 18/18 with clean before/after
-  worktree; known pseudo-git-tag fixture warning only.
+- `python -m compileall src tests`: pass.
+- `python -m unittest tests.test_c4_probe_minimal_implementation_review`: 12 tests OK.
+- `python -m unittest discover`: 282 tests OK.
+- `python -m json.tool samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`: pass.
+- `git diff --check`: pass.
+- C4 `validation_pack_default_pretty` probe live readback: exit 0, warn 18/18
+  with clean before/after worktree; known pseudo-git-tag fixture warning only.
 - C3 `adapters_validate_help` probe: pass 11/11 after commit; dirty warning
   only while the implementation patch was uncommitted.
 - `validation_pack --default`: warn only for historical pseudo-git-tag fixture
@@ -150,6 +163,6 @@ Last known full validation during this minimal-implementation slice:
 - `cross_project_smoke --default`: DevCockpitCore passed after commit; optional
   sibling warnings only.
 
-This minimal implementation intentionally changes only the single bounded C4
-probe surface, docs, tests, and samples. It does not change C3 command keys,
-adapters, target repositories, or sibling repositories.
+This minimal implementation review intentionally changes only review docs,
+tests, samples, and restart context. It does not change C3 command keys, the C4
+probe implementation, adapters, target repositories, or sibling repositories.
