@@ -1,6 +1,6 @@
 {
   "schema_version": "cross_project_smoke_result.v1",
-  "generated_at": "2026-07-06T01:09:10Z",
+  "generated_at": "2026-07-06T07:56:16Z",
   "producer": "dev_cockpit.cross_project_smoke",
   "smoke": {
     "smoke_key": "devcockpitcore_cross_project_observer",
@@ -30,12 +30,12 @@
           {
             "candidate": ".",
             "exists": true,
-            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore"
+            "redacted_path": "C:\\Users\\<redacted>\\DevCockpitCore"
           }
         ],
         "selected": ".",
         "exists": true,
-        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore"
+        "redacted_selected": "C:\\Users\\<redacted>\\DevCockpitCore"
       },
       "adapter_validation": {
         "result": "pass",
@@ -43,27 +43,27 @@
       },
       "status_snapshot": {
         "generated": true,
-        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
+        "path": "C:\\Users\\<redacted>\\DevCockpitCore",
         "schema_version": "status_snapshot.v1",
         "branch": "main",
-        "head": "33250ab",
+        "head": "2e5e924",
         "worktree": {
           "state": "dirty",
           "short_status": [
-            "M  README.md",
-            "A  docs/PROJECT_COCKPIT.md",
-            "M  docs/decision-log.md",
-            "M  docs/idea-ledger.md",
-            "M  docs/project-context.md",
-            "MM docs/runtime-state.md",
-            "M  pyproject.toml",
-            "M  samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-            "MM samples/status_snapshots/devcockpitcore_status.json",
-            "M  samples/validation_packs/devcockpitcore_validation_pack_result.json",
-            "?? docs/PROJECT_PIPELINE.mmd",
-            "?? samples/dashboard/",
-            "?? src/dev_cockpit/dashboard.py",
-            "?? tests/test_dashboard.py"
+            " M README.md",
+            " M docs/PROJECT_COCKPIT.md",
+            " M docs/PROJECT_PIPELINE.mmd",
+            " M docs/project-context.md",
+            " M docs/runtime-state.md",
+            " M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+            " M samples/dashboard/README.md",
+            " M samples/dashboard/devcockpitcore_dashboard.html",
+            " M samples/dashboard/devcockpitcore_review_actions.json",
+            " M samples/dashboard/devcockpitcore_review_actions.md",
+            " M samples/status_snapshots/devcockpitcore_status.json",
+            " M samples/validation_packs/devcockpitcore_validation_pack_result.json",
+            " M src/dev_cockpit/dashboard.py",
+            " M tests/test_dashboard.py"
           ]
         },
         "remote_parity": {
@@ -99,12 +99,12 @@
           {
             "candidate": "../NLMYTGen",
             "exists": true,
-            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\NLMYTGen"
+            "redacted_path": "C:\\Users\\<redacted>\\NLMYTGen"
           }
         ],
         "selected": "../NLMYTGen",
         "exists": true,
-        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\NLMYTGen"
+        "redacted_selected": "C:\\Users\\<redacted>\\NLMYTGen"
       },
       "adapter_validation": {
         "result": "pass",
@@ -112,10 +112,10 @@
       },
       "status_snapshot": {
         "generated": true,
-        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\NLMYTGen",
+        "path": "C:\\Users\\<redacted>\\NLMYTGen",
         "schema_version": "status_snapshot.v1",
-        "branch": "codex/content-spine-002-transcript-substitution-readiness-v1",
-        "head": "6f75266",
+        "branch": "codex/episode-002-thumbnail-visual-proof-v1",
+        "head": "6846359",
         "worktree": {
           "state": "clean",
           "short_status": []
@@ -128,7 +128,7 @@
         },
         "health": "yellow",
         "warnings": [
-          "current branch 'codex/content-spine-002-transcript-substitution-readiness-v1' differs from adapter default 'master'"
+          "current branch 'codex/episode-002-thumbnail-visual-proof-v1' differs from adapter default 'master'"
         ]
       },
       "scope_boundary": {
@@ -153,12 +153,12 @@
           {
             "candidate": "../WritingPage",
             "exists": true,
-            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\WritingPage"
+            "redacted_path": "C:\\Users\\<redacted>\\WritingPage"
           }
         ],
         "selected": "../WritingPage",
         "exists": true,
-        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\WritingPage"
+        "redacted_selected": "C:\\Users\\<redacted>\\WritingPage"
       },
       "adapter_validation": {
         "result": "pass",
@@ -166,16 +166,13 @@
       },
       "status_snapshot": {
         "generated": true,
-        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\WritingPage",
+        "path": "C:\\Users\\<redacted>\\WritingPage",
         "schema_version": "status_snapshot.v1",
         "branch": "main",
-        "head": "ad04ee9",
+        "head": "fbc1949",
         "worktree": {
-          "state": "dirty",
-          "short_status": [
-            " M .serena/project.yml",
-            " M docs/CURRENT_STATE.md"
-          ]
+          "state": "clean",
+          "short_status": []
         },
         "remote_parity": {
           "ahead": 0,
@@ -185,7 +182,6 @@
         },
         "health": "yellow",
         "warnings": [
-          "worktree is dirty",
           "runtime state document is absent"
         ]
       },
@@ -211,12 +207,12 @@
           {
             "candidate": "../ClipPipeGen",
             "exists": true,
-            "redacted_path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\ClipPipeGen"
+            "redacted_path": "C:\\Users\\<redacted>\\ClipPipeGen"
           }
         ],
         "selected": "../ClipPipeGen",
         "exists": true,
-        "redacted_selected": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\ClipPipeGen"
+        "redacted_selected": "C:\\Users\\<redacted>\\ClipPipeGen"
       },
       "adapter_validation": {
         "result": "pass",
@@ -224,43 +220,13 @@
       },
       "status_snapshot": {
         "generated": true,
-        "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\ClipPipeGen",
+        "path": "C:\\Users\\<redacted>\\ClipPipeGen",
         "schema_version": "status_snapshot.v1",
         "branch": "main",
-        "head": "2cae693",
+        "head": "cef2012",
         "worktree": {
-          "state": "dirty",
-          "short_status": [
-            " M artifacts/ARTIFACTS.md",
-            " M docs/CURRENT_HANDOFF.md",
-            " M docs/HANDOFF.md",
-            " M docs/RUNTIME_STATE.md",
-            " M docs/dashboard/index.html",
-            " M docs/dashboard/project-status.json",
-            " M docs/index.md",
-            " M src/cli/main.py",
-            " M tests/test_asset_fetch_boundary.py",
-            "?? docs/content_planning/",
-            "?? samples/content_planning/",
-            "?? src/cli/build_content_candidate_dashboard.py",
-            "?? src/cli/build_episode_init_plan.py",
-            "?? src/cli/build_episode_seed_drafts.py",
-            "?? src/cli/build_operator_cockpit.py",
-            "?? src/cli/build_source_inspection_packet.py",
-            "?? src/cli/resolve_episode_seed_sources.py",
-            "?? src/pipeline/content_planning.py",
-            "?? src/pipeline/episode_init_plan.py",
-            "?? src/pipeline/episode_seed_bridge.py",
-            "?? src/pipeline/operator_cockpit.py",
-            "?? src/pipeline/source_inspection_packet.py",
-            "?? src/pipeline/source_metadata_resolver.py",
-            "?? tests/test_content_planning.py",
-            "?? tests/test_episode_init_plan.py",
-            "?? tests/test_episode_seed_bridge.py",
-            "?? tests/test_operator_cockpit.py",
-            "?? tests/test_source_inspection_packet.py",
-            "?? tests/test_source_metadata_resolver.py"
-          ]
+          "state": "clean",
+          "short_status": []
         },
         "remote_parity": {
           "ahead": 0,
@@ -270,7 +236,6 @@
         },
         "health": "yellow",
         "warnings": [
-          "worktree is dirty",
           "runtime state document is absent",
           "project context document is absent"
         ]

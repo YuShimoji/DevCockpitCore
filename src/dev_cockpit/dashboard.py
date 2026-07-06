@@ -108,6 +108,22 @@ def build_dashboard_model(
         review_checkpoints,
         output_rel,
     )
+    action_summary = _review_action_summary(review_actions)
+    freshness = _freshness_summary(sources, generated)
+    decision_meters = _decision_meters(
+        health,
+        validation,
+        smoke,
+        status,
+        sources,
+        freshness,
+        action_summary,
+        warning_triage,
+        review_actions,
+        output_rel,
+    )
+    review_stack = _review_stack(health, warning_triage, freshness, action_summary)
+    latest_brief = _latest_brief(health, warning_triage, freshness, output_rel, review_stack)
 
     return {
         "schema_version": "devcockpit_local_dashboard.v1",
@@ -129,7 +145,7 @@ def build_dashboard_model(
             "access_evidence_level": "file_generated_by_dashboard_command",
         },
         "sources": sources,
-        "freshness": _freshness_summary(sources, generated),
+        "freshness": freshness,
         "validation_pack": {
             "summary": _dict(validation.get("summary")),
             "health": _dict(validation.get("health")),
@@ -156,9 +172,12 @@ def build_dashboard_model(
         "locked_lanes": list(LOCKED_LANES),
         "review_next": _review_next_items(health, validation, smoke),
         "review_checkpoints": review_checkpoints,
+        "decision_meters": decision_meters,
+        "review_stack": review_stack,
+        "latest_brief": latest_brief,
         "warning_triage": warning_triage,
         "review_actions": review_actions,
-        "review_action_summary": _review_action_summary(review_actions),
+        "review_action_summary": action_summary,
         "designer_notes": list(DESIGNER_NOTES),
     }
 
@@ -191,24 +210,38 @@ def render_dashboard(model: dict[str, Any]) -> str:
         _stylesheet(),
         "  </style>",
         "</head>",
-        '<body data-dashboard-variant="compact-dark-overview">',
+        '<body data-dashboard-variant="home-linked-meters">',
         '  <a class="skip-link" href="#main-content">Skip to dashboard content</a>',
         _top_strip(model, project, health, output, freshness),
         _dashboard_nav(),
         '  <main id="main-content" class="page" tabindex="-1">',
         _noscript_notice(),
         _section(
+            "Review Stack",
+            [_review_stack_cards(_list(model.get("review_stack")))],
+        ),
+        _section(
+            "Linked Detail Map",
+            [
+                _linked_detail_map(
+                    model,
+                    validation,
+                    smoke,
+                    status_snapshot,
+                    output,
+                    action_package,
+                    freshness,
+                    action_summary,
+                    projects,
+                )
+            ],
+            summary="Meter-linked detail panels with back-to-overview paths.",
+        ),
+        _section(
             "Evidence Snapshot",
             [_summary_band(project, validation_summary, smoke_summary, status_repo, health, output, freshness)],
             collapsed=True,
             summary="Raw source rollup and repo/access state.",
-        ),
-        _section(
-            "Review Next",
-            [
-                _review_checkpoint_cards(_list(model.get("review_checkpoints"))),
-                _list_panel(_list(model.get("review_next")), "review compact-list"),
-            ],
         ),
         _section(
             "Warnings Triage",
@@ -393,32 +426,23 @@ def _top_strip(
     warning_count = len(_list(health.get("warnings")))
     blocker_count = len(_list(health.get("blockers")))
     generated_at = model.get("generated_at", "unknown")
-    action_summary = _dict(model.get("review_action_summary"))
     review_next = _list(model.get("review_next"))
     next_item = _short_text(str(review_next[0]), 88) if review_next else "Review warnings, blockers, and evidence freshness."
     decision = _decision_label(health)
-    decision_detail = _decision_detail(health)
-    action_warning_count = _int(action_summary.get("warning"))
-    focus_label = "Warnings" if warning_count or action_warning_count else "Evidence"
-    focus_detail = (
-        f"{action_warning_count or warning_count} review item(s)"
-        if warning_count or action_warning_count
-        else "source-backed"
-    )
+    meters = _list(model.get("decision_meters"))
     return (
         '<header class="top-strip compact-dark-overview" data-dashboard-theme="dark">'
         '<div class="hero-copy">'
         '<p class="eyebrow">Local supervision HUD</p>'
         f"<h1>{_e(project.get('name', 'DevCockpitCore'))}</h1>"
-        '<p class="hero-summary">Dark compact overview for the next human review decision.</p>'
+        '<p class="hero-summary">Home-linked decision meter HUD for the next human review decision.</p>'
         f"<p class=\"subtle\">Generated {_e(generated_at)} from local evidence. Access: {_e(_access_label(output))}.</p>"
+        f"<p class=\"subtle\">Current read: {_e(decision)} with {_e(str(blocker_count))} blockers and {_e(str(warning_count))} warning signals.</p>"
+        f"{_latest_brief_panel(_list(model.get('latest_brief')))}"
         "</div>"
-        '<div class="overview-board" aria-label="Compact review overview">'
-        f"<article class=\"overview-card overview-primary {_tone_class(health.get('tone'))}\" role=\"status\" aria-label=\"Dashboard decision {_e(decision)}\"><span>State</span><strong>{_e(decision)}</strong><p>{_e(decision_detail)}</p></article>"
-        f"<article class=\"overview-card\"><span>Stop</span><strong>{_e(blocker_count)}</strong><p>blockers</p></article>"
-        f"<article class=\"overview-card\"><span>Warn</span><strong>{_e(focus_label)}</strong><p>{_e(focus_detail)}</p></article>"
-        f"<article class=\"overview-card\"><span>Proof</span><strong>{_e(freshness.get('loaded_count', '0/0'))}</strong><p>{_e(_short_text(str(freshness.get('latest_generated_at', 'unknown')), 28))}</p></article>"
-        f"<div class=\"review-strip\"><span>Next</span><p>{_e(next_item)}</p><a href=\"#review-actions\">Review Actions</a></div>"
+        '<div id="meter-board" class="decision-meter-board" aria-label="Home-linked decision meters">'
+        f"{_decision_meter_cards(meters)}"
+        f"<div class=\"review-strip\"><span>Next</span><p>{_e(next_item)}</p><a href=\"#review-stack\">Review Stack</a></div>"
         "</div>"
         "</header>"
     )
@@ -426,7 +450,10 @@ def _top_strip(
 
 def _dashboard_nav() -> str:
     links = (
-        ("Next", "review-next"),
+        ("Brief", "latest-brief"),
+        ("Meters", "meter-board"),
+        ("Stack", "review-stack"),
+        ("Details", "linked-detail-map"),
         ("Warnings", "warnings-triage"),
         ("Actions", "review-actions"),
         ("Projects", "project-cards"),
@@ -482,6 +509,230 @@ def _summary_band(
         _metric_card("Access State", output.get("access_mode", "unknown"), output.get("access_evidence_level", "evidence")),
     ]
     return f'<div class="summary-grid">{"".join(cards)}</div>'
+
+
+def _latest_brief_panel(items: list[Any]) -> str:
+    if not items:
+        return ""
+    rows = []
+    for item in items[:5]:
+        row = _dict(item)
+        href = str(row.get("href", "#review-stack"))
+        rows.append(
+            "<li>"
+            f"<span>{_e(row.get('label', 'Brief'))}</span>"
+            f"<strong>{_e(row.get('value', 'Review'))}</strong>"
+            f"<a href=\"{_e(href)}\">{_e(row.get('action', 'Open'))}</a>"
+            "</li>"
+        )
+    return (
+        '<section id="latest-brief" class="latest-brief" aria-label="Latest Brief">'
+        "<h2>Latest Brief</h2>"
+        f'<ul>{"".join(rows)}</ul>'
+        "</section>"
+    )
+
+
+def _decision_meter_cards(meters: list[Any]) -> str:
+    cards = []
+    for meter in meters:
+        item = _dict(meter)
+        progress = _dict(item.get("progress"))
+        progress_html = _decision_progress(progress)
+        evidence = item.get("evidence_path") or item.get("detail_href", "dashboard")
+        action_href = str(item.get("action_href") or item.get("detail_href", "#linked-detail-map"))
+        action_label = str(item.get("action_label") or "Review action")
+        cards.append(
+            f'<article class="decision-meter {_tone_class(item.get("tone"))}" data-meter-target="{_e(item.get("detail_href", ""))}">'
+            f"<div class=\"meter-head\"><span>{_e(item.get('title', 'Meter'))}</span>"
+            f"<strong>{_e(item.get('primary_value', 'n/a'))}</strong></div>"
+            f"<p>{_e(item.get('summary', 'Review this signal.'))}</p>"
+            f"{progress_html}"
+            f"<p class=\"why-line\">{_e(item.get('why', 'Shows why this signal matters.'))}</p>"
+            f"<div class=\"meter-links\"><a href=\"{_e(item.get('detail_href', '#linked-detail-map'))}\">Open detail</a>"
+            f"<a href=\"{_e(action_href)}\">{_e(action_label)}</a></div>"
+            f"<code>{_e(evidence)}</code>"
+            "</article>"
+        )
+    return "".join(cards)
+
+
+def _decision_progress(progress: dict[str, Any]) -> str:
+    total = _int(progress.get("total"))
+    done = _int(progress.get("done"))
+    if total <= 0:
+        label = progress.get("label", "count only")
+        return f'<p class="meter-note">{_e(label)}</p>'
+    width = max(0, min(100, round(done / total * 100)))
+    label = progress.get("label") or f"{done}/{total}"
+    tone = progress.get("tone", "neutral")
+    return (
+        f'<div class="decision-progress" role="progressbar" aria-valuemin="0" aria-valuemax="{_e(total)}" '
+        f'aria-valuenow="{_e(done)}" aria-label="{_e(label)}">'
+        f'<span class="{_result_class(tone)}" style="width:{width}%"></span>'
+        f"</div><p class=\"meter-note\">{_e(label)}</p>"
+    )
+
+
+def _review_stack_cards(items: list[Any]) -> str:
+    if not items:
+        return '<div class="review-stack-grid"><article class="stack-card"><p>No review stack items were generated.</p></article></div>'
+    cards = []
+    for index, item in enumerate(items[:3], 1):
+        row = _dict(item)
+        cards.append(
+            '<article class="stack-card" data-review-stack-item>'
+            f"<span>Step {index}</span>"
+            f"<strong>{_e(row.get('title', 'Review target'))}</strong>"
+            f"<p>{_e(row.get('reason', 'Review this target before drilling into dense evidence.'))}</p>"
+            f"<a href=\"{_e(row.get('href', '#linked-detail-map'))}\">{_e(row.get('link_label', 'Open detail'))}</a>"
+            f"<code>{_e(row.get('evidence', 'dashboard'))}</code>"
+            "</article>"
+        )
+    return f'<div class="review-stack-grid">{"".join(cards)}</div>'
+
+
+def _linked_detail_map(
+    model: dict[str, Any],
+    validation: dict[str, Any],
+    smoke: dict[str, Any],
+    status_snapshot: dict[str, Any],
+    output: dict[str, Any],
+    action_package: dict[str, Any],
+    freshness: dict[str, Any],
+    action_summary: dict[str, Any],
+    projects: list[Any],
+) -> str:
+    health = _dict(model.get("health"))
+    warning_triage = _list(model.get("warning_triage"))
+    actions = _list(model.get("review_actions"))
+    validation_summary = _dict(validation.get("summary"))
+    smoke_summary = _dict(smoke.get("summary"))
+    status_repo = _dict(status_snapshot.get("repo"))
+    stop_summary = _decision_detail(health)
+    panels = [
+        _linked_detail_panel(
+            "detail-stop-gate",
+            "Detail: Stop Gate",
+            f"{len(_list(health.get('blockers')))} blockers; decision is {_decision_label(health)}.",
+            "This exists to decide whether review can continue before anyone opens deeper evidence.",
+            [
+                _health_panel(health),
+                _gate_panel("Validation Gate", _dict(validation.get("gate_input"))),
+                _gate_panel("Smoke Gate", _dict(smoke.get("gate_input"))),
+            ],
+            actions,
+            ("dashboard_health",),
+            fallback=f"Stop gate has no blocker action. Current stop read is {stop_summary}.",
+        ),
+        _linked_detail_panel(
+            "detail-warning-debt",
+            "Detail: Warning Debt",
+            f"{action_summary.get('warning', 0)} warning review actions across {len(warning_triage)} groups.",
+            "This exists to show which warning bucket deserves attention before source browsing.",
+            [_warning_triage_panel(warning_triage)],
+            actions,
+            ("validation_pack", "cross_project_smoke", "status_snapshot"),
+        ),
+        _linked_detail_panel(
+            "detail-evidence-freshness",
+            "Detail: Evidence Freshness",
+            f"{freshness.get('loaded_count', '0/0')} sources loaded; latest generated at {freshness.get('latest_generated_at', 'unknown')}.",
+            "This exists to decide whether the current evidence is fresh enough for a review decision.",
+            [_sources_table(_list(model.get("sources")))],
+            actions,
+            ("dashboard_review",),
+        ),
+        _linked_detail_panel(
+            "detail-review-actions",
+            "Detail: Review Actions",
+            f"{action_summary.get('total', 0)} actions; {action_summary.get('locked_by_gate', 0)} locked-by-gate reminder.",
+            "This exists to keep review work visible while preserving executable:false on every action.",
+            [_review_action_summary_panel(action_summary, action_package)],
+            actions,
+            ("dashboard_review", "locked_gate"),
+        ),
+        _linked_detail_panel(
+            "detail-project-smoke",
+            "Detail: Project Smoke",
+            f"{smoke_summary.get('result', 'unknown')} across {_count_text(smoke_summary)}.",
+            "This exists to separate cross-project observer warnings from DevCockpitCore implementation work.",
+            [_project_cards(projects)],
+            actions,
+            ("cross_project_smoke",),
+        ),
+        _linked_detail_panel(
+            "detail-source-files",
+            "Detail: Source Files",
+            f"Dashboard artifact is {output.get('repo_relative_path', 'unknown')}; repo state is {status_repo.get('worktree', {}).get('state', 'unknown')}.",
+            "This exists to show local access and source paths without turning the dashboard into a server or runner.",
+            [_access_panel(output), _action_package_access_panel(action_package), _summary_line(validation_summary)],
+            actions,
+            ("status_snapshot",),
+        ),
+    ]
+    return f'<div class="linked-detail-grid">{"".join(panels)}</div>'
+
+
+def _linked_detail_panel(
+    panel_id: str,
+    title: str,
+    summary: str,
+    why: str,
+    body: list[str],
+    actions: list[Any],
+    related_source_types: tuple[str, ...],
+    *,
+    fallback: str = "No related review action is required for this signal.",
+) -> str:
+    return (
+        f'<section id="{_e(panel_id)}" class="detail-anchor-panel" aria-labelledby="{_e(panel_id)}-heading">'
+        '<div class="detail-anchor-head">'
+        '<span>Linked detail</span>'
+        f'<h3 id="{_e(panel_id)}-heading">{_e(title)}</h3>'
+        f"<p>{_e(summary)}</p>"
+        '<a class="back-link" href="#meter-board">Back to overview</a>'
+        "</div>"
+        f"<p class=\"why-line\">{_e(why)}</p>"
+        f'<div class="detail-body">{"".join(body)}</div>'
+        f"{_related_action_links(actions, related_source_types, fallback=fallback)}"
+        "</section>"
+    )
+
+
+def _related_action_links(
+    actions: list[Any],
+    source_types: tuple[str, ...],
+    *,
+    fallback: str,
+    limit: int = 4,
+) -> str:
+    matched = [
+        _dict(action)
+        for action in actions
+        if str(_dict(action).get("source_type")) in source_types
+    ]
+    if not matched:
+        return f'<div class="related-actions"><h4>Related Review Actions</h4><p>{_e(fallback)}</p></div>'
+    rows = []
+    for action in matched[:limit]:
+        action_id = str(action.get("action_id", "review-action"))
+        rows.append(
+            "<li>"
+            f'<a href="#{_e(action_id)}">{_e(action_id)}</a> '
+            f"<span class=\"pill {_result_class(action.get('severity'))}\">{_e(action.get('severity', 'info'))}</span> "
+            f"{_e(_short_text(str(action.get('reason', action.get('title', 'Review action'))), 88))}"
+            "</li>"
+        )
+    overflow = len(matched) - limit
+    overflow_html = f'<p class="subtle">+{overflow} more in Review Actions.</p>' if overflow > 0 else ""
+    return (
+        '<div class="related-actions">'
+        "<h4>Related Review Actions</h4>"
+        f'<ul class="list compact-list">{"".join(rows)}</ul>'
+        f"{overflow_html}"
+        "</div>"
+    )
 
 
 def _section(
@@ -596,6 +847,7 @@ def _review_action_cards(actions: list[Any]) -> str:
     for action in actions:
         item = _dict(action)
         severity = str(item.get("severity", "info"))
+        action_id = _slug(item.get("action_id", "review-action"))
         search_text = " ".join(
             str(part)
             for part in (
@@ -609,7 +861,7 @@ def _review_action_cards(actions: list[Any]) -> str:
         ).lower()
         gate_note = "Locked by gate" if item.get("blocked_by_gate") else "Review-only"
         cards.append(
-            f'<article class="review-action-card" data-review-action data-severity="{_e(severity)}" data-search="{_e(search_text)}">'
+            f'<article id="{_e(action_id)}" class="review-action-card" data-review-action data-severity="{_e(severity)}" data-search="{_e(search_text)}">'
             f"<div class=\"project-card-head\"><h3>{_e(item.get('title', 'Review action'))}</h3>"
             f"<span class=\"pill {_result_class(severity)}\">{_e(severity)}</span></div>"
             f"<p><strong>ID:</strong> <code>{_e(item.get('action_id', 'unknown'))}</code></p>"
@@ -1483,6 +1735,297 @@ def _safe_local_actions(output_rel: str) -> list[dict[str, str]]:
     ]
 
 
+def _latest_brief(
+    health: dict[str, Any],
+    warning_triage: list[dict[str, Any]],
+    freshness: dict[str, Any],
+    output_rel: str,
+    review_stack: list[dict[str, str]],
+) -> list[dict[str, str]]:
+    blockers = _list(health.get("blockers"))
+    largest_warning = _largest_warning_group(warning_triage)
+    first_next = review_stack[0] if review_stack else {}
+    access_label = "local file" if output_rel else "local artifact"
+    return [
+        {
+            "label": "Decision",
+            "value": f"{_decision_label(health)}: {_decision_detail(health)}",
+            "href": "#detail-stop-gate",
+            "action": "Gate",
+        },
+        {
+            "label": "Blockers",
+            "value": f"{len(blockers)} blocker(s)",
+            "href": "#detail-stop-gate",
+            "action": "Check",
+        },
+        {
+            "label": "Focus",
+            "value": f"{largest_warning.get('source', 'Warnings')} ({largest_warning.get('count', 0)})",
+            "href": _warning_group_href(str(largest_warning.get("source", ""))),
+            "action": "Open",
+        },
+        {
+            "label": "Proof",
+            "value": f"{freshness.get('loaded_count', '0/0')} sources, {access_label}",
+            "href": "#detail-evidence-freshness",
+            "action": "Verify",
+        },
+        {
+            "label": "Next",
+            "value": _short_text(str(first_next.get("title") or "Use Review Stack"), 42),
+            "href": str(first_next.get("href") or "#review-stack"),
+            "action": "Review",
+        },
+    ]
+
+
+def _decision_meters(
+    health: dict[str, Any],
+    validation: dict[str, Any],
+    smoke: dict[str, Any],
+    status: dict[str, Any],
+    sources: list[dict[str, Any]],
+    freshness: dict[str, Any],
+    action_summary: dict[str, Any],
+    warning_triage: list[dict[str, Any]],
+    review_actions: list[dict[str, Any]],
+    dashboard_path: str,
+) -> list[dict[str, Any]]:
+    blockers = _list(health.get("blockers"))
+    warnings = _list(health.get("warnings"))
+    action_total = _int(action_summary.get("total"))
+    warning_actions = _int(action_summary.get("warning"))
+    blocker_actions = _int(action_summary.get("blocker"))
+    loaded_sources = sum(1 for source in sources if source.get("state") == "loaded")
+    total_sources = len(sources)
+    smoke_summary = _dict(smoke.get("summary"))
+    status_repo = _dict(status.get("repo"))
+    top_warning_group = _largest_warning_group(warning_triage)
+    warning_action_types = _warning_group_source_types(str(top_warning_group.get("source", "")))
+    access_primary = "Local" if dashboard_path else "Review"
+
+    return [
+        {
+            "title": "Stop Gate",
+            "primary_value": f"{len(blockers)} blockers",
+            "summary": f"{_decision_label(health)}: {_decision_detail(health)}.",
+            "why": "Start here because blockers decide whether the review can continue.",
+            "detail_href": "#detail-stop-gate",
+            "action_href": _action_href(review_actions, ("dashboard_health",), fallback="#detail-stop-gate"),
+            "action_label": "Review action" if blocker_actions else "No blocker action",
+            "evidence_path": "Health, Gate, Readiness",
+            "tone": "red" if blockers else "green",
+            "progress": {
+                "done": blocker_actions,
+                "total": action_total,
+                "label": f"{blocker_actions}/{action_total} actions are blockers",
+                "tone": "red" if blocker_actions else "green",
+            },
+        },
+        {
+            "title": "Warning Debt",
+            "primary_value": f"{warning_actions} warnings",
+            "summary": f"Largest group: {top_warning_group.get('source', 'none')}.",
+            "why": "This points to the warning bucket most likely to need the next judgment.",
+            "detail_href": "#detail-warning-debt",
+            "action_href": _action_href(
+                review_actions,
+                warning_action_types,
+                fallback="#review-actions",
+            ),
+            "action_label": "Review action",
+            "evidence_path": top_warning_group.get("source", "Warnings Triage"),
+            "tone": "yellow" if warning_actions or warnings else "green",
+            "progress": {
+                "done": warning_actions,
+                "total": action_total,
+                "label": f"{warning_actions}/{action_total} actions carry warnings",
+                "tone": "yellow" if warning_actions else "green",
+            },
+        },
+        {
+            "title": "Evidence Freshness",
+            "primary_value": str(freshness.get("loaded_count", "0/0")),
+            "summary": f"Latest source: {_short_text(str(freshness.get('latest_generated_at', 'unknown')), 30)}.",
+            "why": "Use this before trusting the dashboard as a current handoff surface.",
+            "detail_href": "#detail-evidence-freshness",
+            "action_href": _action_href(review_actions, ("dashboard_review",), fallback="#review-actions"),
+            "evidence_path": "Sources and Access",
+            "tone": "green" if loaded_sources == total_sources else "yellow",
+            "progress": {
+                "done": loaded_sources,
+                "total": total_sources,
+                "label": f"{loaded_sources}/{total_sources} configured sources loaded",
+                "tone": "green" if loaded_sources == total_sources else "yellow",
+            },
+        },
+        {
+            "title": "Review Queue",
+            "primary_value": f"{action_total} actions",
+            "summary": f"{warning_actions} warnings, {action_summary.get('info', 0)} info.",
+            "why": "This keeps the next decisions visible while preserving non-executable actions.",
+            "detail_href": "#detail-review-actions",
+            "action_href": _action_href(review_actions, ("locked_gate",), fallback="#review-actions"),
+            "evidence_path": "samples/dashboard/devcockpitcore_review_actions.json",
+            "tone": "yellow" if warning_actions else "green",
+            "progress": {
+                "done": warning_actions + blocker_actions,
+                "total": action_total,
+                "label": f"{warning_actions + blocker_actions}/{action_total} actions need triage",
+                "tone": "yellow" if warning_actions or blocker_actions else "green",
+            },
+        },
+        {
+            "title": "Project Smoke",
+            "primary_value": str(smoke_summary.get("result", "unknown")),
+            "summary": _count_text(smoke_summary),
+            "why": "This separates cross-project observer warnings from local implementation work.",
+            "detail_href": "#detail-project-smoke",
+            "action_href": _action_href(review_actions, ("cross_project_smoke",), fallback="#review-actions"),
+            "evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+            "tone": smoke_summary.get("result", "neutral"),
+            "progress": {
+                "done": _int(smoke_summary.get("done")),
+                "total": _int(smoke_summary.get("total")),
+                "label": _count_text(smoke_summary),
+                "tone": smoke_summary.get("result", "neutral"),
+            },
+        },
+        {
+            "title": "Access Readiness",
+            "primary_value": access_primary,
+            "summary": f"Repo is {status_repo.get('worktree', {}).get('state', 'unknown')}; open as static file.",
+            "why": "Use this to confirm review access without adding a server, scheduler, or writeback path.",
+            "detail_href": "#detail-source-files",
+            "action_href": _action_href(review_actions, ("status_snapshot",), fallback="#review-actions"),
+            "evidence_path": dashboard_path,
+            "tone": "green" if loaded_sources == total_sources else "yellow",
+            "progress": {
+                "done": loaded_sources,
+                "total": total_sources,
+                "label": f"{loaded_sources}/{total_sources} access sources present",
+                "tone": "green" if loaded_sources == total_sources else "yellow",
+            },
+        },
+    ]
+
+
+def _review_stack(
+    health: dict[str, Any],
+    warning_triage: list[dict[str, Any]],
+    freshness: dict[str, Any],
+    action_summary: dict[str, Any],
+) -> list[dict[str, str]]:
+    blockers = _list(health.get("blockers"))
+    largest_warning = _largest_warning_group(warning_triage)
+    stack = [
+        {
+            "title": "Check Stop Gate",
+            "reason": (
+                "Blockers exist and must be resolved before integration."
+                if blockers
+                else "No blockers are reported; confirm this before reviewing warning debt."
+            ),
+            "href": "#detail-stop-gate",
+            "link_label": "Open stop gate",
+            "evidence": "Health, Gate, Readiness",
+        },
+        {
+            "title": f"Review {largest_warning.get('source', 'Warning Debt')}",
+            "reason": f"{largest_warning.get('count', 0)} warning item(s) make this the largest current review bucket.",
+            "href": _warning_group_href(str(largest_warning.get("source", ""))),
+            "link_label": "Open warning detail",
+            "evidence": str(largest_warning.get("source", "Warnings Triage")),
+        },
+    ]
+    loaded, total = _parse_count_pair(str(freshness.get("loaded_count", "0/0")))
+    if loaded < total:
+        stack.append(
+            {
+                "title": "Refresh Evidence",
+                "reason": f"{loaded}/{total} sources loaded; inspect missing or stale source evidence.",
+                "href": "#detail-evidence-freshness",
+                "link_label": "Open freshness detail",
+                "evidence": "Sources and Access",
+            }
+        )
+    elif _int(action_summary.get("warning")):
+        stack.append(
+            {
+                "title": "Use Review Queue",
+                "reason": f"{action_summary.get('warning', 0)} warning actions are ready for freeform review.",
+                "href": "#detail-review-actions",
+                "link_label": "Open action queue",
+                "evidence": "Review Actions",
+            }
+        )
+    else:
+        stack.append(
+            {
+                "title": "Confirm Access",
+                "reason": "All sources loaded; verify the local static handoff path and print view.",
+                "href": "#detail-source-files",
+                "link_label": "Open source detail",
+                "evidence": "Sources and Access",
+            }
+        )
+    return stack[:3]
+
+
+def _largest_warning_group(groups: list[dict[str, Any]]) -> dict[str, Any]:
+    candidates = [
+        _dict(group)
+        for group in groups
+        if str(_dict(group).get("source", "")) != "Blockers"
+    ]
+    if not candidates:
+        return {"source": "Warning Debt", "count": 0}
+    return max(candidates, key=lambda item: _int(item.get("count")))
+
+
+def _warning_group_href(source: str) -> str:
+    mapping = {
+        "Validation Pack": "#detail-warning-debt",
+        "Cross-Project Smoke": "#detail-project-smoke",
+        "Project Rows": "#detail-project-smoke",
+        "Status Snapshot": "#detail-source-files",
+        "Source Files": "#detail-evidence-freshness",
+    }
+    return mapping.get(source, "#detail-warning-debt")
+
+
+def _warning_group_source_types(source: str) -> tuple[str, ...]:
+    mapping = {
+        "Validation Pack": ("validation_pack",),
+        "Cross-Project Smoke": ("cross_project_smoke",),
+        "Project Rows": ("cross_project_smoke",),
+        "Status Snapshot": ("status_snapshot",),
+        "Source Files": ("dashboard_review",),
+    }
+    return mapping.get(source, ("validation_pack", "cross_project_smoke", "status_snapshot"))
+
+
+def _action_href(
+    actions: list[dict[str, Any]],
+    source_types: tuple[str, ...],
+    *,
+    fallback: str,
+) -> str:
+    for action in actions:
+        item = _dict(action)
+        if str(item.get("source_type")) in source_types:
+            return f"#{_slug(item.get('action_id', 'review-action'))}"
+    return fallback
+
+
+def _parse_count_pair(value: str) -> tuple[int, int]:
+    if "/" not in value:
+        return 0, 0
+    left, right = value.split("/", 1)
+    return _int(left), _int(right)
+
+
 def _review_next_items(
     health: dict[str, Any],
     validation: dict[str, Any],
@@ -1516,16 +2059,16 @@ def _review_checkpoints(
     warning_count = len(_list(health.get("warnings")))
     return [
         {
-            "label": "1. Warning Ownership",
-            "state": f"{warning_count} warning(s)",
-            "prompt": "Confirm each warning is expected observer residue or assign a follow-up owner.",
-            "evidence": "Warnings Triage",
+            "label": "1. Meter Clarity",
+            "state": f"{blocker_count} blocker(s), {warning_count} warning signal(s)",
+            "prompt": "Confirm the home meters tell which subsystem to inspect first.",
+            "evidence": "Home Decision Meters",
         },
         {
-            "label": "2. Blocker Check",
-            "state": f"{blocker_count} blocker(s)",
-            "prompt": "Only use this dashboard as an integration signal when blocker count is zero.",
-            "evidence": "Health, Gate, Readiness",
+            "label": "2. Detail Linkage",
+            "state": "6 meter-linked detail panels",
+            "prompt": "Confirm each meter link lands on the matching detail panel and back link.",
+            "evidence": "Linked Detail Map",
         },
         {
             "label": "3. Evidence Freshness",
@@ -1766,7 +2309,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-vis
 }
 .top-strip {
   display: grid;
-  grid-template-columns: minmax(260px, 0.72fr) minmax(460px, 1fr);
+  grid-template-columns: minmax(260px, 0.56fr) minmax(620px, 1fr);
   gap: 24px;
   align-items: stretch;
   padding: 26px 32px 22px;
@@ -1799,6 +2342,7 @@ h1, h2, h3, p { margin-top: 0; }
 h1 { margin-bottom: 8px; font-size: 30px; letter-spacing: 0; }
 h2 { margin-bottom: 14px; font-size: 20px; letter-spacing: 0; }
 h3 { margin-bottom: 10px; font-size: 16px; letter-spacing: 0; }
+h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
 .eyebrow {
   margin-bottom: 6px;
   color: var(--yellow);
@@ -1813,6 +2357,53 @@ h3 { margin-bottom: 10px; font-size: 16px; letter-spacing: 0; }
   margin-bottom: 12px;
   color: var(--muted);
   font-size: 15px;
+}
+.latest-brief {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--teal);
+  border-radius: 8px;
+  background: #1a211d;
+}
+.latest-brief h2 {
+  margin: 0 0 8px;
+  color: var(--yellow);
+  font-size: 13px;
+  text-transform: uppercase;
+}
+.latest-brief ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.latest-brief li {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  min-height: 28px;
+}
+.latest-brief span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.latest-brief strong {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.latest-brief a {
+  min-height: 28px;
+  padding: 3px 8px;
+  border: 1px solid rgba(244, 241, 232, 0.22);
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
 }
 .overview-board {
   display: grid;
@@ -1848,6 +2439,80 @@ h3 { margin-bottom: 10px; font-size: 16px; letter-spacing: 0; }
 .overview-primary {
   background: #243321;
   border-color: #53633b;
+}
+.decision-meter-board {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.decision-meter {
+  display: grid;
+  gap: 8px;
+  min-height: 186px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #1e241f;
+  box-shadow: 0 12px 30px var(--shadow);
+}
+.decision-meter.is-green { color: var(--ink); background: #1e2a21; border-color: #405d45; }
+.decision-meter.is-yellow { color: var(--ink); background: #2d281b; border-color: #6c562b; }
+.decision-meter.is-red { color: var(--ink); background: #2d1b20; border-color: #7d3b45; }
+.decision-meter.is-neutral { color: var(--ink); background: #1b2528; border-color: #38606a; }
+.meter-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.meter-head span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.meter-head strong {
+  font-size: 24px;
+  line-height: 1.05;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.decision-meter p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.decision-progress {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  background: #101410;
+  border-radius: 4px;
+}
+.decision-progress span { display: block; height: 100%; border-radius: 4px; }
+.meter-note { font-size: 12px; }
+.why-line { color: var(--ink); }
+.meter-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.meter-links a,
+.stack-card a,
+.back-link {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid rgba(244, 241, 232, 0.24);
+  border-radius: 6px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+.meter-links a:first-child,
+.stack-card a {
+  background: rgba(102, 198, 166, 0.14);
 }
 .review-strip {
   grid-column: 1 / -1;
@@ -1898,6 +2563,32 @@ h3 { margin-bottom: 10px; font-size: 16px; letter-spacing: 0; }
 .kpi-large strong { display: block; font-size: 24px; }
 .kpi-small strong { display: block; font-size: 14px; }
 .page { padding: 18px 32px 40px; }
+.review-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.stack-card {
+  min-height: 152px;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.stack-card span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.stack-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+.stack-card p { color: var(--muted); font-size: 13px; }
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1969,6 +2660,52 @@ h3 { margin-bottom: 10px; font-size: 16px; letter-spacing: 0; }
   padding: 0 14px 14px;
 }
 .detail-panel { background: #1a1e1a; }
+.linked-detail-grid {
+  display: grid;
+  gap: 14px;
+}
+.detail-anchor-panel {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  background: #151914;
+}
+.detail-anchor-panel:target {
+  outline: 3px solid rgba(217, 168, 78, 0.75);
+  outline-offset: 3px;
+}
+.detail-anchor-head {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 8px 14px;
+  align-items: start;
+}
+.detail-anchor-head span {
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.detail-anchor-head h3,
+.detail-anchor-head p {
+  grid-column: 1;
+  margin: 0;
+}
+.detail-anchor-head p { color: var(--muted); }
+.detail-anchor-head .back-link {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: start;
+}
+.detail-body {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.related-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
 .checkpoint-grid, .triage-grid, .project-card-grid, .action-grid, .action-review-grid, .locked-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -2115,17 +2852,20 @@ code {
 }
 @media (max-width: 980px) {
   .top-strip { grid-template-columns: 1fr; align-items: start; }
-  .overview-board, .top-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .overview-board, .top-kpis, .decision-meter-board, .review-stack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .summary-grid, .grid-three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .filter-panel { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .top-strip { padding: 22px 18px; }
   .page { padding: 18px; }
-  .summary-grid, .grid-three, .overview-board, .top-kpis { grid-template-columns: 1fr; }
+  .summary-grid, .grid-three, .overview-board, .top-kpis, .decision-meter-board, .review-stack-grid { grid-template-columns: 1fr; }
   .review-strip { grid-template-columns: 1fr; }
   .disclosure > summary { grid-template-columns: auto 1fr; }
   .disclosure > summary span { grid-column: 2; }
+  .latest-brief li { grid-template-columns: 1fr; }
+  .detail-anchor-head { grid-template-columns: 1fr; }
+  .detail-anchor-head .back-link { grid-column: 1; grid-row: auto; }
   h1 { font-size: 24px; }
 }
 @media print {
@@ -2146,7 +2886,7 @@ code {
   .skip-link, .dashboard-nav, .filter-panel, script {
     display: none !important;
   }
-  .top-strip, .dashboard-footer, .metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card {
+  .top-strip, .dashboard-footer, .metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card, .decision-meter, .stack-card, .detail-anchor-panel, .latest-brief {
     border-color: #999999;
     box-shadow: none;
     background: #ffffff;

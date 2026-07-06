@@ -1,12 +1,12 @@
 {
   "schema_version": "status_snapshot.v1",
-  "generated_at": "2026-07-06T01:09:06Z",
+  "generated_at": "2026-07-06T07:55:33Z",
   "producer": "dev_cockpit.status_snapshot",
   "adapter": {
     "schema_version": "adapter_manifest.v1",
     "project": "DevCockpitCore",
     "project_key": "devcockpitcore",
-    "adapter_path": "adapters/devcockpitcore.json",
+    "adapter_path": "adapters\\devcockpitcore.json",
     "default_branch": "main",
     "read_only": true
   },
@@ -15,9 +15,9 @@
     "exists": true,
     "is_git_repo": true,
     "branch": "main",
-    "head": "33250ab",
+    "head": "2e5e924",
     "upstream": "origin/main",
-    "latest_commit": "33250ab test: review minimal c4 validation-pack probe",
+    "latest_commit": "2e5e924 feat: add compact dashboard handoff",
     "remote_parity": {
       "ahead": 0,
       "behind": 0,
@@ -27,20 +27,20 @@
     "worktree": {
       "state": "dirty",
       "short_status": [
-        "M  README.md",
-        "A  docs/PROJECT_COCKPIT.md",
-        "M  docs/decision-log.md",
-        "M  docs/idea-ledger.md",
-        "M  docs/project-context.md",
-        "MM docs/runtime-state.md",
-        "M  pyproject.toml",
-        "M  samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-        "M  samples/status_snapshots/devcockpitcore_status.json",
-        "M  samples/validation_packs/devcockpitcore_validation_pack_result.json",
-        "?? docs/PROJECT_PIPELINE.mmd",
-        "?? samples/dashboard/",
-        "?? src/dev_cockpit/dashboard.py",
-        "?? tests/test_dashboard.py"
+        " M README.md",
+        " M docs/PROJECT_COCKPIT.md",
+        " M docs/PROJECT_PIPELINE.mmd",
+        " M docs/project-context.md",
+        " M docs/runtime-state.md",
+        " M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        " M samples/dashboard/README.md",
+        " M samples/dashboard/devcockpitcore_dashboard.html",
+        " M samples/dashboard/devcockpitcore_review_actions.json",
+        " M samples/dashboard/devcockpitcore_review_actions.md",
+        " M samples/status_snapshots/devcockpitcore_status.json",
+        " M samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        " M src/dev_cockpit/dashboard.py",
+        " M tests/test_dashboard.py"
       ]
     }
   },
@@ -49,9 +49,9 @@
     "runtime_state_exists": true,
     "project_context_path": "docs/project-context.md",
     "project_context_exists": true,
-    "active_artifact": "dashboard-compact-dark-overview-v1",
-    "next_action": "Open samples/dashboard/devcockpitcore_dashboard.html for dark overview review, or harden the accepted single bounded C4 validation-pack probe",
-    "user_work": "local dashboard visual review",
+    "active_artifact": "dashboard-latest-brief-checkpoint-v1",
+    "next_action": "Open samples/dashboard/devcockpitcore_dashboard.html for Latest Brief review, or harden the accepted single bounded C4 validation-pack probe",
+    "user_work": "local dashboard latest-brief visual review",
     "render_gate": "not_applicable"
   },
   "artifacts": {
@@ -70,52 +70,52 @@
     "latest_candidates": [
       {
         "path": "samples/status_snapshots/devcockpitcore_status.json",
-        "modified_at": "2026-07-06T01:04:50Z",
-        "size_bytes": 4338
-      },
-      {
-        "path": "docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md",
-        "modified_at": "2026-07-06T01:04:40Z",
-        "size_bytes": 4165
+        "modified_at": "2026-07-06T06:38:50Z",
+        "size_bytes": 4457
       },
       {
         "path": "docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md",
-        "modified_at": "2026-07-06T01:04:40Z",
-        "size_bytes": 4087
+        "modified_at": "2026-07-01T04:36:28Z",
+        "size_bytes": 3937
       },
       {
-        "path": "docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md",
-        "modified_at": "2026-06-30T00:56:58Z",
-        "size_bytes": 3424
+        "path": "docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md",
+        "modified_at": "2026-06-30T09:58:12Z",
+        "size_bytes": 4041
       },
       {
         "path": "docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md",
-        "modified_at": "2026-06-29T13:43:29Z",
+        "modified_at": "2026-06-30T01:57:50Z",
         "size_bytes": 2579
       },
       {
-        "path": "docs/handoffs/2026-06-29-c3-second-command-acceptance-review-v1.md",
-        "modified_at": "2026-06-29T13:38:11Z",
-        "size_bytes": 2800
+        "path": "docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md",
+        "modified_at": "2026-06-30T01:57:50Z",
+        "size_bytes": 3424
       },
       {
-        "path": "docs/handoffs/2026-06-29-c3-second-command-design-v1.md",
-        "modified_at": "2026-06-29T13:38:11Z",
-        "size_bytes": 3704
+        "path": "docs/handoffs/2026-06-29-c3-second-command-acceptance-review-v1.md",
+        "modified_at": "2026-06-29T03:47:37Z",
+        "size_bytes": 2703
       },
       {
         "path": "docs/handoffs/2026-06-29-c3-second-command-help-probe-v1.md",
-        "modified_at": "2026-06-29T13:38:11Z",
-        "size_bytes": 2800
+        "modified_at": "2026-06-29T03:30:19Z",
+        "size_bytes": 2703
+      },
+      {
+        "path": "docs/handoffs/2026-06-29-c3-second-command-design-v1.md",
+        "modified_at": "2026-06-29T02:58:33Z",
+        "size_bytes": 3579
       },
       {
         "path": "docs/handoffs/2026-06-29-c3-probe-hardening-v1.md",
-        "modified_at": "2026-06-29T01:08:09Z",
+        "modified_at": "2026-06-29T02:53:08Z",
         "size_bytes": 4440
       },
       {
         "path": "samples/status_snapshots/example_nlmytgen_status.json",
-        "modified_at": "2026-06-26T15:05:56Z",
+        "modified_at": "2026-06-29T02:53:08Z",
         "size_bytes": 3651
       }
     ]

@@ -9,6 +9,10 @@ flowchart LR
     ACT["non-executable review action package"]
     A11Y["accessibility-oriented handoff layer"]
     HUD["compact dark overview HUD"]
+    BRIEF["Latest Brief: decision, blockers, focus, proof, next"]
+    METER["home-linked decision meter board"]
+    STACK["Review Stack: top 3 targets"]
+    DETAIL["meter-linked detail map"]
     HTML["samples/dashboard/devcockpitcore_dashboard.html"]
     JSON["samples/dashboard/devcockpitcore_review_actions.json"]
     MD["samples/dashboard/devcockpitcore_review_actions.md"]
@@ -24,10 +28,15 @@ flowchart LR
     IA --> ACT
     IA --> A11Y
     A11Y --> HUD
-    HUD --> HTML
+    HUD --> BRIEF
+    BRIEF --> METER
+    METER --> STACK
+    METER --> DETAIL
+    DETAIL --> HTML
+    STACK --> HTML
     ACT --> JSON
     ACT --> MD
-    ACT --> HUD
+    ACT --> METER
     HTML --> TRIAGE
     TRIAGE --> REVIEW
     JSON --> REVIEW

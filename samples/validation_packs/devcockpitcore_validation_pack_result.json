@@ -1,6 +1,6 @@
 {
   "schema_version": "validation_pack_result.v1",
-  "generated_at": "2026-07-06T01:09:24Z",
+  "generated_at": "2026-07-06T07:55:56Z",
   "producer": "dev_cockpit.validation_pack",
   "pack": {
     "pack_key": "devcockpitcore_default",
@@ -8,26 +8,26 @@
     "project_key": "devcockpitcore"
   },
   "repo": {
-    "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
+    "path": "C:\\Users\\<redacted>\\DevCockpitCore",
     "branch": "main",
-    "head": "33250ab",
+    "head": "2e5e924",
     "worktree": {
       "state": "dirty",
       "short_status": [
-        "M  README.md",
-        "A  docs/PROJECT_COCKPIT.md",
-        "M  docs/decision-log.md",
-        "M  docs/idea-ledger.md",
-        "M  docs/project-context.md",
-        "MM docs/runtime-state.md",
-        "M  pyproject.toml",
-        "MM samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-        "MM samples/status_snapshots/devcockpitcore_status.json",
-        "M  samples/validation_packs/devcockpitcore_validation_pack_result.json",
-        "?? docs/PROJECT_PIPELINE.mmd",
-        "?? samples/dashboard/",
-        "?? src/dev_cockpit/dashboard.py",
-        "?? tests/test_dashboard.py"
+        " M README.md",
+        " M docs/PROJECT_COCKPIT.md",
+        " M docs/PROJECT_PIPELINE.mmd",
+        " M docs/project-context.md",
+        " M docs/runtime-state.md",
+        " M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        " M samples/dashboard/README.md",
+        " M samples/dashboard/devcockpitcore_dashboard.html",
+        " M samples/dashboard/devcockpitcore_review_actions.json",
+        " M samples/dashboard/devcockpitcore_review_actions.md",
+        " M samples/status_snapshots/devcockpitcore_status.json",
+        " M samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        " M src/dev_cockpit/dashboard.py",
+        " M tests/test_dashboard.py"
       ]
     },
     "remote_parity": {
@@ -75,7 +75,7 @@
       "meter": "#",
       "severity": "required",
       "command": [
-        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
         "-m",
         "unittest",
         "discover"
@@ -84,7 +84,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=16.418 stdout='' stderr='.........................................................................................................................................................................................................................................................................................................\\n----------------------------------------------------------------------\\nRan 297 tests in 16.200s\\n\\nOK\\n'"
+        "exit=0 duration_seconds=14.727 stdout='' stderr='............................................................................................................................................................................................................................................................................................................\\n----------------------------------------------------------------------\\nRan 300 tests in 14.574s\\n\\nOK\\n'"
       ]
     },
     {
@@ -112,7 +112,7 @@
       "meter": "#",
       "severity": "required",
       "command": [
-        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
         "-m",
         "dev_cockpit.status_snapshot",
         "--help"
@@ -121,7 +121,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.088 stdout='usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\\n                          [--pretty] [--no-write]\\n\\nProduce a read-only repository status snapshot.\\n\\noptions:\\n  -h, --help         show this help message and exit\\n  --repo REPO        Target repository path to inspect.\\n  --adapter ADAPTER  Adapter JSON path.\\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\\n  --pretty           Write indented JSON.\\n  --no-write         Print JSON and skip output file writes.\\n' stderr=''"
+        "exit=0 duration_seconds=0.09 stdout='usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\\n                          [--pretty] [--no-write]\\n\\nProduce a read-only repository status snapshot.\\n\\noptions:\\n  -h, --help         show this help message and exit\\n  --repo REPO        Target repository path to inspect.\\n  --adapter ADAPTER  Adapter JSON path.\\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\\n  --pretty           Write indented JSON.\\n  --no-write         Print JSON and skip output file writes.\\n' stderr=''"
       ]
     },
     {
@@ -134,7 +134,7 @@
       "meter": "#",
       "severity": "required",
       "command": [
-        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
         "-m",
         "dev_cockpit.report_normalizer",
         "--help"
@@ -143,7 +143,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.068 stdout='usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\\n                            [--pretty]\\n\\nNormalize an AGENT_REPORT-like text report.\\n\\noptions:\\n  -h, --help       show this help message and exit\\n  --input INPUT    Input report text path.\\n  --stdin          Read report text from stdin.\\n  --output OUTPUT  Output JSON path. Omit to write to stdout.\\n  --pretty         Write indented JSON.\\n' stderr=''"
+        "exit=0 duration_seconds=0.066 stdout='usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\\n                            [--pretty]\\n\\nNormalize an AGENT_REPORT-like text report.\\n\\noptions:\\n  -h, --help       show this help message and exit\\n  --input INPUT    Input report text path.\\n  --stdin          Read report text from stdin.\\n  --output OUTPUT  Output JSON path. Omit to write to stdout.\\n  --pretty         Write indented JSON.\\n' stderr=''"
       ]
     },
     {
@@ -156,7 +156,7 @@
       "meter": "#",
       "severity": "required",
       "command": [
-        "C:\\Users\\<redacted>\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\python\\python.exe",
+        "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
         "-m",
         "dev_cockpit.gate_classifier",
         "--help"
@@ -165,7 +165,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.068 stdout='usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\\n                          [--status-snapshot STATUS_SNAPSHOT]\\n                          [--adapter ADAPTER] [--output OUTPUT] [--pretty]\\n\\nClassify a report_normalization.v1 JSON readback.\\n\\noptions:\\n  -h, --help            show this help message and exit\\n  --report-normalization REPORT_NORMALIZATION\\n                        Required report normalization JSON path.\\n  --status-snapshot STATUS_SNAPSHOT\\n                        Optional status_snapshot.v1 JSON path.\\n  --adapter ADAPTER     Optional adapter_manifest.v1 JSON path.\\n  --output OUTPUT       Output JSON path. Omit to write to stdout.\\n  --pretty              Write indented JSON.\\n' stderr=''"
+        "exit=0 duration_seconds=0.066 stdout='usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\\n                          [--status-snapshot STATUS_SNAPSHOT]\\n                          [--adapter ADAPTER] [--output OUTPUT] [--pretty]\\n\\nClassify a report_normalization.v1 JSON readback.\\n\\noptions:\\n  -h, --help            show this help message and exit\\n  --report-normalization REPORT_NORMALIZATION\\n                        Required report normalization JSON path.\\n  --status-snapshot STATUS_SNAPSHOT\\n                        Optional status_snapshot.v1 JSON path.\\n  --adapter ADAPTER     Optional adapter_manifest.v1 JSON path.\\n  --output OUTPUT       Output JSON path. Omit to write to stdout.\\n  --pretty              Write indented JSON.\\n' stderr=''"
       ]
     },
     {
@@ -201,7 +201,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.039 stdout='' stderr=\"warning: in the working copy of 'docs/runtime-state.md', LF will be replaced by CRLF the next time Git touches it\\nwarning: in the working copy of 'samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json', LF will be replaced by CRLF the next time Git touches it\\nwarning: in the working copy of 'samples/status_snapshots/devcockpitcore_status.json', LF will be replaced by CRLF the next time Git touches it\\n\""
+        "exit=0 duration_seconds=0.036 stdout='' stderr=''"
       ]
     },
     {
@@ -223,7 +223,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.037 stdout='' stderr=''"
+        "exit=0 duration_seconds=0.026 stdout='' stderr=''"
       ]
     },
     {
@@ -245,8 +245,8 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.035 stdout='## main...origin/main\\nM  README.md\\nA  docs/PROJECT_COCKPIT.md\\nM  docs/decision-log.md\\nM  docs/idea-ledger.md\\nM  docs/project-context.md\\nMM docs/runtime-state.md\\nM  pyproject.toml\\nMM samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\\nMM samples/status_snapshots/devcockpitcore_status.json\\nM  samples/validation_packs/devcockpitcore_validation_pack_result.json\\n?? docs/PROJECT_PIPELINE.mmd\\n?? samples/dashboard/\\n?? src/dev_cockpit/dashboard.py\\n?? tests/test_dashboard.py\\n' stderr=''",
-        "## main...origin/main\nM  README.md\nA  docs/PROJECT_COCKPIT.md\nM  docs/decision-log.md\nM  docs/idea-ledger.md\nM  docs/project-context.md\nMM docs/runtime-state.md\nM  pyproject.toml\nMM samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\nMM samples/status_snapshots/devcockpitcore_status.json\nM  samples/validation_packs/devcockpitcore_validation_pack_result.json\n?? docs/PROJECT_PIPELINE.mmd\n?? samples/dashboard/\n?? src/dev_cockpit/dashboard.py\n?? tests/test_dashboard.py\n"
+        "exit=0 duration_seconds=0.079 stdout='## main...origin/main\\n M README.md\\n M docs/PROJECT_COCKPIT.md\\n M docs/PROJECT_PIPELINE.mmd\\n M docs/project-context.md\\n M docs/runtime-state.md\\n M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\\n M samples/dashboard/README.md\\n M samples/dashboard/devcockpitcore_dashboard.html\\n M samples/dashboard/devcockpitcore_review_actions.json\\n M samples/dashboard/devcockpitcore_review_actions.md\\n M samples/status_snapshots/devcockpitcore_status.json\\n M samples/validation_packs/devcockpitcore_validation_pack_result.json\\n M src/dev_cockpit/dashboard.py\\n M tests/test_dashboard.py\\n' stderr=''",
+        "## main...origin/main\n M README.md\n M docs/PROJECT_COCKPIT.md\n M docs/PROJECT_PIPELINE.mmd\n M docs/project-context.md\n M docs/runtime-state.md\n M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\n M samples/dashboard/README.md\n M samples/dashboard/devcockpitcore_dashboard.html\n M samples/dashboard/devcockpitcore_review_actions.json\n M samples/dashboard/devcockpitcore_review_actions.md\n M samples/status_snapshots/devcockpitcore_status.json\n M samples/validation_packs/devcockpitcore_validation_pack_result.json\n M src/dev_cockpit/dashboard.py\n M tests/test_dashboard.py\n"
       ]
     },
     {

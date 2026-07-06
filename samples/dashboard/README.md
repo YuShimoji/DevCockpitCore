@@ -1,24 +1,30 @@
 # DevCockpitCore Dashboard Samples
 
 This folder holds generated local static dashboard artifacts.
-The default dashboard is a compact dark-mode designer/operator review surface.
-The first view summarizes the continue/stop judgment, blocker count, warning
-focus, source freshness, and next review step. Dense warning, project, source,
-and table evidence stays available in native details panels below the overview.
+The default dashboard is a latest-brief-first, home-linked dark
+designer/operator review surface. The first readout gives decision, blockers,
+warning focus, evidence/access state, and next review in five short lines. The
+meter board then shows stop gate, warning debt, evidence freshness, review
+queue, project smoke, and local access readiness. Each meter links to the
+matching detail panel and review action surface, while dense warning, project,
+source, and table evidence stays available below the overview.
 
 The generator also writes non-executable review action package artifacts:
 
 - `samples/dashboard/devcockpitcore_review_actions.json`
 - `samples/dashboard/devcockpitcore_review_actions.md`
 
-Manual compact/dark review:
+Manual latest-brief review:
 
 1. Open the dashboard file locally.
-2. Confirm the page is natively dark without relying on a browser extension.
-3. Check that the first screen is overview-first and not text-heavy.
-4. Use `Tab` to check the skip link, section navigation, filters, details panels, and action cards.
-5. Confirm the core content remains visible if JavaScript is disabled.
-6. Use browser print preview to inspect the light print handoff view.
+2. Read the Latest Brief and confirm it gives a useful overview before the meters.
+3. Confirm the page is natively dark without relying on a browser extension.
+4. Check that the top meters answer which subsystem to inspect first.
+5. Follow each meter link to its detail panel, then use the back-to-overview link.
+6. Confirm the Review Stack has no more than three immediate review targets.
+7. Use `Tab` to check the skip link, section navigation, filters, details panels, and action cards.
+8. Confirm the core content remains visible if JavaScript is disabled.
+9. Use browser print preview to inspect the light print handoff view.
 
 Generate the default dashboard from the repository root with:
 

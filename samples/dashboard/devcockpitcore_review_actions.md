@@ -2,11 +2,11 @@
 
 Non-executable review package generated from local dashboard evidence.
 
-- generated_at: `2026-07-06T01:09:33Z`
+- generated_at: `2026-07-06T07:56:23Z`
 - source_dashboard: `samples/dashboard/devcockpitcore_dashboard.html`
-- total_actions: `22`
+- total_actions: `20`
 - blockers: `0`
-- warnings: `18`
+- warnings: `16`
 - info: `4`
 
 ## How to review this package
@@ -30,15 +30,13 @@ Non-executable review package generated from local dashboard evidence.
 | project-devcockpitcore-011 | warning | cross_project_smoke | devcockpitcore | Review devcockpitcore smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | project-nlmytgen-012 | warning | cross_project_smoke | nlmytgen | Review nlmytgen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | project-writingpage-013 | warning | cross_project_smoke | writingpage | Review writingpage smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-writingpage-014 | warning | cross_project_smoke | writingpage | Review writingpage smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
+| project-clippipegen-014 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | project-clippipegen-015 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-clippipegen-016 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-clippipegen-017 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| status-018 | warning | status_snapshot | devcockpitcore | Review current repository status note | samples/status_snapshots/devcockpitcore_status.json | False |
-| checkpoint-019 | info | dashboard_review | devcockpitcore | 1. Warning Ownership | Warnings Triage | False |
-| checkpoint-020 | info | dashboard_review | devcockpitcore | 2. Blocker Check | Health, Gate, Readiness | False |
-| checkpoint-021 | info | dashboard_review | devcockpitcore | 3. Evidence Freshness | Sources and Access | False |
-| locked-gate-022 | info | locked_gate | devcockpitcore | Keep locked lanes gated | samples/dashboard/devcockpitcore_dashboard.html | False |
+| status-016 | warning | status_snapshot | devcockpitcore | Review current repository status note | samples/status_snapshots/devcockpitcore_status.json | False |
+| checkpoint-017 | info | dashboard_review | devcockpitcore | 1. Meter Clarity | Home Decision Meters | False |
+| checkpoint-018 | info | dashboard_review | devcockpitcore | 2. Detail Linkage | Linked Detail Map | False |
+| checkpoint-019 | info | dashboard_review | devcockpitcore | 3. Evidence Freshness | Sources and Access | False |
+| locked-gate-020 | info | locked_gate | devcockpitcore | Keep locked lanes gated | samples/dashboard/devcockpitcore_dashboard.html | False |
 
 Review notes:
 - These actions are review-only and not a runner.

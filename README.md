@@ -227,9 +227,12 @@ writeback in target repositories. The next roadmap step is
 
 The local test dashboard turns current validation, smoke, status, adapter, and
 runtime/project context evidence into one static HTML review surface. It now
-opens as a compact dark-mode overview first: a short supervision HUD summarizes
-continue/stop, blocker count, warning focus, source freshness, and the next
-review step before exposing dense evidence below. It is a local file only: no
+opens with a lightweight Latest Brief, then a home-linked dark decision meter
+HUD. The brief gives the current decision, blocker state, warning focus,
+evidence/access state, and next review action in five short lines. The meter
+board still summarizes stop gate, warning debt, evidence freshness, review
+queue, project smoke, and local access readiness, and each meter links to the
+detail panel and review action surface it explains. It is a local file only: no
 server, database, credentials, external services, or target repository
 writeback.
 
@@ -244,10 +247,10 @@ Every generated action is review-only and carries `executable: false`.
 The generated dashboard includes accessibility-oriented review affordances:
 semantic section landmarks, a skip link, section navigation, visible focus
 states, table captions, non-JavaScript fallback copy, and print styling for
-manual handoff. Dense evidence uses native `details` disclosure panels so the
-first screen is less text-heavy while source-backed rows remain available. This
-is an accessibility-oriented and visual-density pass, not a formal compliance
-claim.
+manual handoff. Dense evidence remains below the home meter board or inside
+native `details` disclosure panels, while the Review Stack points to at most
+three immediate review targets. This is an accessibility-oriented navigation
+and visual-density pass, not a formal compliance claim.
 
 Generate the dashboard with:
 
@@ -283,10 +286,11 @@ The generated project-card search and result filters are local DOM affordances
 over already-rendered static content. The review-action filters behave the same
 way. The core review content remains visible without JavaScript.
 
-For manual review, open the file, confirm the native dark overview is readable
-without browser-extension dark mode, use `Tab` to check focus visibility and the
-skip link, expand the details panels as needed, then use browser print preview
-to inspect the static handoff view.
+For manual review, open the file, read the Latest Brief first, confirm the
+native dark meter board remains readable without browser-extension dark mode,
+use the meter links to land on the matching detail panels, check the
+back-to-overview links with `Tab`, expand dense evidence only as needed, then
+use browser print preview to inspect the static handoff view.
 
 ## Controlled runner design
 
@@ -634,3 +638,5 @@ and recommended next entrances.
 27. review action package
 28. dashboard accessibility pass
 29. compact dark dashboard overview
+30. home-linked dashboard decision meters
+31. dashboard latest brief checkpoint

@@ -44,6 +44,11 @@ class DashboardTests(unittest.TestCase):
         self.assertIn("warning_triage", model)
         self.assertEqual(len(model["review_checkpoints"]), 3)
         self.assertEqual(model["freshness"]["loaded_count"], "6/6")
+        self.assertEqual(len(model["decision_meters"]), 6)
+        self.assertLessEqual(len(model["review_stack"]), 3)
+        self.assertTrue(all(meter["detail_href"].startswith("#detail-") for meter in model["decision_meters"]))
+        self.assertEqual(len(model["latest_brief"]), 5)
+        self.assertEqual([row["label"] for row in model["latest_brief"]], ["Decision", "Blockers", "Focus", "Proof", "Next"])
 
     def test_rendered_html_contains_required_review_sections(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -55,8 +60,16 @@ class DashboardTests(unittest.TestCase):
 
         for expected in (
             "Local supervision HUD",
-            "Compact review overview",
-            "Review Next",
+            "Latest Brief",
+            "Home-linked decision meter HUD",
+            "Review Stack",
+            "Linked Detail Map",
+            "Detail: Stop Gate",
+            "Detail: Warning Debt",
+            "Detail: Evidence Freshness",
+            "Detail: Review Actions",
+            "Detail: Project Smoke",
+            "Detail: Source Files",
             "Warnings Triage",
             "Project Cards",
             "Validation Pack",
@@ -83,15 +96,19 @@ class DashboardTests(unittest.TestCase):
         top_strip = html.split("</header>", 1)[0]
 
         for expected in (
-            'data-dashboard-variant="compact-dark-overview"',
+            'data-dashboard-variant="home-linked-meters"',
             'data-dashboard-theme="dark"',
             "color-scheme: dark",
-            "overview-board",
+            "latest-brief",
+            "decision-meter-board",
+            "data-meter-target=\"#detail-stop-gate\"",
             "review-strip",
-            "<span>State</span>",
-            "<span>Stop</span>",
-            "<span>Warn</span>",
-            "<span>Proof</span>",
+            "<span>Stop Gate</span>",
+            "<span>Warning Debt</span>",
+            "<span>Evidence Freshness</span>",
+            "<span>Review Queue</span>",
+            "<span>Project Smoke</span>",
+            "<span>Access Readiness</span>",
             '<details class="disclosure">',
             "Evidence Snapshot",
             "Detailed Review Actions",
@@ -104,6 +121,63 @@ class DashboardTests(unittest.TestCase):
             "file_generated_by_dashboard_command",
         ):
             self.assertNotIn(raw_value, top_strip)
+
+    def test_latest_brief_is_short_and_before_meter_board(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+
+        html = render_dashboard(model)
+        top_strip = html.split("</header>", 1)[0]
+        brief = top_strip.split('<section id="latest-brief"', 1)[1].split("</section>", 1)[0]
+
+        self.assertLess(top_strip.index('id="latest-brief"'), top_strip.index('id="meter-board"'))
+        self.assertEqual(brief.count("<li>"), 5)
+        for expected in ("Decision", "Blockers", "Focus", "Proof", "Next"):
+            self.assertIn(expected, brief)
+        for duplicated_meter in ("Review Queue", "Project Smoke", "Access Readiness"):
+            self.assertNotIn(duplicated_meter, brief)
+
+    def test_home_meters_link_to_detail_panels_and_review_actions(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+
+        html = render_dashboard(model)
+
+        detail_ids = (
+            "detail-stop-gate",
+            "detail-warning-debt",
+            "detail-evidence-freshness",
+            "detail-review-actions",
+            "detail-project-smoke",
+            "detail-source-files",
+        )
+        self.assertEqual(html.count('class="decision-meter '), 6)
+        for detail_id in detail_ids:
+            self.assertIn(f'href="#{detail_id}"', html)
+            self.assertIn(f'id="{detail_id}"', html)
+            self.assertIn('href="#meter-board"', html)
+        self.assertIn('href="#validation-001"', html)
+        self.assertIn('id="validation-001"', html)
+
+    def test_review_stack_is_short_and_dense_evidence_stays_below_home(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+
+        html = render_dashboard(model)
+        top_strip = html.split("</header>", 1)[0]
+
+        self.assertLessEqual(html.count("data-review-stack-item"), 3)
+        self.assertLess(html.index('id="review-stack"'), html.index('id="validation-pack"'))
+        self.assertLess(html.index('id="linked-detail-map"'), html.index('id="validation-pack"'))
+        self.assertNotIn("Validation pack checks", top_strip)
+        for forbidden in ("NEXT_WORKER_PROMPT", "[PASTE TARGET:", "shell=True", "C:\\Users\\"):
+            self.assertNotIn(forbidden, html)
 
     def test_rendered_html_has_static_filter_affordance_and_project_cards(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -218,7 +292,7 @@ class DashboardTests(unittest.TestCase):
             '<footer class="dashboard-footer">',
             '<noscript>',
             "aria-labelledby=",
-            'aria-label="Dashboard decision Continue"',
+            'aria-label="Home-linked decision meters"',
             "@media print",
             ":focus-visible",
             "prefers-reduced-motion",

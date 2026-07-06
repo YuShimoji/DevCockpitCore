@@ -1,11 +1,11 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-07-06
-active_artifact: dashboard-compact-dark-overview-v1
-artifact_current: dashboard-compact-dark-overview-v1
-artifact_next: common-foundation-c4-probe-minimal-implementation-hardening-v1 or japanese-display-polish-v1
-next: Open samples/dashboard/devcockpitcore_dashboard.html for dark overview review, or harden the accepted single bounded C4 validation-pack probe
-user_work: local dashboard visual review
+active_artifact: dashboard-latest-brief-checkpoint-v1
+artifact_current: dashboard-latest-brief-checkpoint-v1
+artifact_next: progress-driven-brief-evolution-v1 or japanese-display-polish-v1
+next: Open samples/dashboard/devcockpitcore_dashboard.html for Latest Brief review, or harden the accepted single bounded C4 validation-pack probe
+user_work: local dashboard latest-brief visual review
 render_gate: not_applicable
 handoff: docs/PROJECT_COCKPIT.md
 remote_sync_state_at_handoff_start: origin/main fast-forwarded to 33250ab before local dashboard handoff was reapplied
@@ -33,13 +33,18 @@ Current executable capability is intentionally narrow:
 - The C4 key maps only to
   `python -m dev_cockpit.validation_pack --default --pretty`.
 
-The current review-surface slice is `dashboard-compact-dark-overview-v1`. It
-keeps the static dashboard and non-executable Review Actions package, but
-changes the generated HTML into a native dark, compact overview-first
-supervision HUD. The first screen emphasizes continue/stop, blocker count,
-warning focus, source freshness, and the next review step. Dense evidence
-remains available in native details panels. It is an offline review artifact,
-not an execution surface.
+The current review-surface slice is `dashboard-latest-brief-checkpoint-v1`. It
+keeps the static dashboard and non-executable Review Actions package, preserves
+the native dark home-linked decision meter HUD, and adds a lightweight Latest
+Brief before the meter board. The brief summarizes decision, blockers, warning
+focus, evidence/access state, and next review action in five short lines. Dense
+evidence remains available below the overview or in native details panels. It
+is an offline review artifact, not an execution surface.
+
+User visual review accepted the dark mode and improved organization as usable
+for now. The caveat is that the dashboard can still place many signals in
+parallel; brief-first status reporting should evolve flexibly with development
+progress, not as a full reporting engine in this slice.
 
 ## Verified Capabilities
 
@@ -62,9 +67,10 @@ not an execution surface.
 - Generate non-executable review actions at
   `samples/dashboard/devcockpitcore_review_actions.json` and
   `samples/dashboard/devcockpitcore_review_actions.md`.
-- Present the dashboard as a compact dark-mode overview-first HUD with short
-  display labels, keyboard/focus markers, non-JS fallback text, print-oriented
-  CSS, and progressive disclosure for dense evidence.
+- Present the dashboard as a home-linked dark decision meter HUD with a concise
+  Latest Brief, short display labels, keyboard/focus markers, non-JS fallback
+  text, print-oriented CSS, Review Stack targets, back-to-overview links, and
+  progressive disclosure for dense evidence.
 
 ## Safety Boundary
 
@@ -117,13 +123,17 @@ Use the bundled Python runtime or a real Python 3.11+ interpreter with
 Last known validation before commit/push:
 
 - `python -m compileall src tests`: pass.
-- `python -m unittest tests.test_dashboard`: 15 tests OK.
-- `python -m unittest discover`: 297 tests OK.
+- `python -m unittest tests.test_dashboard`: 18 tests OK.
+- `python -m unittest discover`: 300 tests OK.
+- `python -m dev_cockpit.status_snapshot --repo . --adapter adapters\devcockpitcore.json --output samples\status_snapshots\devcockpitcore_status.json --pretty`: pass.
+- `python -m dev_cockpit.validation_pack --default --output samples\validation_packs\devcockpitcore_validation_pack_result.json --pretty`: pass, warning-level historical pseudo-git-tag fixture residue.
+- `python -m dev_cockpit.cross_project_smoke --default --output samples\cross_project_smokes\devcockpitcore_cross_project_smoke_result.json --pretty`: pass, warning-level observer rows.
 - `python -m dev_cockpit.dashboard --output samples/dashboard/devcockpitcore_dashboard.html`: pass, with review action JSON/Markdown outputs.
 - `python -m json.tool samples/dashboard/devcockpitcore_review_actions.json`: pass.
+- Review action package readback: 20 actions, 0 blockers, 16 warnings, 4 info, 1 locked-by-gate, all `executable: false`.
 - `validation_pack --default`: warn only for historical pseudo-git-tag fixture residue.
 - `cross_project_smoke --default`: warning-level observer rows, no blockers.
-- `git diff --check`: rerun after regenerated samples before commit.
+- `git diff --check`: pass.
 
 ## Handoff Notes
 
