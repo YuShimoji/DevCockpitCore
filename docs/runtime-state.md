@@ -1,11 +1,11 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-07-06
-active_artifact: dashboard-latest-brief-checkpoint-v1
-artifact_current: dashboard-latest-brief-checkpoint-v1
-artifact_next: progress-driven-brief-evolution-v1 or japanese-display-polish-v1
-next: Open samples/dashboard/devcockpitcore_dashboard.html for Latest Brief review, or harden the accepted single bounded C4 validation-pack probe
-user_work: local dashboard latest-brief visual review
+active_artifact: dashboard-editorial-brief-v1
+artifact_current: dashboard-editorial-brief-v1
+artifact_next: japanese-display-polish-v1 or progress-driven-brief-evolution-v1
+next: Open samples/dashboard/devcockpitcore_dashboard.html for editorial Latest Brief review, or harden the accepted single bounded C4 validation-pack probe
+user_work: local dashboard editorial brief visual review
 render_gate: not_applicable
 handoff: docs/PROJECT_COCKPIT.md
 remote_sync_state_at_handoff_start: origin/main fast-forwarded to 33250ab before local dashboard handoff was reapplied
@@ -33,18 +33,20 @@ Current executable capability is intentionally narrow:
 - The C4 key maps only to
   `python -m dev_cockpit.validation_pack --default --pretty`.
 
-The current review-surface slice is `dashboard-latest-brief-checkpoint-v1`. It
-keeps the static dashboard and non-executable Review Actions package, preserves
-the native dark home-linked decision meter HUD, and adds a lightweight Latest
-Brief before the meter board. The brief summarizes decision, blockers, warning
-focus, evidence/access state, and next review action in five short lines. Dense
-evidence remains available below the overview or in native details panels. It
-is an offline review artifact, not an execution surface.
+The current review-surface slice is `dashboard-editorial-brief-v1`. It keeps
+the static dashboard and non-executable Review Actions package, preserves the
+native dark home-linked decision meter HUD, and replaces the ingredient-label
+Latest Brief with a compact editorial status note. The brief gives a headline
+judgment, implication, compact three-step cue, and one primary review link
+before the meter board. Dense evidence remains available below the overview or
+in native details panels. It is an offline review artifact, not an execution
+surface.
 
 User visual review accepted the dark mode and improved organization as usable
-for now. The caveat is that the dashboard can still place many signals in
-parallel; brief-first status reporting should evolve flexibly with development
-progress, not as a full reporting engine in this slice.
+for now, then flagged the first Latest Brief as too factual and not meaningful
+enough. The remaining caveat is visual tone: the editorial note should be
+opened locally and judged against the meter board for whether it is worth
+reading first every time.
 
 ## Verified Capabilities
 
@@ -67,10 +69,10 @@ progress, not as a full reporting engine in this slice.
 - Generate non-executable review actions at
   `samples/dashboard/devcockpitcore_review_actions.json` and
   `samples/dashboard/devcockpitcore_review_actions.md`.
-- Present the dashboard as a home-linked dark decision meter HUD with a concise
-  Latest Brief, short display labels, keyboard/focus markers, non-JS fallback
-  text, print-oriented CSS, Review Stack targets, back-to-overview links, and
-  progressive disclosure for dense evidence.
+- Present the dashboard as a home-linked dark decision meter HUD with an
+  editorial Latest Brief, short display labels, keyboard/focus markers, non-JS
+  fallback text, print-oriented CSS, Review Stack targets, back-to-overview
+  links, and progressive disclosure for dense evidence.
 
 ## Safety Boundary
 

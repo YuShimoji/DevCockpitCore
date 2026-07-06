@@ -9,12 +9,13 @@ adding any broader automation capability.
 
 ## Current Active Slice
 
-`dashboard-latest-brief-checkpoint-v1`
+`dashboard-editorial-brief-v1`
 
-Purpose: checkpoint the accepted dark home-linked dashboard lane with a
-lightweight Latest Brief before the meter board. The brief gives a concise
-status readout while preserving meter/detail navigation, source-backed evidence,
-and non-executable Review Actions.
+Purpose: correct the accepted dark home-linked dashboard lane so the Latest
+Brief reads as a meaning-first editorial note before the meter board. The brief
+now gives a headline judgment, implication, compact three-step cue, and one
+primary review link while preserving meter/detail navigation, source-backed
+evidence, and non-executable Review Actions.
 
 Dashboard artifact path:
 
@@ -54,7 +55,8 @@ src/dev_cockpit/dashboard.py
 | Dashboard accessibility pass | Project review surface | complete |
 | Compact dark overview | Project review surface | complete |
 | Home-linked decision meters | Project review surface | accepted with caveat |
-| Latest brief checkpoint | Project review surface | active |
+| Latest brief checkpoint | Project review surface | complete with caveat |
+| Editorial brief correction | Project review surface | active |
 | Japanese display polish | Project review surface | future review slice |
 
 ## Capability Glyph Grid
@@ -71,7 +73,7 @@ src/dev_cockpit/dashboard.py
 | Skip link, focus states, print view | [#] | available after generation |
 | Compact dark overview HUD | [#] | available after generation |
 | Home-linked meter HUD | [#] | available after generation |
-| Latest Brief readout | [#] | available after generation |
+| Editorial Latest Brief | [#] | available after generation |
 | C3 help-only probes | [#] | two fixed keys only |
 | Single C4 validation-pack probe | [#] | one bounded key accepted |
 | Additional C4 commands | [!] | locked |
@@ -87,7 +89,7 @@ src/dev_cockpit/dashboard.py
 | Smoke evidence | warning-level observer rows expected | confirm optional sibling warnings are acceptable |
 | Dashboard artifact | generated local HTML | open and inspect meter clarity, detail anchors, Review Stack, Review Actions, and print view |
 | Review action package | JSON and Markdown artifacts | confirm actions are review-only and non-executable |
-| Latest Brief checkpoint | static HTML/CSS | confirm the first readout gives decision, blockers, focus, proof, and next action without becoming a new data table |
+| Editorial Latest Brief | static HTML/CSS | confirm the first readout explains what the current state means before the meters |
 | C4 probe boundary | exactly one validation-pack key accepted | harden docs/tests before any further execution-readiness work |
 | Execution expansion | locked beyond accepted single C4 probe | keep outside this slice |
 | Public or production claims | locked | keep dashboard local and review-only |
@@ -96,7 +98,7 @@ src/dev_cockpit/dashboard.py
 
 - Can a user open one local file and see current testability?
 - Are warning ownership, blocker count, and access state visible in the first scan?
-- Does the Latest Brief give an overview report before the parallel meter set?
+- Does the Latest Brief feel like an editorial status note before the parallel meter set?
 - Does the first viewport feel like a decision meter HUD rather than a collapsed evidence closet?
 - Does each top meter link to the exact detail panel and review action surface it explains?
 - Are source JSON paths and generated_at values visible enough for audit?
@@ -108,6 +110,7 @@ src/dev_cockpit/dashboard.py
 ## Review Memory
 
 The user accepted the dark mode and improved information organization as good
-enough for now. The remaining caveat is that the dashboard can still present
-too many signals in parallel; future progress should evolve brief-first status
-reporting without turning this slice into a full reporting engine.
+enough for now, then flagged the first Latest Brief as too much like an
+ingredient label. The current correction makes the brief a compact editorial
+read before the meters. The remaining caveat is tone: a human visual pass still
+needs to decide whether the note is something worth reading every time.

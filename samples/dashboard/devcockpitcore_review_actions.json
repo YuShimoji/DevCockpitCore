@@ -1,6 +1,6 @@
 {
   "schema_version": "devcockpit_review_actions.v1",
-  "generated_at": "2026-07-06T07:56:23Z",
+  "generated_at": "2026-07-06T08:43:35Z",
   "producer": "dev_cockpit.dashboard",
   "source_dashboard": "samples/dashboard/devcockpitcore_dashboard.html",
   "package": {

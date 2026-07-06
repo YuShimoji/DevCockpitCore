@@ -47,8 +47,12 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(len(model["decision_meters"]), 6)
         self.assertLessEqual(len(model["review_stack"]), 3)
         self.assertTrue(all(meter["detail_href"].startswith("#detail-") for meter in model["decision_meters"]))
-        self.assertEqual(len(model["latest_brief"]), 5)
-        self.assertEqual([row["label"] for row in model["latest_brief"]], ["Decision", "Blockers", "Focus", "Proof", "Next"])
+        brief = model["latest_brief"]
+        self.assertEqual(brief["kind"], "editorial")
+        self.assertIn("headline", brief)
+        self.assertIn("annotation", brief)
+        self.assertEqual(len(brief["runway"]), 3)
+        self.assertIn("primary_action", brief)
 
     def test_rendered_html_contains_required_review_sections(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -122,7 +126,7 @@ class DashboardTests(unittest.TestCase):
         ):
             self.assertNotIn(raw_value, top_strip)
 
-    def test_latest_brief_is_short_and_before_meter_board(self) -> None:
+    def test_latest_brief_is_editorial_and_before_meter_board(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
@@ -133,11 +137,25 @@ class DashboardTests(unittest.TestCase):
         brief = top_strip.split('<section id="latest-brief"', 1)[1].split("</section>", 1)[0]
 
         self.assertLess(top_strip.index('id="latest-brief"'), top_strip.index('id="meter-board"'))
-        self.assertEqual(brief.count("<li>"), 5)
-        for expected in ("Decision", "Blockers", "Focus", "Proof", "Next"):
+        self.assertIn('data-brief-kind="editorial"', top_strip)
+        self.assertEqual(brief.count("<li"), 3)
+        for expected in (
+            "Continue locally; the useful attention is warning judgment, not blocker hunting.",
+            "The largest review bucket is validation findings",
+            "brief-headline",
+            "brief-annotation",
+            "brief-runway",
+            "brief-primary-action",
+            "Review warning detail",
+            "Not urgent",
+        ):
             self.assertIn(expected, brief)
-        for duplicated_meter in ("Review Queue", "Project Smoke", "Access Readiness"):
+        for table_label in ("Decision</span>", "Blockers</span>", "Focus</span>", "Next</span>"):
+            self.assertNotIn(table_label, brief)
+        for duplicated_meter in ("Stop Gate", "Warning Debt", "Review Queue", "Project Smoke", "Access Readiness"):
             self.assertNotIn(duplicated_meter, brief)
+        for raw_value in ("INTEGRATE_AND_CONTINUE", "worker_generated_not_user_opened", "local_static_file"):
+            self.assertNotIn(raw_value, brief)
 
     def test_home_meters_link_to_detail_panels_and_review_actions(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

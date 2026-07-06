@@ -2,7 +2,7 @@
 
 Non-executable review package generated from local dashboard evidence.
 
-- generated_at: `2026-07-06T07:56:23Z`
+- generated_at: `2026-07-06T08:43:35Z`
 - source_dashboard: `samples/dashboard/devcockpitcore_dashboard.html`
 - total_actions: `20`
 - blockers: `0`

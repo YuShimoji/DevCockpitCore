@@ -227,9 +227,10 @@ writeback in target repositories. The next roadmap step is
 
 The local test dashboard turns current validation, smoke, status, adapter, and
 runtime/project context evidence into one static HTML review surface. It now
-opens with a lightweight Latest Brief, then a home-linked dark decision meter
-HUD. The brief gives the current decision, blocker state, warning focus,
-evidence/access state, and next review action in five short lines. The meter
+opens with an editorial Latest Brief, then a home-linked dark decision meter
+HUD. The brief gives a headline judgment, a short "why it matters" annotation,
+a three-step visual cue, and one primary review link so the first scan explains
+what the evidence means before the meter board repeats raw state. The meter
 board still summarizes stop gate, warning debt, evidence freshness, review
 queue, project smoke, and local access readiness, and each meter links to the
 detail panel and review action surface it explains. It is a local file only: no
@@ -286,9 +287,10 @@ The generated project-card search and result filters are local DOM affordances
 over already-rendered static content. The review-action filters behave the same
 way. The core review content remains visible without JavaScript.
 
-For manual review, open the file, read the Latest Brief first, confirm the
-native dark meter board remains readable without browser-extension dark mode,
-use the meter links to land on the matching detail panels, check the
+For manual review, open the file, read the Latest Brief first, confirm it feels
+like a meaning-first status note rather than a key-value label, then confirm the
+native dark meter board remains readable without browser-extension dark mode.
+Use the meter links to land on the matching detail panels, check the
 back-to-overview links with `Tab`, expand dense evidence only as needed, then
 use browser print preview to inspect the static handoff view.
 
@@ -640,3 +642,4 @@ and recommended next entrances.
 29. compact dark dashboard overview
 30. home-linked dashboard decision meters
 31. dashboard latest brief checkpoint
+32. dashboard editorial brief correction

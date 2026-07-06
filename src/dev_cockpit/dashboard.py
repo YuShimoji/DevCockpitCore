@@ -438,7 +438,7 @@ def _top_strip(
         '<p class="hero-summary">Home-linked decision meter HUD for the next human review decision.</p>'
         f"<p class=\"subtle\">Generated {_e(generated_at)} from local evidence. Access: {_e(_access_label(output))}.</p>"
         f"<p class=\"subtle\">Current read: {_e(decision)} with {_e(str(blocker_count))} blockers and {_e(str(warning_count))} warning signals.</p>"
-        f"{_latest_brief_panel(_list(model.get('latest_brief')))}"
+        f"{_latest_brief_panel(model.get('latest_brief'))}"
         "</div>"
         '<div id="meter-board" class="decision-meter-board" aria-label="Home-linked decision meters">'
         f"{_decision_meter_cards(meters)}"
@@ -511,24 +511,52 @@ def _summary_band(
     return f'<div class="summary-grid">{"".join(cards)}</div>'
 
 
-def _latest_brief_panel(items: list[Any]) -> str:
-    if not items:
+def _latest_brief_panel(brief_value: Any) -> str:
+    brief = _dict(brief_value)
+    if not brief:
         return ""
-    rows = []
-    for item in items[:5]:
-        row = _dict(item)
-        href = str(row.get("href", "#review-stack"))
-        rows.append(
-            "<li>"
-            f"<span>{_e(row.get('label', 'Brief'))}</span>"
-            f"<strong>{_e(row.get('value', 'Review'))}</strong>"
-            f"<a href=\"{_e(href)}\">{_e(row.get('action', 'Open'))}</a>"
+    steps = []
+    for step_value in _list(brief.get("runway"))[:3]:
+        step = _dict(step_value)
+        steps.append(
+            f'<li class="{_tone_class(step.get("tone"))}">'
+            f"<span>{_e(step.get('label', 'Read'))}</span>"
+            f"<strong>{_e(step.get('value', 'Review'))}</strong>"
             "</li>"
         )
+    runway = f'<ol class="brief-runway">{"".join(steps)}</ol>' if steps else ""
+    action = _dict(brief.get("primary_action"))
+    primary_href = str(action.get("href") or "#review-stack")
+    primary_label = str(action.get("label") or "Review")
+    secondary = _dict(brief.get("secondary_link"))
+    secondary_html = ""
+    if secondary.get("label"):
+        secondary_html = (
+            f'<a class="brief-secondary" href="{_e(secondary.get("href", "#review-stack"))}">'
+            f'{_e(secondary.get("label"))}</a>'
+        )
+    aside = _dict(brief.get("aside"))
+    aside_html = ""
+    if aside:
+        aside_html = (
+            '<p class="brief-aside">'
+            f"<span>{_e(aside.get('label', 'Not urgent'))}</span>"
+            f"{_e(aside.get('text', 'Keep locked lanes out of this review.'))}"
+            "</p>"
+        )
     return (
-        '<section id="latest-brief" class="latest-brief" aria-label="Latest Brief">'
+        '<section id="latest-brief" class="latest-brief" data-brief-kind="editorial" aria-label="Latest Brief">'
         "<h2>Latest Brief</h2>"
-        f'<ul>{"".join(rows)}</ul>'
+        f'<p class="brief-headline">{_e(brief.get("headline", "Review the current local state."))}</p>'
+        f'<p class="brief-annotation">{_e(brief.get("annotation", ""))}</p>'
+        f"{runway}"
+        '<div class="brief-footer">'
+        f"{aside_html}"
+        '<div class="brief-actions">'
+        f'<a class="brief-primary-action" href="{_e(primary_href)}">{_e(primary_label)}</a>'
+        f"{secondary_html}"
+        "</div>"
+        "</div>"
         "</section>"
     )
 
@@ -1741,43 +1769,100 @@ def _latest_brief(
     freshness: dict[str, Any],
     output_rel: str,
     review_stack: list[dict[str, str]],
-) -> list[dict[str, str]]:
+) -> dict[str, Any]:
     blockers = _list(health.get("blockers"))
+    warnings = _list(health.get("warnings"))
     largest_warning = _largest_warning_group(warning_triage)
     first_next = review_stack[0] if review_stack else {}
+    warning_source = str(largest_warning.get("source", "Warnings"))
+    warning_source_label = _brief_warning_source_label(warning_source)
+    warning_count = _int(largest_warning.get("count"))
+    loaded, total = _parse_count_pair(str(freshness.get("loaded_count", "0/0")))
     access_label = "local file" if output_rel else "local artifact"
-    return [
-        {
-            "label": "Decision",
-            "value": f"{_decision_label(health)}: {_decision_detail(health)}",
+    if blockers:
+        headline = "Pause locally; blocker evidence needs judgment before this can be a handoff signal."
+        annotation = (
+            "Treat the stop gate as the first read. Warning review can wait until the blocking row is explained."
+        )
+        first_step = {
+            "label": "Pause",
+            "value": f"{len(blockers)} blocker item(s)",
             "href": "#detail-stop-gate",
-            "action": "Gate",
-        },
-        {
-            "label": "Blockers",
-            "value": f"{len(blockers)} blocker(s)",
+            "tone": "red",
+        }
+        primary_action = {"label": "Open stop gate", "href": "#detail-stop-gate"}
+    elif warnings:
+        headline = "Continue locally; the useful attention is warning judgment, not blocker hunting."
+        annotation = (
+            f"The largest review bucket is {warning_source_label}; read it as review debt and confirm whether it is expected observer residue."
+        )
+        first_step = {
+            "label": "Continue",
+            "value": "No blocker stop",
             "href": "#detail-stop-gate",
-            "action": "Check",
-        },
-        {
-            "label": "Focus",
-            "value": f"{largest_warning.get('source', 'Warnings')} ({largest_warning.get('count', 0)})",
-            "href": _warning_group_href(str(largest_warning.get("source", ""))),
-            "action": "Open",
-        },
-        {
-            "label": "Proof",
-            "value": f"{freshness.get('loaded_count', '0/0')} sources, {access_label}",
-            "href": "#detail-evidence-freshness",
-            "action": "Verify",
-        },
-        {
-            "label": "Next",
-            "value": _short_text(str(first_next.get("title") or "Use Review Stack"), 42),
+            "tone": "green",
+        }
+        primary_action = {
+            "label": "Review warning detail",
+            "href": _warning_group_href(warning_source),
+        }
+    else:
+        headline = "Continue locally; current evidence is quiet enough for a quick handoff review."
+        annotation = (
+            f"All configured sources are loaded into the {access_label}; use the meters only to spot-check freshness and access."
+        )
+        first_step = {
+            "label": "Continue",
+            "value": "No blocker stop",
+            "href": "#detail-stop-gate",
+            "tone": "green",
+        }
+        primary_action = {
+            "label": str(first_next.get("link_label") or "Open review stack"),
             "href": str(first_next.get("href") or "#review-stack"),
-            "action": "Review",
+        }
+
+    if loaded < total:
+        proof_value = f"{loaded}/{total} sources loaded"
+        proof_tone = "yellow"
+    else:
+        proof_value = f"{loaded}/{total} sources ready"
+        proof_tone = "green"
+
+    if warning_count:
+        middle_value = f"{warning_count} item(s) need judgment"
+    else:
+        middle_value = "No warning bucket leads"
+
+    return {
+        "kind": "editorial",
+        "headline": headline,
+        "annotation": annotation,
+        "runway": [
+            first_step,
+            {
+                "label": "Warnings",
+                "value": middle_value,
+                "href": _warning_group_href(warning_source),
+                "tone": "yellow" if warning_count else "green",
+            },
+            {
+                "label": "Proof",
+                "value": proof_value,
+                "href": "#detail-evidence-freshness",
+                "tone": proof_tone,
+            },
+        ],
+        "primary_action": primary_action,
+        "secondary_link": {
+            "label": "Why blocked?" if blockers else "Why no blocker?",
+            "href": "#detail-stop-gate",
         },
-    ]
+        "aside": {
+            "label": "Not urgent",
+            "text": "execution expansion stays locked; expected fixture residue belongs in review debt unless source evidence changes.",
+        },
+    }
 
 
 def _decision_meters(
@@ -1993,6 +2078,17 @@ def _warning_group_href(source: str) -> str:
         "Source Files": "#detail-evidence-freshness",
     }
     return mapping.get(source, "#detail-warning-debt")
+
+
+def _brief_warning_source_label(source: str) -> str:
+    mapping = {
+        "Validation Pack": "validation findings",
+        "Cross-Project Smoke": "cross-project smoke rows",
+        "Project Rows": "project observer rows",
+        "Status Snapshot": "repository status notes",
+        "Source Files": "source freshness notes",
+    }
+    return mapping.get(source, "warning notes")
 
 
 def _warning_group_source_types(source: str) -> tuple[str, ...]:
@@ -2360,11 +2456,11 @@ h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
 }
 .latest-brief {
   margin-top: 14px;
-  padding: 12px;
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--teal);
+  padding: 14px;
+  border: 1px solid #524832;
+  border-left: 4px solid var(--yellow);
   border-radius: 8px;
-  background: #1a211d;
+  background: #211f1a;
 }
 .latest-brief h2 {
   margin: 0 0 8px;
@@ -2372,38 +2468,80 @@ h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
   font-size: 13px;
   text-transform: uppercase;
 }
-.latest-brief ul {
+.brief-headline {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+.brief-annotation {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+}
+.brief-runway {
   display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
-  margin: 0;
+  margin: 0 0 12px;
   padding: 0;
   list-style: none;
 }
-.latest-brief li {
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: center;
-  min-height: 28px;
+.brief-runway li {
+  min-height: 58px;
+  padding: 8px;
+  border: 1px solid rgba(244, 241, 232, 0.14);
+  border-radius: 6px;
+  background: #151914;
 }
-.latest-brief span {
+.brief-runway span,
+.brief-aside span {
+  display: block;
   color: var(--muted);
   font-size: 12px;
   font-weight: 700;
+  text-transform: uppercase;
 }
-.latest-brief strong {
+.brief-runway strong {
+  display: block;
+  margin-top: 4px;
   font-size: 13px;
+  line-height: 1.2;
   overflow-wrap: anywhere;
 }
-.latest-brief a {
-  min-height: 28px;
-  padding: 3px 8px;
+.brief-footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+}
+.brief-aside {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.brief-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.brief-primary-action,
+.brief-secondary {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 5px 10px;
   border: 1px solid rgba(244, 241, 232, 0.22);
   border-radius: 6px;
   color: var(--ink);
   font-size: 12px;
   font-weight: 700;
   text-decoration: none;
+}
+.brief-primary-action {
+  background: rgba(217, 168, 78, 0.16);
 }
 .overview-board {
   display: grid;
@@ -2863,7 +3001,8 @@ code {
   .review-strip { grid-template-columns: 1fr; }
   .disclosure > summary { grid-template-columns: auto 1fr; }
   .disclosure > summary span { grid-column: 2; }
-  .latest-brief li { grid-template-columns: 1fr; }
+  .brief-runway, .brief-footer { grid-template-columns: 1fr; }
+  .brief-actions { justify-content: flex-start; }
   .detail-anchor-head { grid-template-columns: 1fr; }
   .detail-anchor-head .back-link { grid-column: 1; grid-row: auto; }
   h1 { font-size: 24px; }
