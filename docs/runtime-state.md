@@ -7,7 +7,8 @@ artifact_next: japanese-display-polish-v1 or progress-driven-brief-evolution-v1
 next: Open samples/dashboard/devcockpitcore_dashboard.html for editorial Latest Brief review, or harden the accepted single bounded C4 validation-pack probe
 user_work: local dashboard editorial brief visual review
 render_gate: not_applicable
-handoff: docs/PROJECT_COCKPIT.md
+handoff: docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md
+latest_dashboard_editorial_commit: 3ea0e1e feat: add dashboard editorial brief
 remote_sync_state_at_handoff_start: origin/main fast-forwarded to 33250ab before local dashboard handoff was reapplied
 latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
 latest_hardening_commit: 763f9e9 test: harden c4 scoped runner design
@@ -92,21 +93,23 @@ Start a new terminal or agent from:
 1. `AGENTS.md`
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
-4. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
-5. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
-6. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
-7. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
-8. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
-9. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
-10. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-11. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-12. `docs/PROJECT_COCKPIT.md`
-13. `docs/PROJECT_PIPELINE.mmd`
-14. `samples/dashboard/devcockpitcore_dashboard.html`
-15. `samples/dashboard/devcockpitcore_review_actions.json`
-16. `samples/dashboard/devcockpitcore_review_actions.md`
-17. `docs/decision-log.md`
-18. `docs/idea-ledger.md`
+4. `docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md`
+5. `docs/PROJECT_COCKPIT.md`
+6. `docs/PROJECT_PIPELINE.mmd`
+7. `samples/dashboard/README.md`
+8. `samples/dashboard/devcockpitcore_dashboard.html`
+9. `samples/dashboard/devcockpitcore_review_actions.json`
+10. `samples/dashboard/devcockpitcore_review_actions.md`
+11. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
+12. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
+13. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
+14. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
+15. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
+16. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
+17. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
+18. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
+19. `docs/decision-log.md`
+20. `docs/idea-ledger.md`
 
 First live checks:
 
@@ -139,10 +142,13 @@ Last known validation before commit/push:
 
 ## Handoff Notes
 
-- Remote `origin/main` had advanced to `33250ab`; the local dashboard work was
-  stashed, the repo was fast-forwarded, and the dashboard handoff was reapplied.
-- This handoff intentionally preserves the remote C4 minimal implementation
-  review state and layers the compact dark dashboard review surface on top.
+- Latest dashboard editorial checkpoint is `3ea0e1e feat: add dashboard
+  editorial brief`, pushed to `origin/main` with parity `0 0` before this
+  handoff refresh began.
+- The immediate continuation handoff is
+  `docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md`.
+- The older C4 handoff remains in the restart surface as boundary memory, not
+  as the first active dashboard continuation target.
 - No sibling repositories were edited.
 - No staging, commit, or push should be assumed complete until the final chat
   report names the pushed commit.
