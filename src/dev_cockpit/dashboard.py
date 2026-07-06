@@ -123,7 +123,7 @@ def build_dashboard_model(
         output_rel,
     )
     review_stack = _review_stack(health, warning_triage, freshness, action_summary)
-    latest_brief = _latest_brief(health, warning_triage, freshness, output_rel, review_stack)
+    frontpage_report = _frontpage_report(health, warning_triage, freshness, output_rel, review_stack)
 
     return {
         "schema_version": "devcockpit_local_dashboard.v1",
@@ -174,7 +174,8 @@ def build_dashboard_model(
         "review_checkpoints": review_checkpoints,
         "decision_meters": decision_meters,
         "review_stack": review_stack,
-        "latest_brief": latest_brief,
+        "frontpage_report": frontpage_report,
+        "latest_brief": frontpage_report,
         "warning_triage": warning_triage,
         "review_actions": review_actions,
         "review_action_summary": action_summary,
@@ -210,15 +211,22 @@ def render_dashboard(model: dict[str, Any]) -> str:
         _stylesheet(),
         "  </style>",
         "</head>",
-        '<body data-dashboard-variant="home-linked-meters">',
+        '<body data-dashboard-variant="report-first-frontpage">',
         '  <a class="skip-link" href="#main-content">Skip to dashboard content</a>',
         _top_strip(model, project, health, output, freshness),
         _dashboard_nav(),
         '  <main id="main-content" class="page" tabindex="-1">',
         _noscript_notice(),
         _section(
+            "Review Map",
+            [_review_map(_list(model.get("decision_meters")))],
+            summary="Compact navigation from the frontpage report into linked detail evidence.",
+        ),
+        _section(
             "Review Stack",
             [_review_stack_cards(_list(model.get("review_stack")))],
+            collapsed=True,
+            summary="Top three review targets, opened only when needed.",
         ),
         _section(
             "Linked Detail Map",
@@ -235,7 +243,7 @@ def render_dashboard(model: dict[str, Any]) -> str:
                     projects,
                 )
             ],
-            summary="Meter-linked detail panels with back-to-overview paths.",
+            summary="Review-map-linked detail panels with back-to-overview paths.",
         ),
         _section(
             "Evidence Snapshot",
@@ -426,32 +434,52 @@ def _top_strip(
     warning_count = len(_list(health.get("warnings")))
     blocker_count = len(_list(health.get("blockers")))
     generated_at = model.get("generated_at", "unknown")
-    review_next = _list(model.get("review_next"))
-    next_item = _short_text(str(review_next[0]), 88) if review_next else "Review warnings, blockers, and evidence freshness."
-    decision = _decision_label(health)
-    meters = _list(model.get("decision_meters"))
+    report = _dict(model.get("frontpage_report") or model.get("latest_brief"))
+    headline = str(report.get("headline") or "Review the current local state.")
+    annotation = str(report.get("annotation") or "Use the linked evidence below when a review signal needs source detail.")
+    primary = _dict(report.get("primary_action"))
+    primary_href = str(primary.get("href") or "#review-map")
+    primary_label = str(primary.get("label") or "Open review map")
+    secondary = _dict(report.get("secondary_link"))
+    secondary_href = str(secondary.get("href") or "#detail-evidence-freshness")
+    secondary_label = str(secondary.get("label") or "Check evidence freshness")
+    aside = _dict(report.get("aside"))
+    aside_text = str(
+        aside.get("text")
+        or "Execution expansion stays locked; use this as a local review surface only."
+    )
     return (
-        '<header class="top-strip compact-dark-overview" data-dashboard-theme="dark">'
-        '<div class="hero-copy">'
-        '<p class="eyebrow">Local supervision HUD</p>'
+        '<header class="top-strip report-first-frontpage" data-dashboard-theme="dark">'
+        '<section id="current-status-report" class="frontpage-report" aria-label="Current Status Report">'
+        '<div class="report-front-grid">'
+        '<div class="report-main">'
+        '<p class="eyebrow">Current Status / Supervision Report</p>'
         f"<h1>{_e(project.get('name', 'DevCockpitCore'))}</h1>"
-        '<p class="hero-summary">Home-linked decision meter HUD for the next human review decision.</p>'
-        f"<p class=\"subtle\">Generated {_e(generated_at)} from local evidence. Access: {_e(_access_label(output))}.</p>"
-        f"<p class=\"subtle\">Current read: {_e(decision)} with {_e(str(blocker_count))} blockers and {_e(str(warning_count))} warning signals.</p>"
-        f"{_latest_brief_panel(model.get('latest_brief'))}"
+        f'<p class="report-headline">{_e(headline)}</p>'
+        f'<p class="report-interpretation">{_e(annotation)}</p>'
         "</div>"
-        '<div id="meter-board" class="decision-meter-board" aria-label="Home-linked decision meters">'
-        f"{_decision_meter_cards(meters)}"
-        f"<div class=\"review-strip\"><span>Next</span><p>{_e(next_item)}</p><a href=\"#review-stack\">Review Stack</a></div>"
+        '<div class="report-next">'
+        "<span>Open first</span>"
+        f'<a class="report-primary-action" href="{_e(primary_href)}">{_e(primary_label)}</a>'
+        f'<a class="report-secondary-link" href="{_e(secondary_href)}">{_e(secondary_label)}</a>'
         "</div>"
+        "</div>"
+        f"{_report_status_strip(health, report, freshness, output)}"
+        '<p class="report-meta">'
+        f"Generated {_e(generated_at)} from local evidence. "
+        f"Access: {_e(_access_label(output))}. "
+        f"{_e(str(blocker_count))} blocker(s), {_e(str(warning_count))} warning signal(s). "
+        f"Not urgent: {_e(aside_text)}"
+        "</p>"
+        "</section>"
         "</header>"
     )
 
 
 def _dashboard_nav() -> str:
     links = (
-        ("Brief", "latest-brief"),
-        ("Meters", "meter-board"),
+        ("Report", "current-status-report"),
+        ("Review Map", "review-map"),
         ("Stack", "review-stack"),
         ("Details", "linked-detail-map"),
         ("Warnings", "warnings-triage"),
@@ -470,6 +498,82 @@ def _noscript_notice() -> str:
         "<p>All dashboard evidence and review actions remain visible. Search and filter controls are optional local-only conveniences.</p>"
         "</div></noscript>"
     )
+
+
+def _report_status_strip(
+    health: dict[str, Any],
+    report: dict[str, Any],
+    freshness: dict[str, Any],
+    output: dict[str, Any],
+) -> str:
+    blockers = len(_list(health.get("blockers")))
+    runway = [_dict(item) for item in _list(report.get("runway"))]
+    warning = runway[1] if len(runway) > 1 else {}
+    proof = runway[2] if len(runway) > 2 else {}
+    indicators = [
+        {
+            "label": "Stop gate",
+            "value": f"{blockers} blocker(s)",
+            "tone": "red" if blockers else "green",
+        },
+        {
+            "label": "Attention",
+            "value": str(warning.get("value") or "No warning bucket leads"),
+            "tone": str(warning.get("tone") or "neutral"),
+        },
+        {
+            "label": "Evidence",
+            "value": str(proof.get("value") or freshness.get("loaded_count", "0/0")),
+            "tone": str(proof.get("tone") or "neutral"),
+        },
+        {
+            "label": "Access",
+            "value": _access_label(output),
+            "tone": "neutral",
+        },
+    ]
+    items = []
+    for item in indicators:
+        items.append(
+            f'<div class="{_tone_class(item.get("tone"))}">'
+            f"<dt>{_e(item.get('label', 'Signal'))}</dt>"
+            f"<dd>{_e(item.get('value', 'Review'))}</dd>"
+            "</div>"
+        )
+    return f'<dl class="report-status-strip" aria-label="Current report indicators">{"".join(items)}</dl>'
+
+
+def _review_map(meters: list[Any]) -> str:
+    if not meters:
+        return '<nav class="review-map-list" aria-label="Compact review map"><p>No review map items were generated.</p></nav>'
+    links = []
+    for meter in meters:
+        item = _dict(meter)
+        href = str(item.get("detail_href") or "#linked-detail-map")
+        tone = _review_map_tone(item.get("tone"))
+        links.append(
+            f'<a class="review-map-item {tone}" data-review-map-item href="{_e(href)}">'
+            f"<span>{_e(item.get('title', 'Review'))}</span>"
+            f"<strong>{_e(item.get('primary_value', 'n/a'))}</strong>"
+            f"<small>{_e(_short_text(str(item.get('summary', 'Open detail.')), 82))}</small>"
+            "</a>"
+        )
+    return f'<nav class="review-map-list" aria-label="Compact review map">{"".join(links)}</nav>'
+
+
+def _review_map_tone(value: Any) -> str:
+    normalized = str(value or "neutral").lower()
+    mapping = {
+        "pass": "tone-green",
+        "green": "tone-green",
+        "warn": "tone-yellow",
+        "warning": "tone-yellow",
+        "yellow": "tone-yellow",
+        "fail": "tone-red",
+        "red": "tone-red",
+        "neutral": "tone-neutral",
+    }
+    return mapping.get(normalized, "tone-neutral")
 
 
 def _dashboard_footer(model: dict[str, Any]) -> str:
@@ -509,97 +613,6 @@ def _summary_band(
         _metric_card("Access State", output.get("access_mode", "unknown"), output.get("access_evidence_level", "evidence")),
     ]
     return f'<div class="summary-grid">{"".join(cards)}</div>'
-
-
-def _latest_brief_panel(brief_value: Any) -> str:
-    brief = _dict(brief_value)
-    if not brief:
-        return ""
-    steps = []
-    for step_value in _list(brief.get("runway"))[:3]:
-        step = _dict(step_value)
-        steps.append(
-            f'<li class="{_tone_class(step.get("tone"))}">'
-            f"<span>{_e(step.get('label', 'Read'))}</span>"
-            f"<strong>{_e(step.get('value', 'Review'))}</strong>"
-            "</li>"
-        )
-    runway = f'<ol class="brief-runway">{"".join(steps)}</ol>' if steps else ""
-    action = _dict(brief.get("primary_action"))
-    primary_href = str(action.get("href") or "#review-stack")
-    primary_label = str(action.get("label") or "Review")
-    secondary = _dict(brief.get("secondary_link"))
-    secondary_html = ""
-    if secondary.get("label"):
-        secondary_html = (
-            f'<a class="brief-secondary" href="{_e(secondary.get("href", "#review-stack"))}">'
-            f'{_e(secondary.get("label"))}</a>'
-        )
-    aside = _dict(brief.get("aside"))
-    aside_html = ""
-    if aside:
-        aside_html = (
-            '<p class="brief-aside">'
-            f"<span>{_e(aside.get('label', 'Not urgent'))}</span>"
-            f"{_e(aside.get('text', 'Keep locked lanes out of this review.'))}"
-            "</p>"
-        )
-    return (
-        '<section id="latest-brief" class="latest-brief" data-brief-kind="editorial" aria-label="Latest Brief">'
-        "<h2>Latest Brief</h2>"
-        f'<p class="brief-headline">{_e(brief.get("headline", "Review the current local state."))}</p>'
-        f'<p class="brief-annotation">{_e(brief.get("annotation", ""))}</p>'
-        f"{runway}"
-        '<div class="brief-footer">'
-        f"{aside_html}"
-        '<div class="brief-actions">'
-        f'<a class="brief-primary-action" href="{_e(primary_href)}">{_e(primary_label)}</a>'
-        f"{secondary_html}"
-        "</div>"
-        "</div>"
-        "</section>"
-    )
-
-
-def _decision_meter_cards(meters: list[Any]) -> str:
-    cards = []
-    for meter in meters:
-        item = _dict(meter)
-        progress = _dict(item.get("progress"))
-        progress_html = _decision_progress(progress)
-        evidence = item.get("evidence_path") or item.get("detail_href", "dashboard")
-        action_href = str(item.get("action_href") or item.get("detail_href", "#linked-detail-map"))
-        action_label = str(item.get("action_label") or "Review action")
-        cards.append(
-            f'<article class="decision-meter {_tone_class(item.get("tone"))}" data-meter-target="{_e(item.get("detail_href", ""))}">'
-            f"<div class=\"meter-head\"><span>{_e(item.get('title', 'Meter'))}</span>"
-            f"<strong>{_e(item.get('primary_value', 'n/a'))}</strong></div>"
-            f"<p>{_e(item.get('summary', 'Review this signal.'))}</p>"
-            f"{progress_html}"
-            f"<p class=\"why-line\">{_e(item.get('why', 'Shows why this signal matters.'))}</p>"
-            f"<div class=\"meter-links\"><a href=\"{_e(item.get('detail_href', '#linked-detail-map'))}\">Open detail</a>"
-            f"<a href=\"{_e(action_href)}\">{_e(action_label)}</a></div>"
-            f"<code>{_e(evidence)}</code>"
-            "</article>"
-        )
-    return "".join(cards)
-
-
-def _decision_progress(progress: dict[str, Any]) -> str:
-    total = _int(progress.get("total"))
-    done = _int(progress.get("done"))
-    if total <= 0:
-        label = progress.get("label", "count only")
-        return f'<p class="meter-note">{_e(label)}</p>'
-    width = max(0, min(100, round(done / total * 100)))
-    label = progress.get("label") or f"{done}/{total}"
-    tone = progress.get("tone", "neutral")
-    return (
-        f'<div class="decision-progress" role="progressbar" aria-valuemin="0" aria-valuemax="{_e(total)}" '
-        f'aria-valuenow="{_e(done)}" aria-label="{_e(label)}">'
-        f'<span class="{_result_class(tone)}" style="width:{width}%"></span>'
-        f"</div><p class=\"meter-note\">{_e(label)}</p>"
-    )
 
 
 def _review_stack_cards(items: list[Any]) -> str:
@@ -719,7 +732,7 @@ def _linked_detail_panel(
         '<span>Linked detail</span>'
         f'<h3 id="{_e(panel_id)}-heading">{_e(title)}</h3>'
         f"<p>{_e(summary)}</p>"
-        '<a class="back-link" href="#meter-board">Back to overview</a>'
+        '<a class="back-link" href="#review-map">Back to review map</a>'
         "</div>"
         f"<p class=\"why-line\">{_e(why)}</p>"
         f'<div class="detail-body">{"".join(body)}</div>'
@@ -1763,7 +1776,7 @@ def _safe_local_actions(output_rel: str) -> list[dict[str, str]]:
     ]
 
 
-def _latest_brief(
+def _frontpage_report(
     health: dict[str, Any],
     warning_triage: list[dict[str, Any]],
     freshness: dict[str, Any],
@@ -1835,7 +1848,7 @@ def _latest_brief(
         middle_value = "No warning bucket leads"
 
     return {
-        "kind": "editorial",
+        "kind": "frontpage_report",
         "headline": headline,
         "annotation": annotation,
         "runway": [
@@ -2155,15 +2168,15 @@ def _review_checkpoints(
     warning_count = len(_list(health.get("warnings")))
     return [
         {
-            "label": "1. Meter Clarity",
-            "state": f"{blocker_count} blocker(s), {warning_count} warning signal(s)",
-            "prompt": "Confirm the home meters tell which subsystem to inspect first.",
-            "evidence": "Home Decision Meters",
+                "label": "1. Report Clarity",
+                "state": f"{blocker_count} blocker(s), {warning_count} warning signal(s)",
+            "prompt": "Confirm the first screen reads as a concise current-status report.",
+            "evidence": "Current Status Report",
         },
         {
-            "label": "2. Detail Linkage",
-            "state": "6 meter-linked detail panels",
-            "prompt": "Confirm each meter link lands on the matching detail panel and back link.",
+            "label": "2. Review Map Linkage",
+            "state": "6 compact review-map links",
+            "prompt": "Confirm each Review Map link lands on the matching detail panel and back link.",
             "evidence": "Linked Detail Map",
         },
         {
@@ -2404,13 +2417,101 @@ a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-vis
   top: 12px;
 }
 .top-strip {
-  display: grid;
-  grid-template-columns: minmax(260px, 0.56fr) minmax(620px, 1fr);
-  gap: 24px;
-  align-items: stretch;
-  padding: 26px 32px 22px;
+  padding: 28px 32px 24px;
   background: #151914;
   border-bottom: 1px solid var(--line);
+}
+.frontpage-report {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.report-front-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  gap: 24px;
+  align-items: start;
+}
+.report-main { min-width: 0; }
+.report-headline {
+  max-width: 48rem;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.report-interpretation {
+  max-width: 55rem;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+.report-next {
+  display: grid;
+  gap: 8px;
+  padding-top: 26px;
+}
+.report-next span {
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.report-primary-action,
+.report-secondary-link {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  border: 1px solid rgba(244, 241, 232, 0.24);
+  border-radius: 6px;
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: none;
+}
+.report-primary-action {
+  background: rgba(217, 168, 78, 0.18);
+  border-color: rgba(217, 168, 78, 0.55);
+}
+.report-secondary-link {
+  background: rgba(102, 198, 166, 0.12);
+}
+.report-status-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 18px 0 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.report-status-strip div {
+  min-width: 0;
+  padding: 0 14px;
+  border-right: 1px solid rgba(244, 241, 232, 0.12);
+  background: transparent;
+}
+.report-status-strip div:first-child { padding-left: 0; }
+.report-status-strip div:last-child { border-right: 0; padding-right: 0; }
+.report-status-strip dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.report-status-strip dd {
+  margin: 3px 0 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.report-meta {
+  max-width: 68rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
 }
 .dashboard-nav {
   display: flex;
@@ -2447,102 +2548,6 @@ h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
   text-transform: uppercase;
 }
 .subtle { color: var(--muted); font-size: 13px; }
-.hero-copy { min-width: 0; }
-.hero-summary {
-  max-width: 34rem;
-  margin-bottom: 12px;
-  color: var(--muted);
-  font-size: 15px;
-}
-.latest-brief {
-  margin-top: 14px;
-  padding: 14px;
-  border: 1px solid #524832;
-  border-left: 4px solid var(--yellow);
-  border-radius: 8px;
-  background: #211f1a;
-}
-.latest-brief h2 {
-  margin: 0 0 8px;
-  color: var(--yellow);
-  font-size: 13px;
-  text-transform: uppercase;
-}
-.brief-headline {
-  margin: 0 0 8px;
-  color: var(--ink);
-  font-size: 18px;
-  font-weight: 800;
-  line-height: 1.25;
-}
-.brief-annotation {
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: 13px;
-}
-.brief-runway {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 6px;
-  margin: 0 0 12px;
-  padding: 0;
-  list-style: none;
-}
-.brief-runway li {
-  min-height: 58px;
-  padding: 8px;
-  border: 1px solid rgba(244, 241, 232, 0.14);
-  border-radius: 6px;
-  background: #151914;
-}
-.brief-runway span,
-.brief-aside span {
-  display: block;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-.brief-runway strong {
-  display: block;
-  margin-top: 4px;
-  font-size: 13px;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-.brief-footer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
-  align-items: end;
-}
-.brief-aside {
-  margin: 0;
-  color: var(--muted);
-  font-size: 12px;
-}
-.brief-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 8px;
-}
-.brief-primary-action,
-.brief-secondary {
-  display: inline-flex;
-  min-height: 32px;
-  align-items: center;
-  padding: 5px 10px;
-  border: 1px solid rgba(244, 241, 232, 0.22);
-  border-radius: 6px;
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 700;
-  text-decoration: none;
-}
-.brief-primary-action {
-  background: rgba(217, 168, 78, 0.16);
-}
 .overview-board {
   display: grid;
   grid-template-columns: 1.2fr repeat(3, minmax(112px, 0.72fr));
@@ -2578,56 +2583,51 @@ h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
   background: #243321;
   border-color: #53633b;
 }
-.decision-meter-board {
+.review-map-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: #151914;
 }
-.decision-meter {
+.review-map-item {
   display: grid;
-  gap: 8px;
-  min-height: 186px;
-  padding: 13px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #1e241f;
-  box-shadow: 0 12px 30px var(--shadow);
+  grid-template-rows: auto auto 1fr;
+  gap: 3px;
+  min-height: 56px;
+  padding: 8px 10px 8px 12px;
+  border: 0;
+  border-right: 1px solid rgba(244, 241, 232, 0.12);
+  border-left: 3px solid transparent;
+  color: var(--ink);
+  text-decoration: none;
 }
-.decision-meter.is-green { color: var(--ink); background: #1e2a21; border-color: #405d45; }
-.decision-meter.is-yellow { color: var(--ink); background: #2d281b; border-color: #6c562b; }
-.decision-meter.is-red { color: var(--ink); background: #2d1b20; border-color: #7d3b45; }
-.decision-meter.is-neutral { color: var(--ink); background: #1b2528; border-color: #38606a; }
-.meter-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
+.review-map-item:last-child { border-right: 0; }
+.review-map-item:hover {
+  background: #1b211c;
 }
-.meter-head span {
+.review-map-item.tone-green { border-left-color: var(--green); }
+.review-map-item.tone-yellow { border-left-color: var(--yellow); }
+.review-map-item.tone-red { border-left-color: var(--red); }
+.review-map-item.tone-neutral { border-left-color: var(--teal); }
+.review-map-item span {
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
 }
-.meter-head strong {
-  font-size: 24px;
-  line-height: 1.05;
-  text-align: right;
+.review-map-item strong {
+  font-size: 14px;
+  line-height: 1.1;
   overflow-wrap: anywhere;
 }
-.decision-meter p {
+.review-map-item small {
   margin: 0;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 11px;
+  line-height: 1.3;
 }
-.decision-progress {
-  width: 100%;
-  height: 10px;
-  overflow: hidden;
-  background: #101410;
-  border-radius: 4px;
-}
-.decision-progress span { display: block; height: 100%; border-radius: 4px; }
 .meter-note { font-size: 12px; }
 .why-line { color: var(--ink); }
 .meter-links {
@@ -2651,32 +2651,6 @@ h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
 .meter-links a:first-child,
 .stack-card a {
   background: rgba(102, 198, 166, 0.14);
-}
-.review-strip {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: auto minmax(180px, 1fr) auto;
-  gap: 12px;
-  align-items: center;
-  min-height: 48px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--amber-soft);
-}
-.review-strip span {
-  color: var(--yellow);
-  font-size: 12px;
-  font-weight: 700;
-}
-.review-strip p { margin: 0; color: var(--ink); }
-.review-strip a {
-  min-height: 32px;
-  padding: 5px 10px;
-  border: 1px solid rgba(244, 241, 232, 0.24);
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 700;
 }
 .top-kpis {
   display: grid;
@@ -2989,23 +2963,29 @@ code {
   }
 }
 @media (max-width: 980px) {
-  .top-strip { grid-template-columns: 1fr; align-items: start; }
-  .overview-board, .top-kpis, .decision-meter-board, .review-stack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .report-front-grid { grid-template-columns: 1fr; }
+  .report-next { padding-top: 0; }
+  .overview-board, .top-kpis, .review-map-list, .review-stack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .summary-grid, .grid-three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .filter-panel { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
   .top-strip { padding: 22px 18px; }
   .page { padding: 18px; }
-  .summary-grid, .grid-three, .overview-board, .top-kpis, .decision-meter-board, .review-stack-grid { grid-template-columns: 1fr; }
-  .review-strip { grid-template-columns: 1fr; }
+  .summary-grid, .grid-three, .overview-board, .top-kpis, .review-map-list, .review-stack-grid { grid-template-columns: 1fr; }
+  .report-status-strip { grid-template-columns: 1fr; }
+  .report-status-strip div {
+    padding: 8px 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(244, 241, 232, 0.12);
+  }
+  .report-status-strip div:last-child { border-bottom: 0; }
   .disclosure > summary { grid-template-columns: auto 1fr; }
   .disclosure > summary span { grid-column: 2; }
-  .brief-runway, .brief-footer { grid-template-columns: 1fr; }
-  .brief-actions { justify-content: flex-start; }
   .detail-anchor-head { grid-template-columns: 1fr; }
   .detail-anchor-head .back-link { grid-column: 1; grid-row: auto; }
   h1 { font-size: 24px; }
+  .report-headline { font-size: 22px; }
 }
 @media print {
   body {
@@ -3025,7 +3005,7 @@ code {
   .skip-link, .dashboard-nav, .filter-panel, script {
     display: none !important;
   }
-  .top-strip, .dashboard-footer, .metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card, .decision-meter, .stack-card, .detail-anchor-panel, .latest-brief {
+  .top-strip, .dashboard-footer, .metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card, .review-map-item, .stack-card, .detail-anchor-panel {
     border-color: #999999;
     box-shadow: none;
     background: #ffffff;
@@ -3038,7 +3018,7 @@ code {
   .disclosure:not([open]) > :not(summary) {
     display: block;
   }
-  .review-strip, .overview-card {
+  .overview-card {
     background: #ffffff;
     color: #000000;
     box-shadow: none;

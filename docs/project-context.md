@@ -35,18 +35,18 @@ C4 is limited to one repo-local validation-pack probe, now accepted by the
 minimal implementation review. C4 is limited to one accepted repo-local
 validation-pack probe in the current review state.
 
-The latest dashboard checkpoint is `dashboard-editorial-brief-v1`, which keeps
-the non-executable dashboard and Review Actions package while replacing the
-ingredient-label Latest Brief with a meaning-first editorial status note above
-the home-linked dark decision meter HUD.
+The latest dashboard checkpoint is `dashboard-report-first-frontpage-v1`, which
+keeps the non-executable dashboard and Review Actions package while replacing
+the card-heavy top viewport with a concise Current Status / Supervision Report
+frontpage.
 
 The active checkpoint responds to user-opened visual feedback: the dark mode
-and information organization are acceptable for now, but the first Latest Brief
-was too close to a data label. The current dashboard keeps the accessibility
-pass, dark compact treatment, top-level decision meters, Review Stack, matching
-detail anchors, back-to-overview links, and related Review Action links, while
-making the brief a headline-plus-annotation readout that explains what the
-state means before the meters.
+and information organization are acceptable for now, but the Latest Brief still
+felt forced and the card-based top layout remained the root problem. The
+current dashboard keeps the accessibility pass, dark treatment, Review Stack,
+matching detail anchors, back-to-review-map links, and related Review Action
+links, while absorbing the former brief into a report-first frontpage and
+demoting the six large meters into a compact Review Map below the report.
 
 ## Completed Artifact Stack
 
@@ -83,6 +83,7 @@ state means before the meters.
 - `dashboard-home-linked-meters-v1`
 - `dashboard-latest-brief-checkpoint-v1`
 - `dashboard-editorial-brief-v1`
+- `dashboard-report-first-frontpage-v1`
 
 ## Current Capability Boundary
 
@@ -142,10 +143,10 @@ actions from validation, smoke, status, and dashboard-review evidence, writes
 `samples/dashboard/devcockpitcore_review_actions.md`, and marks every action
 with `executable: false`.
 
-The editorial-brief checkpoint keeps the same static/local boundary and turns
-the brief-first readout into a meaning-first status note above the native dark
-decision meter board. It does not add a reporting engine, server, network,
-telemetry, scheduler, writeback, or execution behavior.
+The report-first frontpage checkpoint keeps the same static/local boundary and
+turns the top viewport into a concise current-status report with a compact
+Review Map for linked detail navigation. It does not add a reporting engine,
+server, network, telemetry, scheduler, writeback, or execution behavior.
 
 ## Current Restart Surface
 
@@ -154,7 +155,7 @@ Start a new terminal or agent from:
 1. `AGENTS.md`
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
-4. `docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md`
+4. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
 5. `docs/PROJECT_COCKPIT.md`
 6. `docs/PROJECT_PIPELINE.mmd`
 7. `samples/dashboard/README.md`

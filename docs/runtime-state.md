@@ -1,13 +1,14 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-06
-active_artifact: dashboard-editorial-brief-v1
-artifact_current: dashboard-editorial-brief-v1
-artifact_next: japanese-display-polish-v1 or progress-driven-brief-evolution-v1
-next: Open samples/dashboard/devcockpitcore_dashboard.html for editorial Latest Brief review, or harden the accepted single bounded C4 validation-pack probe
-user_work: local dashboard editorial brief visual review
+updated_at: 2026-07-07
+active_artifact: dashboard-report-first-frontpage-v1
+artifact_current: dashboard-report-first-frontpage-v1
+artifact_next: progress-driven-report-evolution-v1 or japanese-display-polish-v1
+next: Open samples/dashboard/devcockpitcore_dashboard.html for report-first frontpage review, or harden the accepted single bounded C4 validation-pack probe
+user_work: local dashboard report-first visual review
 render_gate: not_applicable
-handoff: docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md
+handoff: docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md
+latest_dashboard_report_frontpage_commit: see final AGENT_REPORT for checkpoint hash
 latest_dashboard_editorial_commit: 3ea0e1e feat: add dashboard editorial brief
 remote_sync_state_at_handoff_start: origin/main fast-forwarded to 33250ab before local dashboard handoff was reapplied
 latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
@@ -34,20 +35,19 @@ Current executable capability is intentionally narrow:
 - The C4 key maps only to
   `python -m dev_cockpit.validation_pack --default --pretty`.
 
-The current review-surface slice is `dashboard-editorial-brief-v1`. It keeps
-the static dashboard and non-executable Review Actions package, preserves the
-native dark home-linked decision meter HUD, and replaces the ingredient-label
-Latest Brief with a compact editorial status note. The brief gives a headline
-judgment, implication, compact three-step cue, and one primary review link
-before the meter board. Dense evidence remains available below the overview or
-in native details panels. It is an offline review artifact, not an execution
-surface.
+The current review-surface slice is `dashboard-report-first-frontpage-v1`. It
+keeps the static dashboard and non-executable Review Actions package, preserves
+native dark mode and linked detail evidence, and absorbs the former Latest
+Brief into a concise Current Status / Supervision Report frontpage. The six
+large meter cards are no longer the first viewport; their detail-navigation
+role is demoted into a compact Review Map below the report. Dense evidence
+remains available below the frontpage or in native details panels. It is an
+offline review artifact, not an execution surface.
 
 User visual review accepted the dark mode and improved organization as usable
-for now, then flagged the first Latest Brief as too factual and not meaningful
-enough. The remaining caveat is visual tone: the editorial note should be
-opened locally and judged against the meter board for whether it is worth
-reading first every time.
+for now, then flagged that the Latest Brief still felt forced and that the
+card-heavy top viewport remained the root problem. The current correction is a
+structural layout change, not another copy-only brief pass.
 
 ## Verified Capabilities
 
@@ -70,10 +70,10 @@ reading first every time.
 - Generate non-executable review actions at
   `samples/dashboard/devcockpitcore_review_actions.json` and
   `samples/dashboard/devcockpitcore_review_actions.md`.
-- Present the dashboard as a home-linked dark decision meter HUD with an
-  editorial Latest Brief, short display labels, keyboard/focus markers, non-JS
-  fallback text, print-oriented CSS, Review Stack targets, back-to-overview
-  links, and progressive disclosure for dense evidence.
+- Present the dashboard as a report-first dark frontpage with a compact Review
+  Map, short display labels, keyboard/focus markers, non-JS fallback text,
+  print-oriented CSS, Review Stack targets, back-to-review-map links, and
+  progressive disclosure for dense evidence.
 
 ## Safety Boundary
 
@@ -93,7 +93,7 @@ Start a new terminal or agent from:
 1. `AGENTS.md`
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
-4. `docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md`
+4. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
 5. `docs/PROJECT_COCKPIT.md`
 6. `docs/PROJECT_PIPELINE.mmd`
 7. `samples/dashboard/README.md`
@@ -125,27 +125,27 @@ Use the bundled Python runtime or a real Python 3.11+ interpreter with
 
 ## Last Validation
 
-Last known validation before commit/push:
+Last known validation before commit/push for the report-first frontpage slice:
 
-- `python -m compileall src tests`: pass.
-- `python -m unittest tests.test_dashboard`: 18 tests OK.
-- `python -m unittest discover`: 300 tests OK.
-- `python -m dev_cockpit.status_snapshot --repo . --adapter adapters\devcockpitcore.json --output samples\status_snapshots\devcockpitcore_status.json --pretty`: pass.
-- `python -m dev_cockpit.validation_pack --default --output samples\validation_packs\devcockpitcore_validation_pack_result.json --pretty`: pass, warning-level historical pseudo-git-tag fixture residue.
-- `python -m dev_cockpit.cross_project_smoke --default --output samples\cross_project_smokes\devcockpitcore_cross_project_smoke_result.json --pretty`: pass, warning-level observer rows.
-- `python -m dev_cockpit.dashboard --output samples/dashboard/devcockpitcore_dashboard.html`: pass, with review action JSON/Markdown outputs.
-- `python -m json.tool samples/dashboard/devcockpitcore_review_actions.json`: pass.
-- Review action package readback: 20 actions, 0 blockers, 16 warnings, 4 info, 1 locked-by-gate, all `executable: false`.
-- `validation_pack --default`: warn only for historical pseudo-git-tag fixture residue.
-- `cross_project_smoke --default`: warning-level observer rows, no blockers.
-- `git diff --check`: pass.
+- bundled `python -m compileall src tests`: pass.
+- bundled `PYTHONPATH=src python -m unittest tests.test_dashboard`: 18 tests OK.
+- bundled `PYTHONPATH=src python -m unittest discover`: 300 tests OK.
+- bundled `PYTHONPATH=src python -m dev_cockpit.dashboard --output samples/dashboard/devcockpitcore_dashboard.html`: pass, with review action JSON/Markdown outputs.
+- bundled `python -m json.tool samples/dashboard/devcockpitcore_review_actions.json`: pass.
+- Playwright `file://` smoke: `report-first-frontpage` variant present, old Latest Brief absent, old meter board absent, old decision-meter cards absent, 6 Review Map links present, Review Stack collapsed.
+- Generated artifact scan: no prompt delimiters, raw host paths, `shell=True`, old top-surface classes, or `executable: true` matches.
+- Review action package readback: 20 actions, all `executable: false`.
+- `git diff --check`: pass; Git emitted line-ending normalization warnings only.
 
 ## Handoff Notes
 
+- Current local work implements `dashboard-report-first-frontpage-v1`; commit
+  and push should not be assumed complete until the final report names the
+  checkpoint hash.
 - Latest dashboard editorial checkpoint is `3ea0e1e feat: add dashboard
   editorial brief`, pushed to `origin/main` with parity `0 0` before this
   handoff refresh began.
-- The immediate continuation handoff is
+- The prior editorial handoff remains useful only as history:
   `docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md`.
 - The older C4 handoff remains in the restart surface as boundary memory, not
   as the first active dashboard continuation target.

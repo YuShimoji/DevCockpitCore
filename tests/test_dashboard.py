@@ -47,12 +47,13 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(len(model["decision_meters"]), 6)
         self.assertLessEqual(len(model["review_stack"]), 3)
         self.assertTrue(all(meter["detail_href"].startswith("#detail-") for meter in model["decision_meters"]))
-        brief = model["latest_brief"]
-        self.assertEqual(brief["kind"], "editorial")
-        self.assertIn("headline", brief)
-        self.assertIn("annotation", brief)
-        self.assertEqual(len(brief["runway"]), 3)
-        self.assertIn("primary_action", brief)
+        report = model["frontpage_report"]
+        self.assertIs(model["latest_brief"], report)
+        self.assertEqual(report["kind"], "frontpage_report")
+        self.assertIn("headline", report)
+        self.assertIn("annotation", report)
+        self.assertEqual(len(report["runway"]), 3)
+        self.assertIn("primary_action", report)
 
     def test_rendered_html_contains_required_review_sections(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -63,9 +64,10 @@ class DashboardTests(unittest.TestCase):
         html = render_dashboard(model)
 
         for expected in (
-            "Local supervision HUD",
-            "Latest Brief",
-            "Home-linked decision meter HUD",
+            "Current Status / Supervision Report",
+            "Continue locally; the useful attention is warning judgment, not blocker hunting.",
+            "Review Map",
+            "Compact review map",
             "Review Stack",
             "Linked Detail Map",
             "Detail: Stop Gate",
@@ -90,7 +92,7 @@ class DashboardTests(unittest.TestCase):
         self.assertNotIn("NEXT_WORKER_PROMPT", html)
         self.assertNotIn("[PASTE TARGET:", html)
 
-    def test_rendered_html_has_dark_compact_overview_and_disclosures(self) -> None:
+    def test_rendered_html_has_dark_report_first_frontpage_and_disclosures(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
@@ -100,13 +102,16 @@ class DashboardTests(unittest.TestCase):
         top_strip = html.split("</header>", 1)[0]
 
         for expected in (
-            'data-dashboard-variant="home-linked-meters"',
+            'data-dashboard-variant="report-first-frontpage"',
             'data-dashboard-theme="dark"',
             "color-scheme: dark",
-            "latest-brief",
-            "decision-meter-board",
-            "data-meter-target=\"#detail-stop-gate\"",
-            "review-strip",
+            'id="current-status-report"',
+            "report-first-frontpage",
+            "frontpage-report",
+            "report-status-strip",
+            "report-primary-action",
+            "review-map-list",
+            "data-review-map-item",
             "<span>Stop Gate</span>",
             "<span>Warning Debt</span>",
             "<span>Evidence Freshness</span>",
@@ -125,8 +130,12 @@ class DashboardTests(unittest.TestCase):
             "file_generated_by_dashboard_command",
         ):
             self.assertNotIn(raw_value, top_strip)
+        for demoted_label in ("Warning Debt", "Review Queue", "Project Smoke", "Access Readiness"):
+            self.assertNotIn(demoted_label, top_strip)
+        for old_top_surface in ("latest-brief", "decision-meter-board", "review-strip"):
+            self.assertNotIn(old_top_surface, html)
 
-    def test_latest_brief_is_editorial_and_before_meter_board(self) -> None:
+    def test_frontpage_report_absorbs_latest_brief_without_a_card(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
@@ -134,30 +143,32 @@ class DashboardTests(unittest.TestCase):
 
         html = render_dashboard(model)
         top_strip = html.split("</header>", 1)[0]
-        brief = top_strip.split('<section id="latest-brief"', 1)[1].split("</section>", 1)[0]
+        report = top_strip.split('<section id="current-status-report"', 1)[1].split("</section>", 1)[0]
 
-        self.assertLess(top_strip.index('id="latest-brief"'), top_strip.index('id="meter-board"'))
-        self.assertIn('data-brief-kind="editorial"', top_strip)
-        self.assertEqual(brief.count("<li"), 3)
+        self.assertLess(html.index('id="current-status-report"'), html.index('id="review-map"'))
+        self.assertNotIn("latest-brief", html)
+        self.assertNotIn('data-brief-kind="editorial"', html)
+        self.assertEqual(report.count("<dt>"), 4)
         for expected in (
+            "Current Status / Supervision Report",
             "Continue locally; the useful attention is warning judgment, not blocker hunting.",
             "The largest review bucket is validation findings",
-            "brief-headline",
-            "brief-annotation",
-            "brief-runway",
-            "brief-primary-action",
+            "report-headline",
+            "report-interpretation",
+            "report-status-strip",
+            "report-primary-action",
             "Review warning detail",
             "Not urgent",
         ):
-            self.assertIn(expected, brief)
+            self.assertIn(expected, report)
         for table_label in ("Decision</span>", "Blockers</span>", "Focus</span>", "Next</span>"):
-            self.assertNotIn(table_label, brief)
+            self.assertNotIn(table_label, report)
         for duplicated_meter in ("Stop Gate", "Warning Debt", "Review Queue", "Project Smoke", "Access Readiness"):
-            self.assertNotIn(duplicated_meter, brief)
+            self.assertNotIn(duplicated_meter, report)
         for raw_value in ("INTEGRATE_AND_CONTINUE", "worker_generated_not_user_opened", "local_static_file"):
-            self.assertNotIn(raw_value, brief)
+            self.assertNotIn(raw_value, report)
 
-    def test_home_meters_link_to_detail_panels_and_review_actions(self) -> None:
+    def test_review_map_links_to_detail_panels_and_review_actions(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
@@ -173,11 +184,12 @@ class DashboardTests(unittest.TestCase):
             "detail-project-smoke",
             "detail-source-files",
         )
-        self.assertEqual(html.count('class="decision-meter '), 6)
+        self.assertEqual(html.count("data-review-map-item"), 6)
+        self.assertNotIn('class="decision-meter ', html)
         for detail_id in detail_ids:
             self.assertIn(f'href="#{detail_id}"', html)
             self.assertIn(f'id="{detail_id}"', html)
-            self.assertIn('href="#meter-board"', html)
+            self.assertIn('href="#review-map"', html)
         self.assertIn('href="#validation-001"', html)
         self.assertIn('id="validation-001"', html)
 
@@ -310,7 +322,7 @@ class DashboardTests(unittest.TestCase):
             '<footer class="dashboard-footer">',
             '<noscript>',
             "aria-labelledby=",
-            'aria-label="Home-linked decision meters"',
+            'aria-label="Compact review map"',
             "@media print",
             ":focus-visible",
             "prefers-reduced-motion",

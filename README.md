@@ -227,15 +227,12 @@ writeback in target repositories. The next roadmap step is
 
 The local test dashboard turns current validation, smoke, status, adapter, and
 runtime/project context evidence into one static HTML review surface. It now
-opens with an editorial Latest Brief, then a home-linked dark decision meter
-HUD. The brief gives a headline judgment, a short "why it matters" annotation,
-a three-step visual cue, and one primary review link so the first scan explains
-what the evidence means before the meter board repeats raw state. The meter
-board still summarizes stop gate, warning debt, evidence freshness, review
-queue, project smoke, and local access readiness, and each meter links to the
-detail panel and review action surface it explains. It is a local file only: no
-server, database, credentials, external services, or target repository
-writeback.
+opens with a report-first dark frontpage: a concise Current Status /
+Supervision Report, compact status strip, one primary review link, and one
+secondary evidence link. The former large meter board is demoted into a compact
+Review Map below the report, and each Review Map item links to the detail panel
+and review action surface it explains. It is a local file only: no server,
+database, credentials, external services, or target repository writeback.
 
 The dashboard generator also writes a non-executable review action package
 derived from validation, smoke, status, and dashboard-review evidence:
@@ -248,7 +245,7 @@ Every generated action is review-only and carries `executable: false`.
 The generated dashboard includes accessibility-oriented review affordances:
 semantic section landmarks, a skip link, section navigation, visible focus
 states, table captions, non-JavaScript fallback copy, and print styling for
-manual handoff. Dense evidence remains below the home meter board or inside
+manual handoff. Dense evidence remains below the frontpage report or inside
 native `details` disclosure panels, while the Review Stack points to at most
 three immediate review targets. This is an accessibility-oriented navigation
 and visual-density pass, not a formal compliance claim.
@@ -287,12 +284,12 @@ The generated project-card search and result filters are local DOM affordances
 over already-rendered static content. The review-action filters behave the same
 way. The core review content remains visible without JavaScript.
 
-For manual review, open the file, read the Latest Brief first, confirm it feels
-like a meaning-first status note rather than a key-value label, then confirm the
-native dark meter board remains readable without browser-extension dark mode.
-Use the meter links to land on the matching detail panels, check the
-back-to-overview links with `Tab`, expand dense evidence only as needed, then
-use browser print preview to inspect the static handoff view.
+For manual review, open the file, read the Current Status / Supervision Report
+first, confirm it feels like a concise status report rather than a bolt-on
+brief card, then confirm the native dark Review Map remains compact and
+secondary. Use the Review Map links to land on the matching detail panels,
+check the back-to-review-map links with `Tab`, expand dense evidence only as
+needed, then use browser print preview to inspect the static handoff view.
 
 ## Controlled runner design
 
@@ -643,3 +640,4 @@ and recommended next entrances.
 30. home-linked dashboard decision meters
 31. dashboard latest brief checkpoint
 32. dashboard editorial brief correction
+33. dashboard report-first frontpage

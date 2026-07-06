@@ -1,6 +1,6 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-06
+updated_at: 2026-07-07
 
 ## North Star
 
@@ -9,13 +9,13 @@ adding any broader automation capability.
 
 ## Current Active Slice
 
-`dashboard-editorial-brief-v1`
+`dashboard-report-first-frontpage-v1`
 
-Purpose: correct the accepted dark home-linked dashboard lane so the Latest
-Brief reads as a meaning-first editorial note before the meter board. The brief
-now gives a headline judgment, implication, compact three-step cue, and one
-primary review link while preserving meter/detail navigation, source-backed
-evidence, and non-executable Review Actions.
+Purpose: correct the accepted dark dashboard lane so the first viewport reads
+as a concise current-status report rather than a card board. The former Latest
+Brief is absorbed into the report frontpage, and the six large meter cards are
+demoted into a compact Review Map while preserving detail navigation,
+source-backed evidence, and non-executable Review Actions.
 
 Dashboard artifact path:
 
@@ -56,7 +56,8 @@ src/dev_cockpit/dashboard.py
 | Compact dark overview | Project review surface | complete |
 | Home-linked decision meters | Project review surface | accepted with caveat |
 | Latest brief checkpoint | Project review surface | complete with caveat |
-| Editorial brief correction | Project review surface | active |
+| Editorial brief correction | Project review surface | complete with caveat |
+| Report-first frontpage | Project review surface | active |
 | Japanese display polish | Project review surface | future review slice |
 
 ## Capability Glyph Grid
@@ -72,8 +73,8 @@ src/dev_cockpit/dashboard.py
 | Non-executable review actions | [#] | available after generation |
 | Skip link, focus states, print view | [#] | available after generation |
 | Compact dark overview HUD | [#] | available after generation |
-| Home-linked meter HUD | [#] | available after generation |
-| Editorial Latest Brief | [#] | available after generation |
+| Report-first frontpage | [#] | available after generation |
+| Compact Review Map | [#] | available after generation |
 | C3 help-only probes | [#] | two fixed keys only |
 | Single C4 validation-pack probe | [#] | one bounded key accepted |
 | Additional C4 commands | [!] | locked |
@@ -87,9 +88,9 @@ src/dev_cockpit/dashboard.py
 | --- | --- | --- |
 | Validation evidence | warning-level historical residue expected | review dashboard warning rows |
 | Smoke evidence | warning-level observer rows expected | confirm optional sibling warnings are acceptable |
-| Dashboard artifact | generated local HTML | open and inspect meter clarity, detail anchors, Review Stack, Review Actions, and print view |
+| Dashboard artifact | generated local HTML | open and inspect report clarity, Review Map, detail anchors, Review Stack, Review Actions, and print view |
 | Review action package | JSON and Markdown artifacts | confirm actions are review-only and non-executable |
-| Editorial Latest Brief | static HTML/CSS | confirm the first readout explains what the current state means before the meters |
+| Report-first frontpage | static HTML/CSS | confirm the first viewport reads like a concise current-status report |
 | C4 probe boundary | exactly one validation-pack key accepted | harden docs/tests before any further execution-readiness work |
 | Execution expansion | locked beyond accepted single C4 probe | keep outside this slice |
 | Public or production claims | locked | keep dashboard local and review-only |
@@ -98,9 +99,9 @@ src/dev_cockpit/dashboard.py
 
 - Can a user open one local file and see current testability?
 - Are warning ownership, blocker count, and access state visible in the first scan?
-- Does the Latest Brief feel like an editorial status note before the parallel meter set?
-- Does the first viewport feel like a decision meter HUD rather than a collapsed evidence closet?
-- Does each top meter link to the exact detail panel and review action surface it explains?
+- Does the first viewport read like a concise report rather than a card board?
+- Does the report answer blocker state, attention point, evidence trust, and first detail target?
+- Does each Review Map item link to the exact detail panel and review action surface it explains?
 - Are source JSON paths and generated_at values visible enough for audit?
 - Do review actions stay non-executable and source-backed?
 - Are skip link, keyboard focus, details panels, non-JS fallback, and print view usable enough for manual review?
@@ -110,7 +111,7 @@ src/dev_cockpit/dashboard.py
 ## Review Memory
 
 The user accepted the dark mode and improved information organization as good
-enough for now, then flagged the first Latest Brief as too much like an
-ingredient label. The current correction makes the brief a compact editorial
-read before the meters. The remaining caveat is tone: a human visual pass still
-needs to decide whether the note is something worth reading every time.
+enough for now, then flagged the Latest Brief as still forced and the card-based
+top viewport as the root problem. The current correction replaces the top card
+composition with a report-first frontpage and keeps the large meter logic only
+as compact linked navigation below the report.
