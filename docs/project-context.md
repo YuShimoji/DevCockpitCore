@@ -32,9 +32,18 @@ repo-local validation-pack probe and recommends
 route. C3 command set remains exactly two, while the current executable
 capability includes one accepted minimal C4 repo-local validation-pack probe.
 C4 is limited to one repo-local validation-pack probe, now accepted by the
-minimal implementation review.
-C4 is limited to one accepted repo-local validation-pack probe in the current
-review state.
+minimal implementation review. C4 is limited to one accepted repo-local
+validation-pack probe in the current review state.
+
+The latest dashboard checkpoint is `dashboard-compact-dark-overview-v1`, which
+keeps the non-executable dashboard and Review Actions package while changing
+the local HTML into a compact dark-mode overview-first supervision HUD.
+
+The active checkpoint responds to user-opened visual feedback: the previous
+dashboard was too vertically long and text-heavy. The current dashboard keeps
+the accessibility pass, but moves dense evidence below the first screen or into
+native details panels and uses short display labels for translation-resilient
+top-level review.
 
 ## Completed Artifact Stack
 
@@ -63,6 +72,11 @@ review state.
 - `c4-probe-authorization-review-v1`
 - `c4-probe-minimal-implementation-v1`
 - `c4-probe-minimal-implementation-review-v1`
+- `devcockpit-local-test-dashboard-v0`
+- `designer-dashboard-ia-v1`
+- `dashboard-review-to-action-package-v1`
+- `dashboard-accessibility-pass-v1`
+- `dashboard-compact-dark-overview-v1`
 
 ## Current Capability Boundary
 
@@ -111,6 +125,22 @@ and before/after repository state evidence. A third C3 command, multiple C4
 commands, C5, C6, arbitrary execution, adapter validation as controlled command
 behavior, and target repository writeback remain unauthorized.
 
+The local dashboard generator is a review surface only. It reads existing local
+JSON and markdown evidence and writes a static HTML artifact at
+`samples/dashboard/devcockpitcore_dashboard.html`. Its static GUI affordance is
+local DOM filtering/search over already-rendered project cards.
+
+The review action package is also local and non-executable. It derives review
+actions from validation, smoke, status, and dashboard-review evidence, writes
+`samples/dashboard/devcockpitcore_review_actions.json` and
+`samples/dashboard/devcockpitcore_review_actions.md`, and marks every action
+with `executable: false`.
+
+The compact dark overview pass keeps the same static/local boundary and adds a
+native dark theme, compact first-screen decision cards, short display labels,
+and progressive disclosure for dense evidence without adding any server,
+network, telemetry, or execution behavior.
+
 ## Current Restart Surface
 
 Start a new terminal or agent from:
@@ -135,8 +165,12 @@ Start a new terminal or agent from:
 18. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
 19. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
 20. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
-21. `docs/decision-log.md`
-22. `docs/idea-ledger.md`
+21. `docs/PROJECT_COCKPIT.md`
+22. `samples/dashboard/devcockpitcore_dashboard.html`
+23. `samples/dashboard/devcockpitcore_review_actions.json`
+24. `samples/dashboard/devcockpitcore_review_actions.md`
+25. `docs/decision-log.md`
+26. `docs/idea-ledger.md`
 
 Then verify live state with:
 

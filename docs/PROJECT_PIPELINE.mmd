@@ -1,0 +1,37 @@
+flowchart LR
+    VP["validation_pack_result.v1"]
+    SM["cross_project_smoke_result.v1"]
+    SS["status_snapshot.v1"]
+    AD["adapter_manifest.v1"]
+    RT["runtime/project context"]
+    GEN["dev_cockpit.dashboard generator"]
+    IA["designer/operator IA model"]
+    ACT["non-executable review action package"]
+    A11Y["accessibility-oriented handoff layer"]
+    HUD["compact dark overview HUD"]
+    HTML["samples/dashboard/devcockpitcore_dashboard.html"]
+    JSON["samples/dashboard/devcockpitcore_review_actions.json"]
+    MD["samples/dashboard/devcockpitcore_review_actions.md"]
+    TRIAGE["warning triage + project cards"]
+    REVIEW["local human review"]
+
+    VP --> GEN
+    SM --> GEN
+    SS --> GEN
+    AD --> GEN
+    RT --> GEN
+    GEN --> IA
+    IA --> ACT
+    IA --> A11Y
+    A11Y --> HUD
+    HUD --> HTML
+    ACT --> JSON
+    ACT --> MD
+    ACT --> HUD
+    HTML --> TRIAGE
+    TRIAGE --> REVIEW
+    JSON --> REVIEW
+    MD --> REVIEW
+
+    LOCK["locked: runner, scheduler, external services, credentials, writeback"]
+    LOCK -. "shown as locked, not executable" .-> ACT

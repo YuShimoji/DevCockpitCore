@@ -5,6 +5,27 @@ into the current slice.
 
 ## Active Seeds
 
+### Japanese Display Polish
+
+Purpose: refine the compact dark dashboard labels after human visual review,
+especially for Japanese or machine-translated reading.
+
+Effect: should improve dashboard readability only. It must not introduce a full
+i18n system, external CSS/JS, a server, or any execution capability.
+
+Requirements: keep Review Actions non-executable, keep source evidence
+available, preserve keyboard/focus/print behavior, and avoid raw long enum
+values in top-card headline text.
+
+State: allowed next review-surface route after
+`dashboard-compact-dark-overview-v1`.
+
+Owner: Supervisor or user visual review should decide whether this is worth
+doing before more C4 hardening.
+
+Next move: use `japanese-display-polish-v1` only if the compact dark overview
+still feels hard to scan after opening the generated local dashboard.
+
 ### C4 Probe Minimal Implementation Hardening
 
 Purpose: make the accepted single C4 validation-pack probe review canonical and

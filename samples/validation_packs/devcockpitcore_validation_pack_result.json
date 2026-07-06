@@ -1,25 +1,33 @@
 {
   "schema_version": "validation_pack_result.v1",
-  "generated_at": "2026-06-27T15:04:57Z",
+  "generated_at": "2026-07-06T01:09:24Z",
   "producer": "dev_cockpit.validation_pack",
   "pack": {
     "pack_key": "devcockpitcore_default",
-    "pack_path": "samples/validation_packs/devcockpitcore_validation_pack.json",
+    "pack_path": "default",
     "project_key": "devcockpitcore"
   },
   "repo": {
     "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
     "branch": "main",
-    "head": "3e16f52",
+    "head": "33250ab",
     "worktree": {
       "state": "dirty",
       "short_status": [
-        " M README.md",
-        " M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md",
-        "?? docs/design/VALIDATION_PACK_V1.md",
-        "?? samples/validation_packs/",
-        "?? src/dev_cockpit/validation_pack.py",
-        "?? tests/test_validation_pack.py"
+        "M  README.md",
+        "A  docs/PROJECT_COCKPIT.md",
+        "M  docs/decision-log.md",
+        "M  docs/idea-ledger.md",
+        "M  docs/project-context.md",
+        "MM docs/runtime-state.md",
+        "M  pyproject.toml",
+        "MM samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        "MM samples/status_snapshots/devcockpitcore_status.json",
+        "M  samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        "?? docs/PROJECT_PIPELINE.mmd",
+        "?? samples/dashboard/",
+        "?? src/dev_cockpit/dashboard.py",
+        "?? tests/test_dashboard.py"
       ]
     },
     "remote_parity": {
@@ -76,7 +84,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=2.538 stdout='' stderr='.................................................\\n----------------------------------------------------------------------\\nRan 49 tests in 2.364s\\n\\nOK\\n'"
+        "exit=0 duration_seconds=16.418 stdout='' stderr='.........................................................................................................................................................................................................................................................................................................\\n----------------------------------------------------------------------\\nRan 297 tests in 16.200s\\n\\nOK\\n'"
       ]
     },
     {
@@ -113,7 +121,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.135 stdout='usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\\n                          [--pretty] [--no-write]\\n\\nProduce a read-only repository status snapshot.\\n\\noptions:\\n  -h, --help         show this help message and exit\\n  --repo REPO        Target repository path to inspect.\\n  --adapter ADAPTER  Adapter JSON path.\\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\\n  --pretty           Write indented JSON.\\n  --no-write         Print JSON and skip output file writes.\\n' stderr=''"
+        "exit=0 duration_seconds=0.088 stdout='usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\\n                          [--pretty] [--no-write]\\n\\nProduce a read-only repository status snapshot.\\n\\noptions:\\n  -h, --help         show this help message and exit\\n  --repo REPO        Target repository path to inspect.\\n  --adapter ADAPTER  Adapter JSON path.\\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\\n  --pretty           Write indented JSON.\\n  --no-write         Print JSON and skip output file writes.\\n' stderr=''"
       ]
     },
     {
@@ -135,7 +143,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.082 stdout='usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\\n                            [--pretty]\\n\\nNormalize an AGENT_REPORT-like text report.\\n\\noptions:\\n  -h, --help       show this help message and exit\\n  --input INPUT    Input report text path.\\n  --stdin          Read report text from stdin.\\n  --output OUTPUT  Output JSON path. Omit to write to stdout.\\n  --pretty         Write indented JSON.\\n' stderr=''"
+        "exit=0 duration_seconds=0.068 stdout='usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\\n                            [--pretty]\\n\\nNormalize an AGENT_REPORT-like text report.\\n\\noptions:\\n  -h, --help       show this help message and exit\\n  --input INPUT    Input report text path.\\n  --stdin          Read report text from stdin.\\n  --output OUTPUT  Output JSON path. Omit to write to stdout.\\n  --pretty         Write indented JSON.\\n' stderr=''"
       ]
     },
     {
@@ -157,17 +165,17 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.078 stdout='usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\\n                          [--status-snapshot STATUS_SNAPSHOT]\\n                          [--adapter ADAPTER] [--output OUTPUT] [--pretty]\\n\\nClassify a report_normalization.v1 JSON readback.\\n\\noptions:\\n  -h, --help            show this help message and exit\\n  --report-normalization REPORT_NORMALIZATION\\n                        Required report normalization JSON path.\\n  --status-snapshot STATUS_SNAPSHOT\\n                        Optional status_snapshot.v1 JSON path.\\n  --adapter ADAPTER     Optional adapter_manifest.v1 JSON path.\\n  --output OUTPUT       Output JSON path. Omit to write to stdout.\\n  --pretty              Write indented JSON.\\n' stderr=''"
+        "exit=0 duration_seconds=0.068 stdout='usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\\n                          [--status-snapshot STATUS_SNAPSHOT]\\n                          [--adapter ADAPTER] [--output OUTPUT] [--pretty]\\n\\nClassify a report_normalization.v1 JSON readback.\\n\\noptions:\\n  -h, --help            show this help message and exit\\n  --report-normalization REPORT_NORMALIZATION\\n                        Required report normalization JSON path.\\n  --status-snapshot STATUS_SNAPSHOT\\n                        Optional status_snapshot.v1 JSON path.\\n  --adapter ADAPTER     Optional adapter_manifest.v1 JSON path.\\n  --output OUTPUT       Output JSON path. Omit to write to stdout.\\n  --pretty              Write indented JSON.\\n' stderr=''"
       ]
     },
     {
       "check_key": "json_parse",
       "kind": "json",
       "result": "pass",
-      "done": 10,
-      "total": 10,
+      "done": 41,
+      "total": 41,
       "unknown": 0,
-      "meter": "##########",
+      "meter": "#########################################",
       "severity": "required",
       "command": null,
       "exit_code": null,
@@ -193,7 +201,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.038 stdout='' stderr=\"warning: in the working copy of 'README.md', LF will be replaced by CRLF the next time Git touches it\\nwarning: in the working copy of 'docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md', LF will be replaced by CRLF the next time Git touches it\\n\""
+        "exit=0 duration_seconds=0.039 stdout='' stderr=\"warning: in the working copy of 'docs/runtime-state.md', LF will be replaced by CRLF the next time Git touches it\\nwarning: in the working copy of 'samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json', LF will be replaced by CRLF the next time Git touches it\\nwarning: in the working copy of 'samples/status_snapshots/devcockpitcore_status.json', LF will be replaced by CRLF the next time Git touches it\\n\""
       ]
     },
     {
@@ -215,7 +223,7 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "exit=0 duration_seconds=0.031 stdout='' stderr=''"
+        "exit=0 duration_seconds=0.037 stdout='' stderr=''"
       ]
     },
     {
@@ -237,9 +245,8 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "Observational only; a dirty worktree is recorded, not executed against.",
-        "exit=0 duration_seconds=0.044 stdout='## main...origin/main\\n M README.md\\n M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md\\n?? docs/design/VALIDATION_PACK_V1.md\\n?? samples/validation_packs/\\n?? src/dev_cockpit/validation_pack.py\\n?? tests/test_validation_pack.py\\n' stderr=''",
-        "## main...origin/main\n M README.md\n M docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md\n?? docs/design/VALIDATION_PACK_V1.md\n?? samples/validation_packs/\n?? src/dev_cockpit/validation_pack.py\n?? tests/test_validation_pack.py\n"
+        "exit=0 duration_seconds=0.035 stdout='## main...origin/main\\nM  README.md\\nA  docs/PROJECT_COCKPIT.md\\nM  docs/decision-log.md\\nM  docs/idea-ledger.md\\nM  docs/project-context.md\\nMM docs/runtime-state.md\\nM  pyproject.toml\\nMM samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\\nMM samples/status_snapshots/devcockpitcore_status.json\\nM  samples/validation_packs/devcockpitcore_validation_pack_result.json\\n?? docs/PROJECT_PIPELINE.mmd\\n?? samples/dashboard/\\n?? src/dev_cockpit/dashboard.py\\n?? tests/test_dashboard.py\\n' stderr=''",
+        "## main...origin/main\nM  README.md\nA  docs/PROJECT_COCKPIT.md\nM  docs/decision-log.md\nM  docs/idea-ledger.md\nM  docs/project-context.md\nMM docs/runtime-state.md\nM  pyproject.toml\nMM samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\nMM samples/status_snapshots/devcockpitcore_status.json\nM  samples/validation_packs/devcockpitcore_validation_pack_result.json\n?? docs/PROJECT_PIPELINE.mmd\n?? samples/dashboard/\n?? src/dev_cockpit/dashboard.py\n?? tests/test_dashboard.py\n"
       ]
     },
     {
@@ -270,9 +277,7 @@
       "exit_code": null,
       "findings": [],
       "missing": 0,
-      "notes": [
-        "Historical fixture hits are hygiene warnings, not true stops."
-      ]
+      "notes": []
     },
     {
       "check_key": "pseudo_git_tag_scan",
@@ -296,9 +301,7 @@
         }
       ],
       "missing": 0,
-      "notes": [
-        "Historical AGENT_REPORT fixtures may contain pseudo git tags as residue examples."
-      ]
+      "notes": []
     },
     {
       "check_key": "raw_local_path_scan",
@@ -314,7 +317,6 @@
       "findings": [],
       "missing": 0,
       "notes": [
-        "Raw local user paths fail; redacted local paths are allowed.",
         "redacted local path references observed: 1"
       ]
     },
@@ -331,9 +333,7 @@
       "exit_code": null,
       "findings": [],
       "missing": 0,
-      "notes": [
-        "Mojibake in historical report headers is a hygiene warning."
-      ]
+      "notes": []
     },
     {
       "check_key": "forbidden_implementation_scan",
@@ -348,9 +348,7 @@
       "exit_code": null,
       "findings": [],
       "missing": 0,
-      "notes": [
-        "Detector and boundary language in docs/tests is out of scope for this source scan."
-      ]
+      "notes": []
     }
   ],
   "hygiene": {

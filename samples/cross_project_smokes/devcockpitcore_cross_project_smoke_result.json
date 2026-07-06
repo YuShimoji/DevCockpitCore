@@ -1,10 +1,10 @@
 {
   "schema_version": "cross_project_smoke_result.v1",
-  "generated_at": "2026-06-27T15:29:52Z",
+  "generated_at": "2026-07-06T01:09:10Z",
   "producer": "dev_cockpit.cross_project_smoke",
   "smoke": {
     "smoke_key": "devcockpitcore_cross_project_observer",
-    "smoke_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke.json",
+    "smoke_path": "default",
     "project_key": "devcockpitcore"
   },
   "summary": {
@@ -46,16 +46,24 @@
         "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\DevCockpitCore",
         "schema_version": "status_snapshot.v1",
         "branch": "main",
-        "head": "52aa3de",
+        "head": "33250ab",
         "worktree": {
           "state": "dirty",
           "short_status": [
-            " M README.md",
-            "?? .serena/",
-            "?? docs/design/CROSS_PROJECT_SMOKE_V1.md",
-            "?? samples/cross_project_smokes/",
-            "?? src/dev_cockpit/cross_project_smoke.py",
-            "?? tests/test_cross_project_smoke.py"
+            "M  README.md",
+            "A  docs/PROJECT_COCKPIT.md",
+            "M  docs/decision-log.md",
+            "M  docs/idea-ledger.md",
+            "M  docs/project-context.md",
+            "MM docs/runtime-state.md",
+            "M  pyproject.toml",
+            "M  samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+            "MM samples/status_snapshots/devcockpitcore_status.json",
+            "M  samples/validation_packs/devcockpitcore_validation_pack_result.json",
+            "?? docs/PROJECT_PIPELINE.mmd",
+            "?? samples/dashboard/",
+            "?? src/dev_cockpit/dashboard.py",
+            "?? tests/test_dashboard.py"
           ]
         },
         "remote_parity": {
@@ -106,8 +114,8 @@
         "generated": true,
         "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\NLMYTGen",
         "schema_version": "status_snapshot.v1",
-        "branch": "codex/baseball-bn08-script-beat-linkage",
-        "head": "4abb199",
+        "branch": "codex/content-spine-002-transcript-substitution-readiness-v1",
+        "head": "6f75266",
         "worktree": {
           "state": "clean",
           "short_status": []
@@ -120,7 +128,7 @@
         },
         "health": "yellow",
         "warnings": [
-          "current branch 'codex/baseball-bn08-script-beat-linkage' differs from adapter default 'master'"
+          "current branch 'codex/content-spine-002-transcript-substitution-readiness-v1' differs from adapter default 'master'"
         ]
       },
       "scope_boundary": {
@@ -161,10 +169,13 @@
         "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\WritingPage",
         "schema_version": "status_snapshot.v1",
         "branch": "main",
-        "head": "735bc71",
+        "head": "ad04ee9",
         "worktree": {
-          "state": "clean",
-          "short_status": []
+          "state": "dirty",
+          "short_status": [
+            " M .serena/project.yml",
+            " M docs/CURRENT_STATE.md"
+          ]
         },
         "remote_parity": {
           "ahead": 0,
@@ -174,6 +185,7 @@
         },
         "health": "yellow",
         "warnings": [
+          "worktree is dirty",
           "runtime state document is absent"
         ]
       },
@@ -215,10 +227,40 @@
         "path": "C:\\Users\\<redacted>\\Storage\\Media Contents Projects\\ClipPipeGen",
         "schema_version": "status_snapshot.v1",
         "branch": "main",
-        "head": "c2af4b9",
+        "head": "2cae693",
         "worktree": {
-          "state": "clean",
-          "short_status": []
+          "state": "dirty",
+          "short_status": [
+            " M artifacts/ARTIFACTS.md",
+            " M docs/CURRENT_HANDOFF.md",
+            " M docs/HANDOFF.md",
+            " M docs/RUNTIME_STATE.md",
+            " M docs/dashboard/index.html",
+            " M docs/dashboard/project-status.json",
+            " M docs/index.md",
+            " M src/cli/main.py",
+            " M tests/test_asset_fetch_boundary.py",
+            "?? docs/content_planning/",
+            "?? samples/content_planning/",
+            "?? src/cli/build_content_candidate_dashboard.py",
+            "?? src/cli/build_episode_init_plan.py",
+            "?? src/cli/build_episode_seed_drafts.py",
+            "?? src/cli/build_operator_cockpit.py",
+            "?? src/cli/build_source_inspection_packet.py",
+            "?? src/cli/resolve_episode_seed_sources.py",
+            "?? src/pipeline/content_planning.py",
+            "?? src/pipeline/episode_init_plan.py",
+            "?? src/pipeline/episode_seed_bridge.py",
+            "?? src/pipeline/operator_cockpit.py",
+            "?? src/pipeline/source_inspection_packet.py",
+            "?? src/pipeline/source_metadata_resolver.py",
+            "?? tests/test_content_planning.py",
+            "?? tests/test_episode_init_plan.py",
+            "?? tests/test_episode_seed_bridge.py",
+            "?? tests/test_operator_cockpit.py",
+            "?? tests/test_source_inspection_packet.py",
+            "?? tests/test_source_metadata_resolver.py"
+          ]
         },
         "remote_parity": {
           "ahead": 0,
@@ -228,6 +270,7 @@
         },
         "health": "yellow",
         "warnings": [
+          "worktree is dirty",
           "runtime state document is absent",
           "project context document is absent"
         ]

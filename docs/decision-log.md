@@ -3,6 +3,41 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-06 - Compact Dark Dashboard Handoff After Remote Sync
+
+Purpose: preserve the user-opened dashboard visual feedback and make another
+terminal able to resume after syncing over the newer C4 minimal implementation
+review state.
+
+Decision: keep `c4-probe-minimal-implementation-review-v1` as the current
+execution-readiness authority, and layer `dashboard-compact-dark-overview-v1`
+as the current review-surface artifact.
+
+Effect: `docs/runtime-state.md`, `docs/project-context.md`,
+`docs/PROJECT_COCKPIT.md`, and dashboard samples are the restart surface for
+the compact dark dashboard work. The C4 accepted capability remains exactly one
+bounded repo-local validation-pack probe.
+
+Requirements preserved:
+
+- C3 command set remains exactly two help-only keys.
+- C4 command set remains exactly one key: `validation_pack_default_pretty`.
+- The dashboard and Review Actions remain static, local, and non-executable.
+- No web server, scheduler, credentials, target repository writeback, C5, C6,
+  or public action was added.
+
+State: local dashboard work was stashed, `origin/main` was fast-forwarded to
+`33250ab`, and the dashboard handoff was reapplied on top of the remote C4
+minimal implementation review state.
+
+Owner: next terminal should first verify parity, read `docs/runtime-state.md`,
+then choose either C4 minimal implementation hardening or dashboard visual
+polish.
+
+Next move: prefer
+`common-foundation-c4-probe-minimal-implementation-hardening-v1` for execution
+readiness, or `japanese-display-polish-v1` for dashboard review ergonomics.
+
 ## 2026-07-01 - C4 Probe Minimal Implementation Review Accepted
 
 Purpose: decide whether the single bounded C4 validation-pack probe implemented

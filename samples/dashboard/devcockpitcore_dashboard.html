@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DevCockpitCore Local Test Dashboard</title>
+  <meta name="color-scheme" content="dark">
+  <style>
+:root {
+  color-scheme: dark;
+  --ink: #f4f1e8;
+  --muted: #b8bdaa;
+  --line: #3a4038;
+  --panel: #1b1f1b;
+  --paper: #111411;
+  --soft: #232920;
+  --green: #57b985;
+  --yellow: #d9a84e;
+  --red: #ee6878;
+  --navy: #4d705f;
+  --teal: #66c6a6;
+  --amber-soft: #3a301c;
+  --shadow: rgba(0, 0, 0, 0.35);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.45;
+}
+a { color: var(--teal); }
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  z-index: 10;
+  padding: 8px 12px;
+  background: #f4f1e8;
+  color: #111411;
+  border: 2px solid var(--yellow);
+  border-radius: 6px;
+  font-weight: 700;
+}
+.skip-link:focus {
+  top: 12px;
+}
+.top-strip {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(460px, 1fr);
+  gap: 24px;
+  align-items: stretch;
+  padding: 26px 32px 22px;
+  background: #151914;
+  border-bottom: 1px solid var(--line);
+}
+.dashboard-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 9px 32px;
+  background: #171b17;
+  border-bottom: 1px solid var(--line);
+}
+.dashboard-nav a {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+.dashboard-nav a:hover {
+  background: var(--soft);
+}
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 8px; font-size: 30px; letter-spacing: 0; }
+h2 { margin-bottom: 14px; font-size: 20px; letter-spacing: 0; }
+h3 { margin-bottom: 10px; font-size: 16px; letter-spacing: 0; }
+.eyebrow {
+  margin-bottom: 6px;
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.subtle { color: var(--muted); font-size: 13px; }
+.hero-copy { min-width: 0; }
+.hero-summary {
+  max-width: 34rem;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 15px;
+}
+.overview-board {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, minmax(112px, 0.72fr));
+  gap: 10px;
+}
+.overview-card {
+  min-height: 112px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #1e241f;
+  box-shadow: 0 12px 30px var(--shadow);
+}
+.overview-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.overview-card strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+.overview-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.overview-primary {
+  background: #243321;
+  border-color: #53633b;
+}
+.review-strip {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(180px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--amber-soft);
+}
+.review-strip span {
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+}
+.review-strip p { margin: 0; color: var(--ink); }
+.review-strip a {
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid rgba(244, 241, 232, 0.24);
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 700;
+}
+.top-kpis {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(4, minmax(88px, 1fr));
+  gap: 8px;
+}
+.kpi-large, .kpi-small {
+  min-height: 78px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--soft);
+  overflow-wrap: anywhere;
+}
+.kpi-large span, .kpi-small span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.kpi-large strong { display: block; font-size: 24px; }
+.kpi-small strong { display: block; font-size: 14px; }
+.page { padding: 18px 32px 40px; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.metric-card { padding: 14px; min-height: 126px; }
+.metric-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.metric-card strong {
+  display: block;
+  margin: 8px 0 6px;
+  font-size: 24px;
+  overflow-wrap: anywhere;
+}
+.metric-card p { margin-bottom: 10px; color: var(--muted); font-size: 13px; }
+.section { margin-top: 18px; }
+.section-grid { display: grid; gap: 12px; }
+.grid-three { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+.panel { padding: 16px; }
+.disclosure {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #171b17;
+}
+.disclosure > summary {
+  display: grid;
+  grid-template-columns: auto minmax(160px, auto) minmax(220px, 1fr);
+  gap: 14px;
+  align-items: center;
+  min-height: 56px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary::before {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--yellow);
+}
+.disclosure[open] > summary::before { content: "-"; }
+.disclosure > summary h2,
+.disclosure > summary h3 {
+  display: inline;
+  margin: 0;
+}
+.disclosure > summary span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.disclosure > .section-grid {
+  padding: 0 14px 14px;
+}
+.detail-panel { background: #1a1e1a; }
+.checkpoint-grid, .triage-grid, .project-card-grid, .action-grid, .action-review-grid, .locked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+.checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card {
+  padding: 14px;
+}
+.checkpoint-card span, .action-card span, .locked-card span, .triage-heading span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.checkpoint-card strong, .action-card strong, .locked-card strong {
+  display: block;
+  margin: 6px 0;
+  font-size: 17px;
+}
+.triage-heading, .project-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.project-card h3 { margin-bottom: 8px; }
+.filter-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 2fr;
+  gap: 10px 14px;
+  align-items: end;
+}
+.filter-panel h3, .filter-panel .subtle { grid-column: 1 / -1; }
+.filter-panel label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.filter-panel input {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #121612;
+  color: var(--ink);
+  font: inherit;
+}
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.filter-buttons button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #161a16;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+}
+.filter-buttons button[aria-pressed="true"] {
+  background: var(--teal);
+  color: #111411;
+}
+.locked-card {
+  border-color: rgba(238, 104, 120, 0.65);
+  background: #2d1b20;
+}
+.locked-card span { color: var(--red); }
+.review-action-card {
+  border-left: 4px solid var(--teal);
+}
+.action-summary {
+  border-left: 4px solid var(--navy);
+}
+.status-badge, .pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+.status-badge { min-width: 96px; justify-content: center; }
+.is-green { color: #0d140f; background: var(--green); }
+.is-yellow { color: #171106; background: var(--yellow); }
+.is-red { color: #1a070b; background: var(--red); }
+.is-neutral { color: #0d140f; background: var(--teal); }
+.meter {
+  width: 100%;
+  height: 10px;
+  margin: 7px 0 4px;
+  overflow: hidden;
+  background: #101410;
+  border-radius: 4px;
+}
+.meter span { display: block; height: 100%; border-radius: 4px; }
+.meter-code { color: var(--muted); font-size: 12px; }
+.table-wrap { overflow-x: auto; background: #171b17; }
+table { width: 100%; border-collapse: collapse; min-width: 760px; }
+caption {
+  padding: 10px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: left;
+}
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+td { font-size: 14px; }
+code {
+  padding: 1px 4px;
+  background: #101410;
+  color: #eadfbd;
+  border-radius: 4px;
+  font-family: Consolas, "Courier New", monospace;
+  overflow-wrap: anywhere;
+}
+.list { margin: 0; padding-left: 19px; }
+.list li { margin: 6px 0; }
+.compact-list li { margin: 3px 0; }
+.safe li::marker { color: var(--green); }
+.locked li::marker, .blocker-list li::marker { color: var(--red); }
+.review li::marker, .warning-list li::marker { color: var(--yellow); }
+.notes li::marker, .readiness li::marker { color: var(--teal); }
+.access-panel { margin-top: 12px; }
+.noscript-notice { border-left: 4px solid var(--yellow); }
+.dashboard-footer {
+  padding: 18px 32px 28px;
+  color: var(--muted);
+  background: #151914;
+  border-top: 1px solid var(--line);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+@media (max-width: 980px) {
+  .top-strip { grid-template-columns: 1fr; align-items: start; }
+  .overview-board, .top-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .summary-grid, .grid-three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filter-panel { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .top-strip { padding: 22px 18px; }
+  .page { padding: 18px; }
+  .summary-grid, .grid-three, .overview-board, .top-kpis { grid-template-columns: 1fr; }
+  .review-strip { grid-template-columns: 1fr; }
+  .disclosure > summary { grid-template-columns: auto 1fr; }
+  .disclosure > summary span { grid-column: 2; }
+  h1 { font-size: 24px; }
+}
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 11pt;
+  }
+  :root {
+    color-scheme: light;
+    --ink: #000000;
+    --muted: #333333;
+    --line: #999999;
+    --panel: #ffffff;
+    --paper: #ffffff;
+    --soft: #eeeeee;
+  }
+  .skip-link, .dashboard-nav, .filter-panel, script {
+    display: none !important;
+  }
+  .top-strip, .dashboard-footer, .metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card {
+    border-color: #999999;
+    box-shadow: none;
+    background: #ffffff;
+    color: #000000;
+  }
+  .disclosure {
+    background: #ffffff;
+    border-color: #999999;
+  }
+  .disclosure:not([open]) > :not(summary) {
+    display: block;
+  }
+  .review-strip, .overview-card {
+    background: #ffffff;
+    color: #000000;
+    box-shadow: none;
+  }
+  .page {
+    padding: 0;
+  }
+  .section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+  }
+}
+  </style>
+</head>
+<body data-dashboard-variant="compact-dark-overview">
+  <a class="skip-link" href="#main-content">Skip to dashboard content</a>
+<header class="top-strip compact-dark-overview" data-dashboard-theme="dark"><div class="hero-copy"><p class="eyebrow">Local supervision HUD</p><h1>DevCockpitCore</h1><p class="hero-summary">Dark compact overview for the next human review decision.</p><p class="subtle">Generated 2026-07-06T01:09:33Z from local evidence. Access: Local file / user-opened prior.</p></div><div class="overview-board" aria-label="Compact review overview"><article class="overview-card overview-primary is-yellow" role="status" aria-label="Dashboard decision Continue"><span>State</span><strong>Continue</strong><p>warnings only</p></article><article class="overview-card"><span>Stop</span><strong>0</strong><p>blockers</p></article><article class="overview-card"><span>Warn</span><strong>Warnings</strong><p>18 review item(s)</p></article><article class="overview-card"><span>Proof</span><strong>6/6</strong><p>2026-07-06T01:09:24Z</p></article><div class="review-strip"><span>Next</span><p>Review warning rows and confirm they are expected observer-only residue.</p><a href="#review-actions">Review Actions</a></div></div></header>
+<nav class="dashboard-nav" aria-label="Dashboard sections"><a href="#review-next">Next</a><a href="#warnings-triage">Warnings</a><a href="#review-actions">Actions</a><a href="#project-cards">Projects</a><a href="#sources-and-access">Sources</a></nav>
+  <main id="main-content" class="page" tabindex="-1">
+<noscript><div class="panel noscript-notice"><h2>JavaScript disabled</h2><p>All dashboard evidence and review actions remain visible. Search and filter controls are optional local-only conveniences.</p></div></noscript>
+<section id="evidence-snapshot" class="section section-collapsed" aria-labelledby="evidence-snapshot-heading"><details class="disclosure"><summary><h2 id="evidence-snapshot-heading">Evidence Snapshot</h2><span>Raw source rollup and repo/access state.</span></summary><div class="section-grid"><div class="summary-grid"><article class="metric-card"><span>Project</span><strong>devcockpitcore</strong><p>main</p></article><article class="metric-card"><span>Validation</span><strong>warn</strong><p>16/16 complete, 15 pass, 1 warn, 0 fail</p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="16" aria-valuenow="16" aria-label="16/16 done, meter ############~###"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">############~###</code></article><article class="metric-card"><span>Smoke</span><strong>warn</strong><p>5/5 complete, 0 pass, 5 warn, 0 fail</p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="5" aria-label="5/5 done, meter ~~~~~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">~~~~~</code></article><article class="metric-card"><span>Repo</span><strong>dirty</strong><p>HEAD 33250ab</p></article><article class="metric-card"><span>Gate</span><strong>INTEGRATE_AND_CONTINUE</strong><p>warnings only</p></article><article class="metric-card"><span>Sources</span><strong>6/6</strong><p>6 loaded, 0 missing</p></article><article class="metric-card"><span>Access State</span><strong>local_static_file</strong><p>file_generated_by_dashboard_command</p></article></div></div></details></section>
+<section id="review-next" class="section" aria-labelledby="review-next-heading"><h2 id="review-next-heading">Review Next</h2><div class="section-grid"><div class="checkpoint-grid"><article class="checkpoint-card"><span>1. Warning Ownership</span><strong>9 warning(s)</strong><p>Confirm each warning is expected observer residue or assign a follow-up owner.</p><code>Warnings Triage</code></article><article class="checkpoint-card"><span>2. Blocker Check</span><strong>0 blocker(s)</strong><p>Only use this dashboard as an integration signal when blocker count is zero.</p><code>Health, Gate, Readiness</code></article><article class="checkpoint-card"><span>3. Evidence Freshness</span><strong>validation warn / smoke warn</strong><p>Verify source generated_at values are current enough for the review decision.</p><code>Sources and Access</code></article></div><ul class="list review compact-list"><li>Review warning rows and confirm they are expected observer-only residue.</li><li>Validation checks: 16/16 complete, 15 pass, 1 warn, 0 fail.</li><li>Cross-project rows: 5/5 complete, 0 pass, 5 warn, 0 fail.</li><li>Open details only when a warning needs source evidence.</li></ul></div></section>
+<section id="warnings-triage" class="section section-collapsed" aria-labelledby="warnings-triage-heading"><details class="disclosure"><summary><h2 id="warnings-triage-heading">Warnings Triage</h2><span>Warning ownership groups and source notes.</span></summary><div class="section-grid"><div class="triage-grid"><article class="triage-card"><div class="triage-heading"><span>Blockers</span><strong class="is-green">green</strong></div><p>0 item(s)</p><ul class="list warning-list compact-list"><li>No blockers reported in current evidence.</li></ul></article><article class="triage-card"><div class="triage-heading"><span>Validation Pack</span><strong class="is-yellow">warn</strong></div><p>2 item(s)</p><ul class="list warning-list compact-list"><li>pseudo_git_tag_scan: findings present</li><li>validation summary result is warn</li><li>validation summary result is warn</li></ul></article><article class="triage-card"><div class="triage-heading"><span>Cross-Project Smoke</span><strong class="is-yellow">warn</strong></div><p>6 item(s)</p><ul class="list warning-list compact-list"><li>devcockpitcore: warn</li><li>nlmytgen: warn</li><li>writingpage: warn</li><li>clippipegen: warn</li><li>report hygiene warnings present</li></ul><p class="subtle">+2 more in source evidence</p></article><article class="triage-card"><div class="triage-heading"><span>Project Rows</span><strong class="is-yellow">warn</strong></div><p>7 item(s)</p><ul class="list warning-list compact-list"><li>devcockpitcore: worktree is dirty</li><li>nlmytgen: current branch &#x27;codex/content-spine-002-transcript-substitution-readiness-v1&#x27; differs from adapter default &#x27;master&#x27;</li><li>writingpage: worktree is dirty</li><li>writingpage: runtime state document is absent</li><li>clippipegen: worktree is dirty</li></ul><p class="subtle">+2 more in source evidence</p></article><article class="triage-card"><div class="triage-heading"><span>Status Snapshot</span><strong class="is-yellow">warn</strong></div><p>1 item(s)</p><ul class="list warning-list compact-list"><li>worktree is dirty</li></ul></article><article class="triage-card"><div class="triage-heading"><span>Source Files</span><strong class="is-green">green</strong></div><p>0 item(s)</p><ul class="list warning-list compact-list"><li>All configured source files loaded.</li></ul></article></div></div></details></section>
+<section id="review-actions" class="section" aria-labelledby="review-actions-heading"><h2 id="review-actions-heading">Review Actions</h2><div class="section-grid"><div class="panel action-summary"><h3>Review-only Action Package</h3><p><strong>Non-executable:</strong> every generated action is marked <code>executable: false</code>.</p><p><strong>Total:</strong> 22 <strong>Blockers:</strong> 0 <strong>Warnings:</strong> 18 <strong>Info:</strong> 4</p><p><strong>JSON:</strong> <code>samples/dashboard/devcockpitcore_review_actions.json</code></p><p><strong>Markdown:</strong> <code>samples/dashboard/devcockpitcore_review_actions.md</code></p></div><div class="panel filter-panel"><h3>Action Review Filters</h3><label for="action-search">Search review actions</label><input id="action-search" data-action-search type="search" placeholder="Source, project, title, reason" autocomplete="off"><div class="filter-buttons" aria-label="Action severity filters"><button type="button" data-filter-action-severity="all">All</button><button type="button" data-filter-action-severity="blocker">Blockers</button><button type="button" data-filter-action-severity="warning">Warnings</button><button type="button" data-filter-action-severity="info">Info</button></div><p class="subtle">Filters are local only; action cards remain visible without JavaScript.</p></div><details class="disclosure detail-panel"><summary><h3>Detailed Review Actions</h3><span>All generated review-only actions remain available here.</span></summary><div class="section-grid"><div class="action-review-grid"><article class="review-action-card" data-review-action data-severity="warning" data-search="validation-001 validation_pack devcockpitcore review validation warning pseudo_git_tag_scan: findings present samples/validation_packs/devcockpitcore_validation_pack_result.json"><div class="project-card-head"><h3>Review validation warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>validation-001</code></p><p><strong>Source:</strong> validation_pack / devcockpitcore</p><p><strong>Reason:</strong> pseudo_git_tag_scan: findings present</p><p><strong>Suggested review:</strong> Classify whether this is expected fixture or hygiene residue, then record whether cleanup is needed.</p><p><strong>Evidence:</strong> <code>samples/validation_packs/devcockpitcore_validation_pack_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface local_review</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="validation-002 validation_pack devcockpitcore review validation warning validation summary result is warn samples/validation_packs/devcockpitcore_validation_pack_result.json"><div class="project-card-head"><h3>Review validation warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>validation-002</code></p><p><strong>Source:</strong> validation_pack / devcockpitcore</p><p><strong>Reason:</strong> validation summary result is warn</p><p><strong>Suggested review:</strong> Classify whether this is expected fixture or hygiene residue, then record whether cleanup is needed.</p><p><strong>Evidence:</strong> <code>samples/validation_packs/devcockpitcore_validation_pack_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface local_review</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="validation-003 validation_pack devcockpitcore review validation warning validation summary result is warn samples/validation_packs/devcockpitcore_validation_pack_result.json"><div class="project-card-head"><h3>Review validation warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>validation-003</code></p><p><strong>Source:</strong> validation_pack / devcockpitcore</p><p><strong>Reason:</strong> validation summary result is warn</p><p><strong>Suggested review:</strong> Classify whether this is expected fixture or hygiene residue, then record whether cleanup is needed.</p><p><strong>Evidence:</strong> <code>samples/validation_packs/devcockpitcore_validation_pack_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface local_review</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="smoke-004 cross_project_smoke none review cross-project smoke warning devcockpitcore: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-004</code></p><p><strong>Source:</strong> cross_project_smoke</p><p><strong>Reason:</strong> devcockpitcore: warn</p><p><strong>Suggested review:</strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="smoke-005 cross_project_smoke none review cross-project smoke warning nlmytgen: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-005</code></p><p><strong>Source:</strong> cross_project_smoke</p><p><strong>Reason:</strong> nlmytgen: warn</p><p><strong>Suggested review:</strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="smoke-006 cross_project_smoke none review cross-project smoke warning writingpage: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-006</code></p><p><strong>Source:</strong> cross_project_smoke</p><p><strong>Reason:</strong> writingpage: warn</p><p><strong>Suggested review:</strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="smoke-007 cross_project_smoke none review cross-project smoke warning clippipegen: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-007</code></p><p><strong>Source:</strong> cross_project_smoke</p><p><strong>Reason:</strong> clippipegen: warn</p><p><strong>Suggested review:</strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="smoke-008 cross_project_smoke none review cross-project smoke warning report hygiene warnings present samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-008</code></p><p><strong>Source:</strong> cross_project_smoke</p><p><strong>Reason:</strong> report hygiene warnings present</p><p><strong>Suggested review:</strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="smoke-009 cross_project_smoke none review cross-project smoke warning cross-project smoke summary result is warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-009</code></p><p><strong>Source:</strong> cross_project_smoke</p><p><strong>Reason:</strong> cross-project smoke summary result is warn</p><p><strong>Suggested review:</strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="smoke-010 cross_project_smoke none review cross-project smoke warning cross-project smoke summary result is warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-010</code></p><p><strong>Source:</strong> cross_project_smoke</p><p><strong>Reason:</strong> cross-project smoke summary result is warn</p><p><strong>Suggested review:</strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="project-devcockpitcore-011 cross_project_smoke devcockpitcore review devcockpitcore smoke row worktree is dirty samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review devcockpitcore smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-devcockpitcore-011</code></p><p><strong>Source:</strong> cross_project_smoke / devcockpitcore</p><p><strong>Reason:</strong> worktree is dirty</p><p><strong>Suggested review:</strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="project-nlmytgen-012 cross_project_smoke nlmytgen review nlmytgen smoke row current branch &#x27;codex/content-spine-002-transcript-substitution-readiness-v1&#x27; differs from adapter default &#x27;master&#x27; samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review nlmytgen smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-nlmytgen-012</code></p><p><strong>Source:</strong> cross_project_smoke / nlmytgen</p><p><strong>Reason:</strong> current branch &#x27;codex/content-spine-002-transcript-substitution-readiness-v1&#x27; differs from adapter default &#x27;master&#x27;</p><p><strong>Suggested review:</strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="project-writingpage-013 cross_project_smoke writingpage review writingpage smoke row worktree is dirty samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review writingpage smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-writingpage-013</code></p><p><strong>Source:</strong> cross_project_smoke / writingpage</p><p><strong>Reason:</strong> worktree is dirty</p><p><strong>Suggested review:</strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="project-writingpage-014 cross_project_smoke writingpage review writingpage smoke row runtime state document is absent samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review writingpage smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-writingpage-014</code></p><p><strong>Source:</strong> cross_project_smoke / writingpage</p><p><strong>Reason:</strong> runtime state document is absent</p><p><strong>Suggested review:</strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="project-clippipegen-015 cross_project_smoke clippipegen review clippipegen smoke row worktree is dirty samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review clippipegen smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-clippipegen-015</code></p><p><strong>Source:</strong> cross_project_smoke / clippipegen</p><p><strong>Reason:</strong> worktree is dirty</p><p><strong>Suggested review:</strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="project-clippipegen-016 cross_project_smoke clippipegen review clippipegen smoke row runtime state document is absent samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review clippipegen smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-clippipegen-016</code></p><p><strong>Source:</strong> cross_project_smoke / clippipegen</p><p><strong>Reason:</strong> runtime state document is absent</p><p><strong>Suggested review:</strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="project-clippipegen-017 cross_project_smoke clippipegen review clippipegen smoke row project context document is absent samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review clippipegen smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-clippipegen-017</code></p><p><strong>Source:</strong> cross_project_smoke / clippipegen</p><p><strong>Reason:</strong> project context document is absent</p><p><strong>Suggested review:</strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong>Evidence:</strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface dashboard_only</p></article><article class="review-action-card" data-review-action data-severity="warning" data-search="status-018 status_snapshot devcockpitcore review current repository status note worktree is dirty samples/status_snapshots/devcockpitcore_status.json"><div class="project-card-head"><h3>Review current repository status note</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>status-018</code></p><p><strong>Source:</strong> status_snapshot / devcockpitcore</p><p><strong>Reason:</strong> worktree is dirty</p><p><strong>Suggested review:</strong> Confirm the current worktree state is expected before treating the dashboard as ready for integration.</p><p><strong>Evidence:</strong> <code>samples/status_snapshots/devcockpitcore_status.json</code></p><p><strong>Owner hint:</strong> operator</p><p><strong>Review-only:</strong> executable is false; surface local_review</p></article><article class="review-action-card" data-review-action data-severity="info" data-search="checkpoint-019 dashboard_review devcockpitcore 1. warning ownership 9 warning(s) warnings triage"><div class="project-card-head"><h3>1. Warning Ownership</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>checkpoint-019</code></p><p><strong>Source:</strong> dashboard_review / devcockpitcore</p><p><strong>Reason:</strong> 9 warning(s)</p><p><strong>Suggested review:</strong> Confirm each warning is expected observer residue or assign a follow-up owner.</p><p><strong>Evidence:</strong> <code>Warnings Triage</code></p><p><strong>Owner hint:</strong> supervisor</p><p><strong>Review-only:</strong> executable is false; surface manual_freeform</p></article><article class="review-action-card" data-review-action data-severity="info" data-search="checkpoint-020 dashboard_review devcockpitcore 2. blocker check 0 blocker(s) health, gate, readiness"><div class="project-card-head"><h3>2. Blocker Check</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>checkpoint-020</code></p><p><strong>Source:</strong> dashboard_review / devcockpitcore</p><p><strong>Reason:</strong> 0 blocker(s)</p><p><strong>Suggested review:</strong> Only use this dashboard as an integration signal when blocker count is zero.</p><p><strong>Evidence:</strong> <code>Health, Gate, Readiness</code></p><p><strong>Owner hint:</strong> supervisor</p><p><strong>Review-only:</strong> executable is false; surface manual_freeform</p></article><article class="review-action-card" data-review-action data-severity="info" data-search="checkpoint-021 dashboard_review devcockpitcore 3. evidence freshness validation warn / smoke warn sources and access"><div class="project-card-head"><h3>3. Evidence Freshness</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>checkpoint-021</code></p><p><strong>Source:</strong> dashboard_review / devcockpitcore</p><p><strong>Reason:</strong> validation warn / smoke warn</p><p><strong>Suggested review:</strong> Verify source generated_at values are current enough for the review decision.</p><p><strong>Evidence:</strong> <code>Sources and Access</code></p><p><strong>Owner hint:</strong> supervisor</p><p><strong>Review-only:</strong> executable is false; surface manual_freeform</p></article><article class="review-action-card" data-review-action data-severity="info" data-search="locked-gate-022 locked_gate devcockpitcore keep locked lanes gated locked lanes are reminders, not generated work items. samples/dashboard/devcockpitcore_dashboard.html"><div class="project-card-head"><h3>Keep locked lanes gated</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>locked-gate-022</code></p><p><strong>Source:</strong> locked_gate / devcockpitcore</p><p><strong>Reason:</strong> Locked lanes are reminders, not generated work items.</p><p><strong>Suggested review:</strong> Use locked lane cards only to confirm the dashboard did not expand execution authority.</p><p><strong>Evidence:</strong> <code>samples/dashboard/devcockpitcore_dashboard.html</code></p><p><strong>Owner hint:</strong> supervisor</p><p><strong>Locked by gate:</strong> executable is false; surface dashboard_only</p></article></div></div></details></div></section>
+<section id="project-cards" class="section section-collapsed" aria-labelledby="project-cards-heading"><details class="disclosure"><summary><h2 id="project-cards-heading">Project Cards</h2><span>Per-project smoke evidence and warning notes.</span></summary><div class="section-grid"><div class="panel filter-panel"><h3>Project Review Filters</h3><label for="project-search">Search project evidence</label><input id="project-search" data-dashboard-search type="search" placeholder="Project, branch, adapter, warning" autocomplete="off"><div class="filter-buttons" aria-label="Project result filters"><button type="button" data-filter-result="all">All</button><button type="button" data-filter-result="warn">Warnings</button><button type="button" data-filter-result="pass">Pass</button><button type="button" data-filter-result="fail">Fail</button><button type="button" data-filter-result="skipped">Skipped</button></div><p class="subtle">All cards remain visible without JavaScript; filters only hide local DOM cards.</p></div><div class="project-card-grid"><article class="project-card" data-dashboard-project data-result="warn" data-search="devcockpitcore devcockpitcore adapters/devcockpitcore.json main 33250ab worktree is dirty"><div class="project-card-head"><h3>DevCockpitCore</h3><span class="pill is-yellow">warn</span></div><p><strong>Repo:</strong> .</p><p><strong>Branch:</strong> main <span class="subtle">33250ab</span></p><p><strong>Adapter:</strong> <code>adapters/devcockpitcore.json</code></p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code><ul class="list warning-list compact-list"><li>worktree is dirty</li></ul></article><article class="project-card" data-dashboard-project data-result="warn" data-search="nlmytgen nlmytgen adapters/nlmytgen.json codex/content-spine-002-transcript-substitution-readiness-v1 6f75266 current branch &#x27;codex/content-spine-002-transcript-substitution-readiness-v1&#x27; differs from adapter default &#x27;master&#x27;"><div class="project-card-head"><h3>NLMYTGen</h3><span class="pill is-yellow">warn</span></div><p><strong>Repo:</strong> ../NLMYTGen</p><p><strong>Branch:</strong> codex/content-spine-002-transcript-substitution-readiness-v1 <span class="subtle">6f75266</span></p><p><strong>Adapter:</strong> <code>adapters/nlmytgen.json</code></p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code><ul class="list warning-list compact-list"><li>current branch &#x27;codex/content-spine-002-transcript-substitution-readiness-v1&#x27; differs from adapter default &#x27;master&#x27;</li></ul></article><article class="project-card" data-dashboard-project data-result="warn" data-search="writingpage writingpage adapters/writingpage.json main ad04ee9 worktree is dirty runtime state document is absent"><div class="project-card-head"><h3>WritingPage</h3><span class="pill is-yellow">warn</span></div><p><strong>Repo:</strong> ../WritingPage</p><p><strong>Branch:</strong> main <span class="subtle">ad04ee9</span></p><p><strong>Adapter:</strong> <code>adapters/writingpage.json</code></p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code><ul class="list warning-list compact-list"><li>worktree is dirty</li><li>runtime state document is absent</li></ul></article><article class="project-card" data-dashboard-project data-result="warn" data-search="clippipegen clippipegen adapters/clippipegen.json main 2cae693 worktree is dirty runtime state document is absent project context document is absent"><div class="project-card-head"><h3>ClipPipeGen</h3><span class="pill is-yellow">warn</span></div><p><strong>Repo:</strong> ../ClipPipeGen</p><p><strong>Branch:</strong> main <span class="subtle">2cae693</span></p><p><strong>Adapter:</strong> <code>adapters/clippipegen.json</code></p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code><ul class="list warning-list compact-list"><li>worktree is dirty</li><li>runtime state document is absent</li><li>project context document is absent</li></ul></article></div></div></details></section>
+<section id="validation-pack" class="section section-collapsed" aria-labelledby="validation-pack-heading"><details class="disclosure"><summary><h2 id="validation-pack-heading">Validation Pack</h2><span>Validation check table and meter details.</span></summary><div class="section-grid"><div class="panel"><h3>Summary</h3><p><span class="pill is-yellow">warn</span> 16/16 complete, 15 pass, 1 warn, 0 fail</p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="16" aria-valuenow="16" aria-label="16/16 done, meter ############~###"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">############~###</code></div><div class="table-wrap"><table><caption>Validation pack checks, result severity, evidence bar, and detail.</caption><thead><tr><th>Check</th><th>Result</th><th>Severity</th><th>Bar</th><th>Detail</th></tr></thead><tbody><tr><td><code>python_compile</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="2" aria-valuenow="2" aria-label="2/2 done, meter ##"><span class="is-green" style="width:100%"></span></div><code class="meter-code">##</code></td><td>0 findings</td></tr><tr><td><code>unittest_discover</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=16.418 stdout=&#x27;&#x27; stderr=&#x27;...........................................................................................</td></tr><tr><td><code>adapter_manifest_validation</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ####"><span class="is-green" style="width:100%"></span></div><code class="meter-code">####</code></td><td>0 findings</td></tr><tr><td><code>status_snapshot_help</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.088 stdout=&#x27;usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\n [--pretty] [--no-w...</td></tr><tr><td><code>report_normalizer_help</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.068 stdout=&#x27;usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\n [--pretty]\n\nNormal...</td></tr><tr><td><code>gate_classifier_help</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.068 stdout=&#x27;usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\n [--status-snapshot STA...</td></tr><tr><td><code>json_parse</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="41" aria-valuenow="41" aria-label="41/41 done, meter #########################################"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#########################################</code></td><td>0 findings</td></tr><tr><td><code>git_diff_check</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.039 stdout=&#x27;&#x27; stderr=&quot;warning: in the working copy of &#x27;docs/runtime-state.md&#x27;, LF will be replaced by CRLF the ...</td></tr><tr><td><code>git_diff_cached_check</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.037 stdout=&#x27;&#x27; stderr=&#x27;&#x27;</td></tr><tr><td><code>git_status</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.035 stdout=&#x27;## main...origin/main\nM README.md\nA docs/PROJECT_COCKPIT.md\nM docs/decision-log.md\nM docs/idea-...</td></tr><tr><td><code>conflict_marker_scan</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr><tr><td><code>prompt_residue_scan</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr><tr><td><code>pseudo_git_tag_scan</code></td><td><span class="pill is-yellow">warn</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter ~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">~</code></td><td>1 findings</td></tr><tr><td><code>raw_local_path_scan</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>redacted local path references observed: 1</td></tr><tr><td><code>mojibake_scan</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr><tr><td><code>forbidden_implementation_scan</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr></tbody></table></div></div></details></section>
+<section id="cross-project-smoke" class="section section-collapsed" aria-labelledby="cross-project-smoke-heading"><details class="disclosure"><summary><h2 id="cross-project-smoke-heading">Cross-Project Smoke</h2><span>Cross-project observer rows and warnings.</span></summary><div class="section-grid"><div class="panel"><h3>Summary</h3><p><span class="pill is-yellow">warn</span> 5/5 complete, 0 pass, 5 warn, 0 fail</p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="5" aria-label="5/5 done, meter ~~~~~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">~~~~~</code></div><div class="table-wrap"><table><caption>Cross-project smoke rows with result, repository hint, branch, and warning summary.</caption><thead><tr><th>Project</th><th>Result</th><th>Repo</th><th>Branch / HEAD</th><th>Bar</th><th>Warnings</th></tr></thead><tbody><tr><td><strong>DevCockpitCore</strong><br><code>adapters/devcockpitcore.json</code></td><td><span class="pill is-yellow">warn</span></td><td>.</td><td>main<br><span class="subtle">33250ab</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>worktree is dirty</td></tr><tr><td><strong>NLMYTGen</strong><br><code>adapters/nlmytgen.json</code></td><td><span class="pill is-yellow">warn</span></td><td>../NLMYTGen</td><td>codex/content-spine-002-transcript-substitution-readiness-v1<br><span class="subtle">6f75266</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>current branch &#x27;codex/content-spine-002-transcript-substitution-readiness-v1&#x27; differs from adapter default &#x27;master&#x27;</td></tr><tr><td><strong>WritingPage</strong><br><code>adapters/writingpage.json</code></td><td><span class="pill is-yellow">warn</span></td><td>../WritingPage</td><td>main<br><span class="subtle">ad04ee9</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>worktree is dirty; runtime state document is absent</td></tr><tr><td><strong>ClipPipeGen</strong><br><code>adapters/clippipegen.json</code></td><td><span class="pill is-yellow">warn</span></td><td>../ClipPipeGen</td><td>main<br><span class="subtle">2cae693</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>worktree is dirty; runtime state document is absent; project context document is absent</td></tr></tbody></table></div></div></details></section>
+<section id="health-gate-readiness" class="section section-collapsed" aria-labelledby="health-gate-readiness-heading"><details class="disclosure"><summary><h2 id="health-gate-readiness-heading">Health, Gate, Readiness</h2><span>Raw gate, stop class, and readiness values.</span></summary><div class="section-grid grid-three"><div class="panel"><h3>Warning / Blocker Split</h3><p><strong>Warnings:</strong> 9</p><p><strong>Blockers:</strong> 0</p><ul class="list warning-list"><li>smoke: clippipegen: warn</li><li>smoke: devcockpitcore: warn</li><li>smoke: nlmytgen: warn</li><li>smoke: report hygiene warnings present</li><li>smoke: summary result is warn</li><li>smoke: writingpage: warn</li><li>status: worktree is dirty</li><li>validation: pseudo_git_tag_scan: findings present</li><li>validation: summary result is warn</li></ul><ul class="list blocker-list"><li>No blockers reported.</li></ul></div><div class="panel"><h3>Validation Gate</h3><p><strong>Decision:</strong> integrate_and_continue</p><p><strong>Stop class:</strong> INTEGRATE_AND_CONTINUE</p><p><strong>User work:</strong> none</p></div><div class="panel"><h3>Smoke Gate</h3><p><strong>Decision:</strong> integrate_and_continue</p><p><strong>Stop class:</strong> INTEGRATE_AND_CONTINUE</p><p><strong>User work:</strong> none</p></div><div class="panel"><h3>Readiness</h3><p><strong>Foundation:</strong> cross_project_smoke_available</p><p><strong>Execution:</strong> out_of_scope</p><ul class="list readiness"><li>status producer, adapters, report normalizer, gate classifier, validation pack, and cross-project smoke are foundation tooling</li><li>target repositories are observed through read-only status snapshots only</li><li>controlled execution automation remains a future design slice</li></ul></div></div></details></section>
+<section id="safe-local-actions" class="section section-collapsed" aria-labelledby="safe-local-actions-heading"><details class="disclosure"><summary><h2 id="safe-local-actions-heading">Safe Local Actions</h2><span>Local checks and file-open commands only.</span></summary><div class="section-grid"><div class="action-grid"><article class="action-card"><span>OPEN_ONLY</span><strong>Open generated dashboard</strong><p>Local browser opens the generated HTML file; no server or repository writes.</p><code>Start-Process .\samples\dashboard\devcockpitcore_dashboard.html</code></article><article class="action-card"><span>LOCAL_GENERATE</span><strong>Regenerate dashboard</strong><p>Rebuilds the static HTML from existing local evidence files.</p><code>PYTHONPATH=src python -m dev_cockpit.dashboard --output samples/dashboard/devcockpitcore_dashboard.html</code></article><article class="action-card"><span>LOCAL_CHECK</span><strong>Run local tests</strong><p>Runs DevCockpitCore unit tests in the current checkout only.</p><code>PYTHONPATH=src python -m unittest discover</code></article></div><ul class="list safe compact-list"><li>Open the generated static file: Start-Process .\samples\dashboard\devcockpitcore_dashboard.html</li><li>Regenerate dashboard: PYTHONPATH=src python -m dev_cockpit.dashboard</li><li>Regenerate validation evidence with the fixed default validation pack.</li><li>Regenerate smoke evidence with the fixed default cross-project smoke.</li><li>Run compileall and unittest locally before treating a slice as reviewed.</li></ul></div></details></section>
+<section id="locked-lanes" class="section section-collapsed" aria-labelledby="locked-lanes-heading"><details class="disclosure"><summary><h2 id="locked-lanes-heading">Locked Lanes</h2><span>Execution expansion lanes kept locked.</span></summary><div class="section-grid"><div class="locked-grid"><article class="locked-card"><span>LOCKED</span><strong>Arbitrary command runner</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>General execution loop</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>Scheduler or background daemon</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>Web server or remote dashboard</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>Database or credential handling</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>External service notifications</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>Target repository writeback</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>C5/C6 capability expansion</strong><p>Not part of this static dashboard slice.</p></article><article class="locked-card"><span>LOCKED</span><strong>Public publication or production-ready claims</strong><p>Not part of this static dashboard slice.</p></article></div></div></details></section>
+<section id="designer-operator-notes" class="section section-collapsed" aria-labelledby="designer-operator-notes-heading"><details class="disclosure"><summary><h2 id="designer-operator-notes-heading">Designer / Operator Notes</h2><span>Review guidance retained below the overview.</span></summary><div class="section-grid"><ul class="list notes"><li>Judge whether the first screen makes warning ownership and access state obvious.</li><li>Keep warning text tied to source JSON paths so reviewers can audit it.</li><li>Use proposal panels for future actions; do not turn them into executable controls.</li><li>Preserve a single-file offline artifact for low-friction operator review.</li></ul></div></details></section>
+<section id="sources-and-access" class="section section-collapsed" aria-labelledby="sources-and-access-heading"><details class="disclosure"><summary><h2 id="sources-and-access-heading">Sources and Access</h2><span>Source paths, generated_at values, and local access evidence.</span></summary><div class="section-grid"><div class="table-wrap"><table><caption>Source evidence files used by the local dashboard.</caption><thead><tr><th>Source</th><th>Repo-relative path</th><th>State</th><th>Schema</th><th>Generated at</th></tr></thead><tbody><tr><td>validation_pack_result</td><td><code>samples/validation_packs/devcockpitcore_validation_pack_result.json</code></td><td><span class="pill is-green">loaded</span></td><td>validation_pack_result.v1</td><td>2026-07-06T01:09:24Z</td></tr><tr><td>cross_project_smoke_result</td><td><code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></td><td><span class="pill is-green">loaded</span></td><td>cross_project_smoke_result.v1</td><td>2026-07-06T01:09:10Z</td></tr><tr><td>status_snapshot</td><td><code>samples/status_snapshots/devcockpitcore_status.json</code></td><td><span class="pill is-green">loaded</span></td><td>status_snapshot.v1</td><td>2026-07-06T01:09:06Z</td></tr><tr><td>adapter_manifest</td><td><code>adapters/devcockpitcore.json</code></td><td><span class="pill is-green">loaded</span></td><td>adapter_manifest.v1</td><td>n/a</td></tr><tr><td>runtime_state</td><td><code>docs/runtime-state.md</code></td><td><span class="pill is-green">loaded</span></td><td>text</td><td>n/a</td></tr><tr><td>project_context</td><td><code>docs/project-context.md</code></td><td><span class="pill is-green">loaded</span></td><td>text</td><td>n/a</td></tr></tbody></table></div><div class="panel access-panel"><h3>Open / Access</h3><p><strong>Repo-relative artifact:</strong> <code>samples/dashboard/devcockpitcore_dashboard.html</code></p><p><strong>Access mode:</strong> local_static_file</p><p><strong>Access state:</strong> worker_generated_not_user_opened</p><p><strong>Evidence level:</strong> file_generated_by_dashboard_command</p><p><strong>PowerShell:</strong> <code>Start-Process .\samples\dashboard\devcockpitcore_dashboard.html</code></p></div><div class="panel access-panel"><h3>Review Action Package</h3><p><strong>Schema:</strong> devcockpit_review_actions.v1</p><p><strong>JSON:</strong> <code>samples/dashboard/devcockpitcore_review_actions.json</code></p><p><strong>Markdown:</strong> <code>samples/dashboard/devcockpitcore_review_actions.md</code></p><p><strong>Access state:</strong> worker_generated_not_user_opened</p><p><strong>Evidence level:</strong> file_generated_by_dashboard_command</p></div></div></details></section>
+  </main>
+<footer class="dashboard-footer"><p>Worker-generated local review artifact. Generated at 2026-07-06T01:09:33Z. No server, telemetry, task runner, or repository writeback is included.</p></footer>
+  <script>
+(function () {
+  var search = document.querySelector("[data-dashboard-search]");
+  var buttons = Array.prototype.slice.call(document.querySelectorAll("[data-filter-result]"));
+  var cards = Array.prototype.slice.call(document.querySelectorAll("[data-dashboard-project]"));
+  var actionSearch = document.querySelector("[data-action-search]");
+  var actionButtons = Array.prototype.slice.call(document.querySelectorAll("[data-filter-action-severity]"));
+  var actionCards = Array.prototype.slice.call(document.querySelectorAll("[data-review-action]"));
+  var active = "all";
+  var activeActionSeverity = "all";
+
+  function applyFilters() {
+    var query = search ? search.value.trim().toLowerCase() : "";
+    cards.forEach(function (card) {
+      var result = card.getAttribute("data-result") || "unknown";
+      var text = card.getAttribute("data-search") || "";
+      var resultMatch = active === "all" || result === active;
+      var textMatch = query === "" || text.indexOf(query) !== -1;
+      card.hidden = !(resultMatch && textMatch);
+    });
+  }
+
+  buttons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      active = button.getAttribute("data-filter-result") || "all";
+      buttons.forEach(function (item) { item.setAttribute("aria-pressed", "false"); });
+      button.setAttribute("aria-pressed", "true");
+      applyFilters();
+    });
+  });
+
+  if (search) {
+    search.addEventListener("input", applyFilters);
+  }
+
+  if (buttons.length) {
+    buttons[0].setAttribute("aria-pressed", "true");
+  }
+
+  function applyActionFilters() {
+    var query = actionSearch ? actionSearch.value.trim().toLowerCase() : "";
+    actionCards.forEach(function (card) {
+      var severity = card.getAttribute("data-severity") || "info";
+      var text = card.getAttribute("data-search") || "";
+      var severityMatch = activeActionSeverity === "all" || severity === activeActionSeverity;
+      var textMatch = query === "" || text.indexOf(query) !== -1;
+      card.hidden = !(severityMatch && textMatch);
+    });
+  }
+
+  actionButtons.forEach(function (button) {
+    button.addEventListener("click", function () {
+      activeActionSeverity = button.getAttribute("data-filter-action-severity") || "all";
+      actionButtons.forEach(function (item) { item.setAttribute("aria-pressed", "false"); });
+      button.setAttribute("aria-pressed", "true");
+      applyActionFilters();
+    });
+  });
+
+  if (actionSearch) {
+    actionSearch.addEventListener("input", applyActionFilters);
+  }
+
+  if (actionButtons.length) {
+    actionButtons[0].setAttribute("aria-pressed", "true");
+  }
+}());
+  </script>
+</body>
+</html>

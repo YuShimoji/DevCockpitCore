@@ -223,6 +223,71 @@ The smoke does not run tests, builds, renders, adapter `default_validation`, or
 writeback in target repositories. The next roadmap step is
 `controlled-runner-design`, still without execution automation in this slice.
 
+## Local test dashboard
+
+The local test dashboard turns current validation, smoke, status, adapter, and
+runtime/project context evidence into one static HTML review surface. It now
+opens as a compact dark-mode overview first: a short supervision HUD summarizes
+continue/stop, blocker count, warning focus, source freshness, and the next
+review step before exposing dense evidence below. It is a local file only: no
+server, database, credentials, external services, or target repository
+writeback.
+
+The dashboard generator also writes a non-executable review action package
+derived from validation, smoke, status, and dashboard-review evidence:
+
+- `samples/dashboard/devcockpitcore_review_actions.json`
+- `samples/dashboard/devcockpitcore_review_actions.md`
+
+Every generated action is review-only and carries `executable: false`.
+
+The generated dashboard includes accessibility-oriented review affordances:
+semantic section landmarks, a skip link, section navigation, visible focus
+states, table captions, non-JavaScript fallback copy, and print styling for
+manual handoff. Dense evidence uses native `details` disclosure panels so the
+first screen is less text-heavy while source-backed rows remain available. This
+is an accessibility-oriented and visual-density pass, not a formal compliance
+claim.
+
+Generate the dashboard with:
+
+```bash
+PYTHONPATH=src python -m dev_cockpit.dashboard \
+  --output samples/dashboard/devcockpitcore_dashboard.html
+```
+
+The default artifact lives at
+`samples/dashboard/devcockpitcore_dashboard.html`. From PowerShell, open it
+after generation with:
+
+```powershell
+Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
+```
+
+The console script name is also wired in `pyproject.toml`:
+
+```bash
+dev-cockpit-dashboard --output samples/dashboard/devcockpitcore_dashboard.html
+```
+
+Dashboard inputs default to the current sample evidence:
+
+- `samples/validation_packs/devcockpitcore_validation_pack_result.json`
+- `samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json`
+- `samples/status_snapshots/devcockpitcore_status.json`
+- `adapters/devcockpitcore.json`
+- `docs/runtime-state.md`
+- `docs/project-context.md`
+
+The generated project-card search and result filters are local DOM affordances
+over already-rendered static content. The review-action filters behave the same
+way. The core review content remains visible without JavaScript.
+
+For manual review, open the file, confirm the native dark overview is readable
+without browser-extension dark mode, use `Tab` to check focus visibility and the
+skip link, expand the details panels as needed, then use browser print preview
+to inspect the static handoff view.
+
 ## Controlled runner design
 
 Controlled Runner Design V1 defines the capability ladder, command taxonomy,
@@ -564,3 +629,8 @@ and recommended next entrances.
 22. C4 probe authorization review
 23. C4 probe minimal implementation
 24. C4 probe minimal implementation review
+25. local test dashboard
+26. designer dashboard IA
+27. review action package
+28. dashboard accessibility pass
+29. compact dark dashboard overview

@@ -11,6 +11,7 @@ requires-python = ">=3.11"
 dependencies = []
 
 [project.scripts]
+dev-cockpit-dashboard = "dev_cockpit.dashboard:main"
 dev-cockpit-status = "dev_cockpit.cli:main"
 
 [tool.setuptools]
