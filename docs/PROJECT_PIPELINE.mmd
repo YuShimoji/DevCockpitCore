@@ -6,6 +6,11 @@ flowchart LR
     RT["runtime/project context"]
     GEN["dev_cockpit.dashboard generator"]
     IA["designer/operator IA model"]
+    AUDIT["current dashboard audit"]
+    RESEARCH["layout research: Priority Review Console"]
+    PROTO["low-fi static layout prototype"]
+    ACCEPT["layout acceptance review"]
+    REDESIGN["future production dashboard redesign"]
     ACT["non-executable review action package"]
     A11Y["accessibility-oriented handoff layer"]
     REPORT["Current Status / Supervision Report"]
@@ -24,6 +29,12 @@ flowchart LR
     AD --> GEN
     RT --> GEN
     GEN --> IA
+    IA --> AUDIT
+    AUDIT --> RESEARCH
+    RESEARCH --> PROTO
+    PROTO --> ACCEPT
+    ACCEPT -. "future only after review" .-> REDESIGN
+    REDESIGN -. "not active slice" .-> GEN
     IA --> ACT
     IA --> A11Y
     A11Y --> REPORT

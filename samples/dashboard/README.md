@@ -14,6 +14,36 @@ The generator also writes non-executable review action package artifacts:
 - `samples/dashboard/devcockpitcore_review_actions.json`
 - `samples/dashboard/devcockpitcore_review_actions.md`
 
+## Layout research prototype
+
+The current active dashboard-design checkpoint is not another production
+generator polish pass. The report-first dashboard remains available as the
+current generated artifact, but production layout iteration is paused pending
+review of a research-backed layout recommendation.
+
+Research memo:
+
+```text
+docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
+```
+
+Low-fidelity static prototype:
+
+```text
+samples/dashboard/layout_research/devcockpitcore_layout_prototype.html
+```
+
+Open the prototype directly from PowerShell:
+
+```powershell
+Start-Process .\samples\dashboard\layout_research\devcockpitcore_layout_prototype.html
+```
+
+The recommended model is Priority Review Console: a current-state report,
+ordered priority lane, active review workspace, evidence inspector, ordered
+project/status list, and appendix-style raw evidence. It is a review artifact
+only and does not replace `src/dev_cockpit/dashboard.py`.
+
 Manual report-first review:
 
 1. Open the dashboard file locally.

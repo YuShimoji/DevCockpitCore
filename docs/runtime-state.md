@@ -1,14 +1,16 @@
 # DevCockpitCore Runtime State
 
 updated_at: 2026-07-07
-active_artifact: dashboard-report-first-frontpage-v1
-artifact_current: dashboard-report-first-frontpage-v1
-artifact_next: progress-driven-report-evolution-v1 or japanese-display-polish-v1
-next: Open samples/dashboard/devcockpitcore_dashboard.html for report-first frontpage review, or harden the accepted single bounded C4 validation-pack probe
-user_work: local dashboard report-first visual review
+active_artifact: dashboard-layout-research-and-prototype-v1
+artifact_current: dashboard-layout-research-and-prototype-v1
+artifact_next: dashboard-layout-acceptance-review-v1 or production-dashboard-priority-review-console-v1
+next: Review docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md and samples/dashboard/layout_research/devcockpitcore_layout_prototype.html before any production dashboard rewrite
+user_work: review whether Priority Review Console should drive the production dashboard redesign
 render_gate: not_applicable
 handoff: docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
 active_artifact_handoff: docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md
+active_layout_research: docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
+active_layout_prototype: samples/dashboard/layout_research/devcockpitcore_layout_prototype.html
 latest_remote_sync_resume_base_commit: c72ec47 docs: refresh report-first dashboard handoff
 latest_dashboard_report_frontpage_commit: 28af7ff feat: add report-first dashboard frontpage
 latest_dashboard_editorial_commit: 3ea0e1e feat: add dashboard editorial brief
@@ -37,14 +39,21 @@ Current executable capability is intentionally narrow:
 - The C4 key maps only to
   `python -m dev_cockpit.validation_pack --default --pretty`.
 
-The current review-surface slice is `dashboard-report-first-frontpage-v1`. It
-keeps the static dashboard and non-executable Review Actions package, preserves
-native dark mode and linked detail evidence, and absorbs the former Latest
-Brief into a concise Current Status / Supervision Report frontpage. The six
-large meter cards are no longer the first viewport; their detail-navigation
-role is demoted into a compact Review Map below the report. Dense evidence
-remains available below the frontpage or in native details panels. It is an
-offline review artifact, not an execution surface.
+The current review-surface slice is
+`dashboard-layout-research-and-prototype-v1`. It pauses production dashboard
+polishing after user feedback rejected the still card-first direction, audits
+the current generated dashboard, compares layout models, selects one
+recommended architecture, and adds a low-fidelity static prototype. The
+selected architecture is Priority Review Console: a current-state report,
+ordered priority lane, active review workspace, adjacent evidence inspector,
+ordered project/status list, and appendix-style raw evidence.
+
+The production dashboard generator and generated dashboard remain unchanged in
+this slice. `samples/dashboard/devcockpitcore_dashboard.html` is now evidence
+for the audit rather than the target of more incremental card polishing. The
+research memo lives at `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`; the
+prototype lives at
+`samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`.
 
 This runtime-state refresh is a docs-only remote-sync resume handoff. At
 handoff start, `main` was already fast-forwarded to `origin/main` at
@@ -54,8 +63,9 @@ boundary are unchanged.
 
 User visual review accepted the dark mode and improved organization as usable
 for now, then flagged that the Latest Brief still felt forced and that the
-card-heavy top viewport remained the root problem. The current correction is a
-structural layout change, not another copy-only brief pass.
+card-heavy top viewport remained the root problem. The latest feedback escalated
+that into a structural pause: do not keep polishing the current card-derived
+production layout until the layout research and prototype are reviewed.
 
 ## Verified Capabilities
 
@@ -78,10 +88,10 @@ structural layout change, not another copy-only brief pass.
 - Generate non-executable review actions at
   `samples/dashboard/devcockpitcore_review_actions.json` and
   `samples/dashboard/devcockpitcore_review_actions.md`.
-- Present the dashboard as a report-first dark frontpage with a compact Review
-  Map, short display labels, keyboard/focus markers, non-JS fallback text,
-  print-oriented CSS, Review Stack targets, back-to-review-map links, and
-  progressive disclosure for dense evidence.
+- Preserve the existing report-first dark dashboard as an offline static
+  artifact while layout research is reviewed.
+- Review a separate low-fidelity Priority Review Console prototype without
+  replacing the production generator.
 
 ## Safety Boundary
 
@@ -105,20 +115,22 @@ Start a new terminal or agent from:
 5. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
 6. `docs/PROJECT_COCKPIT.md`
 7. `docs/PROJECT_PIPELINE.mmd`
-8. `samples/dashboard/README.md`
-9. `samples/dashboard/devcockpitcore_dashboard.html`
-10. `samples/dashboard/devcockpitcore_review_actions.json`
-11. `samples/dashboard/devcockpitcore_review_actions.md`
-12. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
-13. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
-14. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
-15. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
-16. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
-17. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
-18. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-19. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-20. `docs/decision-log.md`
-21. `docs/idea-ledger.md`
+8. `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
+9. `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
+10. `samples/dashboard/README.md`
+11. `samples/dashboard/devcockpitcore_dashboard.html`
+12. `samples/dashboard/devcockpitcore_review_actions.json`
+13. `samples/dashboard/devcockpitcore_review_actions.md`
+14. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
+15. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
+16. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
+17. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
+18. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
+19. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
+20. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
+21. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
+22. `docs/decision-log.md`
+23. `docs/idea-ledger.md`
 
 First live checks:
 
@@ -134,17 +146,21 @@ Use the bundled Python runtime or a real Python 3.11+ interpreter with
 
 ## Last Validation
 
-Last known validation before commit/push for the report-first frontpage slice:
+Latest validation for `dashboard-layout-research-and-prototype-v1`:
 
-- bundled `python -m compileall src tests`: pass.
-- bundled `PYTHONPATH=src python -m unittest tests.test_dashboard`: 18 tests OK.
-- bundled `PYTHONPATH=src python -m unittest discover`: 300 tests OK.
-- bundled `PYTHONPATH=src python -m dev_cockpit.dashboard --output samples/dashboard/devcockpitcore_dashboard.html`: pass, with review action JSON/Markdown outputs.
-- bundled `python -m json.tool samples/dashboard/devcockpitcore_review_actions.json`: pass.
-- Playwright `file://` smoke: `report-first-frontpage` variant present, old Latest Brief absent, old meter board absent, old decision-meter cards absent, 6 Review Map links present, Review Stack collapsed.
-- Generated artifact scan: no prompt delimiters, raw host paths, `shell=True`, old top-surface classes, or `executable: true` matches.
-- Review action package readback: 20 actions, all `executable: false`.
-- `git diff --check`: pass; Git emitted line-ending normalization warnings only.
+- `python -m unittest tests.test_dashboard_layout_research`: 5 tests OK.
+- `python -m compileall src tests`: pass.
+- `PYTHONPATH=src python -m unittest discover`: 305 tests OK.
+- `python -m json.tool samples/dashboard/devcockpitcore_review_actions.json`: pass.
+- `git diff --check`: pass.
+- Playwright set-content smoke for the current production dashboard: rendered
+  `report-first-frontpage`, found 6 Review Map items, 8 project cards, 20 review
+  action cards, and 12 disclosure sections.
+- Playwright set-content smoke for the layout prototype: rendered
+  `priority-review-console`, found 5 priority rows, 4 project/status rows, 4
+  appendix disclosure sections, 0 scripts, and no `card-grid` marker.
+- Prototype text overflow check: 0 overflow findings for sampled text/code
+  elements at 1440px viewport after code-path wrapping fix.
 
 ## Handoff Notes
 

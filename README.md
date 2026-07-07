@@ -265,6 +265,13 @@ after generation with:
 Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```
 
+The active dashboard design checkpoint is
+`dashboard-layout-research-and-prototype-v1`. Production dashboard polishing is
+paused until the layout research memo and low-fidelity prototype are reviewed:
+
+- `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
+- `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
+
 The console script name is also wired in `pyproject.toml`:
 
 ```bash

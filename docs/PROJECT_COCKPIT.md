@@ -9,15 +9,25 @@ adding any broader automation capability.
 
 ## Current Active Slice
 
-`dashboard-report-first-frontpage-v1`
+`dashboard-layout-research-and-prototype-v1`
 
-Purpose: correct the accepted dark dashboard lane so the first viewport reads
-as a concise current-status report rather than a card board. The former Latest
-Brief is absorbed into the report frontpage, and the six large meter cards are
-demoted into a compact Review Map while preserving detail navigation,
-source-backed evidence, and non-executable Review Actions.
+Purpose: pause production dashboard polishing, audit why the current report-first
+surface still behaves like a card-heavy evidence warehouse, and define one
+research-backed layout model before changing the generator again.
 
-Dashboard artifact path:
+Research memo:
+
+```text
+docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
+```
+
+Low-fidelity static prototype:
+
+```text
+samples/dashboard/layout_research/devcockpitcore_layout_prototype.html
+```
+
+Current production dashboard remains unchanged:
 
 ```text
 samples/dashboard/devcockpitcore_dashboard.html
@@ -63,7 +73,9 @@ docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
 | Home-linked decision meters | Project review surface | accepted with caveat |
 | Latest brief checkpoint | Project review surface | complete with caveat |
 | Editorial brief correction | Project review surface | complete with caveat |
-| Report-first frontpage | Project review surface | active |
+| Report-first frontpage | Project review surface | paused after user structural rejection |
+| Dashboard layout research/prototype | Project review surface | active |
+| Production dashboard redesign from selected layout | Project review surface | future review slice |
 | Japanese display polish | Project review surface | future review slice |
 
 ## Capability Glyph Grid
@@ -81,6 +93,7 @@ docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
 | Compact dark overview HUD | [#] | available after generation |
 | Report-first frontpage | [#] | available after generation |
 | Compact Review Map | [#] | available after generation |
+| Priority Review Console prototype | [#] | static review artifact |
 | C3 help-only probes | [#] | two fixed keys only |
 | Single C4 validation-pack probe | [#] | one bounded key accepted |
 | Additional C4 commands | [!] | locked |
@@ -94,9 +107,11 @@ docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
 | --- | --- | --- |
 | Validation evidence | warning-level historical residue expected | review dashboard warning rows |
 | Smoke evidence | warning-level observer rows expected | confirm optional sibling warnings are acceptable |
-| Dashboard artifact | generated local HTML | open and inspect report clarity, Review Map, detail anchors, Review Stack, Review Actions, and print view |
+| Dashboard artifact | generated local HTML, not rewritten in the active slice | use as audit evidence, not as the design target |
 | Review action package | JSON and Markdown artifacts | confirm actions are review-only and non-executable |
-| Report-first frontpage | static HTML/CSS | confirm the first viewport reads like a concise current-status report |
+| Report-first frontpage | static HTML/CSS | paused pending layout acceptance |
+| Layout research memo | selected Priority Review Console | review whether the recommendation should drive the production redesign |
+| Layout prototype | low-fidelity static HTML | open and assess queue, workspace, evidence inspector, project order, and appendix |
 | C4 probe boundary | exactly one validation-pack key accepted | harden docs/tests before any further execution-readiness work |
 | Execution expansion | locked beyond accepted single C4 probe | keep outside this slice |
 | Public or production claims | locked | keep dashboard local and review-only |
@@ -105,12 +120,12 @@ docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
 
 - Can a user open one local file and see current testability?
 - Are warning ownership, blocker count, and access state visible in the first scan?
-- Does the first viewport read like a concise report rather than a card board?
-- Does the report answer blocker state, attention point, evidence trust, and first detail target?
-- Does each Review Map item link to the exact detail panel and review action surface it explains?
+- Does the selected layout answer current state, priority, next action, ignorable work, and evidence route?
+- Does the priority lane create a single ordered review sequence instead of parallel cards?
+- Does the active workspace make the current decision clearer than the existing Review Map/Stack/Details sequence?
 - Are source JSON paths and generated_at values visible enough for audit?
 - Do review actions stay non-executable and source-backed?
-- Are skip link, keyboard focus, details panels, non-JS fallback, and print view usable enough for manual review?
+- Are raw validation, smoke, action, and source details available as appendix material rather than top-level reading burden?
 - Is the accepted C4 surface still exactly one repo-local validation-pack probe?
 - Does the surface stay static, local, and non-executing?
 
@@ -118,6 +133,10 @@ docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
 
 The user accepted the dark mode and improved information organization as good
 enough for now, then flagged the Latest Brief as still forced and the card-based
-top viewport as the root problem. The current correction replaces the top card
-composition with a report-first frontpage and keeps the large meter logic only
-as compact linked navigation below the report.
+top viewport as the root problem. The follow-up review rejected continued
+card-first polishing: the current page still presents many warnings without a
+clear operator sequence, treats projects as parallel, assumes prior context, and
+risks becoming test-driven UI. The active checkpoint now recommends a Priority
+Review Console with a current-state report, ordered priority lane, active review
+workspace, adjacent evidence inspector, ordered project/status list, and
+appendix-style raw evidence.
