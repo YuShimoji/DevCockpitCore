@@ -7,10 +7,11 @@ artifact_next: dashboard-layout-acceptance-review-v1 or production-dashboard-pri
 next: Review docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md and samples/dashboard/layout_research/devcockpitcore_layout_prototype.html before any production dashboard rewrite
 user_work: review whether Priority Review Console should drive the production dashboard redesign
 render_gate: not_applicable
-handoff: docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
-active_artifact_handoff: docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md
+handoff: docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md
+active_artifact_handoff: docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md
 active_layout_research: docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
 active_layout_prototype: samples/dashboard/layout_research/devcockpitcore_layout_prototype.html
+latest_dashboard_layout_research_commit: 22e926a docs: add dashboard layout research prototype
 latest_remote_sync_resume_base_commit: c72ec47 docs: refresh report-first dashboard handoff
 latest_dashboard_report_frontpage_commit: 28af7ff feat: add report-first dashboard frontpage
 latest_dashboard_editorial_commit: 3ea0e1e feat: add dashboard editorial brief
@@ -55,11 +56,11 @@ research memo lives at `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`; the
 prototype lives at
 `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`.
 
-This runtime-state refresh is a docs-only remote-sync resume handoff. At
-handoff start, `main` was already fast-forwarded to `origin/main` at
-`c72ec47 docs: refresh report-first dashboard handoff`, `HEAD...origin/main`
-was `0 0`, and the worktree was clean. The active artifact and capability
-boundary are unchanged.
+The latest handoff surface is
+`docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`. It
+preserves the pushed layout-research checkpoint at `22e926a`, records the
+restart order, and keeps the production dashboard as audit evidence rather than
+the active design target.
 
 User visual review accepted the dark mode and improved organization as usable
 for now, then flagged that the Latest Brief still felt forced and that the
@@ -111,26 +112,27 @@ Start a new terminal or agent from:
 1. `AGENTS.md`
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
-4. `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
-5. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
-6. `docs/PROJECT_COCKPIT.md`
-7. `docs/PROJECT_PIPELINE.mmd`
-8. `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
-9. `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
-10. `samples/dashboard/README.md`
-11. `samples/dashboard/devcockpitcore_dashboard.html`
-12. `samples/dashboard/devcockpitcore_review_actions.json`
-13. `samples/dashboard/devcockpitcore_review_actions.md`
-14. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
-15. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
-16. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
-17. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
-18. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
-19. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
-20. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-21. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-22. `docs/decision-log.md`
-23. `docs/idea-ledger.md`
+4. `docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`
+5. `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
+6. `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
+7. `docs/PROJECT_COCKPIT.md`
+8. `docs/PROJECT_PIPELINE.mmd`
+9. `samples/dashboard/README.md`
+10. `samples/dashboard/devcockpitcore_dashboard.html`
+11. `samples/dashboard/devcockpitcore_review_actions.json`
+12. `samples/dashboard/devcockpitcore_review_actions.md`
+13. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
+14. `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
+15. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
+16. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
+17. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
+18. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
+19. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
+20. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
+21. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
+22. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
+23. `docs/decision-log.md`
+24. `docs/idea-ledger.md`
 
 First live checks:
 
@@ -164,18 +166,12 @@ Latest validation for `dashboard-layout-research-and-prototype-v1`:
 
 ## Handoff Notes
 
-- The latest remote-sync resume refresh is docs-only. It preserves the
-  `c72ec47 docs: refresh report-first dashboard handoff` remote state as the
-  starting point and keeps the active artifact at
-  `dashboard-report-first-frontpage-v1`.
-- `dashboard-report-first-frontpage-v1` was committed and pushed as
-  `28af7ff feat: add report-first dashboard frontpage`; post-push parity was
+- `dashboard-layout-research-and-prototype-v1` was committed and pushed as
+  `22e926a docs: add dashboard layout research prototype`; post-push parity was
   `0 0` and the worktree was clean.
-- Latest dashboard editorial checkpoint is `3ea0e1e feat: add dashboard
-  editorial brief`, pushed to `origin/main` with parity `0 0` before this
-  handoff refresh began.
-- The prior editorial handoff remains useful only as history:
-  `docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md`.
-- The older C4 handoff remains in the restart surface as boundary memory, not
-  as the first active dashboard continuation target.
+- The new active handoff is
+  `docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`.
+- The report-first and remote-sync handoffs remain useful as history, not as
+  the first active continuation target.
+- The older C4 handoff remains in the restart surface as boundary memory.
 - No sibling repositories were edited.

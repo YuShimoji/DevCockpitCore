@@ -41,11 +41,11 @@ polishing, audits the current report-first dashboard, compares layout models,
 selects Priority Review Console as the recommended architecture, and adds a
 separate low-fidelity static prototype for review before any generator rewrite.
 
-The latest repo-level handoff refresh is
-`docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`. It is a docs-only
-remote-sync resume packet created after `main` was confirmed in parity with
-`origin/main` at `c72ec47 docs: refresh report-first dashboard handoff`; it
-does not change the active artifact or capability boundary.
+The latest repo-level handoff is
+`docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`. It records
+the pushed layout-research checkpoint at
+`22e926a docs: add dashboard layout research prototype`, the active restart
+order, access routes, validation memory, and the next decision entrances.
 
 The dashboard layout research responds to user-opened visual feedback: the dark
 mode and information organization were usable, but the Latest Brief felt forced,
@@ -171,35 +171,36 @@ Start a new terminal or agent from:
 1. `AGENTS.md`
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
-4. `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
-5. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
-6. `docs/PROJECT_COCKPIT.md`
-7. `docs/PROJECT_PIPELINE.mmd`
-8. `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
-9. `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
-10. `samples/dashboard/README.md`
-11. `samples/dashboard/devcockpitcore_dashboard.html`
-12. `samples/dashboard/devcockpitcore_review_actions.json`
-13. `samples/dashboard/devcockpitcore_review_actions.md`
-14. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
-15. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
-16. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
-17. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
-18. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
-19. `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
-20. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
-21. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-22. `samples/c4_probe_authorization_review/c4_probe_authorization_review_v1.json`
-23. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-24. `samples/c4_probe_decision_packet/c4_probe_decision_packet_v1.json`
-25. `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
-26. `samples/c4_scoped_runner_design_hardening/c4_scoped_runner_design_hardening_v1.json`
-27. `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
-28. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
-29. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
-30. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
-31. `docs/decision-log.md`
-32. `docs/idea-ledger.md`
+4. `docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`
+5. `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
+6. `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
+7. `docs/PROJECT_COCKPIT.md`
+8. `docs/PROJECT_PIPELINE.mmd`
+9. `samples/dashboard/README.md`
+10. `samples/dashboard/devcockpitcore_dashboard.html`
+11. `samples/dashboard/devcockpitcore_review_actions.json`
+12. `samples/dashboard/devcockpitcore_review_actions.md`
+13. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
+14. `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
+15. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
+16. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
+17. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
+18. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
+19. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
+20. `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
+21. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
+22. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
+23. `samples/c4_probe_authorization_review/c4_probe_authorization_review_v1.json`
+24. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
+25. `samples/c4_probe_decision_packet/c4_probe_decision_packet_v1.json`
+26. `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
+27. `samples/c4_scoped_runner_design_hardening/c4_scoped_runner_design_hardening_v1.json`
+28. `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
+29. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
+30. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
+31. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
+32. `docs/decision-log.md`
+33. `docs/idea-ledger.md`
 
 Then verify live state with:
 
