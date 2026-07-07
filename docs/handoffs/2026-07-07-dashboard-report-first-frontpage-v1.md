@@ -6,7 +6,13 @@ This handoff preserves the current DevCockpitCore continuation context after
 ## Current Repository State
 
 - Branch: `main`
+- Checkpoint commit: `28af7ff feat: add report-first dashboard frontpage`
+- Remote: pushed to `origin/main`
+- Post-push parity: `HEAD...origin/main = 0 0`
+- Post-push worktree: clean
 - Active artifact: `dashboard-report-first-frontpage-v1`
+- Handoff refresh: this document now preserves the pushed checkpoint, local
+  access route, validation memory, and next user-side review step.
 - User-side work: open the local dashboard and judge whether the first viewport
   now reads like a concise current-status report rather than a card board.
 
@@ -41,6 +47,18 @@ samples/dashboard/devcockpitcore_review_actions.json
 samples/dashboard/devcockpitcore_review_actions.md
 ```
 
+Current host access path:
+
+```text
+C:\Users\thank\Storage\Media Contents Projects\DevCockpitCore\samples\dashboard\devcockpitcore_dashboard.html
+```
+
+Use the same command for current user-side review:
+
+```powershell
+Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
+```
+
 ## Decision Memory
 
 The user accepted the dark dashboard direction and improved organization as
@@ -69,6 +87,28 @@ Still forbidden without a separate reviewed slice:
 - target repository writeback.
 - new controlled command keys, C5, or C6 expansion.
 - public action surface beyond normal repository push.
+
+## Validation Memory
+
+Last checks before checkpoint:
+
+- bundled `python -m compileall src tests`: pass.
+- bundled `PYTHONPATH=src python -m unittest tests.test_dashboard`: 18 tests OK.
+- bundled `PYTHONPATH=src python -m unittest discover`: 300 tests OK.
+- bundled `PYTHONPATH=src python -m dev_cockpit.dashboard --output samples/dashboard/devcockpitcore_dashboard.html`: pass.
+- bundled `python -m json.tool samples/dashboard/devcockpitcore_review_actions.json`: pass.
+- Playwright `file://` smoke: report-first variant present; old Latest Brief,
+  old meter board, and old decision-meter cards absent; 6 Review Map links
+  present; Review Stack collapsed.
+- Generated artifact scan: no prompt delimiters, raw host paths, `shell=True`,
+  old top-surface classes, or `executable: true` matches.
+- `git diff --check` and `git diff --cached --check`: pass.
+
+Report-first implementation checkpoint state:
+
+- `git push origin main`: success.
+- `git rev-list --left-right --count "HEAD...@{u}"`: `0 0`.
+- `git status --short --branch --untracked-files=all`: clean on `main`.
 
 ## Resume Steps
 

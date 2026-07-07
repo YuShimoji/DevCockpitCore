@@ -8,7 +8,7 @@ next: Open samples/dashboard/devcockpitcore_dashboard.html for report-first fron
 user_work: local dashboard report-first visual review
 render_gate: not_applicable
 handoff: docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md
-latest_dashboard_report_frontpage_commit: see final AGENT_REPORT for checkpoint hash
+latest_dashboard_report_frontpage_commit: 28af7ff feat: add report-first dashboard frontpage
 latest_dashboard_editorial_commit: 3ea0e1e feat: add dashboard editorial brief
 remote_sync_state_at_handoff_start: origin/main fast-forwarded to 33250ab before local dashboard handoff was reapplied
 latest_remote_handoff_refresh_commit: b99d8c6 docs: refresh c4 review handoff state
@@ -113,11 +113,11 @@ Start a new terminal or agent from:
 
 First live checks:
 
-```bash
+```powershell
 git status --short --branch
 git fetch --prune origin
 git pull --ff-only origin main
-git rev-list --left-right --count HEAD...origin/main
+git rev-list --left-right --count "HEAD...@{u}"
 ```
 
 Use the bundled Python runtime or a real Python 3.11+ interpreter with
@@ -139,9 +139,9 @@ Last known validation before commit/push for the report-first frontpage slice:
 
 ## Handoff Notes
 
-- Current local work implements `dashboard-report-first-frontpage-v1`; commit
-  and push should not be assumed complete until the final report names the
-  checkpoint hash.
+- `dashboard-report-first-frontpage-v1` was committed and pushed as
+  `28af7ff feat: add report-first dashboard frontpage`; post-push parity was
+  `0 0` and the worktree was clean.
 - Latest dashboard editorial checkpoint is `3ea0e1e feat: add dashboard
   editorial brief`, pushed to `origin/main` with parity `0 0` before this
   handoff refresh began.
@@ -150,5 +150,3 @@ Last known validation before commit/push for the report-first frontpage slice:
 - The older C4 handoff remains in the restart surface as boundary memory, not
   as the first active dashboard continuation target.
 - No sibling repositories were edited.
-- No staging, commit, or push should be assumed complete until the final chat
-  report names the pushed commit.

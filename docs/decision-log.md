@@ -3,6 +3,42 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-07 - Dashboard Report-First Frontpage Checkpoint
+
+Purpose: preserve the structural correction after user visual feedback that the
+Latest Brief still felt forced and the top viewport remained card-heavy.
+
+Decision: make `dashboard-report-first-frontpage-v1` the active dashboard
+review-surface artifact. The first viewport should read as a concise Current
+Status / Supervision Report, with the former meter board demoted into a compact
+Review Map below the report.
+
+Effect: `src/dev_cockpit/dashboard.py`, `tests/test_dashboard.py`, generated
+dashboard artifacts, `docs/runtime-state.md`, `docs/project-context.md`,
+`docs/PROJECT_COCKPIT.md`, `docs/PROJECT_PIPELINE.mmd`, and
+`docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md` now preserve
+the report-first structure and restart context.
+
+Requirements preserved:
+
+- The dashboard and Review Actions remain static, local, and non-executable.
+- Review Actions remain `executable: false`.
+- C3 command set remains exactly two help-only keys.
+- C4 command set remains exactly one key: `validation_pack_default_pretty`.
+- No web server, scheduler, credentials, target repository writeback, C5, C6,
+  or public action beyond normal repository push was added.
+
+State: checkpoint `28af7ff feat: add report-first dashboard frontpage` was
+pushed to `origin/main`; post-push parity was `0 0` and the worktree was clean.
+
+Owner: user performs visual acceptance on
+`samples/dashboard/devcockpitcore_dashboard.html`; next agent resumes from
+`docs/runtime-state.md` and the 2026-07-07 handoff.
+
+Next move: judge whether the first viewport now reads like a concise report.
+If accepted, future work should be advisory only: progress-aware report logic,
+Japanese display polish, or Review Action Markdown polish.
+
 ## 2026-07-06 - Compact Dark Dashboard Handoff After Remote Sync
 
 Purpose: preserve the user-opened dashboard visual feedback and make another
