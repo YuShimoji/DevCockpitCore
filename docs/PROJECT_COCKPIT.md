@@ -36,6 +36,12 @@ Generator:
 src/dev_cockpit/dashboard.py
 ```
 
+Latest repo-level handoff:
+
+```text
+docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
+```
+
 ## Roadmap Strip
 
 | Step | Lane | State |

@@ -7,7 +7,9 @@ artifact_next: progress-driven-report-evolution-v1 or japanese-display-polish-v1
 next: Open samples/dashboard/devcockpitcore_dashboard.html for report-first frontpage review, or harden the accepted single bounded C4 validation-pack probe
 user_work: local dashboard report-first visual review
 render_gate: not_applicable
-handoff: docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md
+handoff: docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md
+active_artifact_handoff: docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md
+latest_remote_sync_resume_base_commit: c72ec47 docs: refresh report-first dashboard handoff
 latest_dashboard_report_frontpage_commit: 28af7ff feat: add report-first dashboard frontpage
 latest_dashboard_editorial_commit: 3ea0e1e feat: add dashboard editorial brief
 remote_sync_state_at_handoff_start: origin/main fast-forwarded to 33250ab before local dashboard handoff was reapplied
@@ -43,6 +45,12 @@ large meter cards are no longer the first viewport; their detail-navigation
 role is demoted into a compact Review Map below the report. Dense evidence
 remains available below the frontpage or in native details panels. It is an
 offline review artifact, not an execution surface.
+
+This runtime-state refresh is a docs-only remote-sync resume handoff. At
+handoff start, `main` was already fast-forwarded to `origin/main` at
+`c72ec47 docs: refresh report-first dashboard handoff`, `HEAD...origin/main`
+was `0 0`, and the worktree was clean. The active artifact and capability
+boundary are unchanged.
 
 User visual review accepted the dark mode and improved organization as usable
 for now, then flagged that the Latest Brief still felt forced and that the
@@ -93,23 +101,24 @@ Start a new terminal or agent from:
 1. `AGENTS.md`
 2. `docs/runtime-state.md`
 3. `docs/project-context.md`
-4. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
-5. `docs/PROJECT_COCKPIT.md`
-6. `docs/PROJECT_PIPELINE.mmd`
-7. `samples/dashboard/README.md`
-8. `samples/dashboard/devcockpitcore_dashboard.html`
-9. `samples/dashboard/devcockpitcore_review_actions.json`
-10. `samples/dashboard/devcockpitcore_review_actions.md`
-11. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
-12. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
-13. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
-14. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
-15. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
-16. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
-17. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-18. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-19. `docs/decision-log.md`
-20. `docs/idea-ledger.md`
+4. `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
+5. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
+6. `docs/PROJECT_COCKPIT.md`
+7. `docs/PROJECT_PIPELINE.mmd`
+8. `samples/dashboard/README.md`
+9. `samples/dashboard/devcockpitcore_dashboard.html`
+10. `samples/dashboard/devcockpitcore_review_actions.json`
+11. `samples/dashboard/devcockpitcore_review_actions.md`
+12. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
+13. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
+14. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
+15. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
+16. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
+17. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
+18. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
+19. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
+20. `docs/decision-log.md`
+21. `docs/idea-ledger.md`
 
 First live checks:
 
@@ -139,6 +148,10 @@ Last known validation before commit/push for the report-first frontpage slice:
 
 ## Handoff Notes
 
+- The latest remote-sync resume refresh is docs-only. It preserves the
+  `c72ec47 docs: refresh report-first dashboard handoff` remote state as the
+  starting point and keeps the active artifact at
+  `dashboard-report-first-frontpage-v1`.
 - `dashboard-report-first-frontpage-v1` was committed and pushed as
   `28af7ff feat: add report-first dashboard frontpage`; post-push parity was
   `0 0` and the worktree was clean.

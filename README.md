@@ -583,6 +583,8 @@ When resuming from another terminal or agent, start with:
 
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
+- `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
 - `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
 - `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
 - `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`

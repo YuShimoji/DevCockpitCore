@@ -5,6 +5,28 @@ into the current slice.
 
 ## Active Seeds
 
+### Progress-Driven Report Evolution
+
+Purpose: make the deterministic dashboard report wording react to blocker,
+warning, freshness, and access-state mixes instead of staying as a fixed brief.
+
+Effect: should improve the dashboard's first-scan usefulness as source
+evidence changes. It must not add a reporting engine, server, telemetry,
+scheduler, external service, or target-repository writeback.
+
+Requirements: keep source paths and generated evidence visible, keep Review
+Actions non-executable, preserve the report-first layout, and keep top-level
+copy concise.
+
+State: optional next review-surface route after visual acceptance of
+`dashboard-report-first-frontpage-v1`.
+
+Owner: Supervisor or user should choose this only after judging that the layout
+is right but the report language needs evidence-aware variation.
+
+Next move: use `progress-driven-report-evolution-v1` only from a matching
+prompt.
+
 ### Japanese Display Polish
 
 Purpose: refine the compact dark dashboard labels after human visual review,

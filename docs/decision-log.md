@@ -3,6 +3,41 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-07 - Remote Sync Resume Handoff
+
+Purpose: make another terminal able to resume from the latest pushed
+DevCockpitCore state without relying on chat context.
+
+Decision: keep `dashboard-report-first-frontpage-v1` as the active artifact and
+add a docs-only remote-sync resume packet at
+`docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`.
+
+Effect: `docs/runtime-state.md`, `docs/project-context.md`, this decision log,
+`docs/idea-ledger.md`, and the new handoff file now preserve the latest
+sync/parity state, restart order, capability boundary, and residual work.
+
+Requirements preserved:
+
+- No source code, tests, generated dashboard artifact, adapter manifest, or
+  runner behavior changed.
+- C3 command set remains exactly two help-only keys.
+- C4 command set remains exactly one key: `validation_pack_default_pretty`.
+- Dashboard and Review Actions remain static, local, and non-executable.
+- No scheduler, web server, credentials, target repository writeback, C5, C6,
+  or public action beyond normal repository push was added.
+
+State: before the docs-only refresh, `main` was fast-forwarded to
+`origin/main` at `c72ec47 docs: refresh report-first dashboard handoff`,
+`HEAD...origin/main` was `0 0`, and the worktree was clean.
+
+Owner: Agent maintains repo-local restart docs and pushes the docs-only
+handoff; user owns visual acceptance of the dashboard.
+
+Next move: from another terminal, fetch/pull, verify parity, read
+`docs/runtime-state.md`, then open
+`samples/dashboard/devcockpitcore_dashboard.html` for visual acceptance or
+select the next explicit route.
+
 ## 2026-07-07 - Dashboard Report-First Frontpage Checkpoint
 
 Purpose: preserve the structural correction after user visual feedback that the
