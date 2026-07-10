@@ -17,6 +17,7 @@ handoff: docs/handoffs/2026-07-10-workflow-handoff.md
 blocking_issue_count: 0
 external_status: https://github.com/YuShimoji/DevCockpitCore/blob/codex/workflow-handoff/docs/PROJECT_COCKPIT.md
 external_publish_state: draft_pr_before_main_merge
+pull_request: https://github.com/YuShimoji/DevCockpitCore/pull/1
 wiki_sync: not_configured
 
 ## Current State

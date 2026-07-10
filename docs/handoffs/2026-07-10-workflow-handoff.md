@@ -6,7 +6,8 @@ base_branch: main
 verified_base: dc6b5bb
 active_product_checkpoint: dashboard-layout-research-and-prototype-v1
 active_workflow_checkpoint: outcome-envelope-and-cockpit-authority-v1
-publication: draft PR before main merge
+publication: draft PR #1 before main merge
+pull_request: https://github.com/YuShimoji/DevCockpitCore/pull/1
 
 ## Why This Handoff Exists
 
@@ -14,6 +15,10 @@ This is a real terminal and agent transfer. It records the workflow refresh,
 the current product decision, the validation performed, and the exact
 re-entry path so a different terminal can continue without reconstructing chat
 history or reading historical micro-handoffs.
+
+The branch is already pushed to `origin/codex/workflow-handoff` and is open
+as draft PR #1. Continue on the branch until the PR is deliberately reviewed
+and merged into `main`.
 
 ## Resume From Another Terminal
 

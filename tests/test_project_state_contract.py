@@ -46,6 +46,7 @@ class ProjectStateContractTests(unittest.TestCase):
             cockpit["external_publish_state"],
             runtime["external_publish_state"],
         )
+        self.assertEqual(cockpit.get("pull_request"), runtime.get("pull_request"))
 
     def test_readme_exposes_current_state_near_the_top(self) -> None:
         first_lines = "\n".join(_read("README.md").splitlines()[:35])

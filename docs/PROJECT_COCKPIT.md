@@ -11,6 +11,7 @@ active_workflow_checkpoint: outcome-envelope-and-cockpit-authority-v1
 blocking_issue_count: 0
 external_status: https://github.com/YuShimoji/DevCockpitCore/blob/codex/workflow-handoff/docs/PROJECT_COCKPIT.md
 external_publish_state: draft_pr_before_main_merge
+pull_request: https://github.com/YuShimoji/DevCockpitCore/pull/1
 wiki_sync: not_configured
 
 ## Status In One Minute
@@ -84,9 +85,9 @@ The following checks were run against the synchronized checkout on 2026-07-10:
   current-state authority.
 - GitHub Wiki is enabled for the public repository, but it has no pages and no
   wiki repository yet. The branch Cockpit link above is the external viewing
-  route for this handoff. `main` remains on its 2026-07-07 state until the
-  draft PR is reviewed and merged. A second manually edited status source
-  should not be created.
+  route for this handoff. Draft PR #1 carries the branch into `main` when it
+  is reviewed and merged. A second manually edited status source should not be
+  created.
 - The Priority Review Console has low-fidelity evidence and tests but no user
   acceptance. The production generator remains intentionally unchanged.
 - Local verification depends on Python 3.11+, `PYTHONPATH=src`, `unittest`,
