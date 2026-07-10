@@ -34,11 +34,20 @@ class _PrototypeParser(HTMLParser):
 
 
 class DashboardLayoutResearchTests(unittest.TestCase):
-    def test_research_doc_exists_and_selects_one_layout(self) -> None:
+    def test_research_doc_recommends_without_claiming_user_acceptance(self) -> None:
         text = RESEARCH_DOC.read_text(encoding="utf-8")
+        normalized = " ".join(text.split())
 
         self.assertIn("Dashboard Layout Research V1", text)
-        self.assertIn("Choose exactly one architecture: Priority Review Console.", text)
+        self.assertIn(
+            "recommends Priority Review Console as one strong candidate",
+            normalized,
+        )
+        self.assertIn("This recommendation is not user acceptance", normalized)
+        self.assertIn(
+            "two materially different low-fidelity directions",
+            normalized,
+        )
         self.assertIn("Card-grid-first dashboard", text)
         self.assertIn("Reject as primary structure.", text)
         self.assertIn("Current Dashboard Audit", text)

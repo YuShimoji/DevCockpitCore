@@ -1,142 +1,135 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-07
+updated_at: 2026-07-10
+status_authority: this file
+runtime_projection: docs/runtime-state.md
+last_verified_base: dc6b5bb
+resume_branch: codex/workflow-handoff
+handoff: docs/handoffs/2026-07-10-workflow-handoff.md
+active_product_checkpoint: dashboard-layout-research-and-prototype-v1
+active_workflow_checkpoint: outcome-envelope-and-cockpit-authority-v1
+blocking_issue_count: 0
+external_status: https://github.com/YuShimoji/DevCockpitCore/blob/codex/workflow-handoff/docs/PROJECT_COCKPIT.md
+external_publish_state: draft_pr_before_main_merge
+wiki_sync: not_configured
 
-## North Star
+## Status In One Minute
 
-Make local development supervision reviewable from structured evidence before
-adding any broader automation capability.
+DevCockpitCore starts from the `origin/main` verified base `dc6b5bb` and is
+locally developable. The standard-library Python package,
+309 unit tests, four adapters, live observer path, bounded C3/C4 probes, and
+validation pack all run successfully. There is no code or environment blocker.
 
-## Current Active Slice
+The active product decision is deliberately before another production
+dashboard rewrite. The existing report-first dashboard remains audit evidence;
+the separate Priority Review Console prototype is one candidate, not an
+implicitly approved final direction. Production UI work stays paused until a
+small set of materially different low-fidelity directions is compared and the
+user selects one.
 
-`dashboard-layout-research-and-prototype-v1`
+The development workflow now treats one prompt as an outcome envelope.
+Investigation, implementation, related fixes, tests, cleanup, and state
+synchronization continue without a new prompt while they stay in scope.
+Authority-sensitive changes and expensive subjective directions are the two
+explicit stop gates.
 
-Purpose: pause production dashboard polishing, audit why the current report-first
-surface still behaves like a card-heavy evidence warehouse, and define one
-research-backed layout model before changing the generator again.
+## Lane State
 
-Research memo:
-
-```text
-docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
-```
-
-Low-fidelity static prototype:
-
-```text
-samples/dashboard/layout_research/devcockpitcore_layout_prototype.html
-```
-
-Current production dashboard remains unchanged:
-
-```text
-samples/dashboard/devcockpitcore_dashboard.html
-```
-
-Review action package paths:
-
-```text
-samples/dashboard/devcockpitcore_review_actions.json
-samples/dashboard/devcockpitcore_review_actions.md
-```
-
-Generator:
-
-```text
-src/dev_cockpit/dashboard.py
-```
-
-Latest repo-level handoff:
-
-```text
-docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md
-```
-
-## Roadmap Strip
-
-| Step | Lane | State |
+| Lane | Current state | What that means |
 | --- | --- | --- |
-| Status snapshot | Foundation Observer Readiness | complete |
-| Adapter manifests | Foundation Observer Readiness | complete |
-| Report normalizer | Foundation Automation Readiness | complete |
-| Gate classifier | Foundation Automation Readiness | complete |
-| Validation pack | Foundation Automation Readiness | complete |
-| Cross-project smoke | Foundation Automation Readiness | complete |
-| Controlled C3 help probes | Execution Automation Readiness | bounded and complete |
-| C4 scoped runner design review | Execution Automation Readiness | design-only accepted |
-| C4 minimal validation-pack probe | Execution Automation Readiness | one bounded key accepted |
-| Local test dashboard | Foundation Automation Readiness | complete |
-| Designer dashboard IA | Project review surface | complete |
-| Review action package | Project review surface | complete |
-| Dashboard accessibility pass | Project review surface | complete |
-| Compact dark overview | Project review surface | complete |
-| Home-linked decision meters | Project review surface | accepted with caveat |
-| Latest brief checkpoint | Project review surface | complete with caveat |
-| Editorial brief correction | Project review surface | complete with caveat |
-| Report-first frontpage | Project review surface | paused after user structural rejection |
-| Dashboard layout research/prototype | Project review surface | active |
-| Production dashboard redesign from selected layout | Project review surface | future review slice |
-| Japanese display polish | Project review surface | future review slice |
+| Foundation Observer Readiness | Complete | Read-only status snapshots and four project adapters are available. |
+| Foundation Automation Readiness | Complete and usable | Report normalization, gate classification, validation packs, cross-project smoke, dashboard generation, and review actions are available. |
+| Execution Automation Readiness | Intentionally bounded | C3 has two help-only keys; C4 has one fixed local validation-pack key. No general runner is authorized. |
+| Project Review Surface | Intent checkpoint | Layout research and one low-fidelity prototype exist; production generator redesign is waiting for a direction choice. |
+| Development Workflow | Operating model refreshed | Mission-sized prompts, narrow stop gates, creative intent checkpoints, and cockpit closure are the project-local default. |
 
-## Capability Glyph Grid
+## Current Product Decision
 
-| Capability | Glyph | State |
+Do not continue card-by-card polish on
+`samples/dashboard/devcockpitcore_dashboard.html`. Before production work,
+compare two or three low-cost directions. The current exploration set is:
+
+| Direction | Primary experience | Strength | Main tradeoff |
+| --- | --- | --- | --- |
+| Priority Review Console | Ordered queue, active decision workspace, adjacent evidence inspector | Best at telling an operator what to decide next | Can feel tool-like if the narrative state report is too thin |
+| Narrative Status Brief | A concise current-state story with decisions and evidence revealed in reading order | Best for low-context handoff and occasional users | Slower for repeated triage across many projects |
+| Lane And Project Matrix | Readiness lanes by project with one selected detail drawer | Best for cross-project comparison and expansion | Risks returning to equal-weight tiles unless priority is explicit |
+
+The existing prototype represents only the first direction:
+`samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`.
+The other directions should remain low fidelity until the intent checkpoint is
+used.
+
+## Live Verification
+
+The following checks were run against the synchronized checkout on 2026-07-10:
+
+| Check | Result | Interpretation |
 | --- | --- | --- |
-| Read-only repo observation | [#] | available |
-| Adapter validation | [#] | available |
-| Validation pack evidence | [#] | available |
-| Cross-project smoke evidence | [#] | available |
-| Static local dashboard | [#] | available after generation |
-| Warning triage and project cards | [#] | available after generation |
-| Non-executable review actions | [#] | available after generation |
-| Skip link, focus states, print view | [#] | available after generation |
-| Compact dark overview HUD | [#] | available after generation |
-| Report-first frontpage | [#] | available after generation |
-| Compact Review Map | [#] | available after generation |
-| Priority Review Console prototype | [#] | static review artifact |
-| C3 help-only probes | [#] | two fixed keys only |
-| Single C4 validation-pack probe | [#] | one bounded key accepted |
-| Additional C4 commands | [!] | locked |
-| Arbitrary execution | [!] | locked |
-| External services | [!] | locked |
-| Target repository writeback | [!] | locked |
+| Source and test compilation | Pass | Python sources and tests compile. |
+| Unit tests | 309 passed | No failing local test, including the current-state contract guard. |
+| Adapter validation | 4 of 4 passed | All tracked adapters satisfy the manifest contract. |
+| Live status snapshot | Clean checkpoint after commit | The workflow change set is committed on the resume branch; verify remote parity after fetching. |
+| Validation pack | 15 pass, 1 known warning, 0 fail | The warning is the intentional pseudo-git-tag fixture, not a live defect. |
+| C3 probe | 11 of 11 passed | Both bounded help-only paths remain healthy. |
+| C4 probe | 18 of 18 completed, exit 0 | The single validation-pack probe remains within its fixed boundary. |
+| Cross-project smoke | Core passed; 3 optional siblings warned | Optional sibling state does not block DevCockpitCore development. |
+| Git whitespace check | Pass | No whitespace error at the synchronized base. |
 
-## Gate Board
+## Known Drift And Uncertainty
 
-| Gate | Current State | Next Move |
+- Tracked status, validation, cross-project smoke, dashboard, and review-action
+  samples are checkpoint evidence generated on 2026-07-06 or 2026-07-07. They
+  do not represent the current live checkout and must not be used as the sole
+  current-state authority.
+- GitHub Wiki is enabled for the public repository, but it has no pages and no
+  wiki repository yet. The branch Cockpit link above is the external viewing
+  route for this handoff. `main` remains on its 2026-07-07 state until the
+  draft PR is reviewed and merged. A second manually edited status source
+  should not be created.
+- The Priority Review Console has low-fidelity evidence and tests but no user
+  acceptance. The production generator remains intentionally unchanged.
+- Local verification depends on Python 3.11+, `PYTHONPATH=src`, `unittest`,
+  and the repository validation pack. There is no CI workflow or bootstrap
+  script yet.
+
+## Operating Loop
+
+1. The Supervisor reads this cockpit and frames one user-visible outcome,
+   known decisions, autonomy, stop gates, acceptance, and closure.
+2. The development agent continues through the entire authorized outcome.
+3. An Authority Gate stops destructive work, dependencies, contracts,
+   credentials, external effects, writeback, or capability expansion.
+4. An Intent Gate stops expensive subjective work before production and
+   presents two or three low-cost directions plus a recommendation.
+5. Completion updates this cockpit and its runtime projection once, then
+   reports evidence and different next entrances.
+
+Prompt/report separation remains useful, but it does not force a new prompt for
+each mechanical substep. See
+`docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md`.
+
+## Next Entrances
+
+| Entrance | Friction removed | What becomes possible |
 | --- | --- | --- |
-| Validation evidence | warning-level historical residue expected | review dashboard warning rows |
-| Smoke evidence | warning-level observer rows expected | confirm optional sibling warnings are acceptable |
-| Dashboard artifact | generated local HTML, not rewritten in the active slice | use as audit evidence, not as the design target |
-| Review action package | JSON and Markdown artifacts | confirm actions are review-only and non-executable |
-| Report-first frontpage | static HTML/CSS | paused pending layout acceptance |
-| Layout research memo | selected Priority Review Console | review whether the recommendation should drive the production redesign |
-| Layout prototype | low-fidelity static HTML | open and assess queue, workspace, evidence inspector, project order, and appendix |
-| C4 probe boundary | exactly one validation-pack key accepted | harden docs/tests before any further execution-readiness work |
-| Execution expansion | locked beyond accepted single C4 probe | keep outside this slice |
-| Public or production claims | locked | keep dashboard local and review-only |
+| Explore — dashboard intent checkpoint | Large UI delivery followed by correction churn | The user can choose a layout, language, visual, and content direction before generator work. |
+| Verify — current-state freshness guard | Stale samples and duplicated live-state claims | Validation can warn when cockpit/runtime labels or generated evidence fall behind. |
+| Excise — historical restart duplication | Long restart lists and routine handoff creation | A new agent can resume from AGENTS, this cockpit, and one active design artifact. |
+| Advance — macro-prompt pilot | Prompt fragmentation and repeated safe approvals | One selected outcome can run from implementation through verification and cockpit closure. |
 
-## Review Axis
+## Update Contract
 
-- Can a user open one local file and see current testability?
-- Are warning ownership, blocker count, and access state visible in the first scan?
-- Does the selected layout answer current state, priority, next action, ignorable work, and evidence route?
-- Does the priority lane create a single ordered review sequence instead of parallel cards?
-- Does the active workspace make the current decision clearer than the existing Review Map/Stack/Details sequence?
-- Are source JSON paths and generated_at values visible enough for audit?
-- Do review actions stay non-executable and source-backed?
-- Are raw validation, smoke, action, and source details available as appendix material rather than top-level reading burden?
-- Is the accepted C4 surface still exactly one repo-local validation-pack probe?
-- Does the surface stay static, local, and non-executing?
-
-## Review Memory
-
-The user accepted the dark mode and improved information organization as good
-enough for now, then flagged the Latest Brief as still forced and the card-based
-top viewport as the root problem. The follow-up review rejected continued
-card-first polishing: the current page still presents many warnings without a
-clear operator sequence, treats projects as parallel, assumes prior context, and
-risks becoming test-driven UI. The active checkpoint now recommends a Priority
-Review Console with a current-state report, ordered priority lane, active review
-workspace, adjacent evidence inspector, ordered project/status list, and
-appendix-style raw evidence.
+- Update this file when the active outcome, lane state, next decision,
+  validation state, or material uncertainty changes.
+- Update `docs/runtime-state.md` in the same change as the compact
+  machine-facing projection.
+- Keep `docs/project-context.md` limited to durable mission, architecture, and
+  capability boundaries.
+- Record only durable choices in `docs/decision-log.md`.
+- Keep creative opportunities, alternatives, and rejected routes in
+  `docs/idea-ledger.md`.
+- Create a dated handoff only for a real context transfer that cannot be
+  reconstructed from this cockpit and the active design artifact.
+- Treat any external Wiki, Page, or workspace as a one-way view of this file,
+  never as a second status authority.

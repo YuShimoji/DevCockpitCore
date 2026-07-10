@@ -180,12 +180,18 @@ class C4ProbeMinimalImplementationReviewTests(unittest.TestCase):
             with self.subTest(phrase=phrase):
                 self.assertIn(phrase, normalized)
 
-    def test_project_context_records_review_as_current_state(self) -> None:
+    def test_project_context_preserves_reviewed_capability_boundary(self) -> None:
         context = PROJECT_CONTEXT.read_text(encoding="utf-8")
         normalized = " ".join(context.split())
-        self.assertIn("c4-probe-minimal-implementation-review-v1", context)
-        self.assertIn("C4 is limited to one accepted repo-local validation-pack probe", normalized)
-        self.assertIn("C3 command set remains exactly two", normalized)
+        self.assertIn(
+            "accepted C3 command surface has exactly two help-only keys",
+            normalized,
+        )
+        self.assertIn(
+            "accepted C4 surface has exactly one repo-local validation-pack key",
+            normalized,
+        )
+        self.assertIn("validation_pack_default_pretty", context)
 
     def test_artifacts_do_not_use_raw_local_identity_or_prompt_text(self) -> None:
         payload = "\n".join(

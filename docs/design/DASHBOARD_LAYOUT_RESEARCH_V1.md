@@ -105,9 +105,13 @@ The next production redesign should follow these principles:
 | Wizard-like review sequence | Good when every operator must complete a strict process. | Too linear for an observer dashboard where many details are optional and should be ignored. | Reject for primary use. |
 | Single-page report with appendix evidence | Good for handoff and low-context reading. | Too static if the operator must compare warning rows and inspect one item repeatedly. | Keep as secondary appendix behavior. |
 
-## Selected Recommendation
+## Research Recommendation
 
-Choose exactly one architecture: Priority Review Console.
+The research work recommends Priority Review Console as one strong candidate.
+This recommendation is not user acceptance and does not authorize a production
+rewrite. Before production implementation, compare it with two materially
+different low-fidelity directions at the project Intent Gate, then record the
+user's selection in the Project Cockpit.
 
 The model combines a short state report, an ordered priority lane, an active
 review workspace, and an evidence inspector:
@@ -190,6 +194,8 @@ A future production dashboard redesign should pass these checks:
 
 ## Review Debt
 
+- Compare Priority Review Console with a Narrative Status Brief and a Lane And
+  Project Matrix at low fidelity; do not build all three production versions.
 - Decide whether the queue-led split workspace should become the next
   production generator target.
 - Decide whether the priority queue should be derived from review actions,

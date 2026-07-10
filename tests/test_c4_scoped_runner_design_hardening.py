@@ -102,7 +102,7 @@ class C4ScopedRunnerDesignHardeningTests(unittest.TestCase):
         self.assertTrue(invariants["no_scheduler_autonomy"])
         self.assertTrue(invariants["no_c5_c6_unlock"])
 
-    def test_context_sync_resolves_project_context_debt_narrowly(self) -> None:
+    def test_context_sync_preserves_durable_capability_boundary(self) -> None:
         data = _hardening()
         sync = data["context_sync"]
         self.assertTrue(sync["docs_project_context_checked"])
@@ -110,9 +110,15 @@ class C4ScopedRunnerDesignHardeningTests(unittest.TestCase):
         self.assertFalse(sync["stale_context_debt_remaining"])
         context = PROJECT_CONTEXT.read_text(encoding="utf-8")
         normalized = " ".join(context.split())
-        self.assertIn("c4-scoped-runner-design-hardening-v1", context)
-        self.assertIn("C3 command set remains exactly two", normalized)
-        self.assertIn("C4 is limited to one repo-local validation-pack probe", normalized)
+        self.assertIn(
+            "accepted C3 command surface has exactly two help-only keys",
+            normalized,
+        )
+        self.assertIn(
+            "accepted C4 surface has exactly one repo-local validation-pack key",
+            normalized,
+        )
+        self.assertIn("validation_pack_default_pretty", context)
 
     def test_next_decision_is_decision_packet_stop_or_fix_not_implementation(self) -> None:
         next_decision = _hardening()["next_decision"]

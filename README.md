@@ -5,6 +5,29 @@ starts with read-only observation: produce a consistent status snapshot for a
 target repository so a supervisor thread or a future automation layer can resume
 work with less ambiguity.
 
+## Start here
+
+- [Current project state and next decisions](docs/PROJECT_COCKPIT.md)
+- [Durable project context and capability boundaries](docs/project-context.md)
+- [Development-agent operating rules](AGENTS.md)
+- [Prompt/report supervision contract](docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md)
+
+The Project Cockpit is the human-readable current-state authority and is
+publicly readable from the repository page. `docs/runtime-state.md` is its
+compact machine-facing projection; dated handoffs are historical unless the
+cockpit explicitly names one for a real transfer.
+
+From PowerShell, a fresh checkout can be verified without installing project
+dependencies:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m compileall -q src tests
+python -m unittest discover
+python -m dev_cockpit.adapters --validate adapters/*.json
+python -m dev_cockpit.validation_pack --default --pretty
+```
+
 This repository is not an execution runner. The first slice,
 `common-foundation-status-producer-v1`, only inspects repository state, adapter
 configuration, known project documents, artifact roots, and validation hints.
@@ -588,69 +611,27 @@ documents are structured warnings rather than true stop conditions.
 
 When resuming from another terminal or agent, start with:
 
+- `AGENTS.md`
+- `docs/PROJECT_COCKPIT.md`
 - `docs/runtime-state.md`
-- `docs/project-context.md`
-- `docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`
-- `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
-- `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
-- `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
-- `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
-- `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
-- `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
-- `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
-- `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
-- `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
-- `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
-- `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-- `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-- `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
-- `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
-- `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
-- `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
-- `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
-- `docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md`
-- `docs/handoffs/2026-06-29-c3-second-command-acceptance-review-v1.md`
-- `docs/handoffs/2026-06-29-c3-second-command-help-probe-v1.md`
-- `docs/handoffs/2026-06-29-c3-second-command-design-v1.md`
-- `docs/handoffs/2026-06-29-c3-probe-hardening-v1.md`
-- `docs/handoffs/2026-06-26-status-producer-v1.md`
+- the one design artifact named by the cockpit
+- the associated prototype or evidence only when the selected work needs it
 
-These files preserve the current artifact, validation evidence, safety boundary,
-and recommended next entrances.
+`docs/project-context.md` supplies durable architecture and capability
+boundaries when deeper orientation is needed. Dated handoffs are historical
+unless the cockpit explicitly names one for an actual transfer.
 
 ## Roadmap
 
-1. status producer
-2. adapter manifest
-3. report normalizer
-4. gate classifier
-5. validation pack
-6. cross-project smoke
-7. controlled runner design
-8. controlled runner probe
-9. controlled runner probe review
-10. C3 probe hardening
-11. C3 second command design
-12. C3 second command help probe
-13. C3 second command acceptance review
-14. C3 second command candidate acceptance
-15. C3 second command production probe
-16. C3 second command hardening
-17. C3 command set freeze and C4 design decision
-18. C4 scoped runner design
-19. C4 scoped runner design review
-20. C4 scoped runner design hardening
-21. C4 probe decision packet
-22. C4 probe authorization review
-23. C4 probe minimal implementation
-24. C4 probe minimal implementation review
-25. local test dashboard
-26. designer dashboard IA
-27. review action package
-28. dashboard accessibility pass
-29. compact dark dashboard overview
-30. home-linked dashboard decision meters
-31. dashboard latest brief checkpoint
-32. dashboard editorial brief correction
-33. dashboard report-first frontpage
-34. dashboard layout research and prototype
+The durable roadmap is organized by capability rather than by every historical
+micro-artifact:
+
+1. Foundation Observer Readiness: status snapshots and adapter manifests.
+2. Foundation Automation Readiness: report interpretation, validation,
+   cross-project smoke, dashboard evidence, and review actions.
+3. Execution Automation Readiness: the bounded C3 help-only and single C4
+   validation-pack probes; broader execution remains locked.
+4. Project Review Surface: choose an information architecture at an Intent
+   Gate, then implement and verify the selected production direction.
+
+See `docs/PROJECT_COCKPIT.md` for current lane state and next entrances.
