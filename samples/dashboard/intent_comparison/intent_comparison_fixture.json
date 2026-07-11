@@ -1,18 +1,19 @@
 {
-  "schema_version": "intent_comparison_fixture.v1",
-  "artifact_id": "verified-observation-surface-intent-pack-v1",
+  "schema_version": "intent_comparison_fixture.v2",
+  "artifact_id": "verified-observation-surface-intent-pack-v2",
   "evidence_role": {
     "point_in_time": true,
     "authoritative_for_live_state": false,
-    "ja": "この比較パックは時点観測であり、現在状態の権威ではありません。",
-    "en": "This comparison pack is a point-in-time observation, not authority for live state."
+    "ja": "この比較パックは時点観測に基づく情報設計の比較であり、現在状態の権威ではありません。",
+    "en": "This pack compares information architectures using point-in-time evidence; it is not authority for live state."
   },
-  "source_commit": "2e5e924b12a311260bf10c7b252c0695cac7f80c",
-  "observed_at": "2026-07-06T16:56:16+09:00",
+  "source_commit": "2e5e924",
+  "observed_at": "2026-07-06T07:56:16Z",
   "freshness_state": "stale",
-  "freshness_explanation": {
-    "ja": "stale の証拠は履歴として有効な場合がありますが、現在状態の確認には再観測が必要です。",
-    "en": "Stale evidence may remain valid history, but current state requires a new observation."
+  "freshness_assessment": {
+    "assessed_at": "2026-07-12T00:00:00+09:00",
+    "stale_after_hours": 24,
+    "rule": "stale when assessed_at is more than 24 hours after the newest evidence source generated_at"
   },
   "source_paths": [
     "samples/validation_packs/devcockpitcore_validation_pack_result.json",
@@ -36,166 +37,762 @@
       "head": "2e5e924"
     }
   ],
-  "validation_provenance": {
-    "scope": "local_only",
-    "command": "PYTHONPATH=src python -m dev_cockpit.validation_pack --default --pretty",
-    "result": "warn",
-    "checks_passed": 15,
-    "checks_total": 16,
-    "known_warning_count": 1,
-    "blocker_count": 0,
-    "warning_id": "pseudo_git_tag_fixture_warning"
+  "evidence_history": {
+    "v1_b_failure": {
+      "artifact_id": "verified-observation-surface-intent-pack-v1",
+      "tracked_sha256": "de685517421623c8eb78dc222c98ef19986577a6e0c6f3b2906af0c305959ac2",
+      "supervisor_observation": "The first presentation of the tracked B PNG contained black or missing tiles, so the previous visual-pass claim is invalid.",
+      "worker_reproduction": "The same file first presented missing tiles and then decoded completely; canvas sampling confirmed painted pixels in every landmark.",
+      "invalidated_field": "human_visual_review"
+    }
   },
-  "lanes": [
+  "claim_classes": [
+    "observed",
+    "derived",
+    "editorial"
+  ],
+  "directions": [
     {
-      "id": "foundation_observer",
-      "state": "verified",
-      "display_key": "lane.observer"
+      "id": "A",
+      "slug": "priority-review-console",
+      "structure_kind": "priority_console",
+      "claim_class": "editorial",
+      "labels": {
+        "ja": "A・優先レビューコンソール",
+        "en": "A · Priority Review Console"
+      },
+      "titles": {
+        "ja": "優先レビューコンソール",
+        "en": "Priority Review Console"
+      },
+      "descriptions": {
+        "ja": "順序付きアクション、判断、隣接する根拠を一画面で読み比べます。",
+        "en": "Scan ordered actions, a decision summary, and adjacent evidence in one view."
+      },
+      "required_concepts": [
+        "priority-queue",
+        "active-decision",
+        "evidence-inspector"
+      ]
     },
     {
-      "id": "foundation_automation",
-      "state": "verified_with_warning",
-      "display_key": "lane.automation"
+      "id": "B",
+      "slug": "narrative-status-brief",
+      "structure_kind": "narrative_brief",
+      "claim_class": "editorial",
+      "labels": {
+        "ja": "B・状況ナラティブ",
+        "en": "B · Narrative Status Brief"
+      },
+      "titles": {
+        "ja": "状況ナラティブ",
+        "en": "Narrative Status Brief"
+      },
+      "descriptions": {
+        "ja": "現在地、変化、判断、次の行動を一つの読み順で追います。",
+        "en": "Read current state, change, decision, and next action in one deliberate sequence."
+      },
+      "required_concepts": [
+        "opening-summary",
+        "what-changed",
+        "decision-now",
+        "progressive-evidence"
+      ]
     },
     {
-      "id": "execution_automation",
-      "state": "bounded",
-      "display_key": "lane.execution"
-    },
-    {
-      "id": "project_review_surface",
-      "state": "decision_pending",
-      "display_key": "lane.review"
+      "id": "C",
+      "slug": "lane-project-overview",
+      "structure_kind": "overview",
+      "claim_class": "editorial",
+      "labels": {
+        "ja": "C・レーンとプロジェクトの概要",
+        "en": "C · Lane And Project Overview"
+      },
+      "titles": {
+        "ja": "レーンとプロジェクトの概要",
+        "en": "Lane And Project Overview"
+      },
+      "descriptions": {
+        "ja": "基盤レーンとプロジェクト観測を並べ、交点証拠がない限界も明示します。",
+        "en": "Coordinate readiness lanes with project observations while exposing the missing intersection evidence."
+      },
+      "required_concepts": [
+        "lane-view",
+        "project-view",
+        "relationship-limit"
+      ]
     }
   ],
-  "projects": [
+  "structural_labels": {
+    "artifact_kicker": {
+      "ja": "検証済み観測サーフェス・v2",
+      "en": "Verified observation surface · v2"
+    },
+    "evidence_commit": {
+      "ja": "証拠commit",
+      "en": "Evidence commit"
+    },
+    "observed_latest": {
+      "ja": "最終観測",
+      "en": "Observed latest"
+    },
+    "freshness": {
+      "ja": "鮮度",
+      "en": "Freshness"
+    },
+    "direction_a": {
+      "ja": "方向 A",
+      "en": "Direction A"
+    },
+    "direction_b": {
+      "ja": "方向 B",
+      "en": "Direction B"
+    },
+    "direction_c": {
+      "ja": "方向 C",
+      "en": "Direction C"
+    },
+    "comparison_title": {
+      "ja": "観測UI・3方向比較 v2",
+      "en": "Observation UI · Three-Direction Comparison v2"
+    },
+    "comparison_intro": {
+      "ja": "同じ24件の主張を保ち、優先操作・読み順・横断概況の違いだけを比較します。",
+      "en": "Compare priority action, reading order, and coordinated overview while preserving the same 24 claims."
+    },
+    "point_in_time": {
+      "ja": "時点証拠",
+      "en": "Point-in-time evidence"
+    },
+    "direction_controls": {
+      "ja": "比較方向",
+      "en": "Comparison direction"
+    },
+    "comparison_controls": {
+      "ja": "比較と表示の操作",
+      "en": "Comparison and display controls"
+    },
+    "language_controls": {
+      "ja": "表示言語",
+      "en": "Display language"
+    },
+    "priority_lane": {
+      "ja": "優先アクション",
+      "en": "Priority lane"
+    },
+    "active_decision": {
+      "ja": "判断ワークスペース",
+      "en": "Active decision"
+    },
+    "evidence_inspector": {
+      "ja": "根拠インスペクター",
+      "en": "Evidence inspector"
+    },
+    "rank": {
+      "ja": "順位",
+      "en": "Rank"
+    },
+    "action": {
+      "ja": "行動",
+      "en": "Action"
+    },
+    "reason": {
+      "ja": "理由",
+      "en": "Reason"
+    },
+    "state": {
+      "ja": "状態",
+      "en": "State"
+    },
+    "owner": {
+      "ja": "担当",
+      "en": "Owner"
+    },
+    "evidence_route": {
+      "ja": "根拠の所在",
+      "en": "Evidence route"
+    },
+    "secondary_context": {
+      "ja": "補助コンテキスト",
+      "en": "Secondary context"
+    },
+    "opening_summary": {
+      "ja": "現在地",
+      "en": "Current situation"
+    },
+    "what_changed": {
+      "ja": "何が変わったか",
+      "en": "What changed"
+    },
+    "decision_now": {
+      "ja": "いま必要な判断",
+      "en": "Decision needed now"
+    },
+    "next_action": {
+      "ja": "次の行動",
+      "en": "Next action"
+    },
+    "progressive_evidence": {
+      "ja": "根拠と詳細を開く",
+      "en": "Open evidence and detail"
+    },
+    "current_state": {
+      "ja": "現在状態",
+      "en": "Current state"
+    },
+    "observed_counts": {
+      "ja": "観測数値",
+      "en": "Observed counts"
+    },
+    "readiness_lanes": {
+      "ja": "基盤レーン概況",
+      "en": "Readiness lanes"
+    },
+    "project_observations": {
+      "ja": "プロジェクト観測",
+      "en": "Project observations"
+    },
+    "selected_detail": {
+      "ja": "判断要約",
+      "en": "Decision summary"
+    },
+    "relationship_limit": {
+      "ja": "関係証拠の限界",
+      "en": "Relationship evidence limit"
+    },
+    "comparison_notes": {
+      "ja": "比較方法と詳細根拠",
+      "en": "Comparison method and detailed evidence"
+    },
+    "claim_class": {
+      "ja": "主張区分",
+      "en": "Claim class"
+    },
+    "sources": {
+      "ja": "ソース",
+      "en": "Sources"
+    }
+  },
+  "claim_class_labels": {
+    "observed": {
+      "ja": "観測",
+      "en": "observed"
+    },
+    "derived": {
+      "ja": "導出",
+      "en": "derived"
+    },
+    "editorial": {
+      "ja": "編集",
+      "en": "editorial"
+    }
+  },
+  "ui_copy": {
+    "freshness_note": {
+      "ja": "履歴として比較に使えますが、現在状態には再観測が必要です。",
+      "en": "Useful for historical comparison; current state requires a new observation."
+    },
+    "relationship_limit_note": {
+      "ja": "この証拠にはレーン×プロジェクトの交点データがありません。二つの観測面を並置しますが、セル状態は推測しません。",
+      "en": "The evidence has no lane-by-project intersections. The two observation views are shown side by side, and no cell state is inferred."
+    },
+    "narrative_next_action": {
+      "ja": "3案を同じ条件で見比べ、最も早く現在地と次の操作を把握できる方向を一つ選びます。",
+      "en": "Compare all three under equal conditions and choose the direction that makes current state and next action fastest to grasp."
+    },
+    "editorial_note": {
+      "ja": "編集判断であり、観測事実ではありません。",
+      "en": "Editorial guidance, not an observed fact."
+    }
+  },
+  "ui_copy_claims": {
+    "freshness_note": {
+      "claim_class": "editorial",
+      "editorial_basis": "Explains how the declared stale state may be used in this comparison."
+    },
+    "relationship_limit_note": {
+      "claim_class": "derived",
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects",
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#readiness"
+      ],
+      "derivation": "The source exposes independent project rows and global readiness fields but no lane-by-project intersection records."
+    },
+    "narrative_next_action": {
+      "claim_class": "editorial",
+      "editorial_basis": "Neutral comparison instruction; not an observed project state."
+    },
+    "editorial_note": {
+      "claim_class": "editorial",
+      "editorial_basis": "Disclosure label for secondary design guidance."
+    }
+  },
+  "priority_items": [
     {
-      "id": "devcockpitcore",
-      "priority": 1,
-      "state": "yellow",
-      "display_key": "project.devcockpitcore"
+      "rank": 1,
+      "claim_class": "editorial",
+      "editorial_basis": "Orders the unresolved comparison decision for review; the rank and owner are not source observations.",
+      "action": {
+        "ja": "UI方向を一つ選ぶ",
+        "en": "Choose one UI direction"
+      },
+      "reason": {
+        "ja": "production UIは判断待ちです。",
+        "en": "The production UI is waiting for a decision."
+      },
+      "state": {
+        "ja": "判断待ち",
+        "en": "Decision pending"
+      },
+      "owner": {
+        "ja": "ユーザー",
+        "en": "User"
+      },
+      "evidence_route": "claim:decision.question",
+      "claim_ids": [
+        "decision.question",
+        "lane.review"
+      ]
     },
     {
-      "id": "nlmytgen",
-      "priority": 2,
-      "state": "yellow",
-      "display_key": "project.nlmytgen"
+      "rank": 2,
+      "claim_class": "editorial",
+      "editorial_basis": "Orders a source-backed warning as a maintenance action; the rank, action, and owner are editorial.",
+      "action": {
+        "ja": "既知警告を境界付きで確認する",
+        "en": "Review the known warning with its boundary"
+      },
+      "reason": {
+        "ja": "DevCockpitCore validation packには警告1件、失敗0件が記録されています。",
+        "en": "The DevCockpitCore validation pack records one warning and zero failed checks."
+      },
+      "state": {
+        "ja": "継続可能",
+        "en": "Can continue"
+      },
+      "owner": {
+        "ja": "保守担当",
+        "en": "Maintainer"
+      },
+      "evidence_route": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "claim_ids": [
+        "warning.primary",
+        "metric.warnings"
+      ]
     },
     {
-      "id": "writingpage",
-      "priority": 3,
-      "state": "yellow",
-      "display_key": "project.writingpage"
-    },
-    {
-      "id": "clippipegen",
-      "priority": 4,
-      "state": "yellow",
-      "display_key": "project.clippipegen"
+      "rank": 3,
+      "claim_class": "editorial",
+      "editorial_basis": "Orders evidence-freshness caution as a separate future action without starting that lane.",
+      "action": {
+        "ja": "stale証拠を現在値と混同しない",
+        "en": "Do not confuse stale evidence with current state"
+      },
+      "reason": {
+        "ja": "今回の選択には使えますが、運用判断には再観測が必要です。",
+        "en": "It supports this comparison, but operational decisions require a new observation."
+      },
+      "state": {
+        "ja": "別レーン待ち",
+        "en": "Separate lane pending"
+      },
+      "owner": {
+        "ja": "Evidence Freshnessレーン",
+        "en": "Evidence Freshness lane"
+      },
+      "evidence_route": "claim:source.freshness",
+      "claim_ids": [
+        "source.freshness",
+        "source.notice"
+      ]
     }
   ],
-  "next_decision": {
-    "id": "dashboard_information_architecture",
-    "question_key": "decision.question",
-    "research_recommendation_key": "decision.recommendation",
-    "selection_state": "user_preference_pending"
-  },
-  "semantic_contract": {
-    "state.summary": {
-      "ja": "基盤観測と限定実行の境界は維持。UI情報設計は選択待ちです。",
-      "en": "Observer foundations and bounded execution remain intact; the UI information architecture awaits selection."
+  "claims": [
+    {
+      "claim_id": "state.summary",
+      "claim_class": "derived",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "現在状態",
+        "en": "Current state"
+      },
+      "values": {
+        "ja": "adapter検証は4/4成功、status snapshotは4/4生成。execution automationはout_of_scopeです。",
+        "en": "4/4 adapters validated, 4/4 status snapshots generated, and execution automation is out_of_scope."
+      },
+      "source_paths": [
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"
+      ],
+      "derivation": "Counts adapter and snapshot results across the four project rows, then reports the global execution out-of-scope field without inferring project-by-lane state."
     },
-    "state.change": {
-      "ja": "同一データで3方向を比較する Intent Pack を追加。production generator は未変更です。",
-      "en": "An Intent Pack now compares three directions with identical data; the production generator is unchanged."
+    {
+      "claim_id": "state.change",
+      "claim_class": "editorial",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "今回の変化",
+        "en": "What changed"
+      },
+      "values": {
+        "ja": "比較chromeと3案の概念構造をv2として提示します。production generatorの非変更はcapture readbackで別に検証します。",
+        "en": "The comparison chrome and three concept structures are presented as v2; the unchanged production generator is verified separately in capture readback."
+      },
+      "editorial_basis": "Describes the comparison artifact change rather than a tracked observation source."
     },
-    "decision.question": {
-      "ja": "A / B / C のどれが、現在状態と次の行動を最も早く理解できますか？",
-      "en": "Which of A / B / C makes the current state and next action fastest to understand?"
+    {
+      "claim_id": "decision.question",
+      "claim_class": "editorial",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "判断",
+        "en": "Decision"
+      },
+      "values": {
+        "ja": "A / B / Cのどれが、現在地・最優先・次の操作・根拠の所在を最短で把握できますか？",
+        "en": "Which of A / B / C makes current state, top priority, next action, and evidence location fastest to grasp?"
+      },
+      "editorial_basis": "Product decision question for the comparison; not an observed metric."
     },
-    "decision.recommendation": {
-      "ja": "調査上の推奨は A。反復トリアージで決定と証拠の距離が最も短いためです。これは採用決定ではありません。",
-      "en": "Research recommends A because it keeps decisions closest to evidence during repeated triage. This is not an acceptance decision."
+    {
+      "claim_id": "decision.recommendation",
+      "claim_class": "editorial",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "調査メモ",
+        "en": "Research note"
+      },
+      "values": {
+        "ja": "過去調査では反復トリアージ用途にAを推奨しました。採用決定ではなく、v2の公平比較より下位の編集メモです。",
+        "en": "Earlier research recommended A for repeated triage. This is not acceptance and remains secondary to the fair v2 comparison."
+      },
+      "editorial_basis": "Design research recommendation; deliberately separated from empirical evidence and user acceptance."
     },
-    "metric.validation": {
-      "ja": "15 / 16 checks passed（local）",
-      "en": "15 / 16 checks passed (local)"
+    {
+      "claim_id": "metric.validation",
+      "claim_class": "observed",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "ローカル検証",
+        "en": "Local validation"
+      },
+      "values": {
+        "ja": "16件中15件成功",
+        "en": "15 of 16 checks passed"
+      },
+      "source_paths": [
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json#summary"
+      ]
     },
-    "metric.projects": {
-      "ja": "4 projects observed",
-      "en": "4 projects observed"
+    {
+      "claim_id": "metric.projects",
+      "claim_class": "derived",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "観測プロジェクト",
+        "en": "Observed projects"
+      },
+      "values": {
+        "ja": "4プロジェクト",
+        "en": "4 projects"
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects"
+      ],
+      "derivation": "Counts the four project rows in the cross-project smoke result."
     },
-    "metric.warnings": {
-      "ja": "1 known warning",
-      "en": "1 known warning"
+    {
+      "claim_id": "metric.warnings",
+      "claim_class": "observed",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "DevCockpitCore検証警告",
+        "en": "DevCockpitCore validation warnings"
+      },
+      "values": {
+        "ja": "validation packで1件",
+        "en": "1 in the validation pack"
+      },
+      "source_paths": [
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json#summary.warnings"
+      ]
     },
-    "metric.blockers": {
-      "ja": "0 blockers",
-      "en": "0 blockers"
+    {
+      "claim_id": "metric.blockers",
+      "claim_class": "derived",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "ブロッカー",
+        "en": "Blockers"
+      },
+      "values": {
+        "ja": "0件",
+        "en": "0 blockers"
+      },
+      "source_paths": [
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json#health.blockers"
+      ],
+      "derivation": "Counts the empty health.blockers array in the DevCockpitCore validation pack."
     },
-    "warning.primary": {
-      "ja": "pseudo-git-tag fixture warning。非ブロッキングの既知警告です。",
-      "en": "Pseudo-git-tag fixture warning; a known non-blocking warning."
+    {
+      "claim_id": "warning.primary",
+      "claim_class": "observed",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "警告内容",
+        "en": "Warning detail"
+      },
+      "values": {
+        "ja": "pseudo-git-tag fixture warning。",
+        "en": "Pseudo-git-tag fixture warning."
+      },
+      "source_paths": [
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json#hygiene.pseudo_git_tags"
+      ]
     },
-    "lane.observer": {
-      "ja": "Foundation Observer — verified：status snapshot と 4 adapters を観測可能。",
-      "en": "Foundation Observer — verified: status snapshots and four adapters are observable."
+    {
+      "claim_id": "lane.observer",
+      "claim_class": "derived",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "観測基盤",
+        "en": "Observer foundation"
+      },
+      "values": {
+        "ja": "adapter検証4/4成功、status snapshot 4/4生成。",
+        "en": "4/4 adapters validated and 4/4 status snapshots generated."
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects"
+      ],
+      "derivation": "Counts adapter_validation.result=pass and status_snapshot.generated=true across all project rows."
     },
-    "lane.automation": {
-      "ja": "Foundation Automation — verified_with_warning：validation 15 / 16、既知警告 1。",
-      "en": "Foundation Automation — verified_with_warning: validation 15 / 16 with one known warning."
+    {
+      "claim_id": "lane.automation",
+      "claim_class": "derived",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "自動化基盤",
+        "en": "Automation foundation"
+      },
+      "values": {
+        "ja": "cross-project smokeは利用可能。DevCockpitCore検証は15/16、既知警告1件。",
+        "en": "Cross-project smoke is available; DevCockpitCore validation is 15/16 with one known warning."
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#readiness.foundation_automation_readiness",
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json#summary"
+      ],
+      "derivation": "Combines the global smoke availability label with DevCockpitCore-local validation counts; it is not project-by-project automation readiness."
     },
-    "lane.execution": {
-      "ja": "Execution Automation — bounded：C3 help-only x2、C4 validation probe x1。",
-      "en": "Execution Automation — bounded: two help-only C3 probes and one C4 validation probe."
+    {
+      "claim_id": "lane.execution",
+      "claim_class": "derived",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "実行境界",
+        "en": "Execution boundary"
+      },
+      "values": {
+        "ja": "execution automationはout_of_scope。対象repoはread-only git statusのみで、default validationは未実行。",
+        "en": "Execution automation is out_of_scope; target repositories receive read-only git status only and default validation is not executed."
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#readiness.execution_automation_readiness",
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects[*].scope_boundary"
+      ],
+      "derivation": "Reports the global execution out-of-scope field and aggregates scope_boundary values that are read_only_git_status_only with default_validation_executed=false in all 4/4 project rows."
     },
-    "lane.review": {
-      "ja": "Project Review Surface — decision_pending：production UI の方向選択前。",
-      "en": "Project Review Surface — decision_pending: production UI direction has not been selected."
+    {
+      "claim_id": "lane.review",
+      "claim_class": "editorial",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "レビュー状態",
+        "en": "Review state"
+      },
+      "values": {
+        "ja": "user_visual_acceptanceはpending。production方向は未選択です。",
+        "en": "User visual acceptance is pending; no production direction is selected."
+      },
+      "editorial_basis": "Comparison workflow state, intentionally not promoted to observed evidence."
     },
-    "project.devcockpitcore": {
-      "ja": "1. DevCockpitCore — yellow：local validation warn、今回の優先対象。",
-      "en": "1. DevCockpitCore — yellow: local validation warns; current priority."
+    {
+      "claim_id": "project.devcockpitcore",
+      "claim_class": "observed",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "DevCockpitCore",
+        "en": "DevCockpitCore"
+      },
+      "values": {
+        "ja": "required・repoあり・adapter成功・snapshot生成。main@2e5e924、dirty、remote同期、health yellow。",
+        "en": "Required; repo found; adapter passed; snapshot generated. main@2e5e924, dirty, remote in sync, health yellow."
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects[project_key=devcockpitcore]"
+      ]
     },
-    "project.nlmytgen": {
-      "ja": "2. NLMYTGen — yellow：optional repository observation。",
-      "en": "2. NLMYTGen — yellow: optional repository observation."
+    {
+      "claim_id": "project.nlmytgen",
+      "claim_class": "observed",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "NLMYTGen",
+        "en": "NLMYTGen"
+      },
+      "values": {
+        "ja": "optional・repoあり・adapter成功・snapshot生成。codex/episode-002-thumbnail-visual-proof-v1@6846359、clean、remote同期、health yellow。",
+        "en": "Optional; repo found; adapter passed; snapshot generated. codex/episode-002-thumbnail-visual-proof-v1@6846359, clean, remote in sync, health yellow."
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects[project_key=nlmytgen]"
+      ]
     },
-    "project.writingpage": {
-      "ja": "3. WritingPage — yellow：optional repository observation。",
-      "en": "3. WritingPage — yellow: optional repository observation."
+    {
+      "claim_id": "project.writingpage",
+      "claim_class": "observed",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "WritingPage",
+        "en": "WritingPage"
+      },
+      "values": {
+        "ja": "optional・repoあり・adapter成功・snapshot生成。main@fbc1949、clean、remote同期、runtime state文書なし。",
+        "en": "Optional; repo found; adapter passed; snapshot generated. main@fbc1949, clean, remote in sync, runtime state document absent."
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects[project_key=writingpage]"
+      ]
     },
-    "project.clippipegen": {
-      "ja": "4. ClipPipeGen — yellow：optional repository observation。",
-      "en": "4. ClipPipeGen — yellow: optional repository observation."
+    {
+      "claim_id": "project.clippipegen",
+      "claim_class": "observed",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "ClipPipeGen",
+        "en": "ClipPipeGen"
+      },
+      "values": {
+        "ja": "optional・repoあり・adapter成功・snapshot生成。main@cef2012、clean、remote同期、runtime/context文書なし。",
+        "en": "Optional; repo found; adapter passed; snapshot generated. main@cef2012, clean, remote in sync, runtime/context documents absent."
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#projects[project_key=clippipegen]"
+      ]
     },
-    "source.commit": {
-      "ja": "2e5e924b12a311260bf10c7b252c0695cac7f80c",
-      "en": "2e5e924b12a311260bf10c7b252c0695cac7f80c"
+    {
+      "claim_id": "source.commit",
+      "claim_class": "observed",
+      "localization_mode": "technical_identifier",
+      "labels": {
+        "ja": "証拠ソースcommit",
+        "en": "Evidence source commit"
+      },
+      "values": {
+        "ja": "2e5e924",
+        "en": "2e5e924"
+      },
+      "source_paths": [
+        "samples/status_snapshots/devcockpitcore_status.json#repo.head"
+      ]
     },
-    "source.observed_at": {
-      "ja": "2026-07-06T16:56:16+09:00",
-      "en": "2026-07-06T16:56:16+09:00"
+    {
+      "claim_id": "source.observed_at",
+      "claim_class": "observed",
+      "localization_mode": "technical_identifier",
+      "labels": {
+        "ja": "最終観測時刻",
+        "en": "Latest observation time"
+      },
+      "values": {
+        "ja": "2026-07-06T07:56:16Z",
+        "en": "2026-07-06T07:56:16Z"
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#generated_at"
+      ]
     },
-    "source.freshness": {
-      "ja": "stale",
-      "en": "stale"
+    {
+      "claim_id": "source.freshness",
+      "claim_class": "derived",
+      "localization_mode": "technical_identifier",
+      "labels": {
+        "ja": "鮮度",
+        "en": "Freshness"
+      },
+      "values": {
+        "ja": "stale",
+        "en": "stale"
+      },
+      "source_paths": [
+        "samples/status_snapshots/devcockpitcore_status.json#generated_at",
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json#generated_at",
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json#generated_at"
+      ],
+      "derivation": "At assessed_at 2026-07-12T00:00:00+09:00, the newest evidence source is older than the declared 24-hour stale_after_hours threshold."
     },
-    "source.notice": {
-      "ja": "stale の証拠は履歴として有効な場合がありますが、現在状態の確認には再観測が必要です。",
-      "en": "Stale evidence may remain valid history, but current state requires a new observation."
+    {
+      "claim_id": "source.notice",
+      "claim_class": "editorial",
+      "localization_mode": "translated",
+      "labels": {
+        "ja": "鮮度の意味",
+        "en": "Freshness meaning"
+      },
+      "values": {
+        "ja": "stale証拠は情報設計の比較に使えますが、現在状態の判断には再観測が必要です。",
+        "en": "Stale evidence supports information-architecture comparison, but current-state decisions require a new observation."
+      },
+      "editorial_basis": "Explains the product meaning of the derived freshness state."
     },
-    "source.validation_path": {
-      "ja": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
-      "en": "samples/validation_packs/devcockpitcore_validation_pack_result.json"
+    {
+      "claim_id": "source.validation_path",
+      "claim_class": "observed",
+      "localization_mode": "technical_identifier",
+      "labels": {
+        "ja": "validationソース",
+        "en": "Validation source"
+      },
+      "values": {
+        "ja": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        "en": "samples/validation_packs/devcockpitcore_validation_pack_result.json"
+      },
+      "source_paths": [
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json"
+      ]
     },
-    "source.smoke_path": {
-      "ja": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-      "en": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"
+    {
+      "claim_id": "source.smoke_path",
+      "claim_class": "observed",
+      "localization_mode": "technical_identifier",
+      "labels": {
+        "ja": "smokeソース",
+        "en": "Smoke source"
+      },
+      "values": {
+        "ja": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        "en": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"
+      },
+      "source_paths": [
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"
+      ]
     },
-    "source.status_path": {
-      "ja": "samples/status_snapshots/devcockpitcore_status.json",
-      "en": "samples/status_snapshots/devcockpitcore_status.json"
+    {
+      "claim_id": "source.status_path",
+      "claim_class": "observed",
+      "localization_mode": "technical_identifier",
+      "labels": {
+        "ja": "statusソース",
+        "en": "Status source"
+      },
+      "values": {
+        "ja": "samples/status_snapshots/devcockpitcore_status.json",
+        "en": "samples/status_snapshots/devcockpitcore_status.json"
+      },
+      "source_paths": [
+        "samples/status_snapshots/devcockpitcore_status.json"
+      ]
     }
-  }
+  ]
 }

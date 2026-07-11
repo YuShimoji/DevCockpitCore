@@ -1,528 +1,2053 @@
 {
-  "schema_version": "intent_comparison_readback.v1",
-  "artifact_id": "verified-observation-surface-intent-pack-v1",
-  "content_parity_across_directions": {
+  "schema_version": "intent_comparison_readback.v2",
+  "artifact_id": "verified-observation-surface-intent-pack-v2",
+  "capture_id": "2026-07-11T19-37-49-016Z-c45f23357c38",
+  "generated_at": "2026-07-11T19:37:54.495Z",
+  "html_sha256": "c45f23357c38d082b3b866fdacab002df5907e8420e5e1f55098e0bd948d5e97",
+  "fixture_sha256": "4ad41df61478d2e9c1c93a385890064801eca02d1a738bca69d4a32a2231905b",
+  "text_hash_normalization": "UTF-8 with CRLF normalized to LF",
+  "evidence_scope": {
+    "freshness_state": "stale",
+    "freshness_assessment": {
+      "assessed_at": "2026-07-12T00:00:00+09:00",
+      "stale_after_hours": 24,
+      "rule": "stale when assessed_at is more than 24 hours after the newest evidence source generated_at"
+    },
+    "point_in_time": true,
+    "authoritative_for_live_state": false
+  },
+  "v1_failure_reproduction": {
+    "status": "encoded_blank_not_reproduced",
+    "tracked_b_path": "samples/dashboard/intent_comparison/screenshots/narrative-status-brief.png",
+    "expected_sha256": "de685517421623c8eb78dc222c98ef19986577a6e0c6f3b2906af0c305959ac2",
+    "current_sha256": "de685517421623c8eb78dc222c98ef19986577a6e0c6f3b2906af0c305959ac2",
+    "hash_preserved": true,
+    "observed_behavior": "The same tracked PNG presented missing tiles in the viewer and later presented completely; browser-canvas sampling found painted pixels in every sampled landmark.",
+    "root_cause_classification": "viewer/decode presentation-path nondeterminism was observed; encoded PNG damage was not confirmed. The v1 contract was insufficient because it had no raster landmark validation and carried a stale human_visual_review pass forward.",
+    "recurrence_prevention": "V2 uses viewport screenshots without clip, three B activation paths, canvas landmark sampling, a blank negative control, fresh readback construction, and capture-ID/hash-bound worker inspection."
+  },
+  "automated_dom_parity": {
     "status": "pass",
+    "claim_count_per_direction": 24,
     "directions": [
-      "A",
-      "B",
-      "C"
+      "priority-review-console",
+      "narrative-status-brief",
+      "lane-project-overview"
     ],
     "languages": [
       "ja",
       "en"
     ],
-    "semantic_key_count_per_direction": 24,
-    "method": "Browser DOM readback activates every direction and language, then compares each rendered data-semantic-key value with the fixture semantic_contract.",
     "checks": [
       {
         "direction": "priority-review-console",
         "language": "ja",
-        "checked_key_count": 24,
-        "duplicate_keys": [],
-        "missing_keys": [],
-        "unexpected_keys": [],
-        "mismatches": [],
+        "checked_claim_count": 24,
+        "duplicates": [],
+        "missing": [],
+        "unexpected": [],
+        "claim_mismatches": [],
+        "structural_mismatches": [],
+        "aria_mismatches": [],
+        "required_concept_counts": {
+          "priority-queue": 1,
+          "active-decision": 1,
+          "evidence-inspector": 1
+        },
+        "matrix_cell_count": 0,
+        "panel_proof_count": 1,
+        "panel_proof_classes": [
+          "derived"
+        ],
+        "state": {
+          "direction": "priority-review-console",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "priority-review-console"
+          ],
+          "visible_panels": [
+            "priority-review-console"
+          ],
+          "selected_languages": [
+            "ja"
+          ],
+          "pass": true
+        },
         "pass": true
       },
       {
         "direction": "priority-review-console",
         "language": "en",
-        "checked_key_count": 24,
-        "duplicate_keys": [],
-        "missing_keys": [],
-        "unexpected_keys": [],
-        "mismatches": [],
+        "checked_claim_count": 24,
+        "duplicates": [],
+        "missing": [],
+        "unexpected": [],
+        "claim_mismatches": [],
+        "structural_mismatches": [],
+        "aria_mismatches": [],
+        "required_concept_counts": {
+          "priority-queue": 1,
+          "active-decision": 1,
+          "evidence-inspector": 1
+        },
+        "matrix_cell_count": 0,
+        "panel_proof_count": 1,
+        "panel_proof_classes": [
+          "derived"
+        ],
+        "state": {
+          "direction": "priority-review-console",
+          "language": "en",
+          "capture_mode": "common",
+          "selected_directions": [
+            "priority-review-console"
+          ],
+          "visible_panels": [
+            "priority-review-console"
+          ],
+          "selected_languages": [
+            "en"
+          ],
+          "pass": true
+        },
         "pass": true
       },
       {
         "direction": "narrative-status-brief",
         "language": "ja",
-        "checked_key_count": 24,
-        "duplicate_keys": [],
-        "missing_keys": [],
-        "unexpected_keys": [],
-        "mismatches": [],
+        "checked_claim_count": 24,
+        "duplicates": [],
+        "missing": [],
+        "unexpected": [],
+        "claim_mismatches": [],
+        "structural_mismatches": [],
+        "aria_mismatches": [],
+        "required_concept_counts": {
+          "opening-summary": 1,
+          "what-changed": 1,
+          "decision-now": 1,
+          "progressive-evidence": 1
+        },
+        "matrix_cell_count": 0,
+        "panel_proof_count": 1,
+        "panel_proof_classes": [
+          "derived"
+        ],
+        "state": {
+          "direction": "narrative-status-brief",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "narrative-status-brief"
+          ],
+          "visible_panels": [
+            "narrative-status-brief"
+          ],
+          "selected_languages": [
+            "ja"
+          ],
+          "pass": true
+        },
         "pass": true
       },
       {
         "direction": "narrative-status-brief",
         "language": "en",
-        "checked_key_count": 24,
-        "duplicate_keys": [],
-        "missing_keys": [],
-        "unexpected_keys": [],
-        "mismatches": [],
+        "checked_claim_count": 24,
+        "duplicates": [],
+        "missing": [],
+        "unexpected": [],
+        "claim_mismatches": [],
+        "structural_mismatches": [],
+        "aria_mismatches": [],
+        "required_concept_counts": {
+          "opening-summary": 1,
+          "what-changed": 1,
+          "decision-now": 1,
+          "progressive-evidence": 1
+        },
+        "matrix_cell_count": 0,
+        "panel_proof_count": 1,
+        "panel_proof_classes": [
+          "derived"
+        ],
+        "state": {
+          "direction": "narrative-status-brief",
+          "language": "en",
+          "capture_mode": "common",
+          "selected_directions": [
+            "narrative-status-brief"
+          ],
+          "visible_panels": [
+            "narrative-status-brief"
+          ],
+          "selected_languages": [
+            "en"
+          ],
+          "pass": true
+        },
         "pass": true
       },
       {
-        "direction": "lane-project-matrix",
+        "direction": "lane-project-overview",
         "language": "ja",
-        "checked_key_count": 24,
-        "duplicate_keys": [],
-        "missing_keys": [],
-        "unexpected_keys": [],
-        "mismatches": [],
+        "checked_claim_count": 24,
+        "duplicates": [],
+        "missing": [],
+        "unexpected": [],
+        "claim_mismatches": [],
+        "structural_mismatches": [],
+        "aria_mismatches": [],
+        "required_concept_counts": {
+          "lane-view": 1,
+          "project-view": 1,
+          "relationship-limit": 1
+        },
+        "matrix_cell_count": 0,
+        "panel_proof_count": 1,
+        "panel_proof_classes": [
+          "derived"
+        ],
+        "state": {
+          "direction": "lane-project-overview",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "lane-project-overview"
+          ],
+          "visible_panels": [
+            "lane-project-overview"
+          ],
+          "selected_languages": [
+            "ja"
+          ],
+          "pass": true
+        },
         "pass": true
       },
       {
-        "direction": "lane-project-matrix",
+        "direction": "lane-project-overview",
         "language": "en",
-        "checked_key_count": 24,
-        "duplicate_keys": [],
-        "missing_keys": [],
-        "unexpected_keys": [],
-        "mismatches": [],
+        "checked_claim_count": 24,
+        "duplicates": [],
+        "missing": [],
+        "unexpected": [],
+        "claim_mismatches": [],
+        "structural_mismatches": [],
+        "aria_mismatches": [],
+        "required_concept_counts": {
+          "lane-view": 1,
+          "project-view": 1,
+          "relationship-limit": 1
+        },
+        "matrix_cell_count": 0,
+        "panel_proof_count": 1,
+        "panel_proof_classes": [
+          "derived"
+        ],
+        "state": {
+          "direction": "lane-project-overview",
+          "language": "en",
+          "capture_mode": "common",
+          "selected_directions": [
+            "lane-project-overview"
+          ],
+          "visible_panels": [
+            "lane-project-overview"
+          ],
+          "selected_languages": [
+            "en"
+          ],
+          "pass": true
+        },
         "pass": true
       }
     ]
   },
-  "language_parity": {
+  "automated_geometry_check": {
     "status": "pass",
-    "default_language": "ja",
-    "alternate_language": "en",
-    "technical_values_preserved": true
-  },
-  "screenshot_dimensions": {
-    "status": "pass",
-    "width": 1440,
-    "height": 1200,
-    "device_scale_factor": 1,
-    "files": {
-      "A": {
-        "path": "samples/dashboard/intent_comparison/screenshots/priority-review-console.png",
-        "width": 1440,
-        "height": 1200
-      },
-      "B": {
-        "path": "samples/dashboard/intent_comparison/screenshots/narrative-status-brief.png",
-        "width": 1440,
-        "height": 1200
-      },
-      "C": {
-        "path": "samples/dashboard/intent_comparison/screenshots/lane-project-matrix.png",
-        "width": 1440,
-        "height": 1200
-      }
-    }
-  },
-  "overflow_findings": {
-    "status": "pass",
-    "static_css_guard": "pass",
-    "japanese": [],
-    "english": [],
-    "note": "Both languages use overflow wrapping and horizontally scrollable comparison tables; browser readback follows screenshot capture.",
     "viewport": {
       "width": 1440,
       "height": 1200,
       "device_scale_factor": 1
     },
-    "scroll_burden": {
-      "ja": {
-        "A": {
-          "document_height": 1983,
-          "scroll_burden_px": 783,
-          "viewport_count": 1.65
+    "captures": [
+      {
+        "capture_kind": "common",
+        "direction": "A",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/priority-review-console.png",
+        "landmarks": {
+          "common_hero": {
+            "selector": "[data-landmark=\"common-hero\"]",
+            "count": 1,
+            "rect": {
+              "x": 20,
+              "y": 16,
+              "width": 1400,
+              "height": 116.19,
+              "right": 1420,
+              "bottom": 132.19
+            },
+            "raster_rect": {
+              "x": 20,
+              "y": 16,
+              "width": 1400,
+              "height": 117
+            },
+            "pass": true
+          },
+          "direction_controls": {
+            "selector": "[data-landmark=\"direction-controls\"]",
+            "count": 1,
+            "rect": {
+              "x": 30,
+              "y": 151.19,
+              "width": 525.36,
+              "height": 40,
+              "right": 555.36,
+              "bottom": 191.19
+            },
+            "raster_rect": {
+              "x": 30,
+              "y": 151,
+              "width": 526,
+              "height": 41
+            },
+            "pass": true
+          },
+          "language_controls": {
+            "selector": "[data-landmark=\"language-controls\"]",
+            "count": 1,
+            "rect": {
+              "x": 1252.83,
+              "y": 151.19,
+              "width": 157.17,
+              "height": 40,
+              "right": 1410,
+              "bottom": 191.19
+            },
+            "raster_rect": {
+              "x": 1252,
+              "y": 151,
+              "width": 158,
+              "height": 41
+            },
+            "pass": true
+          },
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 229.19,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 321.25
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 229,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 333.25,
+              "width": 1362,
+              "height": 1200.41,
+              "right": 1401,
+              "bottom": 1533.66
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 333,
+              "width": 1362,
+              "height": 867
+            },
+            "pass": true
+          }
         },
-        "B": {
-          "document_height": 3064,
-          "scroll_burden_px": 1864,
-          "viewport_count": 2.55
-        },
-        "C": {
-          "document_height": 2648,
-          "scroll_burden_px": 1448,
-          "viewport_count": 2.21
-        }
+        "pass": true
       },
-      "en": {
-        "A": {
-          "document_height": 2033,
-          "scroll_burden_px": 833,
-          "viewport_count": 1.69
+      {
+        "capture_kind": "common",
+        "direction": "B",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/narrative-status-brief.png",
+        "landmarks": {
+          "common_hero": {
+            "selector": "[data-landmark=\"common-hero\"]",
+            "count": 1,
+            "rect": {
+              "x": 20,
+              "y": 16,
+              "width": 1400,
+              "height": 116.19,
+              "right": 1420,
+              "bottom": 132.19
+            },
+            "raster_rect": {
+              "x": 20,
+              "y": 16,
+              "width": 1400,
+              "height": 117
+            },
+            "pass": true
+          },
+          "direction_controls": {
+            "selector": "[data-landmark=\"direction-controls\"]",
+            "count": 1,
+            "rect": {
+              "x": 30,
+              "y": 151.19,
+              "width": 525.36,
+              "height": 40,
+              "right": 555.36,
+              "bottom": 191.19
+            },
+            "raster_rect": {
+              "x": 30,
+              "y": 151,
+              "width": 526,
+              "height": 41
+            },
+            "pass": true
+          },
+          "language_controls": {
+            "selector": "[data-landmark=\"language-controls\"]",
+            "count": 1,
+            "rect": {
+              "x": 1252.83,
+              "y": 151.19,
+              "width": 157.17,
+              "height": 40,
+              "right": 1410,
+              "bottom": 191.19
+            },
+            "raster_rect": {
+              "x": 1252,
+              "y": 151,
+              "width": 158,
+              "height": 41
+            },
+            "pass": true
+          },
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 229.19,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 321.25
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 229,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 160,
+              "y": 333.25,
+              "width": 1120,
+              "height": 620.48,
+              "right": 1280,
+              "bottom": 953.73
+            },
+            "raster_rect": {
+              "x": 160,
+              "y": 333,
+              "width": 1120,
+              "height": 621
+            },
+            "pass": true
+          }
         },
-        "B": {
-          "document_height": 3089,
-          "scroll_burden_px": 1889,
-          "viewport_count": 2.57
+        "pass": true
+      },
+      {
+        "capture_kind": "common",
+        "direction": "C",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/lane-project-overview.png",
+        "landmarks": {
+          "common_hero": {
+            "selector": "[data-landmark=\"common-hero\"]",
+            "count": 1,
+            "rect": {
+              "x": 20,
+              "y": 16,
+              "width": 1400,
+              "height": 116.19,
+              "right": 1420,
+              "bottom": 132.19
+            },
+            "raster_rect": {
+              "x": 20,
+              "y": 16,
+              "width": 1400,
+              "height": 117
+            },
+            "pass": true
+          },
+          "direction_controls": {
+            "selector": "[data-landmark=\"direction-controls\"]",
+            "count": 1,
+            "rect": {
+              "x": 30,
+              "y": 151.19,
+              "width": 525.36,
+              "height": 40,
+              "right": 555.36,
+              "bottom": 191.19
+            },
+            "raster_rect": {
+              "x": 30,
+              "y": 151,
+              "width": 526,
+              "height": 41
+            },
+            "pass": true
+          },
+          "language_controls": {
+            "selector": "[data-landmark=\"language-controls\"]",
+            "count": 1,
+            "rect": {
+              "x": 1252.83,
+              "y": 151.19,
+              "width": 157.17,
+              "height": 40,
+              "right": 1410,
+              "bottom": 191.19
+            },
+            "raster_rect": {
+              "x": 1252,
+              "y": 151,
+              "width": 158,
+              "height": 41
+            },
+            "pass": true
+          },
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 229.19,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 321.25
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 229,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 333.25,
+              "width": 1362,
+              "height": 1299.36,
+              "right": 1401,
+              "bottom": 1632.61
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 333,
+              "width": 1362,
+              "height": 867
+            },
+            "pass": true
+          }
         },
-        "C": {
-          "document_height": 2723,
-          "scroll_burden_px": 1523,
-          "viewport_count": 2.27
-        }
+        "pass": true
+      },
+      {
+        "capture_kind": "panel",
+        "direction": "A",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/priority-review-console.png",
+        "landmarks": {
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 33,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 125.06
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 33,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "panel_proof": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-panel-proof]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 94.8,
+              "width": 203.08,
+              "height": 17.27,
+              "right": 242.08,
+              "bottom": 112.06
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 94,
+              "width": 204,
+              "height": 19
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 137.06,
+              "width": 1362,
+              "height": 1200.41,
+              "right": 1401,
+              "bottom": 1337.47
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 137,
+              "width": 1362,
+              "height": 1063
+            },
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      {
+        "capture_kind": "panel",
+        "direction": "B",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/narrative-status-brief.png",
+        "landmarks": {
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 33,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 125.06
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 33,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "panel_proof": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-panel-proof]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 94.8,
+              "width": 135.17,
+              "height": 17.27,
+              "right": 174.17,
+              "bottom": 112.06
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 94,
+              "width": 136,
+              "height": 19
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 160,
+              "y": 137.06,
+              "width": 1120,
+              "height": 620.48,
+              "right": 1280,
+              "bottom": 757.55
+            },
+            "raster_rect": {
+              "x": 160,
+              "y": 137,
+              "width": 1120,
+              "height": 621
+            },
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      {
+        "capture_kind": "panel",
+        "direction": "C",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/lane-project-overview.png",
+        "landmarks": {
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 33,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 125.06
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 33,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "panel_proof": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-panel-proof]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 94.8,
+              "width": 243.89,
+              "height": 17.27,
+              "right": 282.89,
+              "bottom": 112.06
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 94,
+              "width": 244,
+              "height": 19
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 137.06,
+              "width": 1362,
+              "height": 1299.36,
+              "right": 1401,
+              "bottom": 1436.42
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 137,
+              "width": 1362,
+              "height": 1063
+            },
+            "pass": true
+          }
+        },
+        "pass": true
       }
-    },
-    "method": "Browser DOM geometry across every direction in Japanese and English; intentional horizontal containers may opt out with data-overflow-allowed."
-  },
-  "broken_links": {
-    "status": "pass",
-    "count": 0,
-    "checked_repo_paths": [
-      "samples/dashboard/intent_comparison/intent_comparison_fixture.json",
-      "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
-      "samples/dashboard/intent_comparison/intent_comparison_readback.json",
-      "samples/validation_packs/devcockpitcore_validation_pack_result.json",
-      "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-      "samples/status_snapshots/devcockpitcore_status.json"
     ],
-    "browser_checked_links": [
-      "intent_comparison_fixture.json",
-      "intent_comparison_manifest.json",
-      "intent_comparison_readback.json",
-      "../../validation_packs/devcockpitcore_validation_pack_result.json",
-      "../../cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-      "../../status_snapshots/devcockpitcore_status.json"
-    ],
-    "browser_findings": []
-  },
-  "duplicate_key_check": {
-    "status": "pass",
-    "files_checked": [
-      "intent_comparison_fixture.json",
-      "intent_comparison_manifest.json",
-      "intent_comparison_readback.json"
-    ],
-    "negative_case": "tests.test_dashboard_intent_comparison.IntentComparisonPackTests.test_strict_json_loader_rejects_duplicate_keys"
-  },
-  "stale_indicator_check": {
-    "status": "pass",
-    "visible_state": "stale",
-    "historical_evidence_explanation_present": true,
-    "fresh_stale_unknown_legend_present": true
-  },
-  "keyboard_switch_check": {
-    "status": "pass",
-    "direction_keys": [
-      "ArrowLeft",
-      "ArrowRight",
-      "Home",
-      "End"
-    ],
-    "language_keys": [
-      "ArrowLeft",
-      "ArrowRight"
-    ],
-    "focus_state_visible": true,
-    "direction_steps": [
+    "anchor_fairness": [
       {
-        "from": "priority-review-console",
-        "key": "ArrowRight",
-        "expected": "narrative-status-brief",
-        "state": {
-          "expected": "narrative-status-brief",
-          "selected": [
-            "narrative-status-brief"
-          ],
-          "visible": [
-            "narrative-status-brief"
-          ],
-          "document_direction": "narrative-status-brief",
-          "pass": true
-        },
-        "focus": {
-          "direction": "narrative-status-brief",
-          "language": null,
-          "focus_visible_match": true,
-          "visual_indicator": true,
-          "visible": true
-        },
+        "capture_kind": "common",
+        "heading_tops": [
+          229.19,
+          229.19,
+          229.19
+        ],
+        "content_tops": [
+          333.25,
+          333.25,
+          333.25
+        ],
+        "max_heading_delta_px": 0,
+        "max_content_delta_px": 0,
+        "tolerance_px": 2,
         "pass": true
       },
       {
-        "from": "narrative-status-brief",
-        "key": "ArrowRight",
-        "expected": "lane-project-matrix",
-        "state": {
-          "expected": "lane-project-matrix",
-          "selected": [
-            "lane-project-matrix"
-          ],
-          "visible": [
-            "lane-project-matrix"
-          ],
-          "document_direction": "lane-project-matrix",
-          "pass": true
-        },
-        "focus": {
-          "direction": "lane-project-matrix",
-          "language": null,
-          "focus_visible_match": true,
-          "visual_indicator": true,
-          "visible": true
-        },
-        "pass": true
-      },
-      {
-        "from": "lane-project-matrix",
-        "key": "ArrowLeft",
-        "expected": "narrative-status-brief",
-        "state": {
-          "expected": "narrative-status-brief",
-          "selected": [
-            "narrative-status-brief"
-          ],
-          "visible": [
-            "narrative-status-brief"
-          ],
-          "document_direction": "narrative-status-brief",
-          "pass": true
-        },
-        "focus": {
-          "direction": "narrative-status-brief",
-          "language": null,
-          "focus_visible_match": true,
-          "visual_indicator": true,
-          "visible": true
-        },
-        "pass": true
-      },
-      {
-        "from": "narrative-status-brief",
-        "key": "End",
-        "expected": "lane-project-matrix",
-        "state": {
-          "expected": "lane-project-matrix",
-          "selected": [
-            "lane-project-matrix"
-          ],
-          "visible": [
-            "lane-project-matrix"
-          ],
-          "document_direction": "lane-project-matrix",
-          "pass": true
-        },
-        "focus": {
-          "direction": "lane-project-matrix",
-          "language": null,
-          "focus_visible_match": true,
-          "visual_indicator": true,
-          "visible": true
-        },
-        "pass": true
-      },
-      {
-        "from": "lane-project-matrix",
-        "key": "Home",
-        "expected": "priority-review-console",
-        "state": {
-          "expected": "priority-review-console",
-          "selected": [
-            "priority-review-console"
-          ],
-          "visible": [
-            "priority-review-console"
-          ],
-          "document_direction": "priority-review-console",
-          "pass": true
-        },
-        "focus": {
-          "direction": "priority-review-console",
-          "language": null,
-          "focus_visible_match": true,
-          "visual_indicator": true,
-          "visible": true
-        },
-        "pass": true
-      }
-    ],
-    "language_steps": [
-      {
-        "from": "ja",
-        "key": "ArrowRight",
-        "expected": "en",
-        "state": {
-          "expected": "en",
-          "selected": [
-            "en"
-          ],
-          "document_language": "en",
-          "pass": true
-        },
-        "focus": {
-          "direction": null,
-          "language": "en",
-          "focus_visible_match": true,
-          "visual_indicator": true,
-          "visible": true
-        },
-        "pass": true
-      },
-      {
-        "from": "en",
-        "key": "ArrowLeft",
-        "expected": "ja",
-        "state": {
-          "expected": "ja",
-          "selected": [
-            "ja"
-          ],
-          "document_language": "ja",
-          "pass": true
-        },
-        "focus": {
-          "direction": null,
-          "language": "ja",
-          "focus_visible_match": true,
-          "visual_indicator": true,
-          "visible": true
-        },
+        "capture_kind": "panel",
+        "heading_tops": [
+          33,
+          33,
+          33
+        ],
+        "content_tops": [
+          137.06,
+          137.06,
+          137.06
+        ],
+        "max_heading_delta_px": 0,
+        "max_content_delta_px": 0,
+        "tolerance_px": 2,
         "pass": true
       }
     ]
   },
-  "production_generator_unchanged": true,
-  "human_visual_review": {
+  "automated_raster_landmark_check": {
     "status": "pass",
-    "method": "The three Japanese screenshots were inspected at the same 1440 x 1200 viewport after browser readback passed; each selected state was compared against the shared fixture and trade-off table.",
-    "findings": {
-      "first_scan_hierarchy": "A presents priority, decision, and evidence in the shortest path; B establishes a calm narrative reading order; C makes lane and project relationships easiest to scan.",
-      "evidence_proximity": "A keeps provenance closest to the active decision; B intentionally defers evidence; C balances summary counts with matrix detail.",
-      "japanese_typography": "No visible clipping, broken glyphs, or line collisions were found in the captured first viewport.",
-      "scroll_burden": "A is shortest at 1.65 viewports, C is intermediate at 2.21, and B is longest at 2.55; these are intentional information-architecture trade-offs.",
-      "selected_state_clarity": "The gold underline and border identify exactly one direction and one language in every capture.",
-      "card_grid_regression": "A uses a triage grid by design; B replaces it with a narrative column and C with a two-column matrix, so the three directions remain structurally distinct."
+    "method": "Each final PNG is decoded back into a browser canvas and sampled inside DOM-derived landmark rectangles; a uniform-black negative control must be rejected.",
+    "captures": [
+      {
+        "capture_kind": "common",
+        "direction": "A",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/priority-review-console.png",
+        "analysis": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "common_hero": {
+              "rect": {
+                "x": 20,
+                "y": 16,
+                "width": 1400,
+                "height": 117
+              },
+              "sampled_pixels": 163800,
+              "luminance_variance": 1588.86,
+              "quantized_color_count": 581,
+              "dominant_color_ratio": 0.89677,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "direction_controls": {
+              "rect": {
+                "x": 30,
+                "y": 151,
+                "width": 526,
+                "height": 41
+              },
+              "sampled_pixels": 21566,
+              "luminance_variance": 3105.887,
+              "quantized_color_count": 289,
+              "dominant_color_ratio": 0.504359,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "language_controls": {
+              "rect": {
+                "x": 1252,
+                "y": 151,
+                "width": 158,
+                "height": 41
+              },
+              "sampled_pixels": 6478,
+              "luminance_variance": 3365.699,
+              "quantized_color_count": 82,
+              "dominant_color_ratio": 0.387311,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 229,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 839.337,
+              "quantized_color_count": 424,
+              "dominant_color_ratio": 0.947792,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 39,
+                "y": 333,
+                "width": 1362,
+                "height": 867
+              },
+              "sampled_pixels": 295554,
+              "luminance_variance": 1085.726,
+              "quantized_color_count": 569,
+              "dominant_color_ratio": 0.940559,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "capture_kind": "common",
+        "direction": "B",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/narrative-status-brief.png",
+        "analysis": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "common_hero": {
+              "rect": {
+                "x": 20,
+                "y": 16,
+                "width": 1400,
+                "height": 117
+              },
+              "sampled_pixels": 163800,
+              "luminance_variance": 1588.599,
+              "quantized_color_count": 582,
+              "dominant_color_ratio": 0.89677,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "direction_controls": {
+              "rect": {
+                "x": 30,
+                "y": 151,
+                "width": 526,
+                "height": 41
+              },
+              "sampled_pixels": 21566,
+              "luminance_variance": 2968.332,
+              "quantized_color_count": 291,
+              "dominant_color_ratio": 0.573681,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "language_controls": {
+              "rect": {
+                "x": 1252,
+                "y": 151,
+                "width": 158,
+                "height": 41
+              },
+              "sampled_pixels": 6478,
+              "luminance_variance": 3365.699,
+              "quantized_color_count": 82,
+              "dominant_color_ratio": 0.387311,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 229,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 679.341,
+              "quantized_color_count": 387,
+              "dominant_color_ratio": 0.954416,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 160,
+                "y": 333,
+                "width": 1120,
+                "height": 621
+              },
+              "sampled_pixels": 695520,
+              "luminance_variance": 1147.478,
+              "quantized_color_count": 794,
+              "dominant_color_ratio": 0.674527,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "capture_kind": "common",
+        "direction": "C",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/lane-project-overview.png",
+        "analysis": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "common_hero": {
+              "rect": {
+                "x": 20,
+                "y": 16,
+                "width": 1400,
+                "height": 117
+              },
+              "sampled_pixels": 163800,
+              "luminance_variance": 1588.893,
+              "quantized_color_count": 581,
+              "dominant_color_ratio": 0.89677,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "direction_controls": {
+              "rect": {
+                "x": 30,
+                "y": 151,
+                "width": 526,
+                "height": 41
+              },
+              "sampled_pixels": 21566,
+              "luminance_variance": 3183.921,
+              "quantized_color_count": 285,
+              "dominant_color_ratio": 0.472271,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "language_controls": {
+              "rect": {
+                "x": 1252,
+                "y": 151,
+                "width": 158,
+                "height": 41
+              },
+              "sampled_pixels": 6478,
+              "luminance_variance": 3365.699,
+              "quantized_color_count": 82,
+              "dominant_color_ratio": 0.387311,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 229,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 985.105,
+              "quantized_color_count": 426,
+              "dominant_color_ratio": 0.942431,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 39,
+                "y": 333,
+                "width": 1362,
+                "height": 867
+              },
+              "sampled_pixels": 295554,
+              "luminance_variance": 1231.423,
+              "quantized_color_count": 552,
+              "dominant_color_ratio": 0.815601,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "capture_kind": "panel",
+        "direction": "A",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/priority-review-console.png",
+        "analysis": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 33,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 839.337,
+              "quantized_color_count": 424,
+              "dominant_color_ratio": 0.947792,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "panel_proof": {
+              "rect": {
+                "x": 39,
+                "y": 94,
+                "width": 204,
+                "height": 19
+              },
+              "sampled_pixels": 3876,
+              "luminance_variance": 2332.256,
+              "quantized_color_count": 32,
+              "dominant_color_ratio": 0.888029,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 39,
+                "y": 137,
+                "width": 1362,
+                "height": 1063
+              },
+              "sampled_pixels": 362292,
+              "luminance_variance": 972.717,
+              "quantized_color_count": 595,
+              "dominant_color_ratio": 0.947291,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "capture_kind": "panel",
+        "direction": "B",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/narrative-status-brief.png",
+        "analysis": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 33,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 679.341,
+              "quantized_color_count": 387,
+              "dominant_color_ratio": 0.954416,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "panel_proof": {
+              "rect": {
+                "x": 39,
+                "y": 94,
+                "width": 136,
+                "height": 19
+              },
+              "sampled_pixels": 2584,
+              "luminance_variance": 3325.855,
+              "quantized_color_count": 32,
+              "dominant_color_ratio": 0.832043,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 160,
+                "y": 137,
+                "width": 1120,
+                "height": 621
+              },
+              "sampled_pixels": 695520,
+              "luminance_variance": 1147.119,
+              "quantized_color_count": 794,
+              "dominant_color_ratio": 0.671354,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "capture_kind": "panel",
+        "direction": "C",
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/lane-project-overview.png",
+        "analysis": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 33,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 985.105,
+              "quantized_color_count": 426,
+              "dominant_color_ratio": 0.942431,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "panel_proof": {
+              "rect": {
+                "x": 39,
+                "y": 94,
+                "width": 244,
+                "height": 19
+              },
+              "sampled_pixels": 4636,
+              "luminance_variance": 1981.449,
+              "quantized_color_count": 32,
+              "dominant_color_ratio": 0.906385,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 39,
+                "y": 137,
+                "width": 1362,
+                "height": 1063
+              },
+              "sampled_pixels": 362292,
+              "luminance_variance": 1169.28,
+              "quantized_color_count": 610,
+              "dominant_color_ratio": 0.838285,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      }
+    ],
+    "contact_sheet": {
+      "path": "samples/dashboard/intent_comparison/screenshots/v2/intent-comparison-contact-sheet.png",
+      "analysis": {
+        "image_width": 1440,
+        "image_height": 620,
+        "landmarks": {
+          "A": {
+            "rect": {
+              "x": 18,
+              "y": 70,
+              "width": 460,
+              "height": 383
+            },
+            "sampled_pixels": 176180,
+            "luminance_variance": 686.433,
+            "quantized_color_count": 409,
+            "dominant_color_ratio": 0.86146,
+            "near_uniform_black_ratio": 0,
+            "thresholds": {
+              "min_luminance_variance": 2,
+              "min_quantized_colors": 4,
+              "max_dominant_color_ratio": 0.995,
+              "max_near_black_ratio": 0.98
+            },
+            "pass": true
+          },
+          "B": {
+            "rect": {
+              "x": 490,
+              "y": 70,
+              "width": 460,
+              "height": 383
+            },
+            "sampled_pixels": 176180,
+            "luminance_variance": 544.553,
+            "quantized_color_count": 376,
+            "dominant_color_ratio": 0.78799,
+            "near_uniform_black_ratio": 0,
+            "thresholds": {
+              "min_luminance_variance": 2,
+              "min_quantized_colors": 4,
+              "max_dominant_color_ratio": 0.995,
+              "max_near_black_ratio": 0.98
+            },
+            "pass": true
+          },
+          "C": {
+            "rect": {
+              "x": 962,
+              "y": 70,
+              "width": 460,
+              "height": 383
+            },
+            "sampled_pixels": 176180,
+            "luminance_variance": 765.669,
+            "quantized_color_count": 435,
+            "dominant_color_ratio": 0.754109,
+            "near_uniform_black_ratio": 0,
+            "thresholds": {
+              "min_luminance_variance": 2,
+              "min_quantized_colors": 4,
+              "max_dominant_color_ratio": 0.995,
+              "max_near_black_ratio": 0.98
+            },
+            "pass": true
+          }
+        }
+      },
+      "pass": true
+    },
+    "narrative_state_paths": [
+      {
+        "path": "direct_query",
+        "state": {
+          "direction": "narrative-status-brief",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "narrative-status-brief"
+          ],
+          "visible_panels": [
+            "narrative-status-brief"
+          ],
+          "selected_languages": [
+            "ja"
+          ],
+          "pass": true
+        },
+        "geometry": {
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 229.19,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 321.25
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 229,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 160,
+              "y": 333.25,
+              "width": 1120,
+              "height": 620.48,
+              "right": 1280,
+              "bottom": 953.73
+            },
+            "raster_rect": {
+              "x": 160,
+              "y": 333,
+              "width": 1120,
+              "height": 621
+            },
+            "pass": true
+          }
+        },
+        "raster": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 229,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 679.341,
+              "quantized_color_count": 387,
+              "dominant_color_ratio": 0.954416,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 160,
+                "y": 333,
+                "width": 1120,
+                "height": 621
+              },
+              "sampled_pixels": 695520,
+              "luminance_variance": 1147.478,
+              "quantized_color_count": 794,
+              "dominant_color_ratio": 0.674527,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "path": "click_switch",
+        "state": {
+          "direction": "narrative-status-brief",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "narrative-status-brief"
+          ],
+          "visible_panels": [
+            "narrative-status-brief"
+          ],
+          "selected_languages": [
+            "ja"
+          ],
+          "pass": true
+        },
+        "geometry": {
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 229.19,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 321.25
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 229,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 160,
+              "y": 333.25,
+              "width": 1120,
+              "height": 620.48,
+              "right": 1280,
+              "bottom": 953.73
+            },
+            "raster_rect": {
+              "x": 160,
+              "y": 333,
+              "width": 1120,
+              "height": 621
+            },
+            "pass": true
+          }
+        },
+        "raster": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 229,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 679.341,
+              "quantized_color_count": 387,
+              "dominant_color_ratio": 0.954416,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 160,
+                "y": 333,
+                "width": 1120,
+                "height": 621
+              },
+              "sampled_pixels": 695520,
+              "luminance_variance": 1147.478,
+              "quantized_color_count": 794,
+              "dominant_color_ratio": 0.674527,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      },
+      {
+        "path": "keyboard_switch",
+        "state": {
+          "direction": "narrative-status-brief",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "narrative-status-brief"
+          ],
+          "visible_panels": [
+            "narrative-status-brief"
+          ],
+          "selected_languages": [
+            "ja"
+          ],
+          "pass": true
+        },
+        "geometry": {
+          "candidate_heading": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-heading\"]",
+            "count": 1,
+            "rect": {
+              "x": 39,
+              "y": 229.19,
+              "width": 1362,
+              "height": 92.06,
+              "right": 1401,
+              "bottom": 321.25
+            },
+            "raster_rect": {
+              "x": 39,
+              "y": 229,
+              "width": 1362,
+              "height": 93
+            },
+            "pass": true
+          },
+          "candidate_first_content": {
+            "selector": "[data-direction-panel]:not([hidden]) [data-landmark=\"candidate-first-content\"]",
+            "count": 1,
+            "rect": {
+              "x": 160,
+              "y": 333.25,
+              "width": 1120,
+              "height": 620.48,
+              "right": 1280,
+              "bottom": 953.73
+            },
+            "raster_rect": {
+              "x": 160,
+              "y": 333,
+              "width": 1120,
+              "height": 621
+            },
+            "pass": true
+          }
+        },
+        "raster": {
+          "image_width": 1440,
+          "image_height": 1200,
+          "landmarks": {
+            "candidate_heading": {
+              "rect": {
+                "x": 39,
+                "y": 229,
+                "width": 1362,
+                "height": 93
+              },
+              "sampled_pixels": 126666,
+              "luminance_variance": 679.341,
+              "quantized_color_count": 387,
+              "dominant_color_ratio": 0.954416,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            },
+            "candidate_first_content": {
+              "rect": {
+                "x": 160,
+                "y": 333,
+                "width": 1120,
+                "height": 621
+              },
+              "sampled_pixels": 695520,
+              "luminance_variance": 1147.478,
+              "quantized_color_count": 794,
+              "dominant_color_ratio": 0.674527,
+              "near_uniform_black_ratio": 0,
+              "thresholds": {
+                "min_luminance_variance": 2,
+                "min_quantized_colors": 4,
+                "max_dominant_color_ratio": 0.995,
+                "max_near_black_ratio": 0.98
+              },
+              "pass": true
+            }
+          }
+        },
+        "pass": true
+      }
+    ],
+    "uniform_black_negative_control": {
+      "expected_result": "fail",
+      "observed_result": "fail",
+      "detector_rejected_blank": true,
+      "analysis": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1200
+        },
+        "sampled_pixels": 192000,
+        "luminance_variance": 0,
+        "quantized_color_count": 1,
+        "dominant_color_ratio": 1,
+        "near_uniform_black_ratio": 1,
+        "thresholds": {
+          "min_luminance_variance": 2,
+          "min_quantized_colors": 4,
+          "max_dominant_color_ratio": 0.995,
+          "max_near_black_ratio": 0.98
+        },
+        "pass": false
+      },
+      "pass": true
     }
   },
-  "remaining_review_debt": [
-    "Collect one freeform user preference before production implementation."
-  ],
-  "selected_state_check": {
+  "automated_keyboard_check": {
     "status": "pass",
-    "exactly_one_direction_and_language_selected": true,
-    "checks": [
+    "steps": [
       {
-        "direction": {
-          "expected": "priority-review-console",
-          "selected": [
-            "priority-review-console"
+        "selector": "button[data-direction=\"priority-review-console\"]",
+        "key": "ArrowRight",
+        "expected_direction": "narrative-status-brief",
+        "expected_language": null,
+        "state": {
+          "direction": "narrative-status-brief",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "narrative-status-brief"
           ],
-          "visible": [
-            "priority-review-console"
+          "visible_panels": [
+            "narrative-status-brief"
           ],
-          "document_direction": "priority-review-console",
-          "pass": true
-        },
-        "language": {
-          "expected": "ja",
-          "selected": [
+          "selected_languages": [
             "ja"
           ],
-          "document_language": "ja",
-          "pass": true
-        }
-      },
-      {
-        "direction": {
-          "expected": "priority-review-console",
-          "selected": [
-            "priority-review-console"
-          ],
-          "visible": [
-            "priority-review-console"
-          ],
-          "document_direction": "priority-review-console",
           "pass": true
         },
-        "language": {
-          "expected": "en",
-          "selected": [
-            "en"
-          ],
-          "document_language": "en",
-          "pass": true
-        }
+        "pass": true
       },
       {
-        "direction": {
-          "expected": "narrative-status-brief",
-          "selected": [
-            "narrative-status-brief"
+        "selector": "button[data-direction=\"narrative-status-brief\"]",
+        "key": "End",
+        "expected_direction": "lane-project-overview",
+        "expected_language": null,
+        "state": {
+          "direction": "lane-project-overview",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "lane-project-overview"
           ],
-          "visible": [
-            "narrative-status-brief"
+          "visible_panels": [
+            "lane-project-overview"
           ],
-          "document_direction": "narrative-status-brief",
-          "pass": true
-        },
-        "language": {
-          "expected": "ja",
-          "selected": [
+          "selected_languages": [
             "ja"
           ],
-          "document_language": "ja",
-          "pass": true
-        }
-      },
-      {
-        "direction": {
-          "expected": "narrative-status-brief",
-          "selected": [
-            "narrative-status-brief"
-          ],
-          "visible": [
-            "narrative-status-brief"
-          ],
-          "document_direction": "narrative-status-brief",
           "pass": true
         },
-        "language": {
-          "expected": "en",
-          "selected": [
-            "en"
-          ],
-          "document_language": "en",
-          "pass": true
-        }
+        "pass": true
       },
       {
-        "direction": {
-          "expected": "lane-project-matrix",
-          "selected": [
-            "lane-project-matrix"
+        "selector": "button[data-direction=\"lane-project-overview\"]",
+        "key": "Home",
+        "expected_direction": "priority-review-console",
+        "expected_language": null,
+        "state": {
+          "direction": "priority-review-console",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "priority-review-console"
           ],
-          "visible": [
-            "lane-project-matrix"
+          "visible_panels": [
+            "priority-review-console"
           ],
-          "document_direction": "lane-project-matrix",
-          "pass": true
-        },
-        "language": {
-          "expected": "ja",
-          "selected": [
+          "selected_languages": [
             "ja"
           ],
-          "document_language": "ja",
-          "pass": true
-        }
-      },
-      {
-        "direction": {
-          "expected": "lane-project-matrix",
-          "selected": [
-            "lane-project-matrix"
-          ],
-          "visible": [
-            "lane-project-matrix"
-          ],
-          "document_direction": "lane-project-matrix",
           "pass": true
         },
-        "language": {
-          "expected": "en",
-          "selected": [
+        "pass": true
+      },
+      {
+        "selector": "button[data-language=\"ja\"]",
+        "key": "ArrowRight",
+        "expected_direction": null,
+        "expected_language": "en",
+        "state": {
+          "direction": "priority-review-console",
+          "language": "en",
+          "capture_mode": "common",
+          "selected_directions": [
+            "priority-review-console"
+          ],
+          "visible_panels": [
+            "priority-review-console"
+          ],
+          "selected_languages": [
             "en"
           ],
-          "document_language": "en",
           "pass": true
-        }
+        },
+        "pass": true
+      },
+      {
+        "selector": "button[data-language=\"en\"]",
+        "key": "ArrowLeft",
+        "expected_direction": null,
+        "expected_language": "ja",
+        "state": {
+          "direction": "priority-review-console",
+          "language": "ja",
+          "capture_mode": "common",
+          "selected_directions": [
+            "priority-review-console"
+          ],
+          "visible_panels": [
+            "priority-review-console"
+          ],
+          "selected_languages": [
+            "ja"
+          ],
+          "pass": true
+        },
+        "pass": true
       }
     ]
   },
-  "browser_runtime_check": {
+  "automated_overflow_check": {
     "status": "pass",
-    "errors": [],
-    "browser_version": "150.0.4078.48",
-    "playwright_core_version": "1.57.0"
-  }
+    "checks": [
+      {
+        "direction": "priority-review-console",
+        "language": "ja",
+        "document_width": 1440,
+        "viewport_width": 1440,
+        "document_height": 1795,
+        "findings": [],
+        "pass": true
+      },
+      {
+        "direction": "priority-review-console",
+        "language": "en",
+        "document_width": 1440,
+        "viewport_width": 1440,
+        "document_height": 1933,
+        "findings": [],
+        "pass": true
+      },
+      {
+        "direction": "narrative-status-brief",
+        "language": "ja",
+        "document_width": 1440,
+        "viewport_width": 1440,
+        "document_height": 1295,
+        "findings": [],
+        "pass": true
+      },
+      {
+        "direction": "narrative-status-brief",
+        "language": "en",
+        "document_width": 1440,
+        "viewport_width": 1440,
+        "document_height": 1317,
+        "findings": [],
+        "pass": true
+      },
+      {
+        "direction": "lane-project-overview",
+        "language": "ja",
+        "document_width": 1440,
+        "viewport_width": 1440,
+        "document_height": 1836,
+        "findings": [],
+        "pass": true
+      },
+      {
+        "direction": "lane-project-overview",
+        "language": "en",
+        "document_width": 1440,
+        "viewport_width": 1440,
+        "document_height": 1906,
+        "findings": [],
+        "pass": true
+      }
+    ]
+  },
+  "automated_link_check": {
+    "status": "pass",
+    "checks": [
+      {
+        "path": "samples/dashboard/intent_comparison/intent_comparison_fixture.json",
+        "exists": true
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
+        "exists": true
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/intent_comparison_readback.json",
+        "exists": true
+      },
+      {
+        "path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        "exists": true
+      },
+      {
+        "path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        "exists": true
+      },
+      {
+        "path": "samples/status_snapshots/devcockpitcore_status.json",
+        "exists": true
+      }
+    ]
+  },
+  "production_generator": {
+    "path": "src/dev_cockpit/dashboard.py",
+    "baseline_blob": "8e047f50f9e9525533f5fbd6d784b27508b6d10f",
+    "current_blob": "8e047f50f9e9525533f5fbd6d784b27508b6d10f",
+    "unchanged": true
+  },
+  "browser_runtime": {
+    "status": "pass",
+    "browser_version": "150.0.4078.65",
+    "playwright_core_version": "1.57.0",
+    "errors": []
+  },
+  "worker_raster_inspection": {
+    "status": "pass",
+    "inspected_at": "2026-07-11T19:38:55.738Z",
+    "inspected_capture_id": "2026-07-11T19-37-49-016Z-c45f23357c38",
+    "method": "All six final 1440x1200 PNGs and the contact sheet were opened and visually inspected after automated readback; this record is bound to their current SHA-256 hashes.",
+    "inspected_files": [
+      {
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/priority-review-console.png",
+        "sha256": "d904f62a731713f00a913980ee9c12df9b9b838343729e72b2aaa3ed8351f954"
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/narrative-status-brief.png",
+        "sha256": "29c00761b71b98642779d79bd20eb717501ffd938ab89e8dc50b7e350f32ea97"
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/common/lane-project-overview.png",
+        "sha256": "f5678b005889ff912001256f000964ba55f4d2b8b26e563529bec9f48fc02371"
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/priority-review-console.png",
+        "sha256": "6ca5a4eb35647ecff637649e38ecefd4898e0b99e531b1e708a21e56b2d21b97"
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/narrative-status-brief.png",
+        "sha256": "d8764fe40f4849d805bf6ab2c9af9ad5dcc1cc07fb86b5c9d59008b0a046f00c"
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/panel/lane-project-overview.png",
+        "sha256": "be1bb7744c9acbe1ae64ac8d785a732741a4c11aa191276b132527989bcd82f2"
+      },
+      {
+        "path": "samples/dashboard/intent_comparison/screenshots/v2/intent-comparison-contact-sheet.png",
+        "sha256": "a46e0f7878a3ef9aa550b4e27a792e7bd71a009066500ac5acdf5c4a4fc53fb2"
+      }
+    ],
+    "findings": {
+      "raster_completeness": "No blank, black, missing, or undecoded tiles were visible.",
+      "concept_fidelity": "A is an ordered priority console, B is a concise narrative brief with collapsed evidence, and C is an overview without invented matrix cells.",
+      "localization": "Japanese structural headings are visible by default and the English switch remains available.",
+      "fairness": "Common-page and panel-only captures use the same viewport, scroll origin, provenance footprint, and candidate anchor."
+    }
+  },
+  "user_visual_acceptance": {
+    "status": "pending",
+    "selected_direction": null
+  },
+  "remaining_review_debt": [
+    "User preference among A/B/C has not been collected."
+  ]
 }
