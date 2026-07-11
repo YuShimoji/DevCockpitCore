@@ -1,8 +1,9 @@
 # DevCockpitCore Project Context
 
-This document contains durable project context. Live status, current validation,
-and next decisions belong in `docs/PROJECT_COCKPIT.md`; the compact
-machine-facing projection belongs in `docs/runtime-state.md`.
+This document contains durable mission, architecture, product principles, and
+capability boundaries. It intentionally excludes current commits, branches,
+pull requests, active artifacts, live validation results, and other transient
+repository state.
 
 ## Mission
 
@@ -87,37 +88,22 @@ credentials, database, target-repository writeback, C5, or C6.
   content.
 - Raw validation, smoke, action, and source data should be secondary to the
   operator decision path.
-- Expensive subjective UI work starts with materially different low-fidelity
-  directions and a user intent checkpoint.
-
-## Development Supervision Principles
-
-- A prompt authorizes one coherent outcome rather than one mechanical edit.
-- Investigation, implementation, related fixes, tests, cleanup, and state
-  synchronization continue within the same outcome envelope.
-- Authority-sensitive changes stop for approval.
-- Subjective, expensive-to-rework choices stop before production work and show
-  two or three low-cost alternatives.
-- Missing optional repositories, upstreams, or documents are warnings.
-- Progress updates communicate transitions; they are not routine approval
-  requests.
-
-The detailed project-local rules live in `AGENTS.md`; prompt/report transport
-rules live in
-`docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md`.
+- Materially different low-fidelity layouts should be compared before choosing
+  a production dashboard architecture.
+- Japanese-first display may coexist with English presentation while technical
+  IDs, paths, enum values, and hashes retain their exact meaning.
+- Evidence displays should expose source, observation time, and freshness.
 
 ## Document Responsibilities
 
 | Resource | Durable responsibility |
 | --- | --- |
-| `AGENTS.md` | Agent autonomy, stop gates, capability restrictions, and closure rules. |
-| `docs/PROJECT_COCKPIT.md` | Single human-readable current state and next decisions. |
-| `docs/runtime-state.md` | Compact machine-facing projection of the cockpit. |
-| `docs/project-context.md` | Mission, architecture, principles, and capability boundaries. |
-| `docs/decision-log.md` | Durable decisions only. |
-| `docs/idea-ledger.md` | Opportunities, alternatives, and deliberately parked routes. |
+| `AGENTS.md` | Stable technical architecture and capability restrictions. |
+| `docs/PROJECT_COCKPIT.md` | Timestamped human-facing repository navigation snapshot. |
+| `docs/runtime-state.md` | Bounded machine-facing restart and artifact-access projection. |
+| `docs/project-context.md` | Mission, architecture, product principles, and capability boundaries. |
+| `docs/decision-log.md` | Durable product and architecture decisions. |
+| `docs/idea-ledger.md` | Product hypotheses, alternatives, and parked directions. |
 | `docs/design/*.md` | Evidence and acceptance criteria for a specific design. |
-| `docs/handoffs/*.md` | Historical context or a real transfer that the cockpit cannot express compactly. |
-
-Current commit hashes, active artifacts, restart order, and live validation
-must not be copied into this durable context document.
+| `docs/handoffs/*.md` | Non-normative historical transfer records. |
+| `docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md` | Report normalization, classification, and transport interface semantics. |

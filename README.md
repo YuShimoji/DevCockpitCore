@@ -7,15 +7,15 @@ work with less ambiguity.
 
 ## Start here
 
-- [Current project state and next decisions](docs/PROJECT_COCKPIT.md)
+- [Timestamped product state and review navigation](docs/PROJECT_COCKPIT.md)
 - [Durable project context and capability boundaries](docs/project-context.md)
-- [Development-agent operating rules](AGENTS.md)
-- [Prompt/report supervision contract](docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md)
+- [Bounded machine-facing restart projection](docs/runtime-state.md)
+- [Three-direction dashboard intent comparison](samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
 
-The Project Cockpit is the human-readable current-state authority and is
-publicly readable from the repository page. `docs/runtime-state.md` is its
-compact machine-facing projection; dated handoffs are historical unless the
-cockpit explicitly names one for a real transfer.
+The Project Cockpit is a timestamped navigation snapshot, not a universal
+source of truth. Git records code and version state, local tests and generated
+artifacts record validation evidence, and `docs/project-context.md` preserves
+the durable architecture and capability boundary.
 
 From PowerShell, a fresh checkout can be verified without installing project
 dependencies:
@@ -289,11 +289,24 @@ Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```
 
 The active dashboard design checkpoint is
-`dashboard-layout-research-and-prototype-v1`. Production dashboard polishing is
-paused until the layout research memo and low-fidelity prototype are reviewed:
+`verified-observation-surface-intent-pack-v1`. Production dashboard polishing
+is paused until one of three same-data, low-fidelity information-architecture
+directions is selected:
 
 - `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
-- `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
+- `samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`
+- `samples/dashboard/intent_comparison/intent_comparison_manifest.json`
+- `samples/dashboard/intent_comparison/intent_comparison_readback.json`
+
+The comparison is Japanese-first with an English toggle. It is point-in-time
+review evidence, not live-state authority, and it does not modify
+`src/dev_cockpit/dashboard.py`.
+
+Open it from the repository root in PowerShell:
+
+```powershell
+Start-Process .\samples\dashboard\intent_comparison\verified_observation_surface_intent_pack.html
+```
 
 The console script name is also wired in `pyproject.toml`:
 
@@ -611,15 +624,14 @@ documents are structured warnings rather than true stop conditions.
 
 When resuming from another terminal or agent, start with:
 
-- `AGENTS.md`
 - `docs/PROJECT_COCKPIT.md`
 - `docs/runtime-state.md`
-- the one design artifact named by the cockpit
-- the associated prototype or evidence only when the selected work needs it
+- `docs/project-context.md` when architecture or capability boundaries matter
+- the review artifact linked by the Project Cockpit when product judgment is
+  needed
 
-`docs/project-context.md` supplies durable architecture and capability
-boundaries when deeper orientation is needed. Dated handoffs are historical
-unless the cockpit explicitly names one for an actual transfer.
+Dated handoffs are non-normative historical records. Verify Git and validation
+state directly rather than treating a handoff or snapshot as live control.
 
 ## Roadmap
 
@@ -631,7 +643,8 @@ micro-artifact:
    cross-project smoke, dashboard evidence, and review actions.
 3. Execution Automation Readiness: the bounded C3 help-only and single C4
    validation-pack probes; broader execution remains locked.
-4. Project Review Surface: choose an information architecture at an Intent
-   Gate, then implement and verify the selected production direction.
+4. Project Review Surface: compare candidate information architectures, record
+   the user's preferred direction, then implement and verify only that
+   production direction.
 
 See `docs/PROJECT_COCKPIT.md` for current lane state and next entrances.

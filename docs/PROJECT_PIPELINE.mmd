@@ -8,10 +8,11 @@ flowchart LR
     IA["designer/operator IA model"]
     AUDIT["current dashboard audit"]
     RESEARCH["layout research and current audit"]
-    OPTION_A["A: Priority Review Console prototype"]
-    OPTION_B["B: Narrative Status Brief sketch"]
-    OPTION_C["C: Lane And Project Matrix sketch"]
-    INTENT["user intent checkpoint"]
+    INTENT_PACK["same-data three-direction intent pack"]
+    OPTION_A["A: Priority Review Console"]
+    OPTION_B["B: Narrative Status Brief"]
+    OPTION_C["C: Lane And Project Matrix"]
+    USER_REVIEW["user direction review"]
     REDESIGN["future production dashboard redesign"]
     ACT["non-executable review action package"]
     A11Y["accessibility-oriented handoff layer"]
@@ -33,13 +34,14 @@ flowchart LR
     GEN --> IA
     IA --> AUDIT
     AUDIT --> RESEARCH
-    RESEARCH --> OPTION_A
-    RESEARCH -. "low fidelity only" .-> OPTION_B
-    RESEARCH -. "low fidelity only" .-> OPTION_C
-    OPTION_A --> INTENT
-    OPTION_B --> INTENT
-    OPTION_C --> INTENT
-    INTENT -. "selected direction only" .-> REDESIGN
+    RESEARCH --> INTENT_PACK
+    INTENT_PACK -. "low fidelity only" .-> OPTION_A
+    INTENT_PACK -. "low fidelity only" .-> OPTION_B
+    INTENT_PACK -. "low fidelity only" .-> OPTION_C
+    OPTION_A --> USER_REVIEW
+    OPTION_B --> USER_REVIEW
+    OPTION_C --> USER_REVIEW
+    USER_REVIEW -. "selected direction only" .-> REDESIGN
     REDESIGN -. "not active slice" .-> GEN
     IA --> ACT
     IA --> A11Y

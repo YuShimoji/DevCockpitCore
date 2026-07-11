@@ -1,10 +1,11 @@
-# Output-First Supervision v2.1 Anchor
+# Output-First Report Interface v2.1
 
-This project keeps a local anchor for the supervision contract used by
-DevCockpitCore work. It is intentionally concise and does not copy external
-project resources.
+This document defines the report-shaped inputs and machine-readable outputs
+handled by DevCockpitCore. It is a product interface contract for observation,
+normalization, classification, and transport readback. It does not control how
+a development agent works and is not a repository workflow authority.
 
-## Prompt and report separation
+## Input lanes
 
 `SUPERVISOR_PROMPT` is the input lane from a supervising thread to an agent. It
 may describe task, goal stack, allowed scope, validation, stop conditions, and
@@ -18,83 +19,7 @@ An `AGENT_REPORT` must not include a paste-ready next-agent prompt. If a handoff
 is needed, it should provide a handoff request with the minimum verified state
 needed for the supervisor to generate the next prompt.
 
-Prompt/report separation is a transport rule, not a work-granularity rule. It
-does not require one prompt per design note, implementation step, review, or
-hardening pass.
-
-## Outcome envelope and continuation
-
-A `SUPERVISOR_PROMPT` should authorize one coherent user-visible outcome. The
-envelope may include investigation, low-cost exploration, implementation,
-related fixes, tests, generated evidence, cleanup, and current-state document
-updates. The agent should continue across those steps without waiting for a new
-prompt while the work remains inside the same scope and capability boundary.
-
-Finishing an intermediate artifact is not, by itself, a handoff condition. A
-new prompt is needed for a new outcome, an authority expansion, or a material
-direction change, not for the next mechanical step of the current outcome.
-
-The prompt should make six things explicit:
-
-| Field | What it establishes |
-| --- | --- |
-| Outcome | What the user will be able to use or decide when the work is complete. |
-| Known decisions | Direction that should not be reopened without new evidence. |
-| Autonomy | Investigation, implementation, related fixes, tests, cleanup, and state synchronization that may proceed continuously. |
-| Intent checkpoint | Subjective, expensive-to-rework choices that need low-cost alternatives before production work. |
-| Authority checkpoint | Destructive work, dependencies, DB/auth/API contracts, credentials, external side effects, writeback, or capability expansion that require approval. |
-| Acceptance and closure | Observable behavior, validation, preserved boundaries, and current-state resources that must be updated. |
-
-## Two stop gates
-
-The **Authority Gate** is for permissions and contracts. It applies to
-destructive or difficult-to-reverse changes, dependencies, databases,
-authentication, API contracts, credentials, external writes or notifications,
-target-repository writeback, execution-capability expansion, and material
-specification conflicts.
-
-The **Intent Gate** is for preference-sensitive work with high rework cost. It
-applies to information architecture, layout, visual identity, color and type
-systems, motion language, copy tone, localization scope, and similarly
-subjective directions. The agent should first show two or three materially
-different low-cost options, state a recommendation, and wait for selection
-before a production-scale implementation. Once selected, the same outcome
-envelope continues through build and verification.
-
-Expected warnings, missing optional inputs, reversible repo-local choices,
-routine fixes, tests, and documentation updates are not stop gates.
-
-## Handoff gate
-
-The Handoff Gate applies to `AGENT_REPORT`, not to supervisor prompt generation.
-Supervisor prompt generation is valid output when the supervisor lane decides
-the next slice. Agent reports should explain whether a handoff is required and
-why the current agent should not continue.
-
-If the current agent can complete the authorized outcome safely, it should do
-so. Handoffs are reserved for a real context transfer, an exhausted authority
-envelope, or a stop gate that requires a decision. They are not mandatory at
-every slice boundary.
-
-## Progress, creative options, and closure
-
-Progress reporting should mark meaningful transitions without asking for
-permission to perform routine continuation work. The final report should lead
-with the outcome, then give verification, remaining uncertainty, and two to
-four next entrances that relieve different bottlenecks.
-
-At orientation and closure, check for repeated workflow friction and useful
-adjacent opportunities. When relevant, return no more than two creative
-proposals with their user value, cost, reversibility, and why deciding now is
-useful. High-cost subjective proposals still pass through the Intent Gate.
-
-When project state changes, closure includes synchronizing the repository's
-declared current-state authority. For DevCockpitCore that authority is
-`docs/PROJECT_COCKPIT.md`; `docs/runtime-state.md` is the compact machine-facing
-projection. Decision logs, idea ledgers, README text, generated evidence, and
-handoffs are updated only when their stated responsibility is triggered.
-
-## User input and future classifiers
+## Freeform input and classifier targets
 
 User input remains freeform. Fixed forms are not required for this repository's
 first observer slice.

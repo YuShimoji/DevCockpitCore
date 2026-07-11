@@ -1,19 +1,19 @@
 # DevCockpitCore Idea Ledger
 
-This file is an opportunity portfolio, not a second current-state document.
-Live state and the next active decision belong in
-`docs/PROJECT_COCKPIT.md`. An idea stays here until evidence promotes it into
-a selected outcome, rejects it, or shows that it is no longer timely.
+This file is an opportunity portfolio, not a current-state document or a
+development control surface. An idea stays here until product evidence promotes
+it, rejects it, or shows that it is no longer timely.
 
 ## Product Exploration
 
-### Dashboard Intent Checkpoint
+### Dashboard Architecture Comparison
 
 Hypothesis: choosing the information architecture before production generator
 work will prevent another cycle of large delivery followed by card, copy, and
 layout correction.
 
-The checkpoint should compare three low-fidelity directions:
+The current intent pack compares three low-fidelity directions with identical
+semantic values and wording:
 
 | Direction | User value | Cost to explore | Main risk | Decision unlocked |
 | --- | --- | --- | --- | --- |
@@ -21,16 +21,20 @@ The checkpoint should compare three low-fidelity directions:
 | Narrative Status Brief | Lets a low-context reader understand state, changes, decisions, and proof in one reading order. | Low; static wireframe and copy hierarchy only. | Cross-project comparison may require more navigation. | Whether handoff readability should dominate repeated triage. |
 | Lane And Project Matrix | Makes observer, automation, execution, and product readiness comparable across projects. | Low to medium; needs realistic multi-project sample rows. | Equal-weight cells can recreate the card-grid problem. | Whether portfolio comparison is the primary job of the surface. |
 
-Recommendation: use the existing Priority Review Console as option A, create
-only low-fidelity sketches for B and C, then select one architecture. Do not
-add production dashboard cards or copy before that choice.
+Research recommendation: A remains the strongest repeated-triage candidate,
+but the pack now includes real low-fidelity B and C alternatives. Collect one
+free-form user preference before selecting an architecture. Do not add
+production dashboard cards or copy before that choice.
 
 ### Japanese-First Reading And Localization Boundary
 
 Hypothesis: Japanese-first display copy and typography will improve first-scan
 clarity for the actual operator without requiring a full localization platform.
 
-Explore after the layout direction is selected:
+The intent pack now validates Japanese-first labels, preserved English
+technical identifiers, a Japanese-capable system font stack, and a working
+English toggle at low fidelity. After the layout direction is selected, decide
+which of those behaviors belongs in the production generator:
 
 - Japanese-first labels with English technical identifiers preserved as
   secondary text.
@@ -74,32 +78,34 @@ Candidate content, in preferred order:
 1. **Since last verified checkpoint:** code, evidence, and decision changes
    since the previous clean baseline.
 2. **Decision queue:** questions that need human preference, separated from
-   technical work the agent may continue autonomously.
+   evidence-integrity and artifact-maintenance work.
 3. **What can wait:** explicitly deprioritized warnings, locked lanes, and
    optional sibling conditions.
-4. **Opportunity pulse:** at most two current creative proposals with value,
-   cost, reversibility, and decision timing.
+4. **Opportunity pulse:** a small number of evidence-backed product hypotheses
+   with value and tradeoffs.
 
 These should be derived from source evidence where possible. They must not
 become another hand-authored brief card or an executable action surface.
 
-## Workflow Opportunities
+### Evidence Freshness And Provenance
 
-| Opportunity | Friction removed | Smallest useful experiment | Promotion signal |
-| --- | --- | --- | --- |
-| Current-state freshness guard | Cockpit, runtime labels, samples, and dashboard drifting apart | Add warning-only checks for authority link, required labels, and sample base age. | It catches a real stale checkpoint without blocking valid work. |
-| Live evidence refresh at clean checkpoints | Dashboard showing historical dirty state | Regenerate status, validation, smoke, review actions, and dashboard only after a clean selected checkpoint. | Generated evidence and cockpit describe the same base commit. |
-| PowerShell development check | Repeated `PYTHONPATH` and command setup | One documented or scripted entry for compile, tests, adapters, validation, and diff check. | A fresh checkout reaches a verified state with one command. |
-| Macro-prompt pilot | One prompt per micro-artifact | Run the next selected outcome from build through verification and cockpit closure. | No avoidable approval round trip and no missing state update. |
+Hypothesis: every review surface should expose `source_commit`, `observed_at`,
+and `freshness_state` close enough to the evidence route that historical
+artifacts cannot be mistaken for current repository state.
+
+The smallest useful implementation keeps generation commands and source paths
+available, distinguishes fresh, stale, and unknown observations, and treats a
+stale artifact as potentially valid history rather than current proof. This is
+a product evidence feature, not a claim that one document controls repository
+state.
 
 ## Maintenance Options
 
 ### C4 Probe Minimal Implementation Hardening
 
 Value: canonicalize the accepted single C4 validation-pack probe without
-widening capability. It is safe to batch with related documentation and tests
-inside one outcome envelope; it does not need separate design, review, and
-handoff prompts unless new capability is proposed.
+widening capability. Documentation and tests should preserve the exact command
+surface and its evidence contract.
 
 ### Validation Fixture Hygiene
 
@@ -126,11 +132,11 @@ commit and freshness.
 
 ### Third C3 Command Or Additional C4 Commands
 
-State: locked. Reopening the accepted command set requires a separate Authority
-Gate and evidence path.
+State: locked. Reopening the accepted command set requires a new capability
+decision and evidence path.
 
 ### General Runner, C5, Or C6
 
 State: locked. A cross-project runner, scheduler, autonomous loop, credentials,
 external services, notifications, and target-repository writeback require new
-design, stop controls, monitoring, and explicit authority.
+product design, stop controls, monitoring, and capability review.

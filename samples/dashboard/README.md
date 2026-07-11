@@ -14,12 +14,41 @@ The generator also writes non-executable review action package artifacts:
 - `samples/dashboard/devcockpitcore_review_actions.json`
 - `samples/dashboard/devcockpitcore_review_actions.md`
 
-## Layout research prototype
+## Three-direction intent comparison
 
-The current active dashboard-design checkpoint is not another production
-generator polish pass. The report-first dashboard remains available as the
-current generated artifact, but production layout iteration is paused pending
-review of a research-backed layout recommendation.
+The active review checkpoint compares three low-fidelity information
+architectures using the same 24 semantic values and wording:
+
+- A: Priority Review Console
+- B: Narrative Status Brief
+- C: Lane And Project Matrix
+
+Open the Japanese-first comparison pack directly from PowerShell:
+
+```powershell
+Start-Process .\samples\dashboard\intent_comparison\verified_observation_surface_intent_pack.html
+```
+
+The page includes an English toggle and explicit `source_commit`,
+`observed_at`, and `freshness_state` fields. Its adjacent evidence is:
+
+- `samples/dashboard/intent_comparison/intent_comparison_fixture.json`
+- `samples/dashboard/intent_comparison/intent_comparison_manifest.json`
+- `samples/dashboard/intent_comparison/intent_comparison_readback.json`
+- `samples/dashboard/intent_comparison/capture_intent_comparison.mjs`
+- `samples/dashboard/intent_comparison/screenshots/priority-review-console.png`
+- `samples/dashboard/intent_comparison/screenshots/narrative-status-brief.png`
+- `samples/dashboard/intent_comparison/screenshots/lane-project-matrix.png`
+
+The pack is point-in-time review evidence only; no direction is accepted yet
+and `src/dev_cockpit/dashboard.py` remains unchanged.
+
+## Earlier layout research prototype
+
+The earlier research memo and single-direction prototype remain supporting
+evidence for the current three-direction comparison. The report-first dashboard
+remains available as the current generated artifact, but production layout
+iteration is paused pending a user direction choice.
 
 Research memo:
 

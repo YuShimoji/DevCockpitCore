@@ -3,48 +3,38 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
-## 2026-07-10 - Outcome Envelopes And One Live-Status Authority
+## 2026-07-12 - Dashboard Intent Comparison Before Production Selection
 
-Purpose: remove the prompt fragmentation, repeated safety approvals, state
-duplication, and late subjective review that were slowing development.
+Purpose: make the dashboard information-architecture choice reviewable without
+changing the production generator or comparing different evidence across
+directions.
 
-Decision:
+Decision: use `verified-observation-surface-intent-pack-v1` as the current
+review artifact. It presents Priority Review Console, Narrative Status Brief,
+and Lane And Project Matrix with the same 24 semantic values, Japanese-first
+copy, an English toggle, and explicit point-in-time provenance.
 
-- Treat one Supervisor prompt as an outcome envelope that can cover
-  investigation, implementation, related fixes, tests, cleanup, and current
-  state synchronization.
-- Continue reversible repository-local work by default. Stop only at an
-  Authority Gate or an Intent Gate.
-- Use the Authority Gate for destructive work, dependencies, DB/auth/API
-  contracts, credentials, external side effects, writeback, execution
-  capability expansion, and material specification conflicts.
-- Use the Intent Gate before expensive subjective work. Present two or three
-  materially different low-fidelity directions and a recommendation before
-  production UI, visual identity, motion, copy tone, or localization work.
-- Make `docs/PROJECT_COCKPIT.md` the single human-readable live-state
-  authority and keep `docs/runtime-state.md` as its compact machine-facing
-  projection.
-- Keep project context durable, decision logs decision-only, idea ledgers
-  exploratory, and dated handoffs exceptional.
-
-Effect: completing an intermediate artifact no longer forces a new prompt, and
-routine progress updates no longer become approval requests. High-cost
-preference decisions move earlier, before production-scale implementation.
-Current state is externally readable through the public Project Cockpit link
-without creating a manually synchronized Wiki copy.
+Effect: one static comparison surface, a fixture, manifest, automated readback,
+capture helper, and three same-viewport screenshots now provide selection
+evidence. The earlier research recommendation for A remains advisory; no
+direction is accepted by this entry.
 
 Requirements preserved:
 
-- Observer, foundation automation, execution automation, and product readiness
-  lanes remain separate.
-- C3 remains exactly two help-only keys.
-- C4 remains exactly one fixed local validation-pack key.
-- No general runner, scheduler, external integration, credentials, database,
-  target-repository writeback, C5, or C6 is added.
+- `src/dev_cockpit/dashboard.py` remains unchanged.
+- The comparison is local, static, non-executable, and read-only.
+- Stale observation evidence is labeled and is not promoted to current-state
+  authority.
+- The observer, automation, and bounded C3/C4 capability lanes remain separate.
 
-State: adopted as the project-local operating model. The first intended trial
-is a macro-prompt that uses the dashboard Intent Gate before any production
-generator rewrite.
+State: the comparison pack is available for review and the user preference is
+pending.
+
+Owner: user selects A, B, or C; a later implementation slice may change the
+production generator only after that selection.
+
+Next move: review the three directions in one viewport and record a short
+free-form preference with the most important reason.
 
 ## 2026-07-07 - Remote Sync Resume Handoff
 
