@@ -1,142 +1,81 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-07
+updated_at: 2026-07-12
+snapshot_kind: persisted_navigation_snapshot
+current_review_artifact: verified-observation-surface-intent-pack-v1
+current_review_artifact_path: samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html
+source_commit: 2e5e924b12a311260bf10c7b252c0695cac7f80c
+observed_at: 2026-07-06T16:56:16+09:00
+freshness_state: stale
+blocking_issue_count: 0
 
-## North Star
+## About This Snapshot
 
-Make local development supervision reviewable from structured evidence before
-adding any broader automation capability.
+This file is a timestamped, persisted navigation snapshot for people reading
+the repository. It summarizes the product surface and points to review
+evidence. It is not live development control: Git records code and version
+truth, tests and generated evidence record validation truth, and the Web
+Supervisor carries current development direction.
 
-## Current Active Slice
+## Product State
 
-`dashboard-layout-research-and-prototype-v1`
+DevCockpitCore provides read-only repository observation, normalized report
+readback, gate classification, local validation evidence, cross-project smoke
+observation, and a static review dashboard. The production dashboard generator
+is unchanged while its next information architecture is compared at low
+fidelity.
 
-Purpose: pause production dashboard polishing, audit why the current report-first
-surface still behaves like a card-heavy evidence warehouse, and define one
-research-backed layout model before changing the generator again.
+The current layout research recommends Priority Review Console as one strong
+candidate. That recommendation is not user acceptance. Narrative Status Brief
+and Lane And Project Matrix remain materially different candidates for the
+same observation data.
 
-Research memo:
+## Capability Summary
 
-```text
-docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
-```
-
-Low-fidelity static prototype:
-
-```text
-samples/dashboard/layout_research/devcockpitcore_layout_prototype.html
-```
-
-Current production dashboard remains unchanged:
-
-```text
-samples/dashboard/devcockpitcore_dashboard.html
-```
-
-Review action package paths:
-
-```text
-samples/dashboard/devcockpitcore_review_actions.json
-samples/dashboard/devcockpitcore_review_actions.md
-```
-
-Generator:
-
-```text
-src/dev_cockpit/dashboard.py
-```
-
-Latest repo-level handoff:
-
-```text
-docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md
-```
-
-## Roadmap Strip
-
-| Step | Lane | State |
+| Capability | State | Boundary |
 | --- | --- | --- |
-| Status snapshot | Foundation Observer Readiness | complete |
-| Adapter manifests | Foundation Observer Readiness | complete |
-| Report normalizer | Foundation Automation Readiness | complete |
-| Gate classifier | Foundation Automation Readiness | complete |
-| Validation pack | Foundation Automation Readiness | complete |
-| Cross-project smoke | Foundation Automation Readiness | complete |
-| Controlled C3 help probes | Execution Automation Readiness | bounded and complete |
-| C4 scoped runner design review | Execution Automation Readiness | design-only accepted |
-| C4 minimal validation-pack probe | Execution Automation Readiness | one bounded key accepted |
-| Local test dashboard | Foundation Automation Readiness | complete |
-| Designer dashboard IA | Project review surface | complete |
-| Review action package | Project review surface | complete |
-| Dashboard accessibility pass | Project review surface | complete |
-| Compact dark overview | Project review surface | complete |
-| Home-linked decision meters | Project review surface | accepted with caveat |
-| Latest brief checkpoint | Project review surface | complete with caveat |
-| Editorial brief correction | Project review surface | complete with caveat |
-| Report-first frontpage | Project review surface | paused after user structural rejection |
-| Dashboard layout research/prototype | Project review surface | active |
-| Production dashboard redesign from selected layout | Project review surface | future review slice |
-| Japanese display polish | Project review surface | future review slice |
+| Repository observation and adapter validation | available | read-only against target repositories |
+| Report normalization and gate classification | available | interpretation only; no prompt generation |
+| Validation pack and cross-project smoke | available | local evidence; missing optional siblings warn |
+| Static dashboard and review actions | available | local, non-executable review surface |
+| C3 probes | bounded | exactly two fixed help-only keys |
+| C4 probe | bounded | exactly one fixed local validation-pack key |
+| General runner, scheduler, external service, or writeback | absent | outside the accepted capability surface |
 
-## Capability Glyph Grid
+## Current Review Artifact
 
-| Capability | Glyph | State |
-| --- | --- | --- |
-| Read-only repo observation | [#] | available |
-| Adapter validation | [#] | available |
-| Validation pack evidence | [#] | available |
-| Cross-project smoke evidence | [#] | available |
-| Static local dashboard | [#] | available after generation |
-| Warning triage and project cards | [#] | available after generation |
-| Non-executable review actions | [#] | available after generation |
-| Skip link, focus states, print view | [#] | available after generation |
-| Compact dark overview HUD | [#] | available after generation |
-| Report-first frontpage | [#] | available after generation |
-| Compact Review Map | [#] | available after generation |
-| Priority Review Console prototype | [#] | static review artifact |
-| C3 help-only probes | [#] | two fixed keys only |
-| Single C4 validation-pack probe | [#] | one bounded key accepted |
-| Additional C4 commands | [!] | locked |
-| Arbitrary execution | [!] | locked |
-| External services | [!] | locked |
-| Target repository writeback | [!] | locked |
+- [Dashboard layout research](design/DASHBOARD_LAYOUT_RESEARCH_V1.md)
+- [Three-direction low-fidelity intent comparison](../samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
+- [Machine-readable comparison manifest](../samples/dashboard/intent_comparison/intent_comparison_manifest.json)
+- [Automated interaction and screenshot readback](../samples/dashboard/intent_comparison/intent_comparison_readback.json)
+- [Current production dashboard](../samples/dashboard/devcockpitcore_dashboard.html)
 
-## Gate Board
+The comparison pack is research evidence only. It keeps the same semantic data
+and wording across A, B, and C, defaults to Japanese, provides an English
+toggle, and does not modify or select the production dashboard implementation.
 
-| Gate | Current State | Next Move |
-| --- | --- | --- |
-| Validation evidence | warning-level historical residue expected | review dashboard warning rows |
-| Smoke evidence | warning-level observer rows expected | confirm optional sibling warnings are acceptable |
-| Dashboard artifact | generated local HTML, not rewritten in the active slice | use as audit evidence, not as the design target |
-| Review action package | JSON and Markdown artifacts | confirm actions are review-only and non-executable |
-| Report-first frontpage | static HTML/CSS | paused pending layout acceptance |
-| Layout research memo | selected Priority Review Console | review whether the recommendation should drive the production redesign |
-| Layout prototype | low-fidelity static HTML | open and assess queue, workspace, evidence inspector, project order, and appendix |
-| C4 probe boundary | exactly one validation-pack key accepted | harden docs/tests before any further execution-readiness work |
-| Execution expansion | locked beyond accepted single C4 probe | keep outside this slice |
-| Public or production claims | locked | keep dashboard local and review-only |
+## Evidence Freshness
 
-## Review Axis
+The comparison's tracked evidence was observed from
+`2e5e924b12a311260bf10c7b252c0695cac7f80c`; `2026-07-06T16:56:16+09:00`
+is the latest generation time among its status, validation, and smoke sources.
+Its `stale` label means the evidence remains
+useful for comparing information architecture but must not be treated as a
+claim about the current checkout. Tracked dashboard, status, validation, smoke,
+and review-action samples may remain valid historical evidence while being
+stale for current-state claims.
 
-- Can a user open one local file and see current testability?
-- Are warning ownership, blocker count, and access state visible in the first scan?
-- Does the selected layout answer current state, priority, next action, ignorable work, and evidence route?
-- Does the priority lane create a single ordered review sequence instead of parallel cards?
-- Does the active workspace make the current decision clearer than the existing Review Map/Stack/Details sequence?
-- Are source JSON paths and generated_at values visible enough for audit?
-- Do review actions stay non-executable and source-backed?
-- Are raw validation, smoke, action, and source details available as appendix material rather than top-level reading burden?
-- Is the accepted C4 surface still exactly one repo-local validation-pack probe?
-- Does the surface stay static, local, and non-executing?
+## Navigation
 
-## Review Memory
+- [Durable mission, architecture, and capability boundaries](project-context.md)
+- [Bounded machine-facing restart projection](runtime-state.md)
+- [Product hypotheses and parked directions](idea-ledger.md)
+- [Durable product and architecture decisions](decision-log.md)
+- [Dashboard artifact guide](../samples/dashboard/README.md)
 
-The user accepted the dark mode and improved information organization as good
-enough for now, then flagged the Latest Brief as still forced and the card-based
-top viewport as the root problem. The follow-up review rejected continued
-card-first polishing: the current page still presents many warnings without a
-clear operator sequence, treats projects as parallel, assumes prior context, and
-risks becoming test-driven UI. The active checkpoint now recommends a Priority
-Review Console with a current-state report, ordered priority lane, active review
-workspace, adjacent evidence inspector, ordered project/status list, and
-appendix-style raw evidence.
+## Next Product Decision
+
+Choose A (Priority Review Console), B (Narrative Status Brief), or C (Lane And
+Project Matrix) according to which makes current state and next action easiest
+to understand. A remains the research recommendation, not an acceptance
+decision. Do not change the production generator until that selection exists.

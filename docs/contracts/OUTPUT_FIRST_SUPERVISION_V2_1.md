@@ -1,10 +1,11 @@
-# Output-First Supervision v2.1 Anchor
+# Output-First Report Interface v2.1
 
-This project keeps a local anchor for the supervision contract used by
-DevCockpitCore work. It is intentionally concise and does not copy external
-project resources.
+This document defines the report-shaped inputs and machine-readable outputs
+handled by DevCockpitCore. It is a product interface contract for observation,
+normalization, classification, and transport readback. It does not control how
+a development agent works and is not a repository workflow authority.
 
-## Prompt and report separation
+## Input lanes
 
 `SUPERVISOR_PROMPT` is the input lane from a supervising thread to an agent. It
 may describe task, goal stack, allowed scope, validation, stop conditions, and
@@ -18,14 +19,7 @@ An `AGENT_REPORT` must not include a paste-ready next-agent prompt. If a handoff
 is needed, it should provide a handoff request with the minimum verified state
 needed for the supervisor to generate the next prompt.
 
-## Handoff gate
-
-The Handoff Gate applies to `AGENT_REPORT`, not to supervisor prompt generation.
-Supervisor prompt generation is valid output when the supervisor lane decides
-the next slice. Agent reports should explain whether a handoff is required and
-why the current agent should not continue.
-
-## User input and future classifiers
+## Freeform input and classifier targets
 
 User input remains freeform. Fixed forms are not required for this repository's
 first observer slice.

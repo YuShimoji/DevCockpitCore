@@ -1,225 +1,109 @@
 # DevCockpitCore Project Context
 
-DevCockpitCore is a cross-project development supervision substrate. Its first
-purpose is to make project state easier to resume by producing structured,
-read-only snapshots of target repositories.
+This document contains durable mission, architecture, product principles, and
+capability boundaries. It intentionally excludes current commits, branches,
+pull requests, active artifacts, live validation results, and other transient
+repository state.
+
+## Mission
+
+DevCockpitCore is a cross-project development supervision substrate. It makes
+local development state reviewable from structured evidence before broader
+automation is considered.
+
+The first principle is observer-first behavior: inspect repositories, normalize
+reports, classify gates, and package validation evidence without turning
+missing optional inputs into hard stops or writing back to target projects.
 
 ## Readiness Lanes
 
-- Foundation Observer Readiness: status schema, status producer, adapter config,
-  tests, and docs.
-- Foundation Automation Readiness: report normalizer, gate classifier,
-  validation pack, and reusable project adapters.
-- Execution Automation Readiness: controlled runner design and evidence gates
-  after observer and classifier slices are mature.
-- Project/Product Readiness: project-specific readiness stays outside this
-  repository unless represented through adapters or snapshots.
+- **Foundation Observer Readiness:** status schema, status producer, adapter
+  configuration, tests, and documentation.
+- **Foundation Automation Readiness:** report normalization, gate
+  classification, validation packs, cross-project smoke, dashboards, and
+  reusable adapters.
+- **Execution Automation Readiness:** narrowly controlled command design and
+  evidence gates only after observer slices are stable.
+- **Project/Product Readiness:** project-specific readiness stays outside this
+  repository unless represented through adapters, snapshots, or review
+  evidence.
 
-## Current Development Axis
+These lanes must not be collapsed into one readiness claim. A healthy observer
+surface does not imply general execution authorization, and a project-specific
+UI decision does not alter the runner boundary.
 
-The current axis is common-foundation execution-readiness governance. The repo
-has moved through read-only observation, report interpretation, validation
-packaging, cross-project smoke observation, a bounded C3 help-probe surface,
-C4 design-only boundary review, C4 design-state hardening, a decision-only C4
-probe authorization packet plus authorization review, a single bounded C4
-validation-pack probe implementation, and review acceptance of that minimal
-implementation.
+## Architecture
 
-The active artifact is `c4-probe-minimal-implementation-review-v1`. It accepts
-only the `validation_pack_default_pretty` C4 command key as a single bounded
-repo-local validation-pack probe and recommends
-`common-foundation-c4-probe-minimal-implementation-hardening-v1` as the next
-route. C3 command set remains exactly two, while the current executable
-capability includes one accepted minimal C4 repo-local validation-pack probe.
-C4 is limited to one repo-local validation-pack probe, now accepted by the
-minimal implementation review. C4 is limited to one accepted repo-local
-validation-pack probe in the current review state.
+The implementation is a standard-library Python package named `dev_cockpit`.
+Its durable components are:
 
-The active dashboard checkpoint is
-`dashboard-layout-research-and-prototype-v1`. It pauses production dashboard
-polishing, audits the current report-first dashboard, compares layout models,
-selects Priority Review Console as the recommended architecture, and adds a
-separate low-fidelity static prototype for review before any generator rewrite.
+| Component | Responsibility |
+| --- | --- |
+| Adapter manifests | Describe safe, project-local observation expectations. |
+| Status snapshot | Read repository, document, artifact, and validation-hint state without modifying the target. |
+| Report normalizer | Convert AGENT_REPORT-like text into structured readback. |
+| Gate classifier | Separate readiness, residue, validation, user-work, and execution gates. |
+| Validation pack | Run a fixed allowlist of DevCockpitCore-local checks. |
+| Cross-project smoke | Observe optional sibling repositories and return warnings when unavailable. |
+| Static dashboard | Render local checkpoint evidence for human review without a server. |
+| Review actions | Derive non-executable, source-backed review items. |
+| Controlled probes | Exercise a fixed, hardcoded C3/C4 command-key surface with evidence and safety checks. |
 
-The latest repo-level handoff is
-`docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`. It records
-the pushed layout-research checkpoint at
-`22e926a docs: add dashboard layout research prototype`, the active restart
-order, access routes, validation memory, and the next decision entrances.
+## Durable Capability Boundary
 
-The dashboard layout research responds to user-opened visual feedback: the dark
-mode and information organization were usable, but the Latest Brief felt forced,
-the card-based top layout remained the root problem, warnings lacked an obvious
-operator sequence, projects were still presented as parallel, and the GUI
-assumed prior context. The production dashboard remains available as audit
-evidence, but additional production card polishing is paused pending review of
-the selected Priority Review Console model.
-
-## Completed Artifact Stack
-
-- `status-producer-v1`
-- `adapter-manifest-v1`
-- `report-normalizer-v1`
-- `gate-classifier-v1`
-- `validation-pack-v1`
-- `cross-project-smoke-v1`
-- `controlled-runner-design-v1`
-- `controlled-runner-probe-v1`
-- `controlled-runner-probe-review-v1`
-- `c3-probe-hardening-v1`
-- `c3-second-command-design-v1`
-- `c3-second-command-help-probe-v1`
-- `c3-second-command-acceptance-review-v1`
-- `c3-second-command-candidate-acceptance-v1`
-- `c3-second-command-production-probe-v1`
-- `c3-second-command-production-probe-review-v1`
-- `c3-second-command-hardening-v1`
-- `c3-command-set-freeze-and-c4-design-decision-v1`
-- `c4-scoped-runner-design-v1`
-- `c4-scoped-runner-design-review-v1`
-- `c4-scoped-runner-design-hardening-v1`
-- `c4-probe-decision-packet-v1`
-- `c4-probe-authorization-review-v1`
-- `c4-probe-minimal-implementation-v1`
-- `c4-probe-minimal-implementation-review-v1`
-- `devcockpit-local-test-dashboard-v0`
-- `designer-dashboard-ia-v1`
-- `dashboard-review-to-action-package-v1`
-- `dashboard-accessibility-pass-v1`
-- `dashboard-compact-dark-overview-v1`
-- `dashboard-home-linked-meters-v1`
-- `dashboard-latest-brief-checkpoint-v1`
-- `dashboard-editorial-brief-v1`
-- `dashboard-report-first-frontpage-v1`
-- `dashboard-layout-research-and-prototype-v1`
-
-## Current Capability Boundary
-
-The implementation remains a standard-library Python package named
-`dev_cockpit`.
-
-Primary observer entry point:
-
-```bash
-python -m dev_cockpit.status_snapshot --repo <repo> --adapter <adapter.json> --output <status.json>
-```
-
-The accepted production C3 command keys are exactly:
+The accepted C3 command surface has exactly two help-only keys:
 
 ```text
 status_snapshot_help
 adapters_validate_help
 ```
 
-The C3 command set remains exactly two fixed help/readback probes.
-`adapters_validate_help` maps only to:
-
-```text
-python -m dev_cockpit.adapters --help
-```
-
-It does not execute `adapters --validate`, adapter `default_validation`, target
-repository writeback, scheduler/autonomy behavior, credentials, external
-services, or arbitrary command execution.
-
-C4 is implemented and review-accepted only as a single bounded probe in
-`src/dev_cockpit/c4_scoped_runner_probe.py`. The C4 command set is exactly:
+The accepted C4 surface has exactly one repo-local validation-pack key:
 
 ```text
 validation_pack_default_pretty
 ```
 
-That key maps only to:
+It maps only to:
 
 ```text
 python -m dev_cockpit.validation_pack --default --pretty
 ```
 
-It uses hardcoded argv, shell disabled, timeout, output truncation, redaction,
-and before/after repository state evidence. A third C3 command, multiple C4
-commands, C5, C6, arbitrary execution, adapter validation as controlled command
-behavior, and target repository writeback remain unauthorized.
+Configuration cannot supply executable paths, argv, shell flags, or arbitrary
+command strings. The probes use hardcoded argv, shell-disabled execution,
+timeouts, redaction, truncation, and before/after repository-state evidence.
 
-The local dashboard generator is a review surface only. It reads existing local
-JSON and markdown evidence and writes a static HTML artifact at
-`samples/dashboard/devcockpitcore_dashboard.html`. Its static GUI affordance is
-local DOM filtering/search over already-rendered project cards.
+The repository does not authorize a general execution loop, arbitrary runner,
+scheduler, watcher, background daemon, external service or notification path,
+credentials, database, target-repository writeback, C5, or C6.
 
-The review action package is also local and non-executable. It derives review
-actions from validation, smoke, status, and dashboard-review evidence, writes
-`samples/dashboard/devcockpitcore_review_actions.json` and
-`samples/dashboard/devcockpitcore_review_actions.md`, and marks every action
-with `executable: false`.
+## Durable Product Principles
 
-The report-first frontpage checkpoint keeps the same static/local boundary and
-turns the top viewport into a concise current-status report with a compact
-Review Map for linked detail navigation. It does not add a reporting engine,
-server, network, telemetry, scheduler, writeback, or execution behavior.
+- A supervision surface should answer current state, priority, next decision,
+  ignorable work, and evidence route before presenting raw inventories.
+- Generated evidence remains source-backed and reviewable.
+- Review actions remain non-executable.
+- The dashboard remains local, static, and usable without JavaScript for core
+  content.
+- Raw validation, smoke, action, and source data should be secondary to the
+  operator decision path.
+- Materially different low-fidelity layouts should be compared before choosing
+  a production dashboard architecture.
+- Japanese-first display may coexist with English presentation while technical
+  IDs, paths, enum values, and hashes retain their exact meaning.
+- Evidence displays should expose source, observation time, and freshness.
 
-The layout research checkpoint keeps the same safety boundary and does not
-rewrite the production generator. Its research memo is
-`docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`; its prototype is
-`samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`. The
-recommended model is a queue-led split workspace: current-state report,
-priority lane, active review workspace, evidence inspector, ordered
-project/status list, and appendix evidence.
+## Document Responsibilities
 
-## Current Restart Surface
-
-Start a new terminal or agent from:
-
-1. `AGENTS.md`
-2. `docs/runtime-state.md`
-3. `docs/project-context.md`
-4. `docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md`
-5. `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
-6. `samples/dashboard/layout_research/devcockpitcore_layout_prototype.html`
-7. `docs/PROJECT_COCKPIT.md`
-8. `docs/PROJECT_PIPELINE.mmd`
-9. `samples/dashboard/README.md`
-10. `samples/dashboard/devcockpitcore_dashboard.html`
-11. `samples/dashboard/devcockpitcore_review_actions.json`
-12. `samples/dashboard/devcockpitcore_review_actions.md`
-13. `docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md`
-14. `docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md`
-15. `docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md`
-16. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_REVIEW_V1.md`
-17. `samples/c4_probe_minimal_implementation_review/c4_probe_minimal_implementation_review_v1.json`
-18. `docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md`
-19. `docs/design/C4_PROBE_MINIMAL_IMPLEMENTATION_V1.md`
-20. `samples/c4_probe_minimal_implementation/c4_probe_minimal_implementation_v1.json`
-21. `samples/c4_probe_minimal_implementation/c4_probe_minimal_result_v1.json`
-22. `docs/design/C4_PROBE_AUTHORIZATION_REVIEW_V1.md`
-23. `samples/c4_probe_authorization_review/c4_probe_authorization_review_v1.json`
-24. `docs/design/C4_PROBE_DECISION_PACKET_V1.md`
-25. `samples/c4_probe_decision_packet/c4_probe_decision_packet_v1.json`
-26. `docs/design/C4_SCOPED_RUNNER_DESIGN_HARDENING_V1.md`
-27. `samples/c4_scoped_runner_design_hardening/c4_scoped_runner_design_hardening_v1.json`
-28. `docs/design/C4_SCOPED_RUNNER_DESIGN_REVIEW_V1.md`
-29. `docs/design/C4_SCOPED_RUNNER_DESIGN_V1.md`
-30. `docs/design/C3_COMMAND_SET_FREEZE_AND_C4_DESIGN_DECISION_V1.md`
-31. `docs/design/C3_SECOND_COMMAND_HARDENING_V1.md`
-32. `docs/decision-log.md`
-33. `docs/idea-ledger.md`
-
-Then verify live state with:
-
-```bash
-git status --short --branch
-git fetch --prune origin
-git pull --ff-only origin main
-git rev-list --left-right --count HEAD...origin/main
-```
-
-Use the active Python runtime with `PYTHONPATH=src` for validation.
-
-## Design Bias
-
-DevCockpitCore should keep early execution-readiness slices narrow and
-inspectable. Prefer machine-readable artifacts, explicit safety boundaries,
-standard-library Python, local tests, and conservative unknowns over premature
-automation.
-
-Missing upstreams, missing sibling repositories, absent optional project docs,
-and historical report-fixture residue should become structured warnings unless
-they affect the current DevCockpitCore capability boundary.
+| Resource | Durable responsibility |
+| --- | --- |
+| `AGENTS.md` | Stable technical architecture and capability restrictions. |
+| `docs/PROJECT_COCKPIT.md` | Timestamped human-facing repository navigation snapshot. |
+| `docs/runtime-state.md` | Bounded machine-facing restart and artifact-access projection. |
+| `docs/project-context.md` | Mission, architecture, product principles, and capability boundaries. |
+| `docs/decision-log.md` | Durable product and architecture decisions. |
+| `docs/idea-ledger.md` | Product hypotheses, alternatives, and parked directions. |
+| `docs/design/*.md` | Evidence and acceptance criteria for a specific design. |
+| `docs/handoffs/*.md` | Non-normative historical transfer records. |
+| `docs/contracts/OUTPUT_FIRST_SUPERVISION_V2_1.md` | Report normalization, classification, and transport interface semantics. |

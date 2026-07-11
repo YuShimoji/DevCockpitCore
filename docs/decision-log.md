@@ -3,6 +3,39 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-12 - Dashboard Intent Comparison Before Production Selection
+
+Purpose: make the dashboard information-architecture choice reviewable without
+changing the production generator or comparing different evidence across
+directions.
+
+Decision: use `verified-observation-surface-intent-pack-v1` as the current
+review artifact. It presents Priority Review Console, Narrative Status Brief,
+and Lane And Project Matrix with the same 24 semantic values, Japanese-first
+copy, an English toggle, and explicit point-in-time provenance.
+
+Effect: one static comparison surface, a fixture, manifest, automated readback,
+capture helper, and three same-viewport screenshots now provide selection
+evidence. The earlier research recommendation for A remains advisory; no
+direction is accepted by this entry.
+
+Requirements preserved:
+
+- `src/dev_cockpit/dashboard.py` remains unchanged.
+- The comparison is local, static, non-executable, and read-only.
+- Stale observation evidence is labeled and is not promoted to current-state
+  authority.
+- The observer, automation, and bounded C3/C4 capability lanes remain separate.
+
+State: the comparison pack is available for review and the user preference is
+pending.
+
+Owner: user selects A, B, or C; a later implementation slice may change the
+production generator only after that selection.
+
+Next move: review the three directions in one viewport and record a short
+free-form preference with the most important reason.
+
 ## 2026-07-07 - Remote Sync Resume Handoff
 
 Purpose: make another terminal able to resume from the latest pushed

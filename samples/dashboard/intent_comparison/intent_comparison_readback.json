@@ -1,0 +1,528 @@
+{
+  "schema_version": "intent_comparison_readback.v1",
+  "artifact_id": "verified-observation-surface-intent-pack-v1",
+  "content_parity_across_directions": {
+    "status": "pass",
+    "directions": [
+      "A",
+      "B",
+      "C"
+    ],
+    "languages": [
+      "ja",
+      "en"
+    ],
+    "semantic_key_count_per_direction": 24,
+    "method": "Browser DOM readback activates every direction and language, then compares each rendered data-semantic-key value with the fixture semantic_contract.",
+    "checks": [
+      {
+        "direction": "priority-review-console",
+        "language": "ja",
+        "checked_key_count": 24,
+        "duplicate_keys": [],
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "mismatches": [],
+        "pass": true
+      },
+      {
+        "direction": "priority-review-console",
+        "language": "en",
+        "checked_key_count": 24,
+        "duplicate_keys": [],
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "mismatches": [],
+        "pass": true
+      },
+      {
+        "direction": "narrative-status-brief",
+        "language": "ja",
+        "checked_key_count": 24,
+        "duplicate_keys": [],
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "mismatches": [],
+        "pass": true
+      },
+      {
+        "direction": "narrative-status-brief",
+        "language": "en",
+        "checked_key_count": 24,
+        "duplicate_keys": [],
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "mismatches": [],
+        "pass": true
+      },
+      {
+        "direction": "lane-project-matrix",
+        "language": "ja",
+        "checked_key_count": 24,
+        "duplicate_keys": [],
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "mismatches": [],
+        "pass": true
+      },
+      {
+        "direction": "lane-project-matrix",
+        "language": "en",
+        "checked_key_count": 24,
+        "duplicate_keys": [],
+        "missing_keys": [],
+        "unexpected_keys": [],
+        "mismatches": [],
+        "pass": true
+      }
+    ]
+  },
+  "language_parity": {
+    "status": "pass",
+    "default_language": "ja",
+    "alternate_language": "en",
+    "technical_values_preserved": true
+  },
+  "screenshot_dimensions": {
+    "status": "pass",
+    "width": 1440,
+    "height": 1200,
+    "device_scale_factor": 1,
+    "files": {
+      "A": {
+        "path": "samples/dashboard/intent_comparison/screenshots/priority-review-console.png",
+        "width": 1440,
+        "height": 1200
+      },
+      "B": {
+        "path": "samples/dashboard/intent_comparison/screenshots/narrative-status-brief.png",
+        "width": 1440,
+        "height": 1200
+      },
+      "C": {
+        "path": "samples/dashboard/intent_comparison/screenshots/lane-project-matrix.png",
+        "width": 1440,
+        "height": 1200
+      }
+    }
+  },
+  "overflow_findings": {
+    "status": "pass",
+    "static_css_guard": "pass",
+    "japanese": [],
+    "english": [],
+    "note": "Both languages use overflow wrapping and horizontally scrollable comparison tables; browser readback follows screenshot capture.",
+    "viewport": {
+      "width": 1440,
+      "height": 1200,
+      "device_scale_factor": 1
+    },
+    "scroll_burden": {
+      "ja": {
+        "A": {
+          "document_height": 1983,
+          "scroll_burden_px": 783,
+          "viewport_count": 1.65
+        },
+        "B": {
+          "document_height": 3064,
+          "scroll_burden_px": 1864,
+          "viewport_count": 2.55
+        },
+        "C": {
+          "document_height": 2648,
+          "scroll_burden_px": 1448,
+          "viewport_count": 2.21
+        }
+      },
+      "en": {
+        "A": {
+          "document_height": 2033,
+          "scroll_burden_px": 833,
+          "viewport_count": 1.69
+        },
+        "B": {
+          "document_height": 3089,
+          "scroll_burden_px": 1889,
+          "viewport_count": 2.57
+        },
+        "C": {
+          "document_height": 2723,
+          "scroll_burden_px": 1523,
+          "viewport_count": 2.27
+        }
+      }
+    },
+    "method": "Browser DOM geometry across every direction in Japanese and English; intentional horizontal containers may opt out with data-overflow-allowed."
+  },
+  "broken_links": {
+    "status": "pass",
+    "count": 0,
+    "checked_repo_paths": [
+      "samples/dashboard/intent_comparison/intent_comparison_fixture.json",
+      "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
+      "samples/dashboard/intent_comparison/intent_comparison_readback.json",
+      "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "samples/status_snapshots/devcockpitcore_status.json"
+    ],
+    "browser_checked_links": [
+      "intent_comparison_fixture.json",
+      "intent_comparison_manifest.json",
+      "intent_comparison_readback.json",
+      "../../validation_packs/devcockpitcore_validation_pack_result.json",
+      "../../cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "../../status_snapshots/devcockpitcore_status.json"
+    ],
+    "browser_findings": []
+  },
+  "duplicate_key_check": {
+    "status": "pass",
+    "files_checked": [
+      "intent_comparison_fixture.json",
+      "intent_comparison_manifest.json",
+      "intent_comparison_readback.json"
+    ],
+    "negative_case": "tests.test_dashboard_intent_comparison.IntentComparisonPackTests.test_strict_json_loader_rejects_duplicate_keys"
+  },
+  "stale_indicator_check": {
+    "status": "pass",
+    "visible_state": "stale",
+    "historical_evidence_explanation_present": true,
+    "fresh_stale_unknown_legend_present": true
+  },
+  "keyboard_switch_check": {
+    "status": "pass",
+    "direction_keys": [
+      "ArrowLeft",
+      "ArrowRight",
+      "Home",
+      "End"
+    ],
+    "language_keys": [
+      "ArrowLeft",
+      "ArrowRight"
+    ],
+    "focus_state_visible": true,
+    "direction_steps": [
+      {
+        "from": "priority-review-console",
+        "key": "ArrowRight",
+        "expected": "narrative-status-brief",
+        "state": {
+          "expected": "narrative-status-brief",
+          "selected": [
+            "narrative-status-brief"
+          ],
+          "visible": [
+            "narrative-status-brief"
+          ],
+          "document_direction": "narrative-status-brief",
+          "pass": true
+        },
+        "focus": {
+          "direction": "narrative-status-brief",
+          "language": null,
+          "focus_visible_match": true,
+          "visual_indicator": true,
+          "visible": true
+        },
+        "pass": true
+      },
+      {
+        "from": "narrative-status-brief",
+        "key": "ArrowRight",
+        "expected": "lane-project-matrix",
+        "state": {
+          "expected": "lane-project-matrix",
+          "selected": [
+            "lane-project-matrix"
+          ],
+          "visible": [
+            "lane-project-matrix"
+          ],
+          "document_direction": "lane-project-matrix",
+          "pass": true
+        },
+        "focus": {
+          "direction": "lane-project-matrix",
+          "language": null,
+          "focus_visible_match": true,
+          "visual_indicator": true,
+          "visible": true
+        },
+        "pass": true
+      },
+      {
+        "from": "lane-project-matrix",
+        "key": "ArrowLeft",
+        "expected": "narrative-status-brief",
+        "state": {
+          "expected": "narrative-status-brief",
+          "selected": [
+            "narrative-status-brief"
+          ],
+          "visible": [
+            "narrative-status-brief"
+          ],
+          "document_direction": "narrative-status-brief",
+          "pass": true
+        },
+        "focus": {
+          "direction": "narrative-status-brief",
+          "language": null,
+          "focus_visible_match": true,
+          "visual_indicator": true,
+          "visible": true
+        },
+        "pass": true
+      },
+      {
+        "from": "narrative-status-brief",
+        "key": "End",
+        "expected": "lane-project-matrix",
+        "state": {
+          "expected": "lane-project-matrix",
+          "selected": [
+            "lane-project-matrix"
+          ],
+          "visible": [
+            "lane-project-matrix"
+          ],
+          "document_direction": "lane-project-matrix",
+          "pass": true
+        },
+        "focus": {
+          "direction": "lane-project-matrix",
+          "language": null,
+          "focus_visible_match": true,
+          "visual_indicator": true,
+          "visible": true
+        },
+        "pass": true
+      },
+      {
+        "from": "lane-project-matrix",
+        "key": "Home",
+        "expected": "priority-review-console",
+        "state": {
+          "expected": "priority-review-console",
+          "selected": [
+            "priority-review-console"
+          ],
+          "visible": [
+            "priority-review-console"
+          ],
+          "document_direction": "priority-review-console",
+          "pass": true
+        },
+        "focus": {
+          "direction": "priority-review-console",
+          "language": null,
+          "focus_visible_match": true,
+          "visual_indicator": true,
+          "visible": true
+        },
+        "pass": true
+      }
+    ],
+    "language_steps": [
+      {
+        "from": "ja",
+        "key": "ArrowRight",
+        "expected": "en",
+        "state": {
+          "expected": "en",
+          "selected": [
+            "en"
+          ],
+          "document_language": "en",
+          "pass": true
+        },
+        "focus": {
+          "direction": null,
+          "language": "en",
+          "focus_visible_match": true,
+          "visual_indicator": true,
+          "visible": true
+        },
+        "pass": true
+      },
+      {
+        "from": "en",
+        "key": "ArrowLeft",
+        "expected": "ja",
+        "state": {
+          "expected": "ja",
+          "selected": [
+            "ja"
+          ],
+          "document_language": "ja",
+          "pass": true
+        },
+        "focus": {
+          "direction": null,
+          "language": "ja",
+          "focus_visible_match": true,
+          "visual_indicator": true,
+          "visible": true
+        },
+        "pass": true
+      }
+    ]
+  },
+  "production_generator_unchanged": true,
+  "human_visual_review": {
+    "status": "pass",
+    "method": "The three Japanese screenshots were inspected at the same 1440 x 1200 viewport after browser readback passed; each selected state was compared against the shared fixture and trade-off table.",
+    "findings": {
+      "first_scan_hierarchy": "A presents priority, decision, and evidence in the shortest path; B establishes a calm narrative reading order; C makes lane and project relationships easiest to scan.",
+      "evidence_proximity": "A keeps provenance closest to the active decision; B intentionally defers evidence; C balances summary counts with matrix detail.",
+      "japanese_typography": "No visible clipping, broken glyphs, or line collisions were found in the captured first viewport.",
+      "scroll_burden": "A is shortest at 1.65 viewports, C is intermediate at 2.21, and B is longest at 2.55; these are intentional information-architecture trade-offs.",
+      "selected_state_clarity": "The gold underline and border identify exactly one direction and one language in every capture.",
+      "card_grid_regression": "A uses a triage grid by design; B replaces it with a narrative column and C with a two-column matrix, so the three directions remain structurally distinct."
+    }
+  },
+  "remaining_review_debt": [
+    "Collect one freeform user preference before production implementation."
+  ],
+  "selected_state_check": {
+    "status": "pass",
+    "exactly_one_direction_and_language_selected": true,
+    "checks": [
+      {
+        "direction": {
+          "expected": "priority-review-console",
+          "selected": [
+            "priority-review-console"
+          ],
+          "visible": [
+            "priority-review-console"
+          ],
+          "document_direction": "priority-review-console",
+          "pass": true
+        },
+        "language": {
+          "expected": "ja",
+          "selected": [
+            "ja"
+          ],
+          "document_language": "ja",
+          "pass": true
+        }
+      },
+      {
+        "direction": {
+          "expected": "priority-review-console",
+          "selected": [
+            "priority-review-console"
+          ],
+          "visible": [
+            "priority-review-console"
+          ],
+          "document_direction": "priority-review-console",
+          "pass": true
+        },
+        "language": {
+          "expected": "en",
+          "selected": [
+            "en"
+          ],
+          "document_language": "en",
+          "pass": true
+        }
+      },
+      {
+        "direction": {
+          "expected": "narrative-status-brief",
+          "selected": [
+            "narrative-status-brief"
+          ],
+          "visible": [
+            "narrative-status-brief"
+          ],
+          "document_direction": "narrative-status-brief",
+          "pass": true
+        },
+        "language": {
+          "expected": "ja",
+          "selected": [
+            "ja"
+          ],
+          "document_language": "ja",
+          "pass": true
+        }
+      },
+      {
+        "direction": {
+          "expected": "narrative-status-brief",
+          "selected": [
+            "narrative-status-brief"
+          ],
+          "visible": [
+            "narrative-status-brief"
+          ],
+          "document_direction": "narrative-status-brief",
+          "pass": true
+        },
+        "language": {
+          "expected": "en",
+          "selected": [
+            "en"
+          ],
+          "document_language": "en",
+          "pass": true
+        }
+      },
+      {
+        "direction": {
+          "expected": "lane-project-matrix",
+          "selected": [
+            "lane-project-matrix"
+          ],
+          "visible": [
+            "lane-project-matrix"
+          ],
+          "document_direction": "lane-project-matrix",
+          "pass": true
+        },
+        "language": {
+          "expected": "ja",
+          "selected": [
+            "ja"
+          ],
+          "document_language": "ja",
+          "pass": true
+        }
+      },
+      {
+        "direction": {
+          "expected": "lane-project-matrix",
+          "selected": [
+            "lane-project-matrix"
+          ],
+          "visible": [
+            "lane-project-matrix"
+          ],
+          "document_direction": "lane-project-matrix",
+          "pass": true
+        },
+        "language": {
+          "expected": "en",
+          "selected": [
+            "en"
+          ],
+          "document_language": "en",
+          "pass": true
+        }
+      }
+    ]
+  },
+  "browser_runtime_check": {
+    "status": "pass",
+    "errors": [],
+    "browser_version": "150.0.4078.48",
+    "playwright_core_version": "1.57.0"
+  }
+}

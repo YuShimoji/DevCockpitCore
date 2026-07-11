@@ -7,9 +7,12 @@ flowchart LR
     GEN["dev_cockpit.dashboard generator"]
     IA["designer/operator IA model"]
     AUDIT["current dashboard audit"]
-    RESEARCH["layout research: Priority Review Console"]
-    PROTO["low-fi static layout prototype"]
-    ACCEPT["layout acceptance review"]
+    RESEARCH["layout research and current audit"]
+    INTENT_PACK["same-data three-direction intent pack"]
+    OPTION_A["A: Priority Review Console"]
+    OPTION_B["B: Narrative Status Brief"]
+    OPTION_C["C: Lane And Project Matrix"]
+    USER_REVIEW["user direction review"]
     REDESIGN["future production dashboard redesign"]
     ACT["non-executable review action package"]
     A11Y["accessibility-oriented handoff layer"]
@@ -31,9 +34,14 @@ flowchart LR
     GEN --> IA
     IA --> AUDIT
     AUDIT --> RESEARCH
-    RESEARCH --> PROTO
-    PROTO --> ACCEPT
-    ACCEPT -. "future only after review" .-> REDESIGN
+    RESEARCH --> INTENT_PACK
+    INTENT_PACK -. "low fidelity only" .-> OPTION_A
+    INTENT_PACK -. "low fidelity only" .-> OPTION_B
+    INTENT_PACK -. "low fidelity only" .-> OPTION_C
+    OPTION_A --> USER_REVIEW
+    OPTION_B --> USER_REVIEW
+    OPTION_C --> USER_REVIEW
+    USER_REVIEW -. "selected direction only" .-> REDESIGN
     REDESIGN -. "not active slice" .-> GEN
     IA --> ACT
     IA --> A11Y

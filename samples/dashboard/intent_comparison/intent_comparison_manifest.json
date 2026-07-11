@@ -1,0 +1,52 @@
+{
+  "schema_version": "intent_comparison_manifest.v1",
+  "artifact_id": "verified-observation-surface-intent-pack-v1",
+  "source_commit": "2e5e924b12a311260bf10c7b252c0695cac7f80c",
+  "observed_at": "2026-07-06T16:56:16+09:00",
+  "freshness_state": "stale",
+  "source_provenance": "The commit and observation time identify the latest of the three tracked validation, smoke, and status evidence files used by the fixture.",
+  "directions": [
+    {
+      "id": "A",
+      "slug": "priority-review-console",
+      "label": "Priority Review Console"
+    },
+    {
+      "id": "B",
+      "slug": "narrative-status-brief",
+      "label": "Narrative Status Brief"
+    },
+    {
+      "id": "C",
+      "slug": "lane-project-matrix",
+      "label": "Lane And Project Matrix"
+    }
+  ],
+  "default_direction": "A",
+  "default_language": "ja",
+  "production_generator_changed": false,
+  "source_fixture": "samples/dashboard/intent_comparison/intent_comparison_fixture.json",
+  "screenshot_paths": {
+    "A": "samples/dashboard/intent_comparison/screenshots/priority-review-console.png",
+    "B": "samples/dashboard/intent_comparison/screenshots/narrative-status-brief.png",
+    "C": "samples/dashboard/intent_comparison/screenshots/lane-project-matrix.png"
+  },
+  "capture": {
+    "viewport": {
+      "width": 1440,
+      "height": 1200,
+      "device_scale_factor": 1
+    },
+    "language": "ja",
+    "command": "node samples/dashboard/intent_comparison/capture_intent_comparison.mjs",
+    "browser_version": "150.0.4078.48",
+    "playwright_core_version": "1.57.0",
+    "dependency_install_performed": false
+  },
+  "validation_commands": [
+    "python -m unittest tests.test_dashboard_intent_comparison",
+    "python -c \"import json, pathlib; [json.loads(p.read_text(encoding='utf-8')) for p in pathlib.Path('samples/dashboard/intent_comparison').glob('*.json')]\"",
+    "git diff --check",
+    "node samples/dashboard/intent_comparison/capture_intent_comparison.mjs"
+  ]
+}

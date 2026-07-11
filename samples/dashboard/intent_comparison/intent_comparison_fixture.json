@@ -1,0 +1,201 @@
+{
+  "schema_version": "intent_comparison_fixture.v1",
+  "artifact_id": "verified-observation-surface-intent-pack-v1",
+  "evidence_role": {
+    "point_in_time": true,
+    "authoritative_for_live_state": false,
+    "ja": "この比較パックは時点観測であり、現在状態の権威ではありません。",
+    "en": "This comparison pack is a point-in-time observation, not authority for live state."
+  },
+  "source_commit": "2e5e924b12a311260bf10c7b252c0695cac7f80c",
+  "observed_at": "2026-07-06T16:56:16+09:00",
+  "freshness_state": "stale",
+  "freshness_explanation": {
+    "ja": "stale の証拠は履歴として有効な場合がありますが、現在状態の確認には再観測が必要です。",
+    "en": "Stale evidence may remain valid history, but current state requires a new observation."
+  },
+  "source_paths": [
+    "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+    "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+    "samples/status_snapshots/devcockpitcore_status.json"
+  ],
+  "evidence_sources": [
+    {
+      "path": "samples/status_snapshots/devcockpitcore_status.json",
+      "generated_at": "2026-07-06T07:55:33Z",
+      "head": "2e5e924"
+    },
+    {
+      "path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "generated_at": "2026-07-06T07:55:56Z",
+      "head": "2e5e924"
+    },
+    {
+      "path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "generated_at": "2026-07-06T07:56:16Z",
+      "head": "2e5e924"
+    }
+  ],
+  "validation_provenance": {
+    "scope": "local_only",
+    "command": "PYTHONPATH=src python -m dev_cockpit.validation_pack --default --pretty",
+    "result": "warn",
+    "checks_passed": 15,
+    "checks_total": 16,
+    "known_warning_count": 1,
+    "blocker_count": 0,
+    "warning_id": "pseudo_git_tag_fixture_warning"
+  },
+  "lanes": [
+    {
+      "id": "foundation_observer",
+      "state": "verified",
+      "display_key": "lane.observer"
+    },
+    {
+      "id": "foundation_automation",
+      "state": "verified_with_warning",
+      "display_key": "lane.automation"
+    },
+    {
+      "id": "execution_automation",
+      "state": "bounded",
+      "display_key": "lane.execution"
+    },
+    {
+      "id": "project_review_surface",
+      "state": "decision_pending",
+      "display_key": "lane.review"
+    }
+  ],
+  "projects": [
+    {
+      "id": "devcockpitcore",
+      "priority": 1,
+      "state": "yellow",
+      "display_key": "project.devcockpitcore"
+    },
+    {
+      "id": "nlmytgen",
+      "priority": 2,
+      "state": "yellow",
+      "display_key": "project.nlmytgen"
+    },
+    {
+      "id": "writingpage",
+      "priority": 3,
+      "state": "yellow",
+      "display_key": "project.writingpage"
+    },
+    {
+      "id": "clippipegen",
+      "priority": 4,
+      "state": "yellow",
+      "display_key": "project.clippipegen"
+    }
+  ],
+  "next_decision": {
+    "id": "dashboard_information_architecture",
+    "question_key": "decision.question",
+    "research_recommendation_key": "decision.recommendation",
+    "selection_state": "user_preference_pending"
+  },
+  "semantic_contract": {
+    "state.summary": {
+      "ja": "基盤観測と限定実行の境界は維持。UI情報設計は選択待ちです。",
+      "en": "Observer foundations and bounded execution remain intact; the UI information architecture awaits selection."
+    },
+    "state.change": {
+      "ja": "同一データで3方向を比較する Intent Pack を追加。production generator は未変更です。",
+      "en": "An Intent Pack now compares three directions with identical data; the production generator is unchanged."
+    },
+    "decision.question": {
+      "ja": "A / B / C のどれが、現在状態と次の行動を最も早く理解できますか？",
+      "en": "Which of A / B / C makes the current state and next action fastest to understand?"
+    },
+    "decision.recommendation": {
+      "ja": "調査上の推奨は A。反復トリアージで決定と証拠の距離が最も短いためです。これは採用決定ではありません。",
+      "en": "Research recommends A because it keeps decisions closest to evidence during repeated triage. This is not an acceptance decision."
+    },
+    "metric.validation": {
+      "ja": "15 / 16 checks passed（local）",
+      "en": "15 / 16 checks passed (local)"
+    },
+    "metric.projects": {
+      "ja": "4 projects observed",
+      "en": "4 projects observed"
+    },
+    "metric.warnings": {
+      "ja": "1 known warning",
+      "en": "1 known warning"
+    },
+    "metric.blockers": {
+      "ja": "0 blockers",
+      "en": "0 blockers"
+    },
+    "warning.primary": {
+      "ja": "pseudo-git-tag fixture warning。非ブロッキングの既知警告です。",
+      "en": "Pseudo-git-tag fixture warning; a known non-blocking warning."
+    },
+    "lane.observer": {
+      "ja": "Foundation Observer — verified：status snapshot と 4 adapters を観測可能。",
+      "en": "Foundation Observer — verified: status snapshots and four adapters are observable."
+    },
+    "lane.automation": {
+      "ja": "Foundation Automation — verified_with_warning：validation 15 / 16、既知警告 1。",
+      "en": "Foundation Automation — verified_with_warning: validation 15 / 16 with one known warning."
+    },
+    "lane.execution": {
+      "ja": "Execution Automation — bounded：C3 help-only x2、C4 validation probe x1。",
+      "en": "Execution Automation — bounded: two help-only C3 probes and one C4 validation probe."
+    },
+    "lane.review": {
+      "ja": "Project Review Surface — decision_pending：production UI の方向選択前。",
+      "en": "Project Review Surface — decision_pending: production UI direction has not been selected."
+    },
+    "project.devcockpitcore": {
+      "ja": "1. DevCockpitCore — yellow：local validation warn、今回の優先対象。",
+      "en": "1. DevCockpitCore — yellow: local validation warns; current priority."
+    },
+    "project.nlmytgen": {
+      "ja": "2. NLMYTGen — yellow：optional repository observation。",
+      "en": "2. NLMYTGen — yellow: optional repository observation."
+    },
+    "project.writingpage": {
+      "ja": "3. WritingPage — yellow：optional repository observation。",
+      "en": "3. WritingPage — yellow: optional repository observation."
+    },
+    "project.clippipegen": {
+      "ja": "4. ClipPipeGen — yellow：optional repository observation。",
+      "en": "4. ClipPipeGen — yellow: optional repository observation."
+    },
+    "source.commit": {
+      "ja": "2e5e924b12a311260bf10c7b252c0695cac7f80c",
+      "en": "2e5e924b12a311260bf10c7b252c0695cac7f80c"
+    },
+    "source.observed_at": {
+      "ja": "2026-07-06T16:56:16+09:00",
+      "en": "2026-07-06T16:56:16+09:00"
+    },
+    "source.freshness": {
+      "ja": "stale",
+      "en": "stale"
+    },
+    "source.notice": {
+      "ja": "stale の証拠は履歴として有効な場合がありますが、現在状態の確認には再観測が必要です。",
+      "en": "Stale evidence may remain valid history, but current state requires a new observation."
+    },
+    "source.validation_path": {
+      "ja": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "en": "samples/validation_packs/devcockpitcore_validation_pack_result.json"
+    },
+    "source.smoke_path": {
+      "ja": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "en": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"
+    },
+    "source.status_path": {
+      "ja": "samples/status_snapshots/devcockpitcore_status.json",
+      "en": "samples/status_snapshots/devcockpitcore_status.json"
+    }
+  }
+}

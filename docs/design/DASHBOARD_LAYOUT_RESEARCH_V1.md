@@ -1,8 +1,9 @@
 # Dashboard Layout Research V1
 
-updated_at: 2026-07-07
-artifact: dashboard-layout-research-and-prototype-v1
-status: research_checkpoint
+updated_at: 2026-07-12
+artifact: dashboard-layout-research-v1
+continuation_artifact: verified-observation-surface-intent-pack-v1
+status: research_basis_for_direction_selection
 production_generator_status: unchanged
 
 ## Problem Statement
@@ -97,17 +98,21 @@ The next production redesign should follow these principles:
 | Layout Model | Helps With | Fails For This Surface | Decision |
 | --- | --- | --- | --- |
 | Card-grid-first dashboard | Fast scanning when every metric has similar weight. | Encourages parallel tiles, repeated warnings, and card proliferation. It does not naturally answer "what should I do now?" | Reject as primary structure. |
-| Status report plus priority queue | Makes current state and next action explicit. | Needs a paired evidence area or the queue becomes another list of claims. | Keep as part of selected model. |
+| Status report plus priority queue | Makes current state and next action explicit. | Needs a paired evidence area or the queue becomes another list of claims. | Keep as part of the candidate model. |
 | Incident command console | Strong for urgent severity, ownership, and active incident handling. | DevCockpitCore is mostly observer evidence and warning judgment, not live incident response. The tone would overstate urgency. | Borrow severity ordering, reject incident framing. |
-| Master-detail workspace | Good for a large collection where one item must be inspected without losing the list. | Pure list/detail can underplay the summary state if it starts directly with the list. | Keep as part of selected model. |
+| Master-detail workspace | Good for a large collection where one item must be inspected without losing the list. | Pure list/detail can underplay the summary state if it starts directly with the list. | Keep as part of the candidate model. |
 | Left-rail navigation with central narrative | Good for stable app sections and repeat users. | Navigation categories do not solve first-time sequencing; a rail can hide the priority decision. | Reject as primary structure. |
 | Timeline/current-state feed | Good for chronological change awareness. | The current evidence is not primarily a sequence of events; it is a set of readiness signals. | Reject for this slice. |
 | Wizard-like review sequence | Good when every operator must complete a strict process. | Too linear for an observer dashboard where many details are optional and should be ignored. | Reject for primary use. |
 | Single-page report with appendix evidence | Good for handoff and low-context reading. | Too static if the operator must compare warning rows and inspect one item repeatedly. | Keep as secondary appendix behavior. |
 
-## Selected Recommendation
+## Research Recommendation
 
-Choose exactly one architecture: Priority Review Console.
+The research work recommends Priority Review Console as one strong candidate.
+This recommendation is not user acceptance and does not authorize a production
+rewrite. The same-data comparison pack now places it beside two materially
+different low-fidelity directions for one user review. A production target
+remains unselected until that preference is recorded.
 
 The model combines a short state report, an ordered priority lane, an active
 review workspace, and an evidence inspector:
@@ -138,16 +143,27 @@ away. It also makes "ignore for now" visible: locked execution lanes, raw
 tables, and repeated review actions belong in the appendix unless the active
 review item needs them.
 
-## Low-Fidelity Prototype
+## Low-Fidelity Comparison Evidence
 
-Prototype path:
+Three-direction intent comparison:
+
+```text
+samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html
+```
+
+Earlier Priority Review Console prototype:
 
 ```text
 samples/dashboard/layout_research/devcockpitcore_layout_prototype.html
 ```
 
-The prototype demonstrates the selected architecture using current sample
-evidence:
+The earlier prototype demonstrates the research candidate in more detail. The
+comparison pack keeps 24 semantic values and bilingual wording identical across
+A, B, and C while changing only their information architecture. Its tracked
+evidence is explicitly stale and remains useful for direction selection, not
+for current-state claims.
+
+The research prototype used sample evidence with:
 
 - 0 blockers.
 - 9 warning signals.
@@ -158,8 +174,9 @@ evidence:
 - Locked execution expansion lanes stay non-executable and below the decision
   surface.
 
-The prototype is intentionally static and low-fidelity. It should be reviewed
-before any production generator rewrite.
+Both artifacts are intentionally static and low-fidelity. The comparison pack,
+its manifest, readback, and same-viewport screenshots should be reviewed before
+any production generator rewrite.
 
 ## Acceptance Criteria For A Future Production Redesign
 
@@ -190,8 +207,10 @@ A future production dashboard redesign should pass these checks:
 
 ## Review Debt
 
-- Decide whether the queue-led split workspace should become the next
-  production generator target.
+- Collect one free-form A, B, or C preference; do not build all three production
+  versions.
+- Decide whether the queue-led split workspace or another compared direction
+  should become the next production generator target.
 - Decide whether the priority queue should be derived from review actions,
   warning triage, or a new normalized operator-decision model.
 - Decide how much current source detail should remain visible by default on
