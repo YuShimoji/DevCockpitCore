@@ -1,6 +1,6 @@
 {
   "schema_version": "devcockpit_review_actions.v1",
-  "generated_at": "2026-07-07T01:02:40Z",
+  "generated_at": "2026-07-12T00:00:00Z",
   "producer": "dev_cockpit.dashboard",
   "source_dashboard": "samples/dashboard/devcockpitcore_dashboard.html",
   "package": {
@@ -10,9 +10,9 @@
     "access_evidence_level": "file_generated_by_dashboard_command"
   },
   "summary": {
-    "total": 20,
+    "total": 18,
     "blocker": 0,
-    "warning": 16,
+    "warning": 14,
     "info": 4,
     "locked_by_gate": 1
   },
@@ -48,22 +48,7 @@
       "safe_next_surface": "local_review"
     },
     {
-      "action_id": "validation-003",
-      "source_type": "validation_pack",
-      "severity": "warning",
-      "project_key": "devcockpitcore",
-      "source_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
-      "title": "Review validation warning",
-      "reason": "validation summary result is warn",
-      "evidence_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
-      "suggested_review": "Classify whether this is expected fixture or hygiene residue, then record whether cleanup is needed.",
-      "owner_hint": "operator",
-      "executable": false,
-      "blocked_by_gate": false,
-      "safe_next_surface": "local_review"
-    },
-    {
-      "action_id": "smoke-004",
+      "action_id": "smoke-003",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": null,
@@ -78,7 +63,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "smoke-005",
+      "action_id": "smoke-004",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": null,
@@ -93,7 +78,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "smoke-006",
+      "action_id": "smoke-005",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": null,
@@ -108,7 +93,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "smoke-007",
+      "action_id": "smoke-006",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": null,
@@ -123,7 +108,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "smoke-008",
+      "action_id": "smoke-007",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": null,
@@ -138,7 +123,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "smoke-009",
+      "action_id": "smoke-008",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": null,
@@ -153,22 +138,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "smoke-010",
-      "source_type": "cross_project_smoke",
-      "severity": "warning",
-      "project_key": null,
-      "source_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-      "title": "Review cross-project smoke warning",
-      "reason": "cross-project smoke summary result is warn",
-      "evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-      "suggested_review": "Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.",
-      "owner_hint": "operator",
-      "executable": false,
-      "blocked_by_gate": false,
-      "safe_next_surface": "dashboard_only"
-    },
-    {
-      "action_id": "project-devcockpitcore-011",
+      "action_id": "project-devcockpitcore-009",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": "devcockpitcore",
@@ -183,7 +153,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "project-nlmytgen-012",
+      "action_id": "project-nlmytgen-010",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": "nlmytgen",
@@ -198,7 +168,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "project-writingpage-013",
+      "action_id": "project-writingpage-011",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": "writingpage",
@@ -213,7 +183,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "project-clippipegen-014",
+      "action_id": "project-clippipegen-012",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": "clippipegen",
@@ -228,7 +198,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "project-clippipegen-015",
+      "action_id": "project-clippipegen-013",
       "source_type": "cross_project_smoke",
       "severity": "warning",
       "project_key": "clippipegen",
@@ -243,7 +213,7 @@
       "safe_next_surface": "dashboard_only"
     },
     {
-      "action_id": "status-016",
+      "action_id": "status-014",
       "source_type": "status_snapshot",
       "severity": "warning",
       "project_key": "devcockpitcore",
@@ -258,52 +228,52 @@
       "safe_next_surface": "local_review"
     },
     {
+      "action_id": "checkpoint-015",
+      "source_type": "dashboard_review",
+      "severity": "info",
+      "project_key": "devcockpitcore",
+      "source_path": "samples/dashboard/devcockpitcore_dashboard.html",
+      "title": "1. Priority Comprehension",
+      "reason": "0 blocker(s), 9 warning signal(s)",
+      "evidence_path": "Priority Lane / Active Decision",
+      "suggested_review": "Confirm rank 1 exposes action, reason, state, owner, and next operation.",
+      "owner_hint": "supervisor",
+      "executable": false,
+      "blocked_by_gate": false,
+      "safe_next_surface": "manual_freeform"
+    },
+    {
+      "action_id": "checkpoint-016",
+      "source_type": "dashboard_review",
+      "severity": "info",
+      "project_key": "devcockpitcore",
+      "source_path": "samples/dashboard/devcockpitcore_dashboard.html",
+      "title": "2. Selection Synchronization",
+      "reason": "priority, decision, and evidence share one selected ID",
+      "evidence_path": "Priority Review Console",
+      "suggested_review": "Confirm click and keyboard selection keep the decision and evidence inspector synchronized.",
+      "owner_hint": "supervisor",
+      "executable": false,
+      "blocked_by_gate": false,
+      "safe_next_surface": "manual_freeform"
+    },
+    {
       "action_id": "checkpoint-017",
       "source_type": "dashboard_review",
       "severity": "info",
       "project_key": "devcockpitcore",
       "source_path": "samples/dashboard/devcockpitcore_dashboard.html",
-      "title": "1. Report Clarity",
-      "reason": "0 blocker(s), 9 warning signal(s)",
-      "evidence_path": "Current Status Report",
-      "suggested_review": "Confirm the first screen reads as a concise current-status report.",
-      "owner_hint": "supervisor",
-      "executable": false,
-      "blocked_by_gate": false,
-      "safe_next_surface": "manual_freeform"
-    },
-    {
-      "action_id": "checkpoint-018",
-      "source_type": "dashboard_review",
-      "severity": "info",
-      "project_key": "devcockpitcore",
-      "source_path": "samples/dashboard/devcockpitcore_dashboard.html",
-      "title": "2. Review Map Linkage",
-      "reason": "6 compact review-map links",
-      "evidence_path": "Linked Detail Map",
-      "suggested_review": "Confirm each Review Map link lands on the matching detail panel and back link.",
-      "owner_hint": "supervisor",
-      "executable": false,
-      "blocked_by_gate": false,
-      "safe_next_surface": "manual_freeform"
-    },
-    {
-      "action_id": "checkpoint-019",
-      "source_type": "dashboard_review",
-      "severity": "info",
-      "project_key": "devcockpitcore",
-      "source_path": "samples/dashboard/devcockpitcore_dashboard.html",
-      "title": "3. Evidence Freshness",
+      "title": "3. Evidence Eligibility",
       "reason": "validation warn / smoke warn",
-      "evidence_path": "Sources and Access",
-      "suggested_review": "Verify source generated_at values are current enough for the review decision.",
+      "evidence_path": "Evidence Inspector / receipt ledger",
+      "suggested_review": "Verify the receipt's freshness, revision binding, authority, and current-claim eligibility.",
       "owner_hint": "supervisor",
       "executable": false,
       "blocked_by_gate": false,
       "safe_next_surface": "manual_freeform"
     },
     {
-      "action_id": "locked-gate-020",
+      "action_id": "locked-gate-018",
       "source_type": "locked_gate",
       "severity": "info",
       "project_key": "devcockpitcore",

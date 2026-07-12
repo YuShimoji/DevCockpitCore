@@ -10,7 +10,8 @@ work with less ambiguity.
 - [Timestamped product state and review navigation](docs/PROJECT_COCKPIT.md)
 - [Durable project context and capability boundaries](docs/project-context.md)
 - [Bounded machine-facing restart projection](docs/runtime-state.md)
-- [Three-direction dashboard intent comparison](samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
+- [Production Priority Review Console](samples/dashboard/devcockpitcore_dashboard.html)
+- [Historical three-direction intent comparison](samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
 
 The Project Cockpit is a timestamped navigation snapshot, not a universal
 source of truth. Git records code and version state, local tests and generated
@@ -246,75 +247,91 @@ The smoke does not run tests, builds, renders, adapter `default_validation`, or
 writeback in target repositories. The next roadmap step is
 `controlled-runner-design`, still without execution automation in this slice.
 
-## Local test dashboard
+## Production Priority Review Console
 
-The local test dashboard turns current validation, smoke, status, adapter, and
-runtime/project context evidence into one static HTML review surface. It now
-opens with a report-first dark frontpage: a concise Current Status /
-Supervision Report, compact status strip, one primary review link, and one
-secondary evidence link. The former large meter board is demoted into a compact
-Review Map below the report, and each Review Map item links to the detail panel
-and review action surface it explains. It is a local file only: no server,
-database, credentials, external services, or target repository writeback.
+A / Priority Review Console is the selected production information
+architecture. The A/B/C selection gate is closed. The generator combines
+validation, smoke, status, adapter, project context, review-action, and the
+existing Evidence Freshness V1 receipt into one local, static, bilingual review
+surface. The first desktop viewport places a concise current-state strip, one
+ordered Priority Lane, the selected item's Active Decision workspace, and its
+adjacent Evidence Inspector in one review flow. Dense project lists, raw
+tables, and historical evidence remain subordinate appendix material.
 
-The dashboard generator also writes a non-executable review action package
-derived from validation, smoke, status, and dashboard-review evidence:
+The queue is evidence-derived and deterministic. True blockers and failed
+required checks lead; required validation failures and then
+current-state-ineligible evidence follow; owned actionable warnings,
+maintenance or decision work, and optional information follow in that order.
+Stable tie-breaking and deduplication turn duplicate
+conditions into one non-executable operator action. Locked execution lanes are
+not emitted as actionable priorities. Within one precedence class, required
+items sort before optional items, followed lexically by `project_key`,
+`condition_key`, and primary evidence path. Deduplication uses the stable
+project-and-condition identity. The readback keeps observed evidence, derived
+rank/actions, policy ordering, and editorial display copy distinguishable.
 
+The default generated artifacts are:
+
+- `samples/dashboard/devcockpitcore_dashboard.html`
+- `samples/dashboard/devcockpitcore_priority_readback.json`
 - `samples/dashboard/devcockpitcore_review_actions.json`
 - `samples/dashboard/devcockpitcore_review_actions.md`
 
-Every generated action is review-only and carries `executable: false`.
+Every review action remains review-only with `executable: false`. The dashboard
+does not add a server, scheduler, database, credentials, external service,
+notification integration, or target-repository writeback.
 
-The generated dashboard includes accessibility-oriented review affordances:
-semantic section landmarks, a skip link, section navigation, visible focus
-states, table captions, non-JavaScript fallback copy, and print styling for
-manual handoff. Dense evidence remains below the frontpage report or inside
-native `details` disclosure panels, while the Review Stack points to at most
-three immediate review targets. This is an accessibility-oriented navigation
-and visual-density pass, not a formal compliance claim.
+Evidence Freshness V1 is an input contract, not dashboard-local re-evaluation.
+The generator loads and validates
+`samples/evidence_freshness/evidence_freshness_receipt_v1.json`, including its
+authority boundary, freshness, revision binding, provenance, and
+`current_state_claim_eligible` result. The tracked receipt is a deterministic
+point-in-time example and is visibly non-live. Generate a newly assessed local
+receipt before using the dashboard for a current-state claim.
 
-Generate the dashboard with:
+Generate all default dashboard artifacts from PowerShell with:
 
-```bash
-PYTHONPATH=src python -m dev_cockpit.dashboard \
-  --output samples/dashboard/devcockpitcore_dashboard.html
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.dashboard
 ```
 
-The default artifact lives at
-`samples/dashboard/devcockpitcore_dashboard.html`. From PowerShell, open it
-after generation with:
+To generate a current local package outside the worktree, write the live
+receipt to an explicit path and pass that exact receipt to the dashboard:
+
+```powershell
+$env:PYTHONPATH = "src"
+$live = Join-Path (Split-Path -Parent (Resolve-Path .)) "DevCockpitCore-live-dashboard"
+New-Item -ItemType Directory -Force $live | Out-Null
+python -m dev_cockpit.evidence_freshness `
+  --output-json "$live\evidence_freshness_receipt_v1.json" `
+  --output-markdown "$live\evidence_freshness_receipt_v1.md" `
+  --pretty
+python -m dev_cockpit.dashboard `
+  --freshness-receipt "$live\evidence_freshness_receipt_v1.json" `
+  --output "$live\devcockpitcore_dashboard.html" `
+  --priority-readback "$live\devcockpitcore_priority_readback.json" `
+  --review-actions-json "$live\devcockpitcore_review_actions.json" `
+  --review-actions-md "$live\devcockpitcore_review_actions.md"
+Start-Process "$live\devcockpitcore_dashboard.html"
+```
+
+The input and output paths can be overridden with `--freshness-receipt`,
+`--output`, `--priority-readback`, `--review-actions-json`, and
+`--review-actions-md`. The console script name is also wired in
+`pyproject.toml`:
+
+```bash
+dev-cockpit-dashboard
+```
+
+Open the generated production file from PowerShell:
 
 ```powershell
 Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```
 
-The active dashboard design checkpoint is
-`verified-observation-surface-intent-pack-v1`. Production dashboard polishing
-is paused until one of three same-data, low-fidelity information-architecture
-directions is selected:
-
-- `docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`
-- `samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`
-- `samples/dashboard/intent_comparison/intent_comparison_manifest.json`
-- `samples/dashboard/intent_comparison/intent_comparison_readback.json`
-
-The comparison is Japanese-first with an English toggle. It is point-in-time
-review evidence, not live-state authority, and it does not modify
-`src/dev_cockpit/dashboard.py`.
-
-Open it from the repository root in PowerShell:
-
-```powershell
-Start-Process .\samples\dashboard\intent_comparison\verified_observation_surface_intent_pack.html
-```
-
-The console script name is also wired in `pyproject.toml`:
-
-```bash
-dev-cockpit-dashboard --output samples/dashboard/devcockpitcore_dashboard.html
-```
-
-Dashboard inputs default to the current sample evidence:
+Dashboard inputs default to:
 
 - `samples/validation_packs/devcockpitcore_validation_pack_result.json`
 - `samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json`
@@ -322,17 +339,27 @@ Dashboard inputs default to the current sample evidence:
 - `adapters/devcockpitcore.json`
 - `docs/runtime-state.md`
 - `docs/project-context.md`
+- `samples/evidence_freshness/evidence_freshness_receipt_v1.json`
 
-The generated project-card search and result filters are local DOM affordances
-over already-rendered static content. The review-action filters behave the same
-way. The core review content remains visible without JavaScript.
+Japanese is the default; the in-page language switch presents the same
+priorities and evidence in English. Priority selection synchronizes the Active
+Decision and Evidence Inspector. The first priority and its evidence remain
+available as a non-JavaScript fallback, and dense evidence is available through
+progressive disclosure. These are accessibility-oriented review affordances,
+not a formal compliance claim.
 
-For manual review, open the file, read the Current Status / Supervision Report
-first, confirm it feels like a concise status report rather than a bolt-on
-brief card, then confirm the native dark Review Map remains compact and
-secondary. Use the Review Map links to land on the matching detail panels,
-check the back-to-review-map links with `Tab`, expand dense evidence only as
-needed, then use browser print preview to inspect the static handoff view.
+Production raster evidence, its capture manifest, and machine readback are
+kept under `samples/dashboard/production_capture/`. The current review asks the
+user only for one free-form production visual/comprehension judgment;
+`user_visual_acceptance` remains `pending` until that review occurs.
+
+The earlier v2 A/B/C comparison remains historical research evidence at
+`samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`.
+It is not live-state authority and no longer controls production selection. B /
+Narrative Status Brief is retained only as a possible future handoff or summary
+view. C / Lane And Project Overview is retained only as a possible future
+cross-project overview. Neither is a production tab or an active implementation
+request.
 
 ## Controlled runner design
 
@@ -643,8 +670,8 @@ micro-artifact:
    cross-project smoke, dashboard evidence, and review actions.
 3. Execution Automation Readiness: the bounded C3 help-only and single C4
    validation-pack probes; broader execution remains locked.
-4. Project Review Surface: compare candidate information architectures, record
-   the user's preferred direction, then implement and verify only that
-   production direction.
+4. Project Review Surface: A / Priority Review Console is the selected
+   production direction; verify it with one free-form user visual/comprehension
+   review before any bounded density or ordering calibration.
 
 See `docs/PROJECT_COCKPIT.md` for current lane state and next entrances.

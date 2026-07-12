@@ -1,0 +1,616 @@
+{
+  "artifact_id": "priority-review-console-production-observation-surface-v1",
+  "freshness_receipt": {
+    "assessed_at": "2026-07-12T00:00:00Z",
+    "authority": {
+      "authoritative_for_live_state": false,
+      "classification": "point_in_time_non_live",
+      "live": false,
+      "may_support_current_state_at_assessed_at": false,
+      "point_in_time": true,
+      "statement": "Tracked deterministic example; never authoritative for live state.",
+      "tracked_example": true
+    },
+    "capture_id": "efr-cbae922571043527b800",
+    "current_state_claim_eligible": {
+      "eligible": 0,
+      "ineligible": 8
+    },
+    "observation_mode": "injected_deterministic_observations",
+    "path": "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+    "schema_version": "evidence_freshness_receipt.v1",
+    "source_counts": {
+      "fresh": 3,
+      "stale": 4,
+      "total": 8,
+      "unknown": 1
+    }
+  },
+  "generated_at": "2026-07-12T00:00:00Z",
+  "priorities": [
+    {
+      "action": {
+        "en": "Refresh evidence and restore current-state eligibility",
+        "ja": "現状根拠を更新して適格性を回復する"
+      },
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "current_claim_ineligible",
+      "decision": {
+        "en": "Which read-only observation must be refreshed before current state can be judged safely?",
+        "ja": "どの読み取り専用観測を更新すれば、現在状態を安全に判断できるか。"
+      },
+      "desired_outcome": {
+        "en": "A new receipt makes at least one required observation current-state eligible.",
+        "ja": "新しい鮮度証跡で、少なくとも1つの必須観測が現状根拠として使用可能になる。"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": "5914ab9662ecadb36287eb0a6b8c6308e764fc4cf383f9fd5b29c30282d773f0",
+          "current_state_claim_eligible": false,
+          "fresh_through": "2026-07-13T00:00:00Z",
+          "freshness_state": "fresh",
+          "reason_codes": [
+            "receipt_not_authoritative_for_live_state",
+            "revision_match",
+            "timestamp_within_threshold"
+          ],
+          "revision_binding_state": "match",
+          "source_id": "devcockpitcore.live_status_observation",
+          "source_path": "git-observation:.",
+          "temporal_state": "fresh"
+        }
+      ],
+      "executable": false,
+      "owner": {
+        "en": "Operator",
+        "id": "operator",
+        "ja": "運用担当"
+      },
+      "precedence": 3,
+      "primary_evidence_id": "devcockpitcore.live_status_observation",
+      "primary_evidence_path": "git-observation:.",
+      "priority_id": "priority-4c6fe193f4e7",
+      "project_key": "devcockpitcore",
+      "rank": 1,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "receipt_not_authoritative_for_live_state, revision_match, revision_mismatch, timestamp_threshold_exceeded, timestamp_within_threshold",
+      "reason": {
+        "en": "No evidence for the required project is eligible for a current-state claim.",
+        "ja": "必須プロジェクトを現在状態として扱える根拠がありません。"
+      },
+      "required": true,
+      "review_action_refs": [],
+      "safe_next_surface": "local_review",
+      "state": {
+        "en": "Evidence refresh needed",
+        "ja": "根拠更新待ち",
+        "key": "evidence_ineligible"
+      }
+    },
+    {
+      "action": {
+        "en": "Review Git UI markers in the sample report",
+        "ja": "サンプル報告内のGit UI表記を確認する"
+      },
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "validation_check:pseudo_git_tag_scan",
+      "decision": {
+        "en": "Should this remain as a known fixture or be removed as hygiene residue?",
+        "ja": "既知fixtureとして維持するか、衛生上の残留として除去するか。"
+      },
+      "desired_outcome": {
+        "en": "The warning's intent and next treatment are recorded.",
+        "ja": "警告の意図と次の扱いが記録される。"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": "91bc955113ecc00c5ddb008eeb447a30efe9eba74be6b2e3babef649cbbcf313",
+          "current_state_claim_eligible": false,
+          "fresh_through": "2026-07-07T07:55:56Z",
+          "freshness_state": "stale",
+          "reason_codes": [
+            "receipt_not_authoritative_for_live_state",
+            "revision_mismatch",
+            "timestamp_threshold_exceeded"
+          ],
+          "revision_binding_state": "mismatch",
+          "source_id": "validation-pack-sample",
+          "source_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+          "temporal_state": "stale"
+        }
+      ],
+      "executable": false,
+      "owner": {
+        "en": "Operator",
+        "id": "operator",
+        "ja": "運用担当"
+      },
+      "precedence": 4,
+      "primary_evidence_id": "validation-pack-sample",
+      "primary_evidence_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "priority_id": "priority-3978971f158b",
+      "project_key": "devcockpitcore",
+      "rank": 2,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "{\"path\":\"samples/reports/agent_report_adapter_manifest_v1_redacted.txt\",\"pseudo_git_tag\":[\"::git-commit\",\"::git-push\",\"::git-stage\"]}",
+      "reason": {
+        "en": "The tracked validation pack records one hygiene warning that needs classification.",
+        "ja": "追跡済み検証packが、確認の必要な衛生上の警告を1件記録しています。"
+      },
+      "required": true,
+      "review_action_refs": [
+        {
+          "action_id": "validation-001",
+          "evidence_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+          "executable": false,
+          "owner_hint": "operator",
+          "severity": "warning",
+          "source_type": "validation_pack"
+        }
+      ],
+      "safe_next_surface": "local_review",
+      "state": {
+        "en": "Review",
+        "ja": "要確認",
+        "key": "review"
+      }
+    },
+    {
+      "action": {
+        "en": "Review the DevCockpitCore observation warning",
+        "ja": "DevCockpitCore の観測警告を確認する"
+      },
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "worktree_dirty",
+      "decision": {
+        "en": "Is this expected observer state, or should it be routed to that project's own lane?",
+        "ja": "想定内の観測状態か、当該プロジェクトの専用laneへ送るべきか。"
+      },
+      "desired_outcome": {
+        "en": "Owner and next review surface are clear without writeback from DevCockpitCore.",
+        "ja": "DevCockpitCoreから書き戻さず、所有者と次の確認先が明確になる。"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": "55d248ef4133f87867836bd57b2a60ed2b2b05964a8ae84c4a645b4069df60fb",
+          "current_state_claim_eligible": false,
+          "fresh_through": "2026-07-07T07:56:16Z",
+          "freshness_state": "stale",
+          "reason_codes": [
+            "receipt_not_authoritative_for_live_state",
+            "revision_mismatch",
+            "timestamp_threshold_exceeded"
+          ],
+          "revision_binding_state": "mismatch",
+          "source_id": "cross-project-smoke-sample",
+          "source_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "temporal_state": "stale"
+        },
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": "311de6f138c588ee137f72275edd085be2e30f1eb6a41beff525ec95bedb3958",
+          "current_state_claim_eligible": false,
+          "fresh_through": "2026-07-07T07:55:33Z",
+          "freshness_state": "stale",
+          "reason_codes": [
+            "receipt_not_authoritative_for_live_state",
+            "revision_mismatch",
+            "timestamp_threshold_exceeded"
+          ],
+          "revision_binding_state": "mismatch",
+          "source_id": "status-snapshot-sample",
+          "source_path": "samples/status_snapshots/devcockpitcore_status.json",
+          "temporal_state": "stale"
+        }
+      ],
+      "executable": false,
+      "owner": {
+        "en": "Operator",
+        "id": "operator",
+        "ja": "運用担当"
+      },
+      "precedence": 4,
+      "primary_evidence_id": "cross-project-smoke-sample",
+      "primary_evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "priority_id": "priority-75a6f2949a8b",
+      "project_key": "devcockpitcore",
+      "rank": 3,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "worktree is dirty",
+      "reason": {
+        "en": "The read-only observation reports: worktree is dirty",
+        "ja": "読み取り専用観測の報告: 作業ツリーに未確定変更があります。"
+      },
+      "required": true,
+      "review_action_refs": [
+        {
+          "action_id": "project-devcockpitcore-009",
+          "evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "executable": false,
+          "owner_hint": "operator",
+          "severity": "warning",
+          "source_type": "cross_project_smoke"
+        },
+        {
+          "action_id": "status-014",
+          "evidence_path": "samples/status_snapshots/devcockpitcore_status.json",
+          "executable": false,
+          "owner_hint": "operator",
+          "severity": "warning",
+          "source_type": "status_snapshot"
+        }
+      ],
+      "safe_next_surface": "local_review",
+      "state": {
+        "en": "Review",
+        "ja": "要確認",
+        "key": "review"
+      }
+    },
+    {
+      "action": {
+        "en": "Review the ClipPipeGen observation warning",
+        "ja": "ClipPipeGen の観測警告を確認する"
+      },
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "project_context_missing",
+      "decision": {
+        "en": "Is this expected observer state, or should it be routed to that project's own lane?",
+        "ja": "想定内の観測状態か、当該プロジェクトの専用laneへ送るべきか。"
+      },
+      "desired_outcome": {
+        "en": "Owner and next review surface are clear without writeback from DevCockpitCore.",
+        "ja": "DevCockpitCoreから書き戻さず、所有者と次の確認先が明確になる。"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": "55d248ef4133f87867836bd57b2a60ed2b2b05964a8ae84c4a645b4069df60fb",
+          "current_state_claim_eligible": false,
+          "fresh_through": "2026-07-07T07:56:16Z",
+          "freshness_state": "stale",
+          "reason_codes": [
+            "receipt_not_authoritative_for_live_state",
+            "revision_mismatch",
+            "timestamp_threshold_exceeded"
+          ],
+          "revision_binding_state": "mismatch",
+          "source_id": "cross-project-smoke-sample",
+          "source_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "temporal_state": "stale"
+        }
+      ],
+      "executable": false,
+      "owner": {
+        "en": "Project owner",
+        "id": "project_owner",
+        "ja": "プロジェクト所有者"
+      },
+      "precedence": 5,
+      "primary_evidence_id": "cross-project-smoke-sample",
+      "primary_evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "priority_id": "priority-aeb1cd4b54d7",
+      "project_key": "clippipegen",
+      "rank": 4,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "project context document is absent",
+      "reason": {
+        "en": "The read-only observation reports: project context document is absent",
+        "ja": "読み取り専用観測の報告: project-context文書がありません。"
+      },
+      "required": false,
+      "review_action_refs": [
+        {
+          "action_id": "project-clippipegen-013",
+          "evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "executable": false,
+          "owner_hint": "operator",
+          "severity": "warning",
+          "source_type": "cross_project_smoke"
+        }
+      ],
+      "safe_next_surface": "local_review",
+      "state": {
+        "en": "Decision pending",
+        "ja": "判断待ち",
+        "key": "decision"
+      }
+    },
+    {
+      "action": {
+        "en": "Review the ClipPipeGen observation warning",
+        "ja": "ClipPipeGen の観測警告を確認する"
+      },
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "runtime_state_missing",
+      "decision": {
+        "en": "Is this expected observer state, or should it be routed to that project's own lane?",
+        "ja": "想定内の観測状態か、当該プロジェクトの専用laneへ送るべきか。"
+      },
+      "desired_outcome": {
+        "en": "Owner and next review surface are clear without writeback from DevCockpitCore.",
+        "ja": "DevCockpitCoreから書き戻さず、所有者と次の確認先が明確になる。"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": "55d248ef4133f87867836bd57b2a60ed2b2b05964a8ae84c4a645b4069df60fb",
+          "current_state_claim_eligible": false,
+          "fresh_through": "2026-07-07T07:56:16Z",
+          "freshness_state": "stale",
+          "reason_codes": [
+            "receipt_not_authoritative_for_live_state",
+            "revision_mismatch",
+            "timestamp_threshold_exceeded"
+          ],
+          "revision_binding_state": "mismatch",
+          "source_id": "cross-project-smoke-sample",
+          "source_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "temporal_state": "stale"
+        }
+      ],
+      "executable": false,
+      "owner": {
+        "en": "Project owner",
+        "id": "project_owner",
+        "ja": "プロジェクト所有者"
+      },
+      "precedence": 5,
+      "primary_evidence_id": "cross-project-smoke-sample",
+      "primary_evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "priority_id": "priority-2bba5e675add",
+      "project_key": "clippipegen",
+      "rank": 5,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "runtime state document is absent",
+      "reason": {
+        "en": "The read-only observation reports: runtime state document is absent",
+        "ja": "読み取り専用観測の報告: runtime-state文書がありません。"
+      },
+      "required": false,
+      "review_action_refs": [
+        {
+          "action_id": "project-clippipegen-012",
+          "evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "executable": false,
+          "owner_hint": "operator",
+          "severity": "warning",
+          "source_type": "cross_project_smoke"
+        }
+      ],
+      "safe_next_surface": "local_review",
+      "state": {
+        "en": "Decision pending",
+        "ja": "判断待ち",
+        "key": "decision"
+      }
+    },
+    {
+      "action": {
+        "en": "Review the NLMYTGen observation warning",
+        "ja": "NLMYTGen の観測警告を確認する"
+      },
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "branch_differs_from_default",
+      "decision": {
+        "en": "Is this expected observer state, or should it be routed to that project's own lane?",
+        "ja": "想定内の観測状態か、当該プロジェクトの専用laneへ送るべきか。"
+      },
+      "desired_outcome": {
+        "en": "Owner and next review surface are clear without writeback from DevCockpitCore.",
+        "ja": "DevCockpitCoreから書き戻さず、所有者と次の確認先が明確になる。"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": "55d248ef4133f87867836bd57b2a60ed2b2b05964a8ae84c4a645b4069df60fb",
+          "current_state_claim_eligible": false,
+          "fresh_through": "2026-07-07T07:56:16Z",
+          "freshness_state": "stale",
+          "reason_codes": [
+            "receipt_not_authoritative_for_live_state",
+            "revision_mismatch",
+            "timestamp_threshold_exceeded"
+          ],
+          "revision_binding_state": "mismatch",
+          "source_id": "cross-project-smoke-sample",
+          "source_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "temporal_state": "stale"
+        }
+      ],
+      "executable": false,
+      "owner": {
+        "en": "Project owner",
+        "id": "project_owner",
+        "ja": "プロジェクト所有者"
+      },
+      "precedence": 5,
+      "primary_evidence_id": "cross-project-smoke-sample",
+      "primary_evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "priority_id": "priority-a89ed06a4a15",
+      "project_key": "nlmytgen",
+      "rank": 6,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "current branch 'codex/episode-002-thumbnail-visual-proof-v1' differs from adapter default 'master'",
+      "reason": {
+        "en": "The read-only observation reports: current branch 'codex/episode-002-thumbnail-visual-proof-v1' differs from adapter default 'master'",
+        "ja": "読み取り専用観測の報告: 現在のbranchがadapterの既定branchと異なります。"
+      },
+      "required": false,
+      "review_action_refs": [
+        {
+          "action_id": "project-nlmytgen-010",
+          "evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "executable": false,
+          "owner_hint": "operator",
+          "severity": "warning",
+          "source_type": "cross_project_smoke"
+        }
+      ],
+      "safe_next_surface": "local_review",
+      "state": {
+        "en": "Decision pending",
+        "ja": "判断待ち",
+        "key": "decision"
+      }
+    },
+    {
+      "action": {
+        "en": "Record missing optional project writingpage",
+        "ja": "任意プロジェクト writingpage の欠落を記録する"
+      },
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "optional_project_missing",
+      "decision": {
+        "en": "Should this remain informational until the next observation?",
+        "ja": "次回観測まで参考情報として残すか。"
+      },
+      "desired_outcome": {
+        "en": "Optional absence is not confused with a required problem.",
+        "ja": "任意欠落が必須問題と混同されない。"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-12T00:00:00Z",
+          "authority_classification": "point_in_time_non_live",
+          "content_sha256": null,
+          "current_state_claim_eligible": false,
+          "fresh_through": null,
+          "freshness_state": "unknown",
+          "reason_codes": [
+            "optional_project_missing"
+          ],
+          "revision_binding_state": "unknown",
+          "source_id": "writingpage.live_status_observation",
+          "source_path": "git-observation:../WritingPage",
+          "temporal_state": "unknown"
+        }
+      ],
+      "executable": false,
+      "owner": {
+        "en": "Observer",
+        "id": "observer",
+        "ja": "観測担当"
+      },
+      "precedence": 6,
+      "primary_evidence_id": "writingpage.live_status_observation",
+      "primary_evidence_path": "git-observation:../WritingPage",
+      "priority_id": "priority-8b555b987fdc",
+      "project_key": "writingpage",
+      "rank": 7,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "optional_project_missing",
+      "reason": {
+        "en": "The optional observation target is missing and does not stop the required gate.",
+        "ja": "任意観測先が見つかりません。必須ゲートは停止しません。"
+      },
+      "required": false,
+      "review_action_refs": [],
+      "safe_next_surface": "local_review",
+      "state": {
+        "en": "Informational",
+        "ja": "参考",
+        "key": "informational"
+      }
+    }
+  ],
+  "priority_output": {
+    "access_evidence_level": "file_generated_by_dashboard_command",
+    "access_state": "worker_generated_not_user_opened",
+    "repo_relative_path": "samples/dashboard/devcockpitcore_priority_readback.json",
+    "schema_version": "devcockpit_priority_readback.v1"
+  },
+  "priority_policy": [
+    {
+      "key": "required_blocker",
+      "label_en": "Required blocker",
+      "label_ja": "必須ブロッカー",
+      "precedence": 1
+    },
+    {
+      "key": "required_validation_failure",
+      "label_en": "Required validation failure",
+      "label_ja": "必須検証失敗",
+      "precedence": 2
+    },
+    {
+      "key": "current_state_evidence_ineligible",
+      "label_en": "Current-state evidence ineligible",
+      "label_ja": "現状根拠の不適格",
+      "precedence": 3
+    },
+    {
+      "key": "owned_actionable_warning",
+      "label_en": "Owned actionable warning",
+      "label_ja": "担当付き警告",
+      "precedence": 4
+    },
+    {
+      "key": "maintenance_or_decision",
+      "label_en": "Maintenance or decision",
+      "label_ja": "保守・判断",
+      "precedence": 5
+    },
+    {
+      "key": "optional_information",
+      "label_en": "Optional information",
+      "label_ja": "任意・参考情報",
+      "precedence": 6
+    }
+  ],
+  "producer": "dev_cockpit.dashboard",
+  "schema_version": "devcockpit_priority_readback.v1",
+  "scope_boundary": {
+    "execution_automation": false,
+    "external_publication": false,
+    "locked_lanes_excluded_from_priorities": true,
+    "observer_first": true,
+    "offline_static": true,
+    "target_repository_writeback": false
+  },
+  "surface": {
+    "b_and_c_production_tabs": false,
+    "default_language": "ja",
+    "executable": false,
+    "languages": [
+      "ja",
+      "en"
+    ],
+    "priority_count": 7,
+    "production": true,
+    "selected_direction": "priority-review-console",
+    "selected_priority_id": "priority-4c6fe193f4e7",
+    "user_visual_acceptance": "pending"
+  }
+}

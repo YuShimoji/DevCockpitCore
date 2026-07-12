@@ -3,7 +3,65 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
-## 2026-07-12 - Dashboard Intent Comparison Before Production Selection
+## 2026-07-13 - Priority Review Console Selected For Production
+
+Purpose: close the A/B/C material-direction gate and make the selected
+production observation surface explicit without expanding execution authority.
+
+Decision: select A / Priority Review Console as the production information
+architecture. This decision supersedes the 2026-07-12 pending-selection entry.
+B / Narrative Status Brief is retained only as a possible future handoff or
+summary view. C / Lane And Project Overview is retained only as a possible
+future cross-project overview. Neither B nor C is a production tab or an active
+implementation request.
+
+Effect: the production generator uses a concise current-state strip, one
+deterministically ordered Priority Lane, the selected priority's Active
+Decision workspace, and an adjacent Evidence Inspector as the primary
+viewport. Dense project, validation, and historical material is subordinate.
+The generator consumes the landed `evidence_freshness_receipt.v1` contract,
+rather than recreating freshness logic, and produces:
+
+- `samples/dashboard/devcockpitcore_dashboard.html`
+- `samples/dashboard/devcockpitcore_priority_readback.json`
+- `samples/dashboard/devcockpitcore_review_actions.json`
+- `samples/dashboard/devcockpitcore_review_actions.md`
+- the production capture package under `samples/dashboard/production_capture/`
+
+Requirements preserved:
+
+- Priority ranking is evidence-derived, deterministic, deduplicated, and
+  review-only.
+- Review Actions remain `executable: false`.
+- Tracked freshness evidence remains explicitly point-in-time and non-live;
+  receipt authority and current-claim eligibility remain visible.
+- Japanese is the default and English uses the same priorities and evidence in
+  the same HTML artifact.
+- A general runner, scheduler, server, database, credentials, notifications,
+  external services, and target-repository writeback remain absent.
+- C3 and C4 capability boundaries remain unchanged.
+
+State: the A/B/C direction gate is closed. The production artifact, priority
+readback, and capture package are the review surfaces. User production visual
+acceptance is still pending and is not implied by Worker image inspection.
+
+Owner: Agent maintains the local production generator and evidence package;
+the user owns one free-form production visual/comprehension judgment.
+
+Next move: open `samples/dashboard/devcockpitcore_dashboard.html` and judge
+whether the first viewport exposes current state, first priority, next
+operation, owner, evidence location, and current-claim status. Do not reopen an
+A/B/C choice unless a later explicit product decision supersedes this entry.
+
+Navigation note: README, Project Cockpit, runtime-state, pipeline, and this log
+are navigation and decision records, not live workflow authority. Verify Git,
+tests, generated readback, receipt authority, and capture hashes directly.
+
+## 2026-07-12 - Dashboard Intent Comparison Before Production Selection (Superseded)
+
+Superseded by the 2026-07-13 A-selection decision above. The following text is
+retained as historical provenance for the selection evidence and describes the
+state at the time of this entry, not current direction.
 
 Purpose: make the dashboard information-architecture choice reviewable without
 changing the production generator or comparing different evidence across
@@ -11,32 +69,35 @@ directions.
 
 Decision: use `verified-observation-surface-intent-pack-v1` as the current
 review artifact. It presents Priority Review Console, Narrative Status Brief,
-and Lane And Project Matrix with the same 24 semantic values, Japanese-first
+and Lane And Project Overview with the same 24 semantic values, Japanese-first
 copy, an English toggle, and explicit point-in-time provenance.
 
 Effect: one static comparison surface, a fixture, manifest, automated readback,
-capture helper, and three same-viewport screenshots now provide selection
-evidence. The earlier research recommendation for A remains advisory; no
-direction is accepted by this entry.
+capture helper, and three same-viewport screenshots provided selection evidence.
+At that checkpoint the earlier research recommendation for A was advisory, and
+the entry did not accept a direction.
 
 Requirements preserved:
 
-- `src/dev_cockpit/dashboard.py` remains unchanged.
+- `src/dev_cockpit/dashboard.py` was unchanged at that checkpoint.
 - The comparison is local, static, non-executable, and read-only.
 - Stale observation evidence is labeled and is not promoted to current-state
   authority.
 - The observer, automation, and bounded C3/C4 capability lanes remain separate.
 
-State: the comparison pack is available for review and the user preference is
-pending.
+Historical state at entry time: the comparison pack was available for review
+and the user preference had not yet been recorded.
 
-Owner: user selects A, B, or C; a later implementation slice may change the
-production generator only after that selection.
+Historical owner: the user was to select A, B, or C. That gate was completed by
+the 2026-07-13 decision.
 
-Next move: review the three directions in one viewport and record a short
-free-form preference with the most important reason.
+Historical next move (completed): review the three directions in one viewport
+and record a short free-form preference with the most important reason.
 
-## 2026-07-07 - Remote Sync Resume Handoff
+## 2026-07-07 - Remote Sync Resume Handoff (Historical)
+
+The sync and restart provenance below is retained, but its report-first
+dashboard state was superseded by the 2026-07-13 production A decision.
 
 Purpose: make another terminal able to resume from the latest pushed
 DevCockpitCore state without relying on chat context.
@@ -71,7 +132,10 @@ Next move: from another terminal, fetch/pull, verify parity, read
 `samples/dashboard/devcockpitcore_dashboard.html` for visual acceptance or
 select the next explicit route.
 
-## 2026-07-07 - Dashboard Report-First Frontpage Checkpoint
+## 2026-07-07 - Dashboard Report-First Frontpage Checkpoint (Superseded)
+
+Superseded for the production dashboard by the 2026-07-13 Priority Review
+Console decision. The checkpoint details remain as visual-history provenance.
 
 Purpose: preserve the structural correction after user visual feedback that the
 Latest Brief still felt forced and the top viewport remained card-heavy.

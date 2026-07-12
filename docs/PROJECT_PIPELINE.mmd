@@ -4,36 +4,34 @@ flowchart LR
     SS["status_snapshot.v1"]
     AD["adapter_manifest.v1"]
     RT["runtime/project context"]
-    GEN["dev_cockpit.dashboard generator<br/>(production unchanged)"]
-    IA["designer/operator IA model"]
-    AUDIT["current dashboard audit"]
-    RESEARCH["layout research and current audit"]
-    INTENT_PACK["verified observation surface intent pack v2"]
-    OPTION_A["A: Priority Review Console"]
-    OPTION_B["B: Narrative Status Brief"]
-    OPTION_C["C: Lane And Project Overview"]
-    USER_REVIEW["user direction review (pending)"]
-    REDESIGN["future production dashboard redesign"]
-    ACT["non-executable review action package"]
-    A11Y["accessibility-oriented handoff layer"]
-    REPORT["Current Status / Supervision Report"]
-    MAP["compact Review Map"]
-    STACK["Review Stack: top 3 targets"]
-    DETAIL["review-map-linked detail map"]
-    HTML["samples/dashboard/devcockpitcore_dashboard.html"]
-    JSON["samples/dashboard/devcockpitcore_review_actions.json"]
-    MD["samples/dashboard/devcockpitcore_review_actions.md"]
-    TRIAGE["warning triage + project cards"]
-    REVIEW["local human review"]
+    ACT_SOURCE["review-action derivation<br/>executable: false"]
+
     FRESH_POLICY["evidence freshness policy v1"]
     FRESH_CLI["python -m dev_cockpit.evidence_freshness"]
-    FRESH_RECEIPT["evidence_freshness_receipt.v1<br/>point-in-time / non-live"]
+    FRESH_RECEIPT["evidence_freshness_receipt.v1<br/>validated point-in-time input"]
 
-    VP --> GEN
-    SM --> GEN
-    SS --> GEN
-    AD --> GEN
-    RT --> GEN
+    GEN["dev_cockpit.dashboard<br/>production generator"]
+    POLICY["deterministic priority policy<br/>rank + deduplicate"]
+    OPTION_A["A: Priority Review Console<br/>selected production direction"]
+    SURFACE["priority-review-console-production-observation-surface-v1"]
+    STATE["concise current-state strip"]
+    PRIORITY["ordered Priority Lane"]
+    DECISION["Active Decision"]
+    EVIDENCE["Evidence Inspector<br/>freshness + provenance"]
+    APPENDIX["subordinate evidence appendix"]
+
+    HTML["devcockpitcore_dashboard.html"]
+    PRIORITY_JSON["devcockpitcore_priority_readback.json"]
+    ACTION_JSON["devcockpitcore_review_actions.json"]
+    ACTION_MD["devcockpitcore_review_actions.md"]
+    CAPTURE["production_capture<br/>JA desktop + EN desktop + JA narrow"]
+    USER_REVIEW["free-form production visual review<br/>pending"]
+
+    HISTORY["v2 A/B/C comparison<br/>historical selection provenance"]
+    OPTION_B["B: Narrative Status Brief<br/>possible future handoff/summary only"]
+    OPTION_C["C: Lane And Project Overview<br/>possible future cross-project overview only"]
+    FUTURE_NEED["future observed secondary-view need"]
+
     VP --> FRESH_RECEIPT
     SM --> FRESH_RECEIPT
     SS --> FRESH_RECEIPT
@@ -41,34 +39,46 @@ flowchart LR
     RT --> FRESH_RECEIPT
     FRESH_POLICY --> FRESH_RECEIPT
     FRESH_CLI --> FRESH_RECEIPT
-    GEN --> IA
-    IA --> AUDIT
-    AUDIT --> RESEARCH
-    RESEARCH --> INTENT_PACK
-    INTENT_PACK -. "low fidelity only" .-> OPTION_A
-    INTENT_PACK -. "low fidelity only" .-> OPTION_B
-    INTENT_PACK -. "low fidelity only" .-> OPTION_C
-    OPTION_A --> USER_REVIEW
-    OPTION_B --> USER_REVIEW
-    OPTION_C --> USER_REVIEW
-    USER_REVIEW -. "selected direction only" .-> REDESIGN
-    REDESIGN -. "not active slice" .-> GEN
-    IA --> ACT
-    IA --> A11Y
-    A11Y --> REPORT
-    REPORT --> MAP
-    MAP --> STACK
-    MAP --> DETAIL
-    DETAIL --> HTML
-    STACK --> HTML
-    ACT --> JSON
-    ACT --> MD
-    ACT --> MAP
-    HTML --> TRIAGE
-    TRIAGE --> REVIEW
-    JSON --> REVIEW
-    MD --> REVIEW
-    FRESH_RECEIPT --> REVIEW
 
-    LOCK["locked: runner, scheduler, external services, credentials, writeback"]
-    LOCK -. "shown as locked, not executable" .-> ACT
+    VP --> GEN
+    SM --> GEN
+    SS --> GEN
+    AD --> GEN
+    RT --> GEN
+    FRESH_RECEIPT --> GEN
+    GEN --> POLICY
+    GEN --> ACT_SOURCE
+    ACT_SOURCE --> POLICY
+    POLICY --> OPTION_A
+    OPTION_A --> SURFACE
+
+    SURFACE --> STATE
+    SURFACE --> PRIORITY
+    PRIORITY --> DECISION
+    DECISION --> EVIDENCE
+    SURFACE --> APPENDIX
+    EVIDENCE --> APPENDIX
+
+    STATE --> HTML
+    PRIORITY --> HTML
+    DECISION --> HTML
+    EVIDENCE --> HTML
+    APPENDIX --> HTML
+    POLICY --> PRIORITY_JSON
+    ACT_SOURCE --> ACTION_JSON
+    ACT_SOURCE --> ACTION_MD
+    HTML --> CAPTURE
+    PRIORITY_JSON --> CAPTURE
+    CAPTURE --> USER_REVIEW
+
+    HISTORY -. "A selection completed" .-> OPTION_A
+    FUTURE_NEED -. "only if observed" .-> OPTION_B
+    FUTURE_NEED -. "only if observed" .-> OPTION_C
+
+    NAV["README / Cockpit / runtime-state / decision-log<br/>navigation and decision records, not live authority"]
+    NAV -. "points to" .-> HTML
+    NAV -. "points to" .-> PRIORITY_JSON
+    NAV -. "points to" .-> CAPTURE
+
+    LOCK["locked: runner, scheduler, server, external services,<br/>credentials, notifications, target writeback"]
+    LOCK -. "not actionable priorities" .-> POLICY

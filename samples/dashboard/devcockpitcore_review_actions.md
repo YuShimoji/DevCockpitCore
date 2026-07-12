@@ -2,11 +2,11 @@
 
 Non-executable review package generated from local dashboard evidence.
 
-- generated_at: `2026-07-07T01:02:40Z`
+- generated_at: `2026-07-12T00:00:00Z`
 - source_dashboard: `samples/dashboard/devcockpitcore_dashboard.html`
-- total_actions: `20`
+- total_actions: `18`
 - blockers: `0`
-- warnings: `16`
+- warnings: `14`
 - info: `4`
 
 ## How to review this package
@@ -19,24 +19,22 @@ Non-executable review package generated from local dashboard evidence.
 | --- | --- | --- | --- | --- | --- | --- |
 | validation-001 | warning | validation_pack | devcockpitcore | Review validation warning | samples/validation_packs/devcockpitcore_validation_pack_result.json | False |
 | validation-002 | warning | validation_pack | devcockpitcore | Review validation warning | samples/validation_packs/devcockpitcore_validation_pack_result.json | False |
-| validation-003 | warning | validation_pack | devcockpitcore | Review validation warning | samples/validation_packs/devcockpitcore_validation_pack_result.json | False |
+| smoke-003 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | smoke-004 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | smoke-005 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | smoke-006 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | smoke-007 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
 | smoke-008 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| smoke-009 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| smoke-010 | warning | cross_project_smoke | None | Review cross-project smoke warning | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-devcockpitcore-011 | warning | cross_project_smoke | devcockpitcore | Review devcockpitcore smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-nlmytgen-012 | warning | cross_project_smoke | nlmytgen | Review nlmytgen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-writingpage-013 | warning | cross_project_smoke | writingpage | Review writingpage smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-clippipegen-014 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| project-clippipegen-015 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
-| status-016 | warning | status_snapshot | devcockpitcore | Review current repository status note | samples/status_snapshots/devcockpitcore_status.json | False |
-| checkpoint-017 | info | dashboard_review | devcockpitcore | 1. Report Clarity | Current Status Report | False |
-| checkpoint-018 | info | dashboard_review | devcockpitcore | 2. Review Map Linkage | Linked Detail Map | False |
-| checkpoint-019 | info | dashboard_review | devcockpitcore | 3. Evidence Freshness | Sources and Access | False |
-| locked-gate-020 | info | locked_gate | devcockpitcore | Keep locked lanes gated | samples/dashboard/devcockpitcore_dashboard.html | False |
+| project-devcockpitcore-009 | warning | cross_project_smoke | devcockpitcore | Review devcockpitcore smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
+| project-nlmytgen-010 | warning | cross_project_smoke | nlmytgen | Review nlmytgen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
+| project-writingpage-011 | warning | cross_project_smoke | writingpage | Review writingpage smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
+| project-clippipegen-012 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
+| project-clippipegen-013 | warning | cross_project_smoke | clippipegen | Review clippipegen smoke row | samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json | False |
+| status-014 | warning | status_snapshot | devcockpitcore | Review current repository status note | samples/status_snapshots/devcockpitcore_status.json | False |
+| checkpoint-015 | info | dashboard_review | devcockpitcore | 1. Priority Comprehension | Priority Lane / Active Decision | False |
+| checkpoint-016 | info | dashboard_review | devcockpitcore | 2. Selection Synchronization | Priority Review Console | False |
+| checkpoint-017 | info | dashboard_review | devcockpitcore | 3. Evidence Eligibility | Evidence Inspector / receipt ledger | False |
+| locked-gate-018 | info | locked_gate | devcockpitcore | Keep locked lanes gated | samples/dashboard/devcockpitcore_dashboard.html | False |
 
 Review notes:
 - These actions are review-only and not a runner.

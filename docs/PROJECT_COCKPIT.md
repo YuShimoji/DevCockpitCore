@@ -1,12 +1,16 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-12
+updated_at: 2026-07-13
 snapshot_kind: persisted_navigation_snapshot
-current_review_artifact: verified-observation-surface-intent-pack-v2
-current_review_artifact_path: samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html
-source_commit: 2e5e924b12a311260bf10c7b252c0695cac7f80c
-observed_at: 2026-07-06T16:56:16+09:00
-freshness_state: stale
+current_review_artifact: priority-review-console-production-observation-surface-v1
+current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
+priority_readback_path: samples/dashboard/devcockpitcore_priority_readback.json
+selected_information_architecture: A_priority_review_console
+selection_state: closed
+user_visual_acceptance: pending
+tracked_receipt_capture_id: efr-cbae922571043527b800
+tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
+tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
 
 ## About This Snapshot
@@ -21,15 +25,21 @@ Supervisor carries current development direction.
 
 DevCockpitCore provides read-only repository observation, normalized report
 readback, gate classification, local validation evidence, cross-project smoke
-observation, and a static review dashboard. The production dashboard generator
-is unchanged while its next information architecture remains at the user
-direction review gate.
+observation, and a static review dashboard. A / Priority Review Console is the
+selected production information architecture, and the A/B/C direction gate is
+closed. Its first viewport is organized as current state, ordered priority,
+Active Decision, and adjacent Evidence Inspector rather than the earlier
+report/card-derived primary layout.
 
-The v2 comparison pack is accepted as user-review-ready. Its research
-recommendation presents Priority Review Console as one strong candidate, but
-that recommendation is not user acceptance and the user selection remains
-pending. Narrative Status Brief and Lane And Project Overview remain materially
-different candidates for the same observation data.
+Production direction A is selected for the production dashboard. The tracked
+sample remains point-in-time review evidence rather than a live-state claim.
+
+The production surface consumes the existing Evidence Freshness V1 receipt and
+keeps review actions non-executable. B / Narrative Status Brief is retained
+only as a possible future handoff or summary view. C / Lane And Project
+Overview is retained only as a possible future cross-project overview. Neither
+is a production tab or an active slice. User production visual acceptance of A
+remains pending.
 
 ## Capability Summary
 
@@ -38,33 +48,48 @@ different candidates for the same observation data.
 | Repository observation and adapter validation | available | read-only against target repositories |
 | Report normalization and gate classification | available | interpretation only; no prompt generation |
 | Validation pack and cross-project smoke | available | local evidence; missing optional siblings warn |
-| Static dashboard and review actions | available | local, non-executable review surface |
+| Priority Review Console and review actions | available | local, static, bilingual, and non-executable |
+| Evidence Freshness V1 integration | available | consumes a validated point-in-time receipt; does not infer live authority |
 | C3 probes | bounded | exactly two fixed help-only keys |
 | C4 probe | bounded | exactly one fixed local validation-pack key |
 | General runner, scheduler, external service, or writeback | absent | outside the accepted capability surface |
 
-## Current Review Artifact
+## Current Production Review Artifact
 
-- [Dashboard layout research](design/DASHBOARD_LAYOUT_RESEARCH_V1.md)
-- [Three-direction v2 intent comparison](../samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
-- [Machine-readable comparison manifest](../samples/dashboard/intent_comparison/intent_comparison_manifest.json)
-- [Automated interaction and screenshot readback](../samples/dashboard/intent_comparison/intent_comparison_readback.json)
-- [Current production dashboard](../samples/dashboard/devcockpitcore_dashboard.html)
+- [Production Priority Review Console](../samples/dashboard/devcockpitcore_dashboard.html)
+- [Deterministic priority readback](../samples/dashboard/devcockpitcore_priority_readback.json)
+- [Non-executable review actions JSON](../samples/dashboard/devcockpitcore_review_actions.json)
+- [Non-executable review actions Markdown](../samples/dashboard/devcockpitcore_review_actions.md)
+- [Production capture manifest](../samples/dashboard/production_capture/production_capture_manifest.json)
+- [Production capture readback](../samples/dashboard/production_capture/production_capture_readback.json)
+- [Production contact sheet](../samples/dashboard/production_capture/screenshots/priority-review-console-contact-sheet.png)
 
-The comparison pack is research evidence only. It preserves the same 24
-material claims across A, B, and C, defaults to Japanese, provides an English
-toggle, and does not modify or select the production dashboard implementation.
+Generate the default artifacts from the repository root in PowerShell:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.dashboard
+Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
+```
+
+The production surface defaults to Japanese and switches the same priorities
+and evidence to English in one HTML file. Priority selection synchronizes the
+Active Decision and Evidence Inspector; dense evidence remains subordinate.
+The capture package records Japanese desktop, English desktop, and Japanese
+narrow-width output for review.
+
+The [v2 comparison pack](../samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
+and [layout research](design/DASHBOARD_LAYOUT_RESEARCH_V1.md) remain historical
+selection provenance. They are not current-state authority and no longer
+control the production direction.
 
 ## Evidence Freshness
 
-The comparison's tracked evidence was observed from
-`2e5e924b12a311260bf10c7b252c0695cac7f80c`; `2026-07-06T16:56:16+09:00`
-is the latest generation time among its status, validation, and smoke sources.
-Its `stale` label means the evidence remains
-useful for comparing information architecture but must not be treated as a
-claim about the current checkout. Tracked dashboard, status, validation, smoke,
-and review-action samples may remain valid historical evidence while being
-stale for current-state claims.
+The production generator loads and validates the landed
+`evidence_freshness_receipt.v1` contract. It surfaces freshness, temporal and
+revision-binding state, current-claim eligibility, assessed time, source route,
+compact evidence identifier, authority boundary, and subordinate reason codes.
+It consumes those decisions rather than reproducing the freshness evaluator.
 
 Generate a read-only freshness and provenance receipt with:
 
@@ -80,9 +105,10 @@ The tracked policy and deterministic example outputs are:
 - [Human-readable receipt](../samples/evidence_freshness/evidence_freshness_receipt_v1.md)
 
 These receipts are point-in-time, non-live observer outputs. The tracked
-example is reproducible navigation evidence, not authority for a current
-checkout; a current-state claim requires a newly generated and assessed local
-receipt.
+example (`efr-cbae922571043527b800`, assessed
+`2026-07-12T00:00:00Z`) is reproducible navigation evidence, not authority for
+a current checkout; a current-state claim requires a newly generated and
+assessed local receipt followed by dashboard regeneration.
 
 ## Navigation
 
@@ -92,9 +118,15 @@ receipt.
 - [Durable product and architecture decisions](decision-log.md)
 - [Dashboard artifact guide](../samples/dashboard/README.md)
 
-## Next Product Decision
+## Current Review Decision
 
-Choose A (Priority Review Console), B (Narrative Status Brief), or C (Lane And
-Project Overview) according to which makes current state and next action easiest
-to understand. A remains the research recommendation, not an acceptance
-decision. Do not change the production generator until that selection exists.
+A / Priority Review Console is selected and is the production direction. The
+remaining user decision is one free-form visual/comprehension review of the
+production artifact: can the first viewport reveal current state, first
+priority, next operation, owner, evidence location, and current-claim status?
+This snapshot does not claim that acceptance; `user_visual_acceptance`
+remains `pending`.
+
+This document is navigation and decision context, not live workflow authority.
+Verify Git state, the receipt authority boundary, generated readback, raster
+manifest, and local tests before treating any status as current.

@@ -15,9 +15,13 @@ SHARED_PROJECTION_FIELDS = {
     "updated_at",
     "current_review_artifact",
     "current_review_artifact_path",
-    "source_commit",
-    "observed_at",
-    "freshness_state",
+    "priority_readback_path",
+    "selected_information_architecture",
+    "selection_state",
+    "user_visual_acceptance",
+    "tracked_receipt_capture_id",
+    "tracked_receipt_assessed_at",
+    "tracked_receipt_authority",
     "blocking_issue_count",
 }
 KNOWN_LIVE_STATE_FIELDS = {
@@ -34,10 +38,17 @@ KNOWN_LIVE_STATE_FIELDS = {
     "last_verified_base",
     "observed_at",
     "pull_request",
+    "priority_readback_path",
     "resume_branch",
+    "selected_information_architecture",
+    "selection_state",
     "source_commit",
     "status_authority",
+    "tracked_receipt_assessed_at",
+    "tracked_receipt_authority",
+    "tracked_receipt_capture_id",
     "updated_at",
+    "user_visual_acceptance",
 }
 STATE_LINE = re.compile(r"(?P<key>[a-z][a-z0-9_]*):\s*(?P<value>.+)")
 REPOSITORY_LINK = re.compile(r"\[[^]]+\]\((?P<target>[^)]+)\)")
@@ -143,21 +154,30 @@ class ProjectStateContractTests(unittest.TestCase):
 
         self.assertFalse(KNOWN_LIVE_STATE_FIELDS & labels_found)
 
-    def test_evidence_freshness_fields_have_valid_forms(self) -> None:
+    def test_selected_surface_and_tracked_receipt_fields_have_valid_forms(self) -> None:
         for relative_path in STATE_DOCUMENTS:
             labels = _frontmatter_labels(_read(relative_path))
             with self.subTest(relative_path=relative_path):
-                self.assertRegex(labels["source_commit"], r"\A[0-9a-f]{7,64}\Z")
-                observed_at = datetime.fromisoformat(
-                    labels["observed_at"].replace("Z", "+00:00")
+                self.assertEqual(
+                    labels["selected_information_architecture"],
+                    "A_priority_review_console",
                 )
-                self.assertIsNotNone(observed_at.utcoffset())
-                self.assertIn(
-                    labels["freshness_state"],
-                    {"fresh", "stale", "unknown"},
+                self.assertEqual(labels["selection_state"], "closed")
+                self.assertEqual(labels["user_visual_acceptance"], "pending")
+                self.assertRegex(
+                    labels["tracked_receipt_capture_id"],
+                    r"\Aefr-[0-9a-f]{20}\Z",
+                )
+                assessed_at = datetime.fromisoformat(
+                    labels["tracked_receipt_assessed_at"].replace("Z", "+00:00")
+                )
+                self.assertIsNotNone(assessed_at.utcoffset())
+                self.assertEqual(
+                    labels["tracked_receipt_authority"],
+                    "point_in_time_non_live",
                 )
 
-    def test_navigation_identifies_v2_overview_pending_choice_and_freshness_entry(self) -> None:
+    def test_navigation_identifies_selected_priority_console_and_freshness_consumption(self) -> None:
         cockpit = _read("docs/PROJECT_COCKPIT.md")
         runtime = _read("docs/runtime-state.md")
         pipeline = _read("docs/PROJECT_PIPELINE.mmd")
@@ -166,19 +186,36 @@ class ProjectStateContractTests(unittest.TestCase):
         for document in (cockpit, runtime):
             with self.subTest(document=document.splitlines()[0]):
                 self.assertIn(
-                    "current_review_artifact: verified-observation-surface-intent-pack-v2",
+                    "current_review_artifact: priority-review-console-production-observation-surface-v1",
                     document,
                 )
-                self.assertIn("Lane And Project Overview", document)
-                self.assertRegex(document, r"(?i)user (?:direction )?selection remains\s+pending")
-                self.assertRegex(document, r"(?i)production dashboard (?:and )?generator[^.]*unchanged")
+                self.assertIn(
+                    "current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html",
+                    document,
+                )
+                self.assertIn("Priority Review Console", document)
+                self.assertRegex(document, r"(?i)production (?:dashboard|observation surface)")
                 self.assertIn("python -m dev_cockpit.evidence_freshness", document)
+                self.assertIn("python -m dev_cockpit.dashboard", document)
+                self.assertIn("evidence_freshness_receipt.v1", document)
 
-        self.assertIn('OPTION_C["C: Lane And Project Overview"]', pipeline)
-        self.assertIn('USER_REVIEW["user direction review (pending)"]', pipeline)
-        self.assertIn('GEN["dev_cockpit.dashboard generator<br/>(production unchanged)"]', pipeline)
+        self.assertIn(
+            "selected_information_architecture: A_priority_review_console",
+            cockpit,
+        )
+        self.assertIn("selection_state: closed", cockpit)
+        self.assertIn("user_visual_acceptance: pending", cockpit)
+        self.assertIn("Production direction A is selected", runtime)
+        self.assertRegex(runtime, r"(?i)user_visual_acceptance[^.]*pending")
+
+        self.assertIn('OPTION_A["A: Priority Review Console<br/>selected production direction"]', pipeline)
+        self.assertIn('GEN["dev_cockpit.dashboard<br/>production generator"]', pipeline)
+        self.assertIn('PRIORITY_JSON["devcockpitcore_priority_readback.json"]', pipeline)
+        self.assertIn('USER_REVIEW["free-form production visual review<br/>pending"]', pipeline)
         self.assertIn('FRESH_CLI["python -m dev_cockpit.evidence_freshness"]', pipeline)
         self.assertIn("evidence_freshness_receipt.v1", pipeline)
+        self.assertNotIn('USER_REVIEW["user direction review (pending)"]', pipeline)
+        self.assertNotIn("production unchanged", combined)
         self.assertNotIn("verified-observation-surface-intent-pack-v1", combined)
         self.assertNotIn("Lane And Project Matrix", combined)
         self.assertIn("persisted navigation snapshot", cockpit)

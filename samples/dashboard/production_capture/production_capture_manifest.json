@@ -1,0 +1,1220 @@
+{
+  "schema_version": "production_capture_manifest.v1",
+  "artifact_id": "priority-review-console-production-observation-surface-v1",
+  "capture_id": "priority-review-console-f160ca3a7b90e3b19d4f0e46",
+  "captured_at": "2026-07-12T00:00:00.000Z",
+  "capture_identity_sha256": "f160ca3a7b90e3b19d4f0e4608cfeb27e0ac192b6e51f0748b88aac434561731",
+  "capture_identity": {
+    "artifact_id": "priority-review-console-production-observation-surface-v1",
+    "html_sha256": "958e6bb99cc4ab65ac9169abed880548b8a5e5e71083f868166e21ccf8c8bd90",
+    "priority_readback_sha256": "e130e4cb78de357248502b782e3ecc10d14f7da37495ffd1bf15d657984c5e70",
+    "freshness_receipt_sha256": "6cce105ebdaa26a1f43d44f487b18abb6a660d11d167e7aae8583c98fbf77aa2",
+    "production_generator_blob": "96bdaa97e0b3ee547a202065033709ed5a6bd285",
+    "capture_script_sha256": "f705a4483958715d01db537ae3cdd3a04f6c76dead8d4ee788c7ef9cb04f4581",
+    "capture_definitions": [
+      {
+        "id": "ja-desktop",
+        "language": "ja",
+        "viewport": {
+          "width": 1440,
+          "height": 1200
+        },
+        "filename": "priority-review-console-ja-desktop.png"
+      },
+      {
+        "id": "en-desktop",
+        "language": "en",
+        "viewport": {
+          "width": 1440,
+          "height": 1200
+        },
+        "filename": "priority-review-console-en-desktop.png"
+      },
+      {
+        "id": "ja-narrow",
+        "language": "ja",
+        "viewport": {
+          "width": 390,
+          "height": 3100
+        },
+        "filename": "priority-review-console-ja-narrow.png"
+      }
+    ],
+    "contact_sheet": {
+      "id": "contact-sheet",
+      "filename": "priority-review-console-contact-sheet.png",
+      "width": 1440,
+      "height": 760
+    },
+    "device_scale_factor": 1
+  },
+  "source_binding": {
+    "artifact_id": "priority-review-console-production-observation-surface-v1",
+    "html": {
+      "path": "samples/dashboard/devcockpitcore_dashboard.html",
+      "sha256": "958e6bb99cc4ab65ac9169abed880548b8a5e5e71083f868166e21ccf8c8bd90"
+    },
+    "priority_readback": {
+      "path": "samples/dashboard/devcockpitcore_priority_readback.json",
+      "schema_version": "devcockpit_priority_readback.v1",
+      "artifact_id": "priority-review-console-production-observation-surface-v1",
+      "freshness_receipt_path": "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+      "freshness_capture_id": "efr-cbae922571043527b800",
+      "sha256": "e130e4cb78de357248502b782e3ecc10d14f7da37495ffd1bf15d657984c5e70"
+    },
+    "freshness_receipt": {
+      "path": "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+      "schema_version": "evidence_freshness_receipt.v1",
+      "capture_id": "efr-cbae922571043527b800",
+      "sha256": "6cce105ebdaa26a1f43d44f487b18abb6a660d11d167e7aae8583c98fbf77aa2"
+    },
+    "production_generator": {
+      "path": "src/dev_cockpit/dashboard.py",
+      "blob": "96bdaa97e0b3ee547a202065033709ed5a6bd285"
+    },
+    "capture_script": {
+      "path": "capture_priority_review_console.mjs",
+      "sha256": "f705a4483958715d01db537ae3cdd3a04f6c76dead8d4ee788c7ef9cb04f4581"
+    }
+  },
+  "capture_contract": {
+    "device_scale_factor": 1,
+    "screenshot_mode": "viewport_without_clip",
+    "settling": "document.fonts.ready; two animation frames; scroll reset; two animation frames",
+    "captures": [
+      {
+        "id": "ja-desktop",
+        "filename": "priority-review-console-ja-desktop.png",
+        "language": "ja",
+        "locale": "ja-JP",
+        "viewport": {
+          "width": 1440,
+          "height": 1200
+        }
+      },
+      {
+        "id": "en-desktop",
+        "filename": "priority-review-console-en-desktop.png",
+        "language": "en",
+        "locale": "en-US",
+        "viewport": {
+          "width": 1440,
+          "height": 1200
+        }
+      },
+      {
+        "id": "ja-narrow",
+        "filename": "priority-review-console-ja-narrow.png",
+        "language": "ja",
+        "locale": "ja-JP",
+        "viewport": {
+          "width": 390,
+          "height": 3100
+        }
+      }
+    ],
+    "contact_sheet": {
+      "id": "contact-sheet",
+      "filename": "priority-review-console-contact-sheet.png",
+      "width": 1440,
+      "height": 760
+    },
+    "required_landmarks": {
+      "current_state": "[data-landmark=\"current-state\"]",
+      "priority_lane": "[data-landmark=\"priority-lane\"]",
+      "priority_first": "[data-landmark=\"priority-first\"]",
+      "active_decision": "[data-landmark=\"active-decision\"]",
+      "evidence_inspector": "[data-landmark=\"evidence-inspector\"]",
+      "freshness_status": "[data-landmark=\"freshness-status\"]",
+      "provenance": "[data-landmark=\"provenance\"]"
+    },
+    "language_default": "ja",
+    "selected_direction": "A",
+    "output_promotion": "All outputs staged outside OUTPUT_ROOT and copied only after every automated status passed."
+  },
+  "screenshots": [
+    {
+      "id": "ja-desktop",
+      "role": "ja-desktop",
+      "path": "screenshots/priority-review-console-ja-desktop.png",
+      "capture_id": "priority-review-console-f160ca3a7b90e3b19d4f0e46",
+      "language": "ja",
+      "viewport": {
+        "width": 1440,
+        "height": 1200,
+        "device_scale_factor": 1
+      },
+      "dimensions": {
+        "width": 1440,
+        "height": 1200
+      },
+      "normalized_png_sha256": "dd32a79f89637c19b17bee08aa6a167895d5cbe91d41a35ea1d449b28161e978",
+      "decoded_pixel_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+      "selected_priority_id": "priority-4c6fe193f4e7",
+      "selected_evidence_id": "devcockpitcore.live_status_observation",
+      "landmarks": {
+        "current_state": {
+          "selector": "[data-landmark=\"current-state\"]",
+          "count": 1,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 230.39,
+            "right": 1440,
+            "bottom": 230.39
+          },
+          "raster_rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 231
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "priority_lane": {
+          "selector": "[data-landmark=\"priority-lane\"]",
+          "count": 1,
+          "rect": {
+            "x": 24,
+            "y": 300.58,
+            "width": 396.72,
+            "height": 880,
+            "right": 420.72,
+            "bottom": 1180.58
+          },
+          "raster_rect": {
+            "x": 24,
+            "y": 300,
+            "width": 397,
+            "height": 881
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "priority_first": {
+          "selector": "[data-landmark=\"priority-first\"]",
+          "count": 1,
+          "rect": {
+            "x": 25,
+            "y": 387.58,
+            "width": 394.72,
+            "height": 124.95,
+            "right": 419.72,
+            "bottom": 512.53
+          },
+          "raster_rect": {
+            "x": 25,
+            "y": 387,
+            "width": 395,
+            "height": 126
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "active_decision": {
+          "selector": "[data-landmark=\"active-decision\"]",
+          "count": 1,
+          "rect": {
+            "x": 432.72,
+            "y": 300.58,
+            "width": 574.55,
+            "height": 880,
+            "right": 1007.27,
+            "bottom": 1180.58
+          },
+          "raster_rect": {
+            "x": 432,
+            "y": 300,
+            "width": 576,
+            "height": 881
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "evidence_inspector": {
+          "selector": "[data-landmark=\"evidence-inspector\"]",
+          "count": 1,
+          "rect": {
+            "x": 1019.27,
+            "y": 300.58,
+            "width": 396.73,
+            "height": 880,
+            "right": 1416,
+            "bottom": 1180.58
+          },
+          "raster_rect": {
+            "x": 1019,
+            "y": 300,
+            "width": 397,
+            "height": 881
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "freshness_status": {
+          "selector": "[data-landmark=\"freshness-status\"]",
+          "count": 1,
+          "rect": {
+            "x": 1038.27,
+            "y": 406.58,
+            "width": 176,
+            "height": 26.39,
+            "right": 1214.27,
+            "bottom": 432.97
+          },
+          "raster_rect": {
+            "x": 1038,
+            "y": 406,
+            "width": 177,
+            "height": 27
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "provenance": {
+          "selector": "[data-landmark=\"provenance\"]",
+          "count": 1,
+          "rect": {
+            "x": 1038.27,
+            "y": 871.56,
+            "width": 358.73,
+            "height": 48.19,
+            "right": 1397,
+            "bottom": 919.75
+          },
+          "raster_rect": {
+            "x": 1038,
+            "y": 871,
+            "width": 359,
+            "height": 49
+          },
+          "fully_visible": true,
+          "pass": true
+        }
+      },
+      "browser_canvas_raster": {
+        "width": 1440,
+        "height": 1200,
+        "rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "regions": {
+          "current_state": {
+            "sampled_pixels": 332640,
+            "luminance_mean": 26.5385,
+            "luminance_variance": 1556.5154,
+            "near_black_ratio": 0,
+            "quantized_color_count": 489,
+            "dominant_color_ratio": 0.681578,
+            "pass": true
+          },
+          "priority_lane": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 42.2832,
+            "luminance_variance": 2097.0322,
+            "near_black_ratio": 0,
+            "quantized_color_count": 404,
+            "dominant_color_ratio": 0.745143,
+            "pass": true
+          },
+          "priority_first": {
+            "sampled_pixels": 49770,
+            "luminance_mean": 49.7941,
+            "luminance_variance": 2219.871,
+            "near_black_ratio": 0,
+            "quantized_color_count": 172,
+            "dominant_color_ratio": 0.851678,
+            "pass": true
+          },
+          "active_decision": {
+            "sampled_pixels": 507456,
+            "luminance_mean": 34.8208,
+            "luminance_variance": 1481.2116,
+            "near_black_ratio": 0,
+            "quantized_color_count": 454,
+            "dominant_color_ratio": 0.930906,
+            "pass": true
+          },
+          "evidence_inspector": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 31.4805,
+            "luminance_variance": 773.7693,
+            "near_black_ratio": 0,
+            "quantized_color_count": 394,
+            "dominant_color_ratio": 0.946434,
+            "pass": true
+          },
+          "freshness_status": {
+            "sampled_pixels": 4779,
+            "luminance_mean": 64.9207,
+            "luminance_variance": 4143.6042,
+            "near_black_ratio": 0,
+            "quantized_color_count": 17,
+            "dominant_color_ratio": 0.654949,
+            "pass": true
+          },
+          "provenance": {
+            "sampled_pixels": 17591,
+            "luminance_mean": 33.5318,
+            "luminance_variance": 813.0878,
+            "near_black_ratio": 0,
+            "quantized_color_count": 102,
+            "dominant_color_ratio": 0.927804,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      "ffmpeg_raster": {
+        "width": 1440,
+        "height": 1200,
+        "byte_length": 6912000,
+        "rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "regions": {
+          "current_state": {
+            "sampled_pixels": 332640,
+            "luminance_mean": 26.5385,
+            "luminance_variance": 1556.5154,
+            "near_black_ratio": 0,
+            "quantized_color_count": 489,
+            "dominant_color_ratio": 0.681578,
+            "pass": true
+          },
+          "priority_lane": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 42.2832,
+            "luminance_variance": 2097.0322,
+            "near_black_ratio": 0,
+            "quantized_color_count": 404,
+            "dominant_color_ratio": 0.745143,
+            "pass": true
+          },
+          "priority_first": {
+            "sampled_pixels": 49770,
+            "luminance_mean": 49.7941,
+            "luminance_variance": 2219.871,
+            "near_black_ratio": 0,
+            "quantized_color_count": 172,
+            "dominant_color_ratio": 0.851678,
+            "pass": true
+          },
+          "active_decision": {
+            "sampled_pixels": 507456,
+            "luminance_mean": 34.8208,
+            "luminance_variance": 1481.2116,
+            "near_black_ratio": 0,
+            "quantized_color_count": 454,
+            "dominant_color_ratio": 0.930906,
+            "pass": true
+          },
+          "evidence_inspector": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 31.4805,
+            "luminance_variance": 773.7693,
+            "near_black_ratio": 0,
+            "quantized_color_count": 394,
+            "dominant_color_ratio": 0.946434,
+            "pass": true
+          },
+          "freshness_status": {
+            "sampled_pixels": 4779,
+            "luminance_mean": 64.9207,
+            "luminance_variance": 4143.6042,
+            "near_black_ratio": 0,
+            "quantized_color_count": 17,
+            "dominant_color_ratio": 0.654949,
+            "pass": true
+          },
+          "provenance": {
+            "sampled_pixels": 17591,
+            "luminance_mean": 33.5318,
+            "luminance_variance": 813.0878,
+            "near_black_ratio": 0,
+            "quantized_color_count": 102,
+            "dominant_color_ratio": 0.927804,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      "decoder_agreement": {
+        "browser_rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "ffmpeg_rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "pass": true
+      },
+      "overflow": {
+        "language": "ja",
+        "viewport": {
+          "width": 1440,
+          "height": 1200
+        },
+        "document_width": 1440,
+        "findings": [],
+        "pass": true
+      },
+      "freshness_status_present": true,
+      "provenance_present": true,
+      "pass": true
+    },
+    {
+      "id": "en-desktop",
+      "role": "en-desktop",
+      "path": "screenshots/priority-review-console-en-desktop.png",
+      "capture_id": "priority-review-console-f160ca3a7b90e3b19d4f0e46",
+      "language": "en",
+      "viewport": {
+        "width": 1440,
+        "height": 1200,
+        "device_scale_factor": 1
+      },
+      "dimensions": {
+        "width": 1440,
+        "height": 1200
+      },
+      "normalized_png_sha256": "b2ad17f2f76d3403ea4d006c93ef860260f84a8fd69fd0b1846e2639156137a5",
+      "decoded_pixel_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+      "selected_priority_id": "priority-4c6fe193f4e7",
+      "selected_evidence_id": "devcockpitcore.live_status_observation",
+      "landmarks": {
+        "current_state": {
+          "selector": "[data-landmark=\"current-state\"]",
+          "count": 1,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 230.39,
+            "right": 1440,
+            "bottom": 230.39
+          },
+          "raster_rect": {
+            "x": 0,
+            "y": 0,
+            "width": 1440,
+            "height": 231
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "priority_lane": {
+          "selector": "[data-landmark=\"priority-lane\"]",
+          "count": 1,
+          "rect": {
+            "x": 24,
+            "y": 300.58,
+            "width": 396.72,
+            "height": 880,
+            "right": 420.72,
+            "bottom": 1180.58
+          },
+          "raster_rect": {
+            "x": 24,
+            "y": 300,
+            "width": 397,
+            "height": 881
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "priority_first": {
+          "selector": "[data-landmark=\"priority-first\"]",
+          "count": 1,
+          "rect": {
+            "x": 25,
+            "y": 387.58,
+            "width": 394.72,
+            "height": 143.84,
+            "right": 419.72,
+            "bottom": 531.42
+          },
+          "raster_rect": {
+            "x": 25,
+            "y": 387,
+            "width": 395,
+            "height": 145
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "active_decision": {
+          "selector": "[data-landmark=\"active-decision\"]",
+          "count": 1,
+          "rect": {
+            "x": 432.72,
+            "y": 300.58,
+            "width": 574.55,
+            "height": 880,
+            "right": 1007.27,
+            "bottom": 1180.58
+          },
+          "raster_rect": {
+            "x": 432,
+            "y": 300,
+            "width": 576,
+            "height": 881
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "evidence_inspector": {
+          "selector": "[data-landmark=\"evidence-inspector\"]",
+          "count": 1,
+          "rect": {
+            "x": 1019.27,
+            "y": 300.58,
+            "width": 396.73,
+            "height": 880,
+            "right": 1416,
+            "bottom": 1180.58
+          },
+          "raster_rect": {
+            "x": 1019,
+            "y": 300,
+            "width": 397,
+            "height": 881
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "freshness_status": {
+          "selector": "[data-landmark=\"freshness-status\"]",
+          "count": 1,
+          "rect": {
+            "x": 1038.27,
+            "y": 406.58,
+            "width": 178.34,
+            "height": 26.39,
+            "right": 1216.61,
+            "bottom": 432.97
+          },
+          "raster_rect": {
+            "x": 1038,
+            "y": 406,
+            "width": 179,
+            "height": 27
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "provenance": {
+          "selector": "[data-landmark=\"provenance\"]",
+          "count": 1,
+          "rect": {
+            "x": 1038.27,
+            "y": 871.56,
+            "width": 358.73,
+            "height": 48.19,
+            "right": 1397,
+            "bottom": 919.75
+          },
+          "raster_rect": {
+            "x": 1038,
+            "y": 871,
+            "width": 359,
+            "height": 49
+          },
+          "fully_visible": true,
+          "pass": true
+        }
+      },
+      "browser_canvas_raster": {
+        "width": 1440,
+        "height": 1200,
+        "rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "regions": {
+          "current_state": {
+            "sampled_pixels": 332640,
+            "luminance_mean": 26.8937,
+            "luminance_variance": 1630.6822,
+            "near_black_ratio": 0,
+            "quantized_color_count": 419,
+            "dominant_color_ratio": 0.681803,
+            "pass": true
+          },
+          "priority_lane": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 40.7511,
+            "luminance_variance": 1914.9024,
+            "near_black_ratio": 0,
+            "quantized_color_count": 350,
+            "dominant_color_ratio": 0.739899,
+            "pass": true
+          },
+          "priority_first": {
+            "sampled_pixels": 57275,
+            "luminance_mean": 48.1088,
+            "luminance_variance": 2074.5516,
+            "near_black_ratio": 0,
+            "quantized_color_count": 138,
+            "dominant_color_ratio": 0.862767,
+            "pass": true
+          },
+          "active_decision": {
+            "sampled_pixels": 507456,
+            "luminance_mean": 34.3682,
+            "luminance_variance": 1382.2933,
+            "near_black_ratio": 0,
+            "quantized_color_count": 406,
+            "dominant_color_ratio": 0.932402,
+            "pass": true
+          },
+          "evidence_inspector": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 31.828,
+            "luminance_variance": 812.3539,
+            "near_black_ratio": 0,
+            "quantized_color_count": 356,
+            "dominant_color_ratio": 0.944018,
+            "pass": true
+          },
+          "freshness_status": {
+            "sampled_pixels": 4833,
+            "luminance_mean": 54.9696,
+            "luminance_variance": 3148.2277,
+            "near_black_ratio": 0,
+            "quantized_color_count": 38,
+            "dominant_color_ratio": 0.760397,
+            "pass": true
+          },
+          "provenance": {
+            "sampled_pixels": 17591,
+            "luminance_mean": 35.3967,
+            "luminance_variance": 1066.8273,
+            "near_black_ratio": 0,
+            "quantized_color_count": 47,
+            "dominant_color_ratio": 0.914786,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      "ffmpeg_raster": {
+        "width": 1440,
+        "height": 1200,
+        "byte_length": 6912000,
+        "rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "regions": {
+          "current_state": {
+            "sampled_pixels": 332640,
+            "luminance_mean": 26.8937,
+            "luminance_variance": 1630.6822,
+            "near_black_ratio": 0,
+            "quantized_color_count": 419,
+            "dominant_color_ratio": 0.681803,
+            "pass": true
+          },
+          "priority_lane": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 40.7511,
+            "luminance_variance": 1914.9024,
+            "near_black_ratio": 0,
+            "quantized_color_count": 350,
+            "dominant_color_ratio": 0.739899,
+            "pass": true
+          },
+          "priority_first": {
+            "sampled_pixels": 57275,
+            "luminance_mean": 48.1088,
+            "luminance_variance": 2074.5516,
+            "near_black_ratio": 0,
+            "quantized_color_count": 138,
+            "dominant_color_ratio": 0.862767,
+            "pass": true
+          },
+          "active_decision": {
+            "sampled_pixels": 507456,
+            "luminance_mean": 34.3682,
+            "luminance_variance": 1382.2933,
+            "near_black_ratio": 0,
+            "quantized_color_count": 406,
+            "dominant_color_ratio": 0.932402,
+            "pass": true
+          },
+          "evidence_inspector": {
+            "sampled_pixels": 349757,
+            "luminance_mean": 31.828,
+            "luminance_variance": 812.3539,
+            "near_black_ratio": 0,
+            "quantized_color_count": 356,
+            "dominant_color_ratio": 0.944018,
+            "pass": true
+          },
+          "freshness_status": {
+            "sampled_pixels": 4833,
+            "luminance_mean": 54.9696,
+            "luminance_variance": 3148.2277,
+            "near_black_ratio": 0,
+            "quantized_color_count": 38,
+            "dominant_color_ratio": 0.760397,
+            "pass": true
+          },
+          "provenance": {
+            "sampled_pixels": 17591,
+            "luminance_mean": 35.3967,
+            "luminance_variance": 1066.8273,
+            "near_black_ratio": 0,
+            "quantized_color_count": 47,
+            "dominant_color_ratio": 0.914786,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      "decoder_agreement": {
+        "browser_rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "ffmpeg_rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "pass": true
+      },
+      "overflow": {
+        "language": "en",
+        "viewport": {
+          "width": 1440,
+          "height": 1200
+        },
+        "document_width": 1440,
+        "findings": [],
+        "pass": true
+      },
+      "freshness_status_present": true,
+      "provenance_present": true,
+      "pass": true
+    },
+    {
+      "id": "ja-narrow",
+      "role": "ja-narrow",
+      "path": "screenshots/priority-review-console-ja-narrow.png",
+      "capture_id": "priority-review-console-f160ca3a7b90e3b19d4f0e46",
+      "language": "ja",
+      "viewport": {
+        "width": 390,
+        "height": 3100,
+        "device_scale_factor": 1
+      },
+      "dimensions": {
+        "width": 390,
+        "height": 3100
+      },
+      "normalized_png_sha256": "36e6e0886fb55f38e1aaa684621412effb11dccac545e86c40da2c6017ad48c3",
+      "decoded_pixel_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+      "selected_priority_id": "priority-4c6fe193f4e7",
+      "selected_evidence_id": "devcockpitcore.live_status_observation",
+      "landmarks": {
+        "current_state": {
+          "selector": "[data-landmark=\"current-state\"]",
+          "count": 1,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 388.64,
+            "right": 390,
+            "bottom": 388.64
+          },
+          "raster_rect": {
+            "x": 0,
+            "y": 0,
+            "width": 390,
+            "height": 389
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "priority_lane": {
+          "selector": "[data-landmark=\"priority-lane\"]",
+          "count": 1,
+          "rect": {
+            "x": 14,
+            "y": 452.83,
+            "width": 362,
+            "height": 810.44,
+            "right": 376,
+            "bottom": 1263.27
+          },
+          "raster_rect": {
+            "x": 14,
+            "y": 452,
+            "width": 362,
+            "height": 812
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "priority_first": {
+          "selector": "[data-landmark=\"priority-first\"]",
+          "count": 1,
+          "rect": {
+            "x": 15,
+            "y": 529.83,
+            "width": 360,
+            "height": 120.95,
+            "right": 375,
+            "bottom": 650.78
+          },
+          "raster_rect": {
+            "x": 15,
+            "y": 529,
+            "width": 360,
+            "height": 122
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "active_decision": {
+          "selector": "[data-landmark=\"active-decision\"]",
+          "count": 1,
+          "rect": {
+            "x": 14,
+            "y": 1275.27,
+            "width": 362,
+            "height": 605.16,
+            "right": 376,
+            "bottom": 1880.42
+          },
+          "raster_rect": {
+            "x": 14,
+            "y": 1275,
+            "width": 362,
+            "height": 606
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "evidence_inspector": {
+          "selector": "[data-landmark=\"evidence-inspector\"]",
+          "count": 1,
+          "rect": {
+            "x": 14,
+            "y": 1892.42,
+            "width": 362,
+            "height": 651.11,
+            "right": 376,
+            "bottom": 2543.53
+          },
+          "raster_rect": {
+            "x": 14,
+            "y": 1892,
+            "width": 362,
+            "height": 652
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "freshness_status": {
+          "selector": "[data-landmark=\"freshness-status\"]",
+          "count": 1,
+          "rect": {
+            "x": 29,
+            "y": 1984.42,
+            "width": 176,
+            "height": 26.39,
+            "right": 205,
+            "bottom": 2010.81
+          },
+          "raster_rect": {
+            "x": 29,
+            "y": 1984,
+            "width": 176,
+            "height": 27
+          },
+          "fully_visible": true,
+          "pass": true
+        },
+        "provenance": {
+          "selector": "[data-landmark=\"provenance\"]",
+          "count": 1,
+          "rect": {
+            "x": 29,
+            "y": 2449.41,
+            "width": 332,
+            "height": 48.19,
+            "right": 361,
+            "bottom": 2497.59
+          },
+          "raster_rect": {
+            "x": 29,
+            "y": 2449,
+            "width": 332,
+            "height": 49
+          },
+          "fully_visible": true,
+          "pass": true
+        }
+      },
+      "browser_canvas_raster": {
+        "width": 390,
+        "height": 3100,
+        "rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "regions": {
+          "current_state": {
+            "sampled_pixels": 151710,
+            "luminance_mean": 34.1112,
+            "luminance_variance": 2519.7909,
+            "near_black_ratio": 0,
+            "quantized_color_count": 474,
+            "dominant_color_ratio": 0.597311,
+            "pass": true
+          },
+          "priority_lane": {
+            "sampled_pixels": 293944,
+            "luminance_mean": 45.0772,
+            "luminance_variance": 2430.2526,
+            "near_black_ratio": 0,
+            "quantized_color_count": 400,
+            "dominant_color_ratio": 0.718314,
+            "pass": true
+          },
+          "priority_first": {
+            "sampled_pixels": 43920,
+            "luminance_mean": 51.9341,
+            "luminance_variance": 2467.7966,
+            "near_black_ratio": 0,
+            "quantized_color_count": 173,
+            "dominant_color_ratio": 0.834107,
+            "pass": true
+          },
+          "active_decision": {
+            "sampled_pixels": 219372,
+            "luminance_mean": 41.1421,
+            "luminance_variance": 2397.9463,
+            "near_black_ratio": 0,
+            "quantized_color_count": 431,
+            "dominant_color_ratio": 0.882683,
+            "pass": true
+          },
+          "evidence_inspector": {
+            "sampled_pixels": 236024,
+            "luminance_mean": 33.8007,
+            "luminance_variance": 1115.3601,
+            "near_black_ratio": 0,
+            "quantized_color_count": 380,
+            "dominant_color_ratio": 0.92619,
+            "pass": true
+          },
+          "freshness_status": {
+            "sampled_pixels": 4752,
+            "luminance_mean": 65.2022,
+            "luminance_variance": 4163.5892,
+            "near_black_ratio": 0,
+            "quantized_color_count": 17,
+            "dominant_color_ratio": 0.652567,
+            "pass": true
+          },
+          "provenance": {
+            "sampled_pixels": 16268,
+            "luminance_mean": 33.9603,
+            "luminance_variance": 876.8344,
+            "near_black_ratio": 0,
+            "quantized_color_count": 103,
+            "dominant_color_ratio": 0.923715,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      "ffmpeg_raster": {
+        "width": 390,
+        "height": 3100,
+        "byte_length": 4836000,
+        "rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "regions": {
+          "current_state": {
+            "sampled_pixels": 151710,
+            "luminance_mean": 34.1112,
+            "luminance_variance": 2519.7909,
+            "near_black_ratio": 0,
+            "quantized_color_count": 474,
+            "dominant_color_ratio": 0.597311,
+            "pass": true
+          },
+          "priority_lane": {
+            "sampled_pixels": 293944,
+            "luminance_mean": 45.0772,
+            "luminance_variance": 2430.2526,
+            "near_black_ratio": 0,
+            "quantized_color_count": 400,
+            "dominant_color_ratio": 0.718314,
+            "pass": true
+          },
+          "priority_first": {
+            "sampled_pixels": 43920,
+            "luminance_mean": 51.9341,
+            "luminance_variance": 2467.7966,
+            "near_black_ratio": 0,
+            "quantized_color_count": 173,
+            "dominant_color_ratio": 0.834107,
+            "pass": true
+          },
+          "active_decision": {
+            "sampled_pixels": 219372,
+            "luminance_mean": 41.1421,
+            "luminance_variance": 2397.9463,
+            "near_black_ratio": 0,
+            "quantized_color_count": 431,
+            "dominant_color_ratio": 0.882683,
+            "pass": true
+          },
+          "evidence_inspector": {
+            "sampled_pixels": 236024,
+            "luminance_mean": 33.8007,
+            "luminance_variance": 1115.3601,
+            "near_black_ratio": 0,
+            "quantized_color_count": 380,
+            "dominant_color_ratio": 0.92619,
+            "pass": true
+          },
+          "freshness_status": {
+            "sampled_pixels": 4752,
+            "luminance_mean": 65.2022,
+            "luminance_variance": 4163.5892,
+            "near_black_ratio": 0,
+            "quantized_color_count": 17,
+            "dominant_color_ratio": 0.652567,
+            "pass": true
+          },
+          "provenance": {
+            "sampled_pixels": 16268,
+            "luminance_mean": 33.9603,
+            "luminance_variance": 876.8344,
+            "near_black_ratio": 0,
+            "quantized_color_count": 103,
+            "dominant_color_ratio": 0.923715,
+            "pass": true
+          }
+        },
+        "pass": true
+      },
+      "decoder_agreement": {
+        "browser_rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "ffmpeg_rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "pass": true
+      },
+      "overflow": {
+        "language": "ja",
+        "viewport": {
+          "width": 390,
+          "height": 3100
+        },
+        "document_width": 390,
+        "findings": [],
+        "pass": true
+      },
+      "freshness_status_present": true,
+      "provenance_present": true,
+      "pass": true
+    }
+  ],
+  "contact_sheet": {
+    "id": "contact-sheet",
+    "role": "contact-sheet",
+    "path": "screenshots/priority-review-console-contact-sheet.png",
+    "capture_id": "priority-review-console-f160ca3a7b90e3b19d4f0e46",
+    "source_capture_ids": [
+      "ja-desktop",
+      "en-desktop",
+      "ja-narrow"
+    ],
+    "dimensions": {
+      "width": 1440,
+      "height": 760
+    },
+    "normalized_png_sha256": "58fb705dc7604ed75ef3e15b3b73fe865389356fefd48aae0c0fe3194cb8fd47",
+    "decoded_pixel_sha256": "5afadc2f7cda219a8d304e6ebe7f98e1e9ecb4757172a19e8573abcdfe3c9348",
+    "browser_canvas_raster": {
+      "regions": {
+        "ja-desktop": {
+          "sampled_pixels": 170781,
+          "luminance_mean": 33.6141,
+          "luminance_variance": 1045.8744,
+          "near_black_ratio": 0,
+          "quantized_color_count": 536,
+          "dominant_color_ratio": 0.661619,
+          "pass": true
+        },
+        "en-desktop": {
+          "sampled_pixels": 170781,
+          "luminance_mean": 33.1817,
+          "luminance_variance": 980.0692,
+          "near_black_ratio": 0,
+          "quantized_color_count": 531,
+          "dominant_color_ratio": 0.653568,
+          "pass": true
+        },
+        "ja-narrow": {
+          "sampled_pixels": 37128,
+          "luminance_mean": 35.6292,
+          "luminance_variance": 1022.3623,
+          "near_black_ratio": 0,
+          "quantized_color_count": 512,
+          "dominant_color_ratio": 0.665347,
+          "pass": true
+        }
+      },
+      "pass": true
+    },
+    "ffmpeg_raster": {
+      "regions": {
+        "ja-desktop": {
+          "sampled_pixels": 170781,
+          "luminance_mean": 33.6141,
+          "luminance_variance": 1045.8744,
+          "near_black_ratio": 0,
+          "quantized_color_count": 536,
+          "dominant_color_ratio": 0.661619,
+          "pass": true
+        },
+        "en-desktop": {
+          "sampled_pixels": 170781,
+          "luminance_mean": 33.1817,
+          "luminance_variance": 980.0692,
+          "near_black_ratio": 0,
+          "quantized_color_count": 531,
+          "dominant_color_ratio": 0.653568,
+          "pass": true
+        },
+        "ja-narrow": {
+          "sampled_pixels": 37128,
+          "luminance_mean": 35.6292,
+          "luminance_variance": 1022.3623,
+          "near_black_ratio": 0,
+          "quantized_color_count": 512,
+          "dominant_color_ratio": 0.665347,
+          "pass": true
+        }
+      },
+      "rgba_sha256": "5afadc2f7cda219a8d304e6ebe7f98e1e9ecb4757172a19e8573abcdfe3c9348",
+      "pass": true
+    },
+    "decoder_agreement": {
+      "browser_rgba_sha256": "5afadc2f7cda219a8d304e6ebe7f98e1e9ecb4757172a19e8573abcdfe3c9348",
+      "ffmpeg_rgba_sha256": "5afadc2f7cda219a8d304e6ebe7f98e1e9ecb4757172a19e8573abcdfe3c9348",
+      "pass": true
+    },
+    "pass": true
+  },
+  "capture_runtime": {
+    "node_version": "v24.13.0",
+    "browser_version": "150.0.4078.65",
+    "playwright_core_version": "1.57.0",
+    "ffmpeg_version": "ffmpeg version 8.0.1-full_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers",
+    "browser_executable": "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe",
+    "ffmpeg_executable": "ffmpeg",
+    "capture_script_path": "capture_priority_review_console.mjs",
+    "capture_script_sha256": "f705a4483958715d01db537ae3cdd3a04f6c76dead8d4ee788c7ef9cb04f4581",
+    "locale": [
+      "ja-JP",
+      "en-US"
+    ],
+    "timezone": "Asia/Tokyo",
+    "reduced_motion": "reduce",
+    "dependency_install_performed": false
+  },
+  "validation_commands": [
+    "node samples/dashboard/production_capture/capture_priority_review_console.mjs --captured-at <ISO-8601>",
+    "node samples/dashboard/production_capture/capture_priority_review_console.mjs --record-worker-inspection --inspection-at <ISO-8601>",
+    "python -m unittest tests.test_dashboard_production_capture",
+    "git diff --check"
+  ]
+}

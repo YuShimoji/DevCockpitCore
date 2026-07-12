@@ -1,17 +1,26 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-12
+updated_at: 2026-07-13
 projection_kind: repository_restart_and_artifact_access
-current_review_artifact: verified-observation-surface-intent-pack-v2
-current_review_artifact_path: samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html
-source_commit: 2e5e924b12a311260bf10c7b252c0695cac7f80c
-observed_at: 2026-07-06T16:56:16+09:00
-freshness_state: stale
+current_review_artifact: priority-review-console-production-observation-surface-v1
+current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
+priority_readback_path: samples/dashboard/devcockpitcore_priority_readback.json
+selected_information_architecture: A_priority_review_console
+selection_state: closed
+user_visual_acceptance: pending
+tracked_receipt_capture_id: efr-cbae922571043527b800
+tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
+tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
 durable_context_path: docs/project-context.md
 layout_research_path: docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
 production_dashboard_path: samples/dashboard/devcockpitcore_dashboard.html
 production_generator_path: src/dev_cockpit/dashboard.py
+review_actions_json_path: samples/dashboard/devcockpitcore_review_actions.json
+review_actions_markdown_path: samples/dashboard/devcockpitcore_review_actions.md
+production_capture_manifest_path: samples/dashboard/production_capture/production_capture_manifest.json
+production_capture_readback_path: samples/dashboard/production_capture/production_capture_readback.json
+production_contact_sheet_path: samples/dashboard/production_capture/screenshots/priority-review-console-contact-sheet.png
 capability_state: bounded_c3_c4
 evidence_freshness_policy_path: samples/evidence_freshness/evidence_freshness_policy_v1.json
 evidence_freshness_receipt_json_path: samples/evidence_freshness/evidence_freshness_receipt_v1.json
@@ -36,30 +45,38 @@ does not act as a development workflow controller.
 
 ## Artifact Access
 
-The current review artifact is the v2 three-direction, same-claim intent
-comparison at
-`samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`.
-Its directions are A (Priority Review Console), B (Narrative Status Brief), and
-C (Lane And Project Overview). Its manifest and automated readback are in the
-same directory, and its supporting research is
-`docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md`. User direction selection remains
-pending. The production dashboard and generator remain separate and unchanged
-by this review checkpoint.
+The current review artifact is the production A / Priority Review Console at
+`samples/dashboard/devcockpitcore_dashboard.html`. The A/B/C direction gate is
+closed and A is the production direction. Its deterministic priority readback,
+non-executable review actions, capture manifest, capture readback, and contact
+sheet are at the paths declared above.
+
+Production direction A is selected for the production dashboard;
+`user_visual_acceptance` remains `pending`.
+
+The historical v2 comparison remains at
+`samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`
+as selection provenance only. B / Narrative Status Brief is parked as a
+possible future handoff or summary view. C / Lane And Project Overview is
+parked as a possible future cross-project overview. Neither is part of the
+production UI or current implementation scope. The only open user gate is one
+free-form production visual/comprehension review; production visual acceptance
+remains pending.
 
 ## Freshness
 
-The projection records the comparison evidence source commit
-`2e5e924b12a311260bf10c7b252c0695cac7f80c`; the latest generation time among
-the three tracked source artifacts is `2026-07-06T16:56:16+09:00`. Its `stale`
-state is explicit: re-read Git state
-and regenerate validation evidence before treating the values as current after
-that observation.
+The production generator consumes the existing validated
+`evidence_freshness_receipt.v1`; it does not run a parallel freshness evaluator.
+The tracked receipt identified above is deterministic, point-in-time, and
+non-live. Its authority classification, assessed time, temporal state,
+revision-binding state, provenance, and current-claim eligibility are displayed
+in the console. A live claim requires a newly generated receipt assessed
+against its recorded policy, observation time, and revision binding, followed
+by dashboard regeneration.
 
-The tracked evidence-freshness policy and JSON/Markdown receipt examples are at
-the paths declared above. They are deterministic, point-in-time, non-live
-observer outputs rather than workflow control or authority for the current
-checkout. A live claim requires a newly generated receipt assessed against its
-recorded policy, observation time, and revision binding.
+This projection and the other repository documents are navigation and decision
+records, not live workflow authority. Verify Git, tests, generated readback, and
+the receipt authority boundary directly.
 
 ## Local Validation Entry
 
@@ -70,4 +87,6 @@ $env:PYTHONPATH = "src"
 python -m unittest discover
 python -m dev_cockpit.validation_pack --default --pretty
 python -m dev_cockpit.evidence_freshness
+python -m dev_cockpit.dashboard
+Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```

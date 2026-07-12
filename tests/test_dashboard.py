@@ -4,6 +4,7 @@ from contextlib import redirect_stdout
 import io
 import json
 from pathlib import Path
+import shutil
 import sys
 import tempfile
 import unittest
@@ -13,235 +14,373 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from dev_cockpit.dashboard import (
+    _priority_items,
     build_dashboard_model,
     main,
+    priority_readback,
     render_dashboard,
     render_review_actions_markdown,
     review_action_package,
     write_dashboard,
+    write_priority_readback,
     write_review_actions_json,
     write_review_actions_markdown,
 )
 
 
 class DashboardTests(unittest.TestCase):
-    def test_model_loads_sources_and_aggregates_warning_health(self) -> None:
+    def test_model_loads_receipt_and_builds_priority_console_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
 
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+            model = build_dashboard_model(
+                repo_root=root,
+                generated_at="2026-07-12T00:00:00Z",
+            )
 
         self.assertEqual(model["schema_version"], "devcockpit_local_dashboard.v1")
         self.assertEqual(model["project"]["key"], "devcockpitcore")
         self.assertEqual(model["health"]["tone"], "yellow")
         self.assertEqual({source["state"] for source in model["sources"]}, {"loaded"})
+        self.assertEqual(len(model["sources"]), 7)
+        self.assertEqual(model["source_freshness"]["loaded_count"], "7/7")
         self.assertEqual(
             model["output"]["repo_relative_path"],
             "samples/dashboard/devcockpitcore_dashboard.html",
         )
         self.assertEqual(model["output"]["access_state"], "worker_generated_not_user_opened")
-        self.assertIn("warning_triage", model)
-        self.assertEqual(len(model["review_checkpoints"]), 3)
-        self.assertEqual(model["freshness"]["loaded_count"], "6/6")
-        self.assertEqual(len(model["decision_meters"]), 6)
-        self.assertLessEqual(len(model["review_stack"]), 3)
-        self.assertTrue(all(meter["detail_href"].startswith("#detail-") for meter in model["decision_meters"]))
-        report = model["frontpage_report"]
-        self.assertIs(model["latest_brief"], report)
-        self.assertEqual(report["kind"], "frontpage_report")
-        self.assertIn("headline", report)
-        self.assertIn("annotation", report)
-        self.assertEqual(len(report["runway"]), 3)
-        self.assertIn("primary_action", report)
+        self.assertEqual(
+            model["priority_readback"]["repo_relative_path"],
+            "samples/dashboard/devcockpitcore_priority_readback.json",
+        )
+        self.assertEqual(model["freshness"]["loaded_count"], "7/7")
+        self.assertEqual(
+            set(model["freshness"]),
+            {"loaded_count", "latest_generated_at", "source_summary"},
+        )
+        self.assertEqual(model["evidence_freshness"]["schema_version"], "evidence_freshness_receipt.v1")
+        self.assertEqual(model["evidence_freshness"]["capture_id"], "efr-cbae922571043527b800")
+        self.assertEqual([item["precedence"] for item in model["priority_policy"]], list(range(1, 7)))
+        self.assertGreaterEqual(len(model["priority_items"]), 1)
+        self.assertEqual(model["selected_priority_id"], model["priority_items"][0]["priority_id"])
+        self.assertEqual(model["user_visual_acceptance"], "pending")
 
-    def test_rendered_html_contains_required_review_sections(self) -> None:
+    def test_receipt_projection_is_consumed_without_re_evaluating_freshness(self) -> None:
+        receipt = json.loads(
+            (ROOT / "samples" / "evidence_freshness" / "evidence_freshness_receipt_v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+            model = build_dashboard_model(
+                repo_root=root,
+                generated_at="2035-01-01T00:00:00Z",
+            )
+
+        projected = model["evidence_freshness"]
+        self.assertEqual(projected["assessed_at"], receipt["assessed_at"])
+        self.assertEqual(projected["authority"], receipt["authority"])
+        self.assertEqual(projected["source_counts"], receipt["summary"]["source_counts"])
+        self.assertEqual(
+            projected["current_state_claim_eligible"],
+            receipt["summary"]["current_state_claim_eligible"],
+        )
+        receipt_source = next(
+            source for source in model["sources"] if source["label"] == "evidence_freshness_receipt"
+        )
+        self.assertIs(receipt_source["hashes_verified"], False)
+
+    def test_priority_ranking_is_deterministic_deduplicated_and_required_first(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            first = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+            second = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+
+        priorities = first["priority_items"]
+        self.assertEqual(priorities, second["priority_items"])
+        self.assertEqual([item["rank"] for item in priorities], list(range(1, len(priorities) + 1)))
+        self.assertEqual(
+            [item["precedence"] for item in priorities],
+            sorted(item["precedence"] for item in priorities),
+        )
+        identities = [(item["project_key"], item["condition_key"]) for item in priorities]
+        self.assertEqual(len(identities), len(set(identities)))
+        required_ranks = [item["rank"] for item in priorities if item["required"] is True]
+        optional_ranks = [item["rank"] for item in priorities if item["required"] is False]
+        self.assertTrue(required_ranks)
+        self.assertTrue(optional_ranks)
+        self.assertLess(max(required_ranks), min(optional_ranks))
+
+        worktree = [
+            item
+            for item in priorities
+            if item["project_key"] == "devcockpitcore" and item["condition_key"] == "worktree_dirty"
+        ]
+        self.assertEqual(len(worktree), 1)
+        self.assertGreaterEqual(len(worktree[0]["evidence_refs"]), 2)
+        self.assertEqual(worktree[0]["primary_evidence_id"], "cross-project-smoke-sample")
+        writing_conditions = [
+            item["condition_key"]
+            for item in priorities
+            if item["project_key"] == "writingpage"
+        ]
+        self.assertEqual(writing_conditions, ["optional_project_missing"])
+
+    def test_required_blocker_and_validation_failure_precede_freshness_and_warnings(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            validation_path = root / "samples" / "validation_packs" / "devcockpitcore_validation_pack_result.json"
+            validation = json.loads(validation_path.read_text(encoding="utf-8"))
+            validation["checks"][1]["result"] = "fail"
+            validation["checks"][1]["severity"] = "required"
+            validation["health"]["blockers"] = ["required observation contract broken"]
+            _write_json(validation_path, validation)
+
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+
+        priorities = model["priority_items"]
+        self.assertEqual([item["precedence"] for item in priorities[:3]], [1, 2, 3])
+        self.assertTrue(priorities[0]["condition_key"].startswith("blocker:"))
+        self.assertEqual(
+            priorities[1]["condition_key"],
+            "validation_check:historical_fixture_scan",
+        )
+        self.assertEqual(priorities[2]["condition_key"], "current_claim_ineligible")
+        blocker_html = render_dashboard(model)
+        self.assertIn('<span class="lang-ja">停止</span>', blocker_html)
+        self.assertIn('<span class="lang-en">Blocked</span>', blocker_html)
+
+    def test_matching_required_failure_and_blocker_collapse_with_correct_evidence(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            validation_path = root / "samples" / "validation_packs" / "devcockpitcore_validation_pack_result.json"
+            validation = json.loads(validation_path.read_text(encoding="utf-8"))
+            validation["checks"][1]["result"] = "fail"
+            validation["checks"][1]["severity"] = "required"
+            validation["summary"]["result"] = "fail"
+            validation["health"]["blockers"] = ["historical_fixture_scan failed"]
+            _write_json(validation_path, validation)
+
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+
+        matching = [
+            item
+            for item in model["priority_items"]
+            if item["condition_key"] == "validation_check:historical_fixture_scan"
+        ]
+        self.assertEqual(len(matching), 1)
+        self.assertEqual(matching[0]["precedence"], 1)
+        self.assertEqual(matching[0]["primary_evidence_id"], "validation-pack-sample")
+
+    def test_red_status_note_collapses_with_matching_smoke_condition(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            status_path = root / "samples" / "status_snapshots" / "devcockpitcore_status.json"
+            status = json.loads(status_path.read_text(encoding="utf-8"))
+            status["health"] = {
+                "status": "red",
+                "notes": ["worktree is dirty"],
+                "stop_class": "STOP",
+            }
+            _write_json(status_path, status)
+
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+
+        worktree = [
+            item for item in model["priority_items"] if item["condition_key"] == "worktree_dirty"
+        ]
+        self.assertEqual(len(worktree), 1)
+        self.assertEqual(worktree[0]["precedence"], 1)
+        self.assertGreaterEqual(len(worktree[0]["evidence_refs"]), 2)
+
+    def test_priority_items_are_non_executable_source_backed_and_keep_locked_lanes_out(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+
+        priorities = model["priority_items"]
+        self.assertTrue(all(item["executable"] is False for item in priorities))
+        self.assertTrue(all(item["primary_evidence_path"] for item in priorities))
+        self.assertTrue(all(item["evidence_refs"] for item in priorities))
+        self.assertTrue(any(item["review_action_refs"] for item in priorities))
+        self.assertTrue(
+            all(
+                ref["executable"] is False
+                for item in priorities
+                for ref in item["review_action_refs"]
+            )
+        )
+        self.assertTrue(
+            all(
+                ref["source_id"] and ref["source_path"]
+                for item in priorities
+                for ref in item["evidence_refs"]
+            )
+        )
+        payload = json.dumps(priorities)
+        self.assertTrue(all(item["claim_class"] == "derived" for item in priorities))
+        self.assertTrue(all(item["evidence_claim_class"] == "observed" for item in priorities))
+        self.assertTrue(all(item["display_copy_claim_class"] == "editorial" for item in priorities))
+        self.assertTrue(all(item["ranking_policy_claim_class"] == "policy" for item in priorities))
+        for forbidden in (
+            "NEXT_WORKER_PROMPT",
+            "[PASTE TARGET:",
+            "autonomous runner",
+            "external publication action",
+        ):
+            self.assertNotIn(forbidden, payload)
+
+    def test_unmatched_owned_review_action_becomes_a_priority(self) -> None:
+        inputs = _green_priority_inputs()
+        inputs["review_actions"] = [
+            {
+                "action_id": "validation-orphan-001",
+                "source_type": "validation_pack",
+                "severity": "warning",
+                "project_key": "devcockpitcore",
+                "reason": "orphan warning requiring an owner",
+                "evidence_path": "samples/validation.json",
+                "owner_hint": "operator",
+                "executable": False,
+            }
+        ]
+
+        priorities = _priority_items(**inputs)
+
+        self.assertEqual(len(priorities), 1)
+        self.assertTrue(priorities[0]["condition_key"].startswith("review_action:validation_pack:"))
+        self.assertEqual(
+            [ref["action_id"] for ref in priorities[0]["review_action_refs"]],
+            ["validation-orphan-001"],
+        )
+
+    def test_all_green_inputs_render_a_stable_success_priority(self) -> None:
+        priorities = _priority_items(**_green_priority_inputs())
+
+        self.assertEqual(len(priorities), 1)
+        self.assertEqual(priorities[0]["condition_key"], "routine_observation_review")
+        self.assertEqual(priorities[0]["precedence"], 5)
+        self.assertEqual(priorities[0]["primary_evidence_id"], "devcockpitcore.live_status_observation")
+
+    def test_rendered_html_uses_priority_decision_evidence_as_primary_order(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
 
         html = render_dashboard(model)
 
         for expected in (
-            "Current Status / Supervision Report",
-            "Continue locally; the useful attention is warning judgment, not blocker hunting.",
-            "Review Map",
-            "Compact review map",
-            "Review Stack",
-            "Linked Detail Map",
-            "Detail: Stop Gate",
-            "Detail: Warning Debt",
-            "Detail: Evidence Freshness",
-            "Detail: Review Actions",
-            "Detail: Project Smoke",
-            "Detail: Source Files",
-            "Warnings Triage",
-            "Project Cards",
+            'data-dashboard-variant="priority-review-console-production"',
+            'data-dashboard-theme="dark"',
+            'data-landmark="current-state"',
+            'id="priority-lane"',
+            'data-landmark="priority-lane"',
+            'id="active-decision"',
+            'data-landmark="active-decision"',
+            'id="evidence-inspector"',
+            'data-landmark="evidence-inspector"',
+            'id="evidence-appendix"',
+            "Priority Review Console",
+            "Priority Lane",
+            "Active Decision",
+            "Evidence Inspector",
+            "Current-claim eligible",
+            "Fresh through",
+            'role="option" aria-selected=',
+            'data-field="review-actions"',
+            "Freshness receipt ledger",
+            "Non-executable review actions",
             "Validation Pack",
             "Cross-Project Smoke",
-            "Health, Gate, Readiness",
-            "Safe Local Actions",
-            "Locked Lanes",
-            "Designer / Operator Notes",
-            "Sources and Access",
-            "samples/validation_packs/devcockpitcore_validation_pack_result.json",
-            "worker_generated_not_user_opened",
+            "Locked lanes",
         ):
             self.assertIn(expected, html)
+        priority_list_tag = html.split('class="priority-list"', 1)[1].split(">", 1)[0]
+        self.assertNotIn("data-overflow-allowed", priority_list_tag)
+        self.assertLess(html.index('id="priority-lane"'), html.index('id="active-decision"'))
+        self.assertLess(html.index('id="active-decision"'), html.index('id="evidence-inspector"'))
+        self.assertLess(html.index('id="evidence-inspector"'), html.index('id="evidence-appendix"'))
+        self.assertNotIn('id="current-status-report"', html)
+        self.assertNotIn('id="review-map"', html)
+        self.assertNotIn('id="review-stack"', html)
         self.assertNotIn("NEXT_WORKER_PROMPT", html)
         self.assertNotIn("[PASTE TARGET:", html)
 
-    def test_rendered_html_has_dark_report_first_frontpage_and_disclosures(self) -> None:
+    def test_rendered_html_is_bilingual_without_b_or_c_production_tabs(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-
-        html = render_dashboard(model)
-        top_strip = html.split("</header>", 1)[0]
+            html = render_dashboard(
+                build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+            )
 
         for expected in (
-            'data-dashboard-variant="report-first-frontpage"',
-            'data-dashboard-theme="dark"',
-            "color-scheme: dark",
-            'id="current-status-report"',
-            "report-first-frontpage",
-            "frontpage-report",
-            "report-status-strip",
-            "report-primary-action",
-            "review-map-list",
-            "data-review-map-item",
-            "<span>Stop Gate</span>",
-            "<span>Warning Debt</span>",
-            "<span>Evidence Freshness</span>",
-            "<span>Review Queue</span>",
-            "<span>Project Smoke</span>",
-            "<span>Access Readiness</span>",
-            '<details class="disclosure">',
-            "Evidence Snapshot",
-            "Detailed Review Actions",
+            '<html lang="ja" data-language="ja">',
+            'class="lang-ja"',
+            'class="lang-en"',
+            'data-language="ja" aria-pressed="true"',
+            'data-language="en" aria-pressed="false"',
+            "優先レビュー・コンソール",
+            "優先事項",
+            "現在の判断",
+            "根拠",
+            "鮮度receiptの証拠ソース",
+            "確認専用action package",
+            "Workerが生成したローカル確認成果物です。",
+            "setLanguage",
         ):
             self.assertIn(expected, html)
-        for raw_value in (
-            "INTEGRATE_AND_CONTINUE",
-            "worker_generated_not_user_opened",
-            "local_static_file",
-            "file_generated_by_dashboard_command",
-        ):
-            self.assertNotIn(raw_value, top_strip)
-        for demoted_label in ("Warning Debt", "Review Queue", "Project Smoke", "Access Readiness"):
-            self.assertNotIn(demoted_label, top_strip)
-        for old_top_surface in ("latest-brief", "decision-meter-board", "review-strip"):
-            self.assertNotIn(old_top_surface, html)
+        self.assertNotIn('data-direction="narrative-status-brief"', html)
+        self.assertNotIn('data-direction="lane-and-project-overview"', html)
+        self.assertNotIn('role="tablist"', html)
+        self.assertNotIn("linear-gradient", html)
+        self.assertNotIn("radial-gradient", html)
 
-    def test_frontpage_report_absorbs_latest_brief_without_a_card(self) -> None:
+    def test_non_javascript_fallback_and_interaction_contract_are_present(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-
-        html = render_dashboard(model)
-        top_strip = html.split("</header>", 1)[0]
-        report = top_strip.split('<section id="current-status-report"', 1)[1].split("</section>", 1)[0]
-
-        self.assertLess(html.index('id="current-status-report"'), html.index('id="review-map"'))
-        self.assertNotIn("latest-brief", html)
-        self.assertNotIn('data-brief-kind="editorial"', html)
-        self.assertEqual(report.count("<dt>"), 4)
-        for expected in (
-            "Current Status / Supervision Report",
-            "Continue locally; the useful attention is warning judgment, not blocker hunting.",
-            "The largest review bucket is validation findings",
-            "report-headline",
-            "report-interpretation",
-            "report-status-strip",
-            "report-primary-action",
-            "Review warning detail",
-            "Not urgent",
-        ):
-            self.assertIn(expected, report)
-        for table_label in ("Decision</span>", "Blockers</span>", "Focus</span>", "Next</span>"):
-            self.assertNotIn(table_label, report)
-        for duplicated_meter in ("Stop Gate", "Warning Debt", "Review Queue", "Project Smoke", "Access Readiness"):
-            self.assertNotIn(duplicated_meter, report)
-        for raw_value in ("INTEGRATE_AND_CONTINUE", "worker_generated_not_user_opened", "local_static_file"):
-            self.assertNotIn(raw_value, report)
-
-    def test_review_map_links_to_detail_panels_and_review_actions(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-
-        html = render_dashboard(model)
-
-        detail_ids = (
-            "detail-stop-gate",
-            "detail-warning-debt",
-            "detail-evidence-freshness",
-            "detail-review-actions",
-            "detail-project-smoke",
-            "detail-source-files",
-        )
-        self.assertEqual(html.count("data-review-map-item"), 6)
-        self.assertNotIn('class="decision-meter ', html)
-        for detail_id in detail_ids:
-            self.assertIn(f'href="#{detail_id}"', html)
-            self.assertIn(f'id="{detail_id}"', html)
-            self.assertIn('href="#review-map"', html)
-        self.assertIn('href="#validation-001"', html)
-        self.assertIn('id="validation-001"', html)
-
-    def test_review_stack_is_short_and_dense_evidence_stays_below_home(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-
-        html = render_dashboard(model)
-        top_strip = html.split("</header>", 1)[0]
-
-        self.assertLessEqual(html.count("data-review-stack-item"), 3)
-        self.assertLess(html.index('id="review-stack"'), html.index('id="validation-pack"'))
-        self.assertLess(html.index('id="linked-detail-map"'), html.index('id="validation-pack"'))
-        self.assertNotIn("Validation pack checks", top_strip)
-        for forbidden in ("NEXT_WORKER_PROMPT", "[PASTE TARGET:", "shell=True", "C:\\Users\\"):
-            self.assertNotIn(forbidden, html)
-
-    def test_rendered_html_has_static_filter_affordance_and_project_cards(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-
-        html = render_dashboard(model)
+            html = render_dashboard(
+                build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+            )
 
         for expected in (
-            "data-dashboard-search",
-            "data-filter-result=\"warn\"",
-            "data-dashboard-project",
-            "data-result=\"warn\"",
-            "All cards remain visible without JavaScript",
+            "<noscript>",
+            "完全な代替表示として、順位1、その判断、根拠を以下に表示します。",
+            "Rank 1, its active decision, and its evidence are rendered below as the complete fallback.",
+            'role="listbox"',
+            'role="option" aria-selected="true"',
+            'aria-controls="active-decision evidence-inspector"',
+            'aria-selected="true"',
+            'tabindex="0" data-landmark="priority-first"',
+            "selectPriority",
+            "ArrowDown",
+            "ArrowUp",
+            "Home",
+            "End",
+            "data-selected-priority-id",
         ):
             self.assertIn(expected, html)
 
-    def test_warning_triage_keeps_blockers_separate_from_warnings(self) -> None:
+    def test_warning_triage_and_review_actions_keep_substantive_contracts(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
 
         triage = {group["source"]: group for group in model["warning_triage"]}
         self.assertEqual(triage["Blockers"]["count"], 0)
         self.assertGreaterEqual(triage["Validation Pack"]["count"], 1)
         self.assertGreaterEqual(triage["Project Rows"]["count"], 1)
-
-    def test_review_actions_are_non_executable_and_source_backed(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
 
         actions = model["review_actions"]
         self.assertGreaterEqual(len(actions), 1)
@@ -256,7 +395,7 @@ class DashboardTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
 
         package = review_action_package(model)
 
@@ -264,6 +403,34 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(package["summary"]["total"], len(package["actions"]))
         self.assertGreaterEqual(package["summary"]["warning"], 1)
         self.assertEqual(package["package"]["access_state"], "worker_generated_not_user_opened")
+
+    def test_priority_readback_records_selected_production_surface_and_pending_acceptance(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            _write_fixture_tree(root)
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+            package = priority_readback(model)
+            output = root / "samples" / "dashboard" / "devcockpitcore_priority_readback.json"
+            write_priority_readback(package, output, pretty=True)
+
+            written = json.loads(output.read_text(encoding="utf-8"))
+
+        self.assertEqual(written["schema_version"], "devcockpit_priority_readback.v1")
+        self.assertEqual(
+            written["artifact_id"],
+            "priority-review-console-production-observation-surface-v1",
+        )
+        self.assertEqual(written["surface"]["selected_direction"], "priority-review-console")
+        self.assertIs(written["surface"]["production"], True)
+        self.assertIs(written["surface"]["b_and_c_production_tabs"], False)
+        self.assertEqual(written["surface"]["user_visual_acceptance"], "pending")
+        self.assertIs(written["surface"]["executable"], False)
+        self.assertEqual(written["priorities"], model["priority_items"])
+        self.assertEqual(
+            written["freshness_receipt"]["capture_id"],
+            model["evidence_freshness"]["capture_id"],
+        )
+        self.assertTrue(written["scope_boundary"]["locked_lanes_excluded_from_priorities"])
 
     def test_review_action_markdown_escapes_table_pipes(self) -> None:
         package = {
@@ -287,47 +454,30 @@ class DashboardTests(unittest.TestCase):
         self.assertIn("Non-executable review package", markdown)
         self.assertIn("## How to review this package", markdown)
 
-    def test_rendered_html_includes_review_actions_surface(self) -> None:
+    def test_rendered_html_has_accessibility_responsive_and_print_markers(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-
-        html = render_dashboard(model)
-
-        for expected in (
-            "Review Actions",
-            "Review-only Action Package",
-            "data-review-action",
-            "data-action-search",
-            "data-filter-action-severity=\"warning\"",
-            "executable is false",
-            "devcockpitcore_review_actions.json",
-        ):
-            self.assertIn(expected, html)
-
-    def test_rendered_html_has_accessibility_and_print_markers(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-
-        html = render_dashboard(model)
+            html = render_dashboard(
+                build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+            )
 
         for expected in (
             'class="skip-link"',
             'href="#main-content"',
-            '<nav class="dashboard-nav" aria-label="Dashboard sections">',
+            '<nav class="dashboard-nav"',
+            'data-aria-en="Dashboard sections"',
             '<main id="main-content"',
             '<footer class="dashboard-footer">',
-            '<noscript>',
             "aria-labelledby=",
-            'aria-label="Compact review map"',
+            'data-aria-en="Priority review queue"',
+            "@media (max-width:",
             "@media print",
             ":focus-visible",
             "prefers-reduced-motion",
-            "<caption>Validation pack checks",
-            "<caption>Source evidence files",
+            "Evidence freshness receipt sources",
+            "Validation pack checks, result severity, evidence bar, and detail.",
+            "Cross-project smoke rows with result, repository hint, branch, and warning summary.",
         ):
             self.assertIn(expected, html)
 
@@ -339,57 +489,68 @@ class DashboardTests(unittest.TestCase):
             data = json.loads(validation_path.read_text(encoding="utf-8"))
             data["health"]["warnings"].append("<script>alert(1)</script>")
             _write_json(validation_path, data)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
 
         html = render_dashboard(model)
 
         self.assertIn("&lt;script&gt;alert(1)&lt;/script&gt;", html)
         self.assertNotIn("<script>alert(1)</script>", html)
 
-    def test_write_dashboard_creates_static_html(self) -> None:
+    def test_write_dashboard_and_machine_packages(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-            output = root / "samples" / "dashboard" / "devcockpitcore_dashboard.html"
-
-            write_dashboard(model, output)
-
-            self.assertTrue(output.exists())
-            text = output.read_text(encoding="utf-8")
-            self.assertIn("<!doctype html>", text)
-            self.assertIn("local_static_file", text)
-            self.assertIn("Evidence level", text)
-
-    def test_write_review_action_packages(self) -> None:
-        with tempfile.TemporaryDirectory() as temp:
-            root = Path(temp)
-            _write_fixture_tree(root)
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
-            package = review_action_package(model)
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
+            html_output = root / "samples" / "dashboard" / "devcockpitcore_dashboard.html"
             json_output = root / "samples" / "dashboard" / "devcockpitcore_review_actions.json"
             md_output = root / "samples" / "dashboard" / "devcockpitcore_review_actions.md"
 
-            write_review_actions_json(package, json_output, pretty=True)
-            write_review_actions_markdown(package, md_output)
+            write_dashboard(model, html_output)
+            review_package = review_action_package(model)
+            write_review_actions_json(review_package, json_output, pretty=True)
+            write_review_actions_markdown(review_package, md_output)
 
-            self.assertEqual(json.loads(json_output.read_text(encoding="utf-8"))["schema_version"], "devcockpit_review_actions.v1")
-            self.assertIn("Non-executable review package", md_output.read_text(encoding="utf-8"))
+            html = html_output.read_text(encoding="utf-8")
+            review_json = json.loads(json_output.read_text(encoding="utf-8"))
+            review_md = md_output.read_text(encoding="utf-8")
 
-    def test_cli_writes_dashboard_with_default_paths(self) -> None:
+        self.assertIn("<!doctype html>", html)
+        self.assertIn("Priority Review Console", html)
+        self.assertIn("local_static_file", html)
+        self.assertEqual(review_json["schema_version"], "devcockpit_review_actions.v1")
+        self.assertIn("Non-executable review package", review_md)
+
+    def test_cli_writes_all_default_outputs_with_explicit_fixture_hash_skip(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
 
             stdout = io.StringIO()
             with redirect_stdout(stdout):
-                result = main(["--repo-root", str(root)])
+                result = main(
+                    [
+                        "--repo-root",
+                        str(root),
+                        "--skip-freshness-hash-verification",
+                    ]
+                )
 
+            output = stdout.getvalue()
             self.assertEqual(result, 0)
-            self.assertIn("samples/dashboard/devcockpitcore_dashboard.html", stdout.getvalue())
-            self.assertTrue((root / "samples" / "dashboard" / "devcockpitcore_dashboard.html").exists())
-            self.assertTrue((root / "samples" / "dashboard" / "devcockpitcore_review_actions.json").exists())
-            self.assertTrue((root / "samples" / "dashboard" / "devcockpitcore_review_actions.md").exists())
+            for relative_path in (
+                "samples/dashboard/devcockpitcore_dashboard.html",
+                "samples/dashboard/devcockpitcore_review_actions.json",
+                "samples/dashboard/devcockpitcore_review_actions.md",
+                "samples/dashboard/devcockpitcore_priority_readback.json",
+            ):
+                self.assertIn(relative_path, output)
+                self.assertTrue((root / relative_path).exists())
+            readback = json.loads(
+                (root / "samples" / "dashboard" / "devcockpitcore_priority_readback.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertEqual(readback["surface"]["selected_direction"], "priority-review-console")
 
     def test_missing_optional_context_is_warning_not_crash(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -397,10 +558,69 @@ class DashboardTests(unittest.TestCase):
             _write_fixture_tree(root)
             (root / "docs" / "project-context.md").unlink()
 
-            model = build_dashboard_model(repo_root=root, generated_at="2026-01-01T00:00:00Z")
+            model = build_dashboard_model(repo_root=root, generated_at="2026-07-12T00:00:00Z")
 
         self.assertEqual(model["health"]["tone"], "yellow")
         self.assertIn("project_context: missing source file", model["health"]["warnings"])
+
+
+def _green_priority_inputs() -> dict[str, object]:
+    live_source = {
+        "project_id": "devcockpitcore",
+        "source_id": "devcockpitcore.live_status_observation",
+        "source_path": "git-observation:.",
+        "freshness_state": "fresh",
+        "temporal_state": "fresh",
+        "revision_binding_state": "match",
+        "current_state_claim_eligible": True,
+        "assessed_at": "2026-07-13T00:00:00Z",
+        "fresh_through": "2026-07-14T00:00:00Z",
+        "content_sha256": "a" * 64,
+        "authority_classification": "point_in_time_non_live",
+        "reason_codes": ["revision_match", "timestamp_within_threshold"],
+    }
+    return {
+        "health": {"blockers": [], "warnings": []},
+        "validation": {
+            "summary": {"result": "pass"},
+            "health": {"blockers": [], "warnings": []},
+            "checks": [
+                {
+                    "check_key": "required_contract",
+                    "result": "pass",
+                    "severity": "required",
+                }
+            ],
+        },
+        "smoke": {
+            "summary": {"result": "pass"},
+            "health": {"blockers": [], "warnings": []},
+            "projects": [
+                {
+                    "project_key": "devcockpitcore",
+                    "project": "DevCockpitCore",
+                    "required": True,
+                    "status_snapshot": {"warnings": []},
+                }
+            ],
+        },
+        "status": {"health": {"status": "green", "notes": []}},
+        "receipt": {
+            "assessed_at": "2026-07-13T00:00:00Z",
+            "projects": [
+                {
+                    "project_id": "devcockpitcore",
+                    "required": True,
+                    "available": True,
+                }
+            ],
+            "sources": [live_source],
+        },
+        "review_actions": [],
+        "validation_path": "samples/validation.json",
+        "smoke_path": "samples/smoke.json",
+        "status_path": "samples/status.json",
+    }
 
 
 def _write_fixture_tree(root: Path) -> None:
@@ -471,6 +691,7 @@ def _write_fixture_tree(root: Path) -> None:
                 {
                     "project_key": "devcockpitcore",
                     "project": "DevCockpitCore",
+                    "required": True,
                     "adapter_path": "adapters/devcockpitcore.json",
                     "result": "warn",
                     "done": 1,
@@ -513,8 +734,8 @@ def _write_fixture_tree(root: Path) -> None:
                 "worktree": {"state": "dirty", "short_status": [" M README.md"]},
             },
             "project_state": {
-                "active_artifact": "dashboard-compact-dark-overview-v1",
-                "next_action": "review compact dark dashboard overview",
+                "active_artifact": "priority-review-console-production-observation-surface-v1",
+                "next_action": "review production priority console",
             },
             "health": {
                 "status": "yellow",
@@ -535,9 +756,18 @@ def _write_fixture_tree(root: Path) -> None:
     )
     _write_text(
         root / "docs" / "runtime-state.md",
-        "active_artifact: dashboard-compact-dark-overview-v1\nartifact_next: japanese-display-polish-v1\n",
+        "active_artifact: priority-review-console-production-observation-surface-v1\n"
+        "artifact_next: visual-acceptance-review\n",
     )
     _write_text(root / "docs" / "project-context.md", "# Project Context\n")
+    receipt_target = (
+        root / "samples" / "evidence_freshness" / "evidence_freshness_receipt_v1.json"
+    )
+    receipt_target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(
+        ROOT / "samples" / "evidence_freshness" / "evidence_freshness_receipt_v1.json",
+        receipt_target,
+    )
 
 
 def _write_json(path: Path, payload: dict[str, object]) -> None:

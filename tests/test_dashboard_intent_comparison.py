@@ -7,7 +7,6 @@ import json
 from pathlib import Path
 import re
 import struct
-import subprocess
 import unittest
 
 
@@ -18,7 +17,6 @@ FIXTURE_PATH = PACK / "intent_comparison_fixture.json"
 MANIFEST_PATH = PACK / "intent_comparison_manifest.json"
 READBACK_PATH = PACK / "intent_comparison_readback.json"
 CAPTURE_PATH = PACK / "capture_intent_comparison.mjs"
-GENERATOR_PATH = ROOT / "src" / "dev_cockpit" / "dashboard.py"
 BASELINE_GENERATOR_BLOB = "8e047f50f9e9525533f5fbd6d784b27508b6d10f"
 V1_B_SHA256 = "de685517421623c8eb78dc222c98ef19986577a6e0c6f3b2906af0c305959ac2"
 FROZEN_CLAIM_IDS = {
@@ -378,14 +376,6 @@ class IntentComparisonPackTests(unittest.TestCase):
         self.assertEqual(BASELINE_GENERATOR_BLOB, generator["baseline_blob"])
         self.assertEqual(BASELINE_GENERATOR_BLOB, generator["current_blob"])
         self.assertIs(generator["unchanged"], True)
-        current_blob = subprocess.run(
-            ["git", "hash-object", str(GENERATOR_PATH.relative_to(ROOT))],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        self.assertEqual(BASELINE_GENERATOR_BLOB, current_blob)
 
     def test_v2_machine_readback_and_worker_hash_binding(self) -> None:
         readback = self.readback

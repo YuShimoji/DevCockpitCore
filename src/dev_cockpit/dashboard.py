@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import hashlib
 import html
 import json
 from pathlib import Path
 import sys
 from typing import Any
+
+from .evidence_freshness import EvidenceFreshnessError, load_receipt
 
 
 PRODUCER = "dev_cockpit.dashboard"
@@ -23,6 +26,49 @@ DEFAULT_PROJECT_CONTEXT_PATH = "docs/project-context.md"
 DEFAULT_OUTPUT_PATH = "samples/dashboard/devcockpitcore_dashboard.html"
 DEFAULT_REVIEW_ACTIONS_JSON_PATH = "samples/dashboard/devcockpitcore_review_actions.json"
 DEFAULT_REVIEW_ACTIONS_MD_PATH = "samples/dashboard/devcockpitcore_review_actions.md"
+DEFAULT_FRESHNESS_RECEIPT_PATH = (
+    "samples/evidence_freshness/evidence_freshness_receipt_v1.json"
+)
+DEFAULT_PRIORITY_READBACK_PATH = "samples/dashboard/devcockpitcore_priority_readback.json"
+
+PRIORITY_POLICY = (
+    {
+        "precedence": 1,
+        "key": "required_blocker",
+        "label_ja": "必須ブロッカー",
+        "label_en": "Required blocker",
+    },
+    {
+        "precedence": 2,
+        "key": "required_validation_failure",
+        "label_ja": "必須検証失敗",
+        "label_en": "Required validation failure",
+    },
+    {
+        "precedence": 3,
+        "key": "current_state_evidence_ineligible",
+        "label_ja": "現状根拠の不適格",
+        "label_en": "Current-state evidence ineligible",
+    },
+    {
+        "precedence": 4,
+        "key": "owned_actionable_warning",
+        "label_ja": "担当付き警告",
+        "label_en": "Owned actionable warning",
+    },
+    {
+        "precedence": 5,
+        "key": "maintenance_or_decision",
+        "label_ja": "保守・判断",
+        "label_en": "Maintenance or decision",
+    },
+    {
+        "precedence": 6,
+        "key": "optional_information",
+        "label_ja": "任意・参考情報",
+        "label_en": "Optional information",
+    },
+)
 
 LOCKED_LANES = (
     "Arbitrary command runner",
@@ -57,13 +103,28 @@ def build_dashboard_model(
     adapter_path: str | Path = DEFAULT_ADAPTER_PATH,
     runtime_state_path: str | Path = DEFAULT_RUNTIME_STATE_PATH,
     project_context_path: str | Path = DEFAULT_PROJECT_CONTEXT_PATH,
+    freshness_receipt_path: str | Path = DEFAULT_FRESHNESS_RECEIPT_PATH,
     output_path: str | Path = DEFAULT_OUTPUT_PATH,
     review_actions_json_path: str | Path = DEFAULT_REVIEW_ACTIONS_JSON_PATH,
     review_actions_md_path: str | Path = DEFAULT_REVIEW_ACTIONS_MD_PATH,
+    priority_readback_path: str | Path = DEFAULT_PRIORITY_READBACK_PATH,
+    verify_freshness_hashes: bool = False,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
     root = Path(repo_root)
-    generated = generated_at or _utc_now_iso()
+
+    freshness_full_path = _resolve(root, freshness_receipt_path)
+    if not freshness_full_path.exists():
+        raise DashboardError(f"missing evidence freshness receipt: {freshness_receipt_path}")
+    try:
+        freshness_receipt = load_receipt(
+            freshness_full_path,
+            repo_root=root,
+            verify_hashes=verify_freshness_hashes,
+        )
+    except (EvidenceFreshnessError, OSError) as exc:
+        raise DashboardError(f"invalid evidence freshness receipt {freshness_receipt_path}: {exc}") from exc
+    generated = generated_at or str(freshness_receipt["assessed_at"])
 
     validation, validation_source = _read_json_source(root, validation_result_path, "validation_pack_result")
     smoke, smoke_source = _read_json_source(root, cross_project_smoke_result_path, "cross_project_smoke_result")
@@ -73,6 +134,15 @@ def build_dashboard_model(
     project_context_text, project_context_source = _read_text_source(
         root, project_context_path, "project_context"
     )
+    freshness_receipt_source = {
+        "label": "evidence_freshness_receipt",
+        "repo_relative_path": _display_path(root, freshness_receipt_path),
+        "state": "loaded",
+        "schema_version": str(freshness_receipt.get("schema_version", "unknown")),
+        "generated_at": str(freshness_receipt.get("assessed_at", "")),
+        "capture_id": str(freshness_receipt.get("capture_id", "")),
+        "hashes_verified": verify_freshness_hashes,
+    }
 
     runtime_labels = _parse_label_block(runtime_text)
     project_identity = _project_identity(adapter, status, runtime_labels)
@@ -83,11 +153,13 @@ def build_dashboard_model(
         adapter_source,
         runtime_source,
         project_context_source,
+        freshness_receipt_source,
     )
     health = _aggregate_health(validation, smoke, status, source_warnings)
     output_rel = _display_path(root, output_path)
     actions_json_rel = _display_path(root, review_actions_json_path)
     actions_md_rel = _display_path(root, review_actions_md_path)
+    priority_readback_rel = _display_path(root, priority_readback_path)
     sources = [
         validation_source,
         smoke_source,
@@ -95,6 +167,7 @@ def build_dashboard_model(
         adapter_source,
         runtime_source,
         project_context_source,
+        freshness_receipt_source,
     ]
     warning_triage = _warning_triage(health, validation, smoke, status, sources)
     review_checkpoints = _review_checkpoints(health, validation, smoke)
@@ -109,21 +182,33 @@ def build_dashboard_model(
         output_rel,
     )
     action_summary = _review_action_summary(review_actions)
-    freshness = _freshness_summary(sources, generated)
+    source_freshness = _freshness_summary(sources, generated)
+    evidence_freshness = _receipt_freshness_projection(freshness_receipt)
+    priority_items = _priority_items(
+        health=health,
+        validation=validation,
+        smoke=smoke,
+        status=status,
+        receipt=freshness_receipt,
+        review_actions=review_actions,
+        validation_path=_display_path(root, validation_result_path),
+        smoke_path=_display_path(root, cross_project_smoke_result_path),
+        status_path=_display_path(root, status_snapshot_path),
+    )
     decision_meters = _decision_meters(
         health,
         validation,
         smoke,
         status,
         sources,
-        freshness,
+        source_freshness,
         action_summary,
         warning_triage,
         review_actions,
         output_rel,
     )
-    review_stack = _review_stack(health, warning_triage, freshness, action_summary)
-    frontpage_report = _frontpage_report(health, warning_triage, freshness, output_rel, review_stack)
+    review_stack = _review_stack(health, warning_triage, source_freshness, action_summary)
+    frontpage_report = _frontpage_report(health, warning_triage, source_freshness, output_rel, review_stack)
 
     return {
         "schema_version": "devcockpit_local_dashboard.v1",
@@ -144,8 +229,21 @@ def build_dashboard_model(
             "access_state": "worker_generated_not_user_opened",
             "access_evidence_level": "file_generated_by_dashboard_command",
         },
+        "priority_readback": {
+            "repo_relative_path": priority_readback_rel,
+            "schema_version": "devcockpit_priority_readback.v1",
+            "access_state": "worker_generated_not_user_opened",
+            "access_evidence_level": "file_generated_by_dashboard_command",
+        },
         "sources": sources,
-        "freshness": freshness,
+        "freshness": source_freshness,
+        "source_freshness": source_freshness,
+        "evidence_freshness": evidence_freshness,
+        "evidence_freshness_receipt": freshness_receipt,
+        "priority_policy": [dict(item) for item in PRIORITY_POLICY],
+        "priority_items": priority_items,
+        "selected_priority_id": priority_items[0]["priority_id"] if priority_items else None,
+        "user_visual_acceptance": "pending",
         "validation_pack": {
             "summary": _dict(validation.get("summary")),
             "health": _dict(validation.get("health")),
@@ -184,163 +282,82 @@ def build_dashboard_model(
 
 
 def render_dashboard(model: dict[str, Any]) -> str:
+    """Render the selected Priority Review Console as the production surface."""
+
     project = _dict(model.get("project"))
+    health = _dict(model.get("health"))
     validation = _dict(model.get("validation_pack"))
     smoke = _dict(model.get("cross_project_smoke"))
-    status_snapshot = _dict(model.get("status_snapshot"))
-    health = _dict(model.get("health"))
-    output = _dict(model.get("output"))
-    freshness = _dict(model.get("freshness"))
     action_package = _dict(model.get("action_package"))
     action_summary = _dict(model.get("review_action_summary"))
-
-    validation_summary = _dict(validation.get("summary"))
-    smoke_summary = _dict(smoke.get("summary"))
-    status_repo = _dict(status_snapshot.get("repo"))
-    projects = _list(smoke.get("projects"))
+    output = _dict(model.get("output"))
+    freshness = _dict(model.get("evidence_freshness"))
+    receipt = _dict(model.get("evidence_freshness_receipt"))
+    priorities = [item for item in _list(model.get("priority_items")) if isinstance(item, dict)]
+    if not priorities:
+        raise DashboardError("priority console requires at least one priority item")
+    selected = priorities[0]
+    eligible = _dict(freshness.get("current_state_claim_eligible"))
+    source_counts = _dict(freshness.get("source_counts"))
+    authority_copy = _authority_copy(_dict(freshness.get("authority")))
+    has_blockers = bool(_list(health.get("blockers")))
+    stop_label_ja = "停止" if has_blockers else "継続可能"
+    stop_label_en = "Blocked" if has_blockers else "Continue"
 
     lines = [
         "<!doctype html>",
-        '<html lang="en">',
+        '<html lang="ja" data-language="ja">',
         "<head>",
         '  <meta charset="utf-8">',
         '  <meta name="viewport" content="width=device-width, initial-scale=1">',
-        f"  <title>{_e(project.get('name', 'DevCockpitCore'))} Local Test Dashboard</title>",
+        f"  <title>Priority Review Console · {_e(project.get('name', 'DevCockpitCore'))}</title>",
         '  <meta name="color-scheme" content="dark">',
         "  <style>",
         _stylesheet(),
         "  </style>",
         "</head>",
-        '<body data-dashboard-variant="report-first-frontpage">',
-        '  <a class="skip-link" href="#main-content">Skip to dashboard content</a>',
-        _top_strip(model, project, health, output, freshness),
-        _dashboard_nav(),
-        '  <main id="main-content" class="page" tabindex="-1">',
-        _noscript_notice(),
-        _section(
-            "Review Map",
-            [_review_map(_list(model.get("decision_meters")))],
-            summary="Compact navigation from the frontpage report into linked detail evidence.",
-        ),
-        _section(
-            "Review Stack",
-            [_review_stack_cards(_list(model.get("review_stack")))],
-            collapsed=True,
-            summary="Top three review targets, opened only when needed.",
-        ),
-        _section(
-            "Linked Detail Map",
-            [
-                _linked_detail_map(
-                    model,
-                    validation,
-                    smoke,
-                    status_snapshot,
-                    output,
-                    action_package,
-                    freshness,
-                    action_summary,
-                    projects,
-                )
-            ],
-            summary="Review-map-linked detail panels with back-to-overview paths.",
-        ),
-        _section(
-            "Evidence Snapshot",
-            [_summary_band(project, validation_summary, smoke_summary, status_repo, health, output, freshness)],
-            collapsed=True,
-            summary="Raw source rollup and repo/access state.",
-        ),
-        _section(
-            "Warnings Triage",
-            [_warning_triage_panel(_list(model.get("warning_triage")))],
-            collapsed=True,
-            summary="Warning ownership groups and source notes.",
-        ),
-        _section(
-            "Review Actions",
-            [
-                _review_action_summary_panel(action_summary, action_package),
-                _review_action_filter_controls(),
-                _details_panel(
-                    "Detailed Review Actions",
-                    [_review_action_cards(_list(model.get("review_actions")))],
-                    "All generated review-only actions remain available here.",
-                ),
-            ],
-        ),
-        _section(
-            "Project Cards",
-            [
-                _project_filter_controls(),
-                _project_cards(projects),
-            ],
-            collapsed=True,
-            summary="Per-project smoke evidence and warning notes.",
-        ),
-        _section(
-            "Validation Pack",
-            [
-                _summary_line(validation_summary),
-                _checks_table(_list(validation.get("checks"))),
-            ],
-            collapsed=True,
-            summary="Validation check table and meter details.",
-        ),
-        _section(
-            "Cross-Project Smoke",
-            [
-                _summary_line(smoke_summary),
-                _projects_table(projects),
-            ],
-            collapsed=True,
-            summary="Cross-project observer rows and warnings.",
-        ),
-        _section(
-            "Health, Gate, Readiness",
-            [
-                _health_panel(health),
-                _gate_panel("Validation Gate", _dict(validation.get("gate_input"))),
-                _gate_panel("Smoke Gate", _dict(smoke.get("gate_input"))),
-                _readiness_panel(_dict(smoke.get("readiness"))),
-            ],
-            css_class="grid-three",
-            collapsed=True,
-            summary="Raw gate, stop class, and readiness values.",
-        ),
-        _section(
-            "Safe Local Actions",
-            [
-                _safe_action_cards(_list(model.get("safe_local_actions"))),
-                _list_panel(_list(model.get("safe_to_run")), "safe compact-list"),
-            ],
-            collapsed=True,
-            summary="Local checks and file-open commands only.",
-        ),
-        _section(
-            "Locked Lanes",
-            [_locked_lane_grid(_list(model.get("locked_lanes")))],
-            collapsed=True,
-            summary="Execution expansion lanes kept locked.",
-        ),
-        _section(
-            "Designer / Operator Notes",
-            [_list_panel(_list(model.get("designer_notes")), "notes")],
-            collapsed=True,
-            summary="Review guidance retained below the overview.",
-        ),
-        _section(
-            "Sources and Access",
-            [
-                _sources_table(_list(model.get("sources"))),
-                _access_panel(output),
-                _action_package_access_panel(action_package),
-            ],
-            collapsed=True,
-            summary="Source paths, generated_at values, and local access evidence.",
-        ),
+        '<body data-dashboard-variant="priority-review-console-production" data-dashboard-theme="dark">',
+        '  <a class="skip-link" href="#main-content"><span class="lang-ja">主要画面へ移動</span><span class="lang-en">Skip to main console</span></a>',
+        '  <header class="production-header" data-landmark="current-state">',
+        '    <div class="production-title-row">',
+        '      <div class="production-title-copy">',
+        '        <p class="eyebrow">DEVCOCKPITCORE / OBSERVER CONSOLE</p>',
+        '        <h1><span class="lang-ja">優先レビュー・コンソール</span><span class="lang-en">Priority Review Console</span></h1>',
+        '        <p class="production-deck"><span class="lang-ja">優先事項を選ぶと、判断と根拠が同じ対象へ同期します。読み取り専用・オフライン・非実行です。</span><span class="lang-en">Selecting a priority synchronizes its decision and evidence. Read-only, offline, and non-executable.</span></p>',
+        "      </div>",
+        '      <div class="header-controls">',
+        '        <div class="language-switch" role="group" aria-label="表示言語" data-language-controls data-aria-ja="表示言語" data-aria-en="Display language">',
+        '          <button type="button" data-language="ja" aria-pressed="true" data-aria-ja="日本語を表示" data-aria-en="Show Japanese">日本語</button>',
+        '          <button type="button" data-language="en" aria-pressed="false" data-aria-ja="英語を表示" data-aria-en="Show English">English</button>',
+        "        </div>",
+        '        <div class="acceptance-state"><span class="lang-ja">視覚受入</span><span class="lang-en">Visual acceptance</span><strong><span class="lang-ja">判断待ち</span><span class="lang-en">Pending</span></strong></div>',
+        "      </div>",
+        "    </div>",
+        '    <dl class="current-state-strip">',
+        f'      <div><dt><span class="lang-ja">停止ゲート</span><span class="lang-en">Stop gate</span></dt><dd><span class="lang-ja">{_e(stop_label_ja)}</span><span class="lang-en">{_e(stop_label_en)}</span></dd></div>',
+        f'      <div data-landmark="freshness-summary"><dt><span class="lang-ja">現状根拠</span><span class="lang-en">Current evidence</span></dt><dd><span class="lang-ja">{_e(eligible.get("eligible", 0))}/{_e(source_counts.get("total", 0))} 使用可</span><span class="lang-en">{_e(eligible.get("eligible", 0))}/{_e(source_counts.get("total", 0))} eligible</span></dd></div>',
+        f'      <div><dt><span class="lang-ja">優先事項</span><span class="lang-en">Priorities</span></dt><dd>{len(priorities)}</dd></div>',
+        '      <div><dt><span class="lang-ja">実行権限</span><span class="lang-en">Execution</span></dt><dd><span class="lang-ja">ロック中</span><span class="lang-en">Locked</span></dd></div>',
+        "    </dl>",
+        f'    <p class="receipt-line"><span class="lang-ja">判定時点</span><span class="lang-en">Assessed at</span> <time datetime="{_e(freshness.get("assessed_at", ""))}">{_e(freshness.get("assessed_at", ""))}</time> · <span class="lang-ja">{_e(authority_copy.get("ja", ""))}</span><span class="lang-en">{_e(authority_copy.get("en", ""))}</span></p>',
+        "  </header>",
+        '  <nav class="dashboard-nav" aria-label="ダッシュボード区分" data-aria-ja="ダッシュボード区分" data-aria-en="Dashboard sections">',
+        '    <a href="#priority-lane"><span class="lang-ja">優先一覧</span><span class="lang-en">Priorities</span></a>',
+        '    <a href="#active-decision"><span class="lang-ja">判断</span><span class="lang-en">Decision</span></a>',
+        '    <a href="#evidence-inspector"><span class="lang-ja">根拠</span><span class="lang-en">Evidence</span></a>',
+        '    <a href="#evidence-appendix"><span class="lang-ja">証拠付録</span><span class="lang-en">Evidence appendix</span></a>',
+        "  </nav>",
+        '  <main id="main-content" class="production-page" tabindex="-1">',
+        '    <noscript><div class="noscript-notice"><strong><span class="lang-ja">JavaScriptは無効です。</span><span class="lang-en">JavaScript is disabled.</span></strong> <span class="lang-ja">完全な代替表示として、順位1、その判断、根拠を以下に表示します。</span><span class="lang-en">Rank 1, its active decision, and its evidence are rendered below as the complete fallback.</span></div></noscript>',
+        '    <div class="priority-workspace" data-priority-workspace>',
+        _priority_lane(priorities),
+        _active_decision(selected),
+        _evidence_inspector(selected, receipt),
+        "    </div>",
+        _production_appendix(model, validation, smoke, action_package, action_summary, output, receipt),
         "  </main>",
         _dashboard_footer(model),
+        f'  <script type="application/json" id="priority-model">{_json_for_script(priorities)}</script>',
         "  <script>",
         _dashboard_script(),
         "  </script>",
@@ -349,6 +366,267 @@ def render_dashboard(model: dict[str, Any]) -> str:
         "",
     ]
     return "\n".join(lines)
+
+
+def _priority_lane(priorities: list[dict[str, Any]]) -> str:
+    buttons: list[str] = []
+    for index, item in enumerate(priorities):
+        action = _dict(item.get("action"))
+        reason = _dict(item.get("reason"))
+        state = _dict(item.get("state"))
+        owner = _dict(item.get("owner"))
+        priority_id = str(item.get("priority_id", ""))
+        evidence_id = str(item.get("primary_evidence_id", ""))
+        evidence_refs = [value for value in _list(item.get("evidence_refs")) if isinstance(value, dict)]
+        evidence = evidence_refs[0] if evidence_refs else {}
+        evidence_route = _compact_path(str(evidence.get("source_path", item.get("primary_evidence_path", ""))))
+        evidence_classification = _localized_evidence_labels(evidence)["classification"]
+        first_hook = ' data-landmark="priority-first"' if index == 0 else ""
+        buttons.append(
+            f'<button type="button" class="priority-row state-{_e(state.get("key", "informational"))}" '
+            f'data-priority-id="{_e(priority_id)}" data-evidence-id="{_e(evidence_id)}" role="option" aria-selected="{"true" if index == 0 else "false"}" '
+            f'aria-controls="active-decision evidence-inspector" tabindex="{"0" if index == 0 else "-1"}"{first_hook}>'
+            f'<span class="priority-rank">#{_e(item.get("rank", index + 1))}</span>'
+            '<span class="priority-copy">'
+            f'<strong><span class="lang-ja">{_e(action.get("ja", ""))}</span><span class="lang-en">{_e(action.get("en", ""))}</span></strong>'
+            f'<small><span class="lang-ja">{_e(reason.get("ja", ""))}</span><span class="lang-en">{_e(reason.get("en", ""))}</span></small>'
+            '<span class="priority-meta">'
+            f'<span><span class="lang-ja">{_e(state.get("ja", ""))}</span><span class="lang-en">{_e(state.get("en", ""))}</span></span>'
+            f'<span><span class="lang-ja">{_e(owner.get("ja", ""))}</span><span class="lang-en">{_e(owner.get("en", ""))}</span></span>'
+            f'<span>{_e(evidence_route)}</span><span><span class="lang-ja">{_e(evidence_classification.get("ja", ""))}</span><span class="lang-en">{_e(evidence_classification.get("en", ""))}</span></span>'
+            "</span></span></button>"
+        )
+    return (
+        '      <section id="priority-lane" class="console-panel priority-lane" data-landmark="priority-lane" aria-labelledby="priority-lane-title">'
+        '<header class="console-panel-head"><p>01 / PRIORITY LANE</p>'
+        '<h2 id="priority-lane-title"><span class="lang-ja">優先事項</span><span class="lang-en">Priorities</span></h2>'
+        '<span class="panel-hint"><span class="lang-ja">上から対応</span><span class="lang-en">Work top-down</span></span></header>'
+        f'<div class="priority-list" role="listbox" aria-label="優先レビュー一覧" data-aria-ja="優先レビュー一覧" data-aria-en="Priority review queue">{"".join(buttons)}</div>'
+        '<p class="queue-note"><span class="lang-ja">順位は必須ブロッカー → 必須検証失敗 → 現状根拠不適格 → 担当付き警告 → 保守判断 → 任意情報。固定の同順位規則で決定します。</span>'
+        '<span class="lang-en">Order: required blocker → required validation failure → ineligible current evidence → owned warning → maintenance decision → optional information. Stable tie-breaks apply.</span></p>'
+        "</section>"
+    )
+
+
+def _active_decision(item: dict[str, Any]) -> str:
+    action = _dict(item.get("action"))
+    reason = _dict(item.get("reason"))
+    decision = _dict(item.get("decision"))
+    outcome = _dict(item.get("desired_outcome"))
+    state = _dict(item.get("state"))
+    owner = _dict(item.get("owner"))
+    priority_id = str(item.get("priority_id", ""))
+    return (
+        f'      <section id="active-decision" class="console-panel active-decision" data-landmark="active-decision" data-priority-id="{_e(priority_id)}" data-selected-priority-id="{_e(priority_id)}" aria-labelledby="active-decision-title">'
+        '<header class="console-panel-head"><p>02 / ACTIVE DECISION</p>'
+        '<h2 id="active-decision-title"><span class="lang-ja">現在の判断</span><span class="lang-en">Active Decision</span></h2>'
+        f'<span class="panel-hint" data-field="rank">#{_e(item.get("rank", 1))}</span></header>'
+        '<div class="decision-body">'
+        f'<p class="decision-kicker" data-field="state"><span class="lang-ja">{_e(state.get("ja", ""))}</span><span class="lang-en">{_e(state.get("en", ""))}</span></p>'
+        f'<h3 data-field="action"><span class="lang-ja">{_e(action.get("ja", ""))}</span><span class="lang-en">{_e(action.get("en", ""))}</span></h3>'
+        f'<p class="decision-reason" data-field="reason"><span class="lang-ja">{_e(reason.get("ja", ""))}</span><span class="lang-en">{_e(reason.get("en", ""))}</span></p>'
+        '<dl class="decision-grid">'
+        '<div><dt><span class="lang-ja">判断すること</span><span class="lang-en">Decision</span></dt>'
+        f'<dd data-field="decision"><span class="lang-ja">{_e(decision.get("ja", ""))}</span><span class="lang-en">{_e(decision.get("en", ""))}</span></dd></div>'
+        '<div><dt><span class="lang-ja">望ましい結果</span><span class="lang-en">Desired outcome</span></dt>'
+        f'<dd data-field="outcome"><span class="lang-ja">{_e(outcome.get("ja", ""))}</span><span class="lang-en">{_e(outcome.get("en", ""))}</span></dd></div>'
+        '<div><dt><span class="lang-ja">所有者</span><span class="lang-en">Owner</span></dt>'
+        f'<dd data-field="owner"><span class="lang-ja">{_e(owner.get("ja", ""))}</span><span class="lang-en">{_e(owner.get("en", ""))}</span></dd></div>'
+        '<div><dt><span class="lang-ja">次の操作</span><span class="lang-en">Next operation</span></dt><dd><span class="lang-ja">根拠を確認して判断を記録する（自動実行なし）</span><span class="lang-en">Review evidence and record a decision (no execution)</span></dd></div>'
+        "</dl></div></section>"
+    )
+
+
+def _evidence_inspector(item: dict[str, Any], receipt: dict[str, Any]) -> str:
+    refs = [value for value in _list(item.get("evidence_refs")) if isinstance(value, dict)]
+    evidence = refs[0] if refs else {}
+    priority_id = str(item.get("priority_id", ""))
+    path = str(evidence.get("source_path", item.get("primary_evidence_path", "")))
+    evidence_id = str(evidence.get("source_id", ""))
+    reason_codes = ", ".join(str(value) for value in _list(evidence.get("reason_codes"))) or "none"
+    source_label = _human_source_label(evidence)
+    evidence_labels = _localized_evidence_labels(evidence)
+    review_action_ids = ", ".join(
+        str(value.get("action_id", ""))
+        for value in _list(item.get("review_action_refs"))
+        if isinstance(value, dict) and value.get("action_id")
+    ) or "none"
+    return (
+        f'      <aside id="evidence-inspector" class="console-panel evidence-inspector" data-landmark="evidence-inspector" data-priority-id="{_e(priority_id)}" data-selected-priority-id="{_e(priority_id)}" data-evidence-id="{_e(evidence_id)}" aria-labelledby="evidence-inspector-title">'
+        '<header class="console-panel-head"><p>03 / EVIDENCE INSPECTOR</p>'
+        '<h2 id="evidence-inspector-title"><span class="lang-ja">根拠</span><span class="lang-en">Evidence</span></h2>'
+        '<span class="panel-hint"><span class="lang-ja">観測値</span><span class="lang-en">Observed</span></span></header>'
+        '<div class="evidence-body">'
+        f'<div class="evidence-status" data-field="freshness" data-landmark="freshness-status"><span class="lang-ja">{_e(evidence_labels["classification"].get("ja", ""))}</span><span class="lang-en">{_e(evidence_labels["classification"].get("en", ""))}</span></div>'
+        '<dl class="evidence-grid">'
+        '<div><dt><span class="lang-ja">ソース</span><span class="lang-en">Source</span></dt>'
+        f'<dd data-field="source-label"><span class="lang-ja">{_e(source_label.get("ja", ""))}</span><span class="lang-en">{_e(source_label.get("en", ""))}</span><small data-field="source-route">{_e(_compact_path(path))}</small></dd></div>'
+        '<div><dt><span class="lang-ja">現状根拠として使用可</span><span class="lang-en">Current-claim eligible</span></dt>'
+        f'<dd data-field="eligible"><span class="lang-ja">{_e(evidence_labels["eligibility"].get("ja", ""))}</span><span class="lang-en">{_e(evidence_labels["eligibility"].get("en", ""))}</span></dd></div>'
+        '<div><dt><span class="lang-ja">時間状態</span><span class="lang-en">Temporal state</span></dt>'
+        f'<dd data-field="temporal"><span class="lang-ja">{_e(evidence_labels["temporal"].get("ja", ""))}</span><span class="lang-en">{_e(evidence_labels["temporal"].get("en", ""))}</span></dd></div>'
+        '<div><dt><span class="lang-ja">改訂整合性</span><span class="lang-en">Revision binding</span></dt>'
+        f'<dd data-field="revision"><span class="lang-ja">{_e(evidence_labels["revision"].get("ja", ""))}</span><span class="lang-en">{_e(evidence_labels["revision"].get("en", ""))}</span></dd></div>'
+        '<div><dt><span class="lang-ja">判定時点</span><span class="lang-en">Assessed at</span></dt>'
+        f'<dd data-field="assessed">{_e(evidence.get("assessed_at", receipt.get("assessed_at", "")))}</dd></div>'
+        '<div><dt><span class="lang-ja">有効期限</span><span class="lang-en">Fresh through</span></dt>'
+        f'<dd data-field="fresh-through">{_e(evidence.get("fresh_through") or "n/a")}</dd></div>'
+        "</dl>"
+        '<details class="provenance-details" data-landmark="provenance"><summary><span class="lang-ja">由来の詳細</span><span class="lang-en">Provenance details</span></summary>'
+        '<dl class="provenance-grid">'
+        f'<div><dt>source_id</dt><dd data-field="source-id">{_e(evidence.get("source_id", ""))}</dd></div>'
+        f'<div><dt>full_path</dt><dd class="full-path" data-field="source-path">{_e(path)}</dd></div>'
+        f'<div><dt>authority</dt><dd data-field="authority">{_e(evidence.get("authority_classification", "unknown"))}</dd></div>'
+        f'<div><dt>reason_codes</dt><dd data-field="reason-codes">{_e(reason_codes)}</dd></div>'
+        f'<div><dt>review_actions</dt><dd data-field="review-actions">{_e(review_action_ids)}</dd></div>'
+        f'<div><dt>content_sha256</dt><dd class="hash-value" data-field="content-sha">{_e(evidence.get("content_sha256") or "n/a")}</dd></div>'
+        "</dl></details>"
+        f'<p class="receipt-id">receipt <code>{_e(receipt.get("capture_id", ""))}</code></p>'
+        "</div></aside>"
+    )
+
+
+def _production_appendix(
+    model: dict[str, Any],
+    validation: dict[str, Any],
+    smoke: dict[str, Any],
+    action_package: dict[str, Any],
+    action_summary: dict[str, Any],
+    output: dict[str, Any],
+    receipt: dict[str, Any],
+) -> str:
+    return (
+        '    <details id="evidence-appendix" class="evidence-appendix">'
+        '<summary><span><span class="lang-ja">証拠付録を開く</span><span class="lang-en">Open evidence appendix</span></span>'
+        '<small><span class="lang-ja">密な表・確認項目・ロック中の領域は主画面の下位です。</span><span class="lang-en">Dense tables, review actions, and locked lanes remain subordinate.</span></small></summary>'
+        '<div class="appendix-content">'
+        '<section aria-labelledby="receipt-ledger-title"><h2 id="receipt-ledger-title"><span class="lang-ja">鮮度receipt台帳</span><span class="lang-en">Freshness receipt ledger</span></h2>'
+        f'{_receipt_sources_table(_list(receipt.get("sources")))}</section>'
+        '<section aria-labelledby="review-actions-title"><h2 id="review-actions-title"><span class="lang-ja">非実行の確認項目</span><span class="lang-en">Non-executable review actions</span></h2>'
+        f'{_review_action_summary_panel(action_summary, action_package)}{_review_action_cards(_list(model.get("review_actions")))}</section>'
+        '<section aria-labelledby="validation-title"><h2 id="validation-title"><span class="lang-ja">検証pack</span><span class="lang-en">Validation Pack</span></h2>'
+        f'{_summary_line(_dict(validation.get("summary")))}{_checks_table(_list(validation.get("checks")))}</section>'
+        '<section aria-labelledby="smoke-title"><h2 id="smoke-title"><span class="lang-ja">横断project観測</span><span class="lang-en">Cross-Project Smoke</span></h2>'
+        f'{_summary_line(_dict(smoke.get("summary")))}{_projects_table(_list(smoke.get("projects")))}</section>'
+        '<section aria-labelledby="locked-title"><h2 id="locked-title"><span class="lang-ja">ロック中lane</span><span class="lang-en">Locked lanes</span></h2>'
+        f'{_locked_lane_grid(_list(model.get("locked_lanes")))}</section>'
+        '<section aria-labelledby="sources-title"><h2 id="sources-title"><span class="lang-ja">ソースとアクセス</span><span class="lang-en">Sources and access</span></h2>'
+        f'{_sources_table(_list(model.get("sources")))}{_access_panel(output)}{_action_package_access_panel(action_package)}</section>'
+        "</div></details>"
+    )
+
+
+def _receipt_sources_table(sources: list[Any]) -> str:
+    rows: list[str] = []
+    for item in sources:
+        source = _dict(item)
+        cells = [
+            source.get("project_id", ""),
+            source.get("source_id", ""),
+            source.get("required", False),
+            source.get("freshness_state", "unknown"),
+            source.get("revision_binding_state", "unknown"),
+            source.get("current_state_claim_eligible", False),
+            _compact_path(str(source.get("source_path", ""))),
+        ]
+        rows.append("<tr>" + "".join(f"<td>{_e(value)}</td>" for value in cells) + "</tr>")
+    return _table(
+        (
+            {"ja": "プロジェクト", "en": "Project"},
+            {"ja": "ソース", "en": "Source"},
+            {"ja": "必須", "en": "Required"},
+            {"ja": "鮮度", "en": "Freshness"},
+            {"ja": "改訂整合性", "en": "Revision"},
+            {"ja": "使用可", "en": "Eligible"},
+            {"ja": "経路", "en": "Path"},
+        ),
+        rows,
+        empty_text={"ja": "鮮度証拠ソースはありません。", "en": "No evidence freshness sources."},
+        caption={"ja": "鮮度receiptの証拠ソース", "en": "Evidence freshness receipt sources"},
+    )
+
+
+def _compact_path(value: str) -> str:
+    normalized = value.replace("\\", "/").rstrip("/")
+    if not normalized:
+        return "n/a"
+    if normalized.startswith("git-observation:"):
+        return normalized
+    return normalized.rsplit("/", 1)[-1]
+
+
+def _localized_evidence_labels(source: dict[str, Any]) -> dict[str, dict[str, str]]:
+    freshness_state = str(source.get("freshness_state", "unknown"))
+    temporal_state = str(source.get("temporal_state", "unknown"))
+    revision_state = str(source.get("revision_binding_state", "unknown"))
+    eligible = source.get("current_state_claim_eligible") is True
+    freshness = {
+        "fresh": {"ja": "鮮度内", "en": "Fresh"},
+        "stale": {"ja": "期限超過", "en": "Stale"},
+        "unknown": {"ja": "鮮度不明", "en": "Freshness unknown"},
+        "not_applicable": {"ja": "対象外", "en": "Not applicable"},
+    }.get(freshness_state, {"ja": "鮮度不明", "en": freshness_state})
+    temporal = {
+        "fresh": {"ja": "鮮度内", "en": "Fresh"},
+        "stale": {"ja": "期限超過", "en": "Stale"},
+        "unknown": {"ja": "不明", "en": "Unknown"},
+        "not_applicable": {"ja": "対象外", "en": "Not applicable"},
+    }.get(temporal_state, {"ja": "不明", "en": temporal_state})
+    revision = {
+        "match": {"ja": "一致", "en": "Match"},
+        "mismatch": {"ja": "不一致", "en": "Mismatch"},
+        "unknown": {"ja": "不明", "en": "Unknown"},
+        "not_applicable": {"ja": "対象外", "en": "Not applicable"},
+    }.get(revision_state, {"ja": "不明", "en": revision_state})
+    eligibility = (
+        {"ja": "使用可", "en": "Eligible"}
+        if eligible
+        else {"ja": "使用不可", "en": "Ineligible"}
+    )
+    return {
+        "classification": {
+            "ja": f"{freshness['ja']}・現状根拠{eligibility['ja']}",
+            "en": f"{freshness['en']} · claim-{eligibility['en'].lower()}",
+        },
+        "eligibility": eligibility,
+        "temporal": temporal,
+        "revision": revision,
+    }
+
+
+def _authority_copy(authority: dict[str, Any]) -> dict[str, str]:
+    if authority.get("tracked_example") is True:
+        return {
+            "ja": "追跡済みの決定論的サンプル。継続的な現状根拠ではありません。",
+            "en": "Tracked deterministic example; never authoritative for live state.",
+        }
+    return {
+        "ja": "ローカル読み取り専用の取得結果。記録した判定時点と有効期間内でのみ使用できます。",
+        "en": "Local read-only capture; valid only for the recorded assessment and policy window.",
+    }
+
+
+def _human_source_label(source: dict[str, Any]) -> dict[str, str]:
+    source_id = str(source.get("source_id", ""))
+    known = {
+        "validation-pack-sample": {"ja": "検証pack結果", "en": "Validation pack result"},
+        "cross-project-smoke-sample": {"ja": "横断観測結果", "en": "Cross-project observation"},
+        "status-snapshot-sample": {"ja": "状態snapshot", "en": "Status snapshot"},
+        "intent-comparison-manifest-v2": {"ja": "比較履歴", "en": "Comparison history"},
+    }
+    if source_id in known:
+        return dict(known[source_id])
+    if source_id.endswith(".live_status_observation"):
+        project = source_id.split(".", 1)[0]
+        return {
+            "ja": f"{project} 読み取り専用観測",
+            "en": f"{project} read-only observation",
+        }
+    return {"ja": "証拠ソース", "en": "Evidence source"}
+
+
+def _json_for_script(value: Any) -> str:
+    return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")).replace("<", "\\u003c")
 
 
 def write_dashboard(model: dict[str, Any], output_path: str | Path) -> None:
@@ -384,6 +662,11 @@ def main(argv: list[str] | None = None) -> int:
         default=DEFAULT_PROJECT_CONTEXT_PATH,
         help="project context markdown path.",
     )
+    parser.add_argument(
+        "--freshness-receipt",
+        default=DEFAULT_FRESHNESS_RECEIPT_PATH,
+        help="Validated evidence_freshness_receipt.v1 JSON path.",
+    )
     parser.add_argument("--output", default=DEFAULT_OUTPUT_PATH, help="Output HTML path.")
     parser.add_argument(
         "--review-actions-json",
@@ -394,6 +677,20 @@ def main(argv: list[str] | None = None) -> int:
         "--review-actions-md",
         default=DEFAULT_REVIEW_ACTIONS_MD_PATH,
         help="Output non-executable review actions Markdown path.",
+    )
+    parser.add_argument(
+        "--priority-readback",
+        default=DEFAULT_PRIORITY_READBACK_PATH,
+        help="Output deterministic priority/readback JSON path.",
+    )
+    parser.add_argument(
+        "--generated-at",
+        help="Optional deterministic dashboard generation timestamp; defaults to receipt assessed_at.",
+    )
+    parser.add_argument(
+        "--skip-freshness-hash-verification",
+        action="store_true",
+        help="Validate the receipt schema but skip source hash recomputation (test fixtures only).",
     )
     args = parser.parse_args(argv)
 
@@ -406,14 +703,24 @@ def main(argv: list[str] | None = None) -> int:
             adapter_path=args.adapter,
             runtime_state_path=args.runtime_state,
             project_context_path=args.project_context,
+            freshness_receipt_path=args.freshness_receipt,
             output_path=args.output,
             review_actions_json_path=args.review_actions_json,
             review_actions_md_path=args.review_actions_md,
+            priority_readback_path=args.priority_readback,
+            verify_freshness_hashes=not args.skip_freshness_hash_verification,
+            generated_at=args.generated_at,
         )
         package = review_action_package(model)
+        priority_package = priority_readback(model)
         write_dashboard(model, Path(args.repo_root) / args.output)
         write_review_actions_json(package, Path(args.repo_root) / args.review_actions_json, pretty=True)
         write_review_actions_markdown(package, Path(args.repo_root) / args.review_actions_md)
+        write_priority_readback(
+            priority_package,
+            Path(args.repo_root) / args.priority_readback,
+            pretty=True,
+        )
     except DashboardError as exc:
         print(f"dashboard error: {exc}", file=sys.stderr)
         return 2
@@ -421,6 +728,7 @@ def main(argv: list[str] | None = None) -> int:
     print(_display_path(Path(args.repo_root), args.output))
     print(_display_path(Path(args.repo_root), args.review_actions_json))
     print(_display_path(Path(args.repo_root), args.review_actions_md))
+    print(_display_path(Path(args.repo_root), args.priority_readback))
     return 0
 
 
@@ -579,8 +887,11 @@ def _review_map_tone(value: Any) -> str:
 def _dashboard_footer(model: dict[str, Any]) -> str:
     return (
         '<footer class="dashboard-footer">'
-        f"<p>Worker-generated local review artifact. Generated at {_e(model.get('generated_at', 'unknown'))}. "
-        "No server, telemetry, task runner, or repository writeback is included.</p>"
+        '<p><span class="lang-ja">Workerが生成したローカル確認成果物です。生成時点</span>'
+        '<span class="lang-en">Worker-generated local review artifact. Generated at</span> '
+        f"{_e(model.get('generated_at', 'unknown'))}. "
+        '<span class="lang-ja">server、telemetry、task runner、repository writebackは含みません。</span>'
+        '<span class="lang-en">No server, telemetry, task runner, or repository writeback is included.</span></p>'
         "</footer>"
     )
 
@@ -851,12 +1162,13 @@ def _warning_triage_panel(groups: list[Any]) -> str:
 def _review_action_summary_panel(summary: dict[str, Any], package: dict[str, Any]) -> str:
     return (
         '<div class="panel action-summary">'
-        "<h3>Review-only Action Package</h3>"
-        '<p><strong>Non-executable:</strong> every generated action is marked <code>executable: false</code>.</p>'
-        f"<p><strong>Total:</strong> {_e(summary.get('total', 0))} "
-        f"<strong>Blockers:</strong> {_e(summary.get('blocker', 0))} "
-        f"<strong>Warnings:</strong> {_e(summary.get('warning', 0))} "
-        f"<strong>Info:</strong> {_e(summary.get('info', 0))}</p>"
+        '<h3><span class="lang-ja">確認専用action package</span><span class="lang-en">Review-only Action Package</span></h3>'
+        '<p><strong><span class="lang-ja">非実行:</span><span class="lang-en">Non-executable:</span></strong> '
+        '<span class="lang-ja">全項目を</span><span class="lang-en">every generated action is marked</span> <code>executable: false</code>.</p>'
+        f'<p><strong><span class="lang-ja">合計:</span><span class="lang-en">Total:</span></strong> {_e(summary.get("total", 0))} '
+        f'<strong><span class="lang-ja">停止:</span><span class="lang-en">Blockers:</span></strong> {_e(summary.get("blocker", 0))} '
+        f'<strong><span class="lang-ja">警告:</span><span class="lang-en">Warnings:</span></strong> {_e(summary.get("warning", 0))} '
+        f'<strong><span class="lang-ja">参考:</span><span class="lang-en">Info:</span></strong> {_e(summary.get("info", 0))}</p>'
         f"<p><strong>JSON:</strong> <code>{_e(package.get('json_path', 'unknown'))}</code></p>"
         f"<p><strong>Markdown:</strong> <code>{_e(package.get('markdown_path', 'unknown'))}</code></p>"
         "</div>"
@@ -883,7 +1195,7 @@ def _review_action_filter_controls() -> str:
 
 def _review_action_cards(actions: list[Any]) -> str:
     if not actions:
-        return '<div class="action-review-grid"><article class="review-action-card"><p>No review actions generated.</p></article></div>'
+        return '<div class="action-review-grid"><article class="review-action-card"><p><span class="lang-ja">確認項目は生成されませんでした。</span><span class="lang-en">No review actions generated.</span></p></article></div>'
     cards = []
     for action in actions:
         item = _dict(action)
@@ -900,19 +1212,20 @@ def _review_action_cards(actions: list[Any]) -> str:
                 item.get("evidence_path", ""),
             )
         ).lower()
-        gate_note = "Locked by gate" if item.get("blocked_by_gate") else "Review-only"
+        gate_note_ja = "gateでロック" if item.get("blocked_by_gate") else "確認専用"
+        gate_note_en = "Locked by gate" if item.get("blocked_by_gate") else "Review-only"
         cards.append(
             f'<article id="{_e(action_id)}" class="review-action-card" data-review-action data-severity="{_e(severity)}" data-search="{_e(search_text)}">'
             f"<div class=\"project-card-head\"><h3>{_e(item.get('title', 'Review action'))}</h3>"
             f"<span class=\"pill {_result_class(severity)}\">{_e(severity)}</span></div>"
             f"<p><strong>ID:</strong> <code>{_e(item.get('action_id', 'unknown'))}</code></p>"
-            f"<p><strong>Source:</strong> {_e(item.get('source_type', 'unknown'))}"
+            f'<p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> {_e(item.get("source_type", "unknown"))}'
             f"{' / ' + _e(item.get('project_key')) if item.get('project_key') else ''}</p>"
-            f"<p><strong>Reason:</strong> {_e(item.get('reason', 'No reason provided.'))}</p>"
-            f"<p><strong>Suggested review:</strong> {_e(item.get('suggested_review', 'Manual review.'))}</p>"
-            f"<p><strong>Evidence:</strong> <code>{_e(item.get('evidence_path', 'unknown'))}</code></p>"
-            f"<p><strong>Owner hint:</strong> {_e(item.get('owner_hint', 'operator'))}</p>"
-            f"<p><strong>{_e(gate_note)}:</strong> executable is {_e(str(item.get('executable', False)).lower())}; surface {_e(item.get('safe_next_surface', 'local_review'))}</p>"
+            f'<p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> {_e(item.get("reason", "No reason provided."))}</p>'
+            f'<p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> {_e(item.get("suggested_review", "Manual review."))}</p>'
+            f'<p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>{_e(item.get("evidence_path", "unknown"))}</code></p>'
+            f'<p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> {_e(item.get("owner_hint", "operator"))}</p>'
+            f'<p><strong><span class="lang-ja">{_e(gate_note_ja)}:</span><span class="lang-en">{_e(gate_note_en)}:</span></strong> executable = {_e(str(item.get("executable", False)).lower())}; surface = {_e(item.get("safe_next_surface", "local_review"))}</p>'
             "</article>"
         )
     return f'<div class="action-review-grid">{"".join(cards)}</div>'
@@ -988,13 +1301,25 @@ def _safe_action_cards(actions: list[Any]) -> str:
 
 
 def _locked_lane_grid(lanes: list[Any]) -> str:
+    translations = {
+        "Arbitrary command runner": "任意command runner",
+        "General execution loop": "汎用実行loop",
+        "Scheduler or background daemon": "schedulerまたはbackground daemon",
+        "Web server or remote dashboard": "web serverまたはremote dashboard",
+        "Database or credential handling": "databaseまたはcredential処理",
+        "External service notifications": "外部service通知",
+        "Target repository writeback": "対象repositoryへのwriteback",
+        "C5/C6 capability expansion": "C5/C6 capability拡張",
+        "Public publication or production-ready claims": "公開publicationまたはproduction-ready claim",
+    }
     cards = []
     for lane in lanes:
+        lane_text = str(lane)
         cards.append(
             '<article class="locked-card">'
             '<span>LOCKED</span>'
-            f"<strong>{_e(lane)}</strong>"
-            "<p>Not part of this static dashboard slice.</p>"
+            f'<strong><span class="lang-ja">{_e(translations.get(lane_text, lane_text))}</span><span class="lang-en">{_e(lane_text)}</span></strong>'
+            '<p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p>'
             "</article>"
         )
     return f'<div class="locked-grid">{"".join(cards)}</div>'
@@ -1003,7 +1328,7 @@ def _locked_lane_grid(lanes: list[Any]) -> str:
 def _summary_line(summary: dict[str, Any]) -> str:
     return (
         '<div class="panel">'
-        f'<h3>Summary</h3><p><span class="pill {_result_class(summary.get("result"))}">'
+        f'<h3><span class="lang-ja">概要</span><span class="lang-en">Summary</span></h3><p><span class="pill {_result_class(summary.get("result"))}">'
         f'{_e(summary.get("result", "unknown"))}</span> {_e(_count_text(summary))}</p>'
         f"{_meter(summary)}"
         "</div>"
@@ -1029,10 +1354,19 @@ def _checks_table(checks: list[Any]) -> str:
             "</tr>"
         )
     return _table(
-        ("Check", "Result", "Severity", "Bar", "Detail"),
+        (
+            {"ja": "検証", "en": "Check"},
+            {"ja": "結果", "en": "Result"},
+            {"ja": "重要度", "en": "Severity"},
+            {"ja": "進捗", "en": "Bar"},
+            {"ja": "詳細", "en": "Detail"},
+        ),
         rows,
-        empty_text="No validation checks were available.",
-        caption="Validation pack checks, result severity, evidence bar, and detail.",
+        empty_text={"ja": "利用できる検証項目はありません。", "en": "No validation checks were available."},
+        caption={
+            "ja": "検証packの項目、結果、重要度、証拠進捗、詳細。",
+            "en": "Validation pack checks, result severity, evidence bar, and detail.",
+        },
     )
 
 
@@ -1056,10 +1390,20 @@ def _projects_table(projects: list[Any]) -> str:
             "</tr>"
         )
     return _table(
-        ("Project", "Result", "Repo", "Branch / HEAD", "Bar", "Warnings"),
+        (
+            {"ja": "プロジェクト", "en": "Project"},
+            {"ja": "結果", "en": "Result"},
+            {"ja": "repository", "en": "Repo"},
+            {"ja": "branch / HEAD", "en": "Branch / HEAD"},
+            {"ja": "進捗", "en": "Bar"},
+            {"ja": "警告", "en": "Warnings"},
+        ),
         rows,
-        empty_text="No cross-project rows were available.",
-        caption="Cross-project smoke rows with result, repository hint, branch, and warning summary.",
+        empty_text={"ja": "利用できる横断project行はありません。", "en": "No cross-project rows were available."},
+        caption={
+            "ja": "横断project観測の結果、repository、branch、警告概要。",
+            "en": "Cross-project smoke rows with result, repository hint, branch, and warning summary.",
+        },
     )
 
 
@@ -1114,21 +1458,30 @@ def _sources_table(sources: list[Any]) -> str:
             "</tr>"
         )
     return _table(
-        ("Source", "Repo-relative path", "State", "Schema", "Generated at"),
+        (
+            {"ja": "ソース", "en": "Source"},
+            {"ja": "repository相対経路", "en": "Repo-relative path"},
+            {"ja": "状態", "en": "State"},
+            {"ja": "schema", "en": "Schema"},
+            {"ja": "生成時点", "en": "Generated at"},
+        ),
         rows,
-        empty_text="No sources.",
-        caption="Source evidence files used by the local dashboard.",
+        empty_text={"ja": "ソースはありません。", "en": "No sources."},
+        caption={
+            "ja": "ローカルdashboardが使用した証拠ソース。",
+            "en": "Source evidence files used by the local dashboard.",
+        },
     )
 
 
 def _access_panel(output: dict[str, Any]) -> str:
     return (
         '<div class="panel access-panel">'
-        "<h3>Open / Access</h3>"
-        f"<p><strong>Repo-relative artifact:</strong> <code>{_e(output.get('repo_relative_path', 'unknown'))}</code></p>"
-        f"<p><strong>Access mode:</strong> {_e(output.get('access_mode', 'unknown'))}</p>"
-        f"<p><strong>Access state:</strong> {_e(output.get('access_state', 'unknown'))}</p>"
-        f"<p><strong>Evidence level:</strong> {_e(output.get('access_evidence_level', 'unknown'))}</p>"
+        '<h3><span class="lang-ja">開く / access</span><span class="lang-en">Open / Access</span></h3>'
+        f'<p><strong><span class="lang-ja">repository相対成果物:</span><span class="lang-en">Repo-relative artifact:</span></strong> <code>{_e(output.get("repo_relative_path", "unknown"))}</code></p>'
+        f'<p><strong><span class="lang-ja">access mode:</span><span class="lang-en">Access mode:</span></strong> {_e(output.get("access_mode", "unknown"))}</p>'
+        f'<p><strong><span class="lang-ja">access state:</span><span class="lang-en">Access state:</span></strong> {_e(output.get("access_state", "unknown"))}</p>'
+        f'<p><strong><span class="lang-ja">証拠level:</span><span class="lang-en">Evidence level:</span></strong> {_e(output.get("access_evidence_level", "unknown"))}</p>'
         f"<p><strong>PowerShell:</strong> <code>{_e(output.get('open_command', 'unknown'))}</code></p>"
         "</div>"
     )
@@ -1137,12 +1490,12 @@ def _access_panel(output: dict[str, Any]) -> str:
 def _action_package_access_panel(package: dict[str, Any]) -> str:
     return (
         '<div class="panel access-panel">'
-        "<h3>Review Action Package</h3>"
+        '<h3><span class="lang-ja">確認action package</span><span class="lang-en">Review Action Package</span></h3>'
         f"<p><strong>Schema:</strong> {_e(package.get('schema_version', 'unknown'))}</p>"
         f"<p><strong>JSON:</strong> <code>{_e(package.get('json_path', 'unknown'))}</code></p>"
         f"<p><strong>Markdown:</strong> <code>{_e(package.get('markdown_path', 'unknown'))}</code></p>"
-        f"<p><strong>Access state:</strong> {_e(package.get('access_state', 'unknown'))}</p>"
-        f"<p><strong>Evidence level:</strong> {_e(package.get('access_evidence_level', 'unknown'))}</p>"
+        f'<p><strong><span class="lang-ja">access state:</span><span class="lang-en">Access state:</span></strong> {_e(package.get("access_state", "unknown"))}</p>'
+        f'<p><strong><span class="lang-ja">証拠level:</span><span class="lang-en">Evidence level:</span></strong> {_e(package.get("access_evidence_level", "unknown"))}</p>'
         "</div>"
     )
 
@@ -1160,18 +1513,25 @@ def _metric_card(label: str, value: Any, detail: Any, summary: dict[str, Any] | 
 
 
 def _table(
-    headers: tuple[str, ...],
+    headers: tuple[str | dict[str, str], ...],
     rows: list[str],
     *,
-    empty_text: str,
-    caption: str | None = None,
+    empty_text: str | dict[str, str],
+    caption: str | dict[str, str] | None = None,
 ) -> str:
     if not rows:
+        if isinstance(empty_text, dict):
+            return (
+                '<div class="panel"><p>'
+                f'<span class="lang-ja">{_e(empty_text.get("ja", ""))}</span>'
+                f'<span class="lang-en">{_e(empty_text.get("en", ""))}</span>'
+                "</p></div>"
+            )
         return f'<div class="panel"><p>{_e(empty_text)}</p></div>'
-    header_html = "".join(f"<th>{_e(header)}</th>" for header in headers)
-    caption_html = f"<caption>{_e(caption)}</caption>" if caption else ""
+    header_html = "".join(f"<th>{_localized_html(header)}</th>" for header in headers)
+    caption_html = f"<caption>{_localized_html(caption)}</caption>" if caption else ""
     return (
-        '<div class="table-wrap"><table>'
+        '<div class="table-wrap" data-overflow-allowed><table>'
         f"{caption_html}"
         "<thead><tr>"
         f"{header_html}"
@@ -1179,6 +1539,15 @@ def _table(
         f"{''.join(rows)}"
         "</tbody></table></div>"
     )
+
+
+def _localized_html(value: str | dict[str, str]) -> str:
+    if isinstance(value, dict):
+        return (
+            f'<span class="lang-ja">{_e(value.get("ja", ""))}</span>'
+            f'<span class="lang-en">{_e(value.get("en", ""))}</span>'
+        )
+    return _e(value)
 
 
 def _list_panel(items: list[Any], kind: str) -> str:
@@ -1314,6 +1683,695 @@ def _freshness_summary(sources: list[dict[str, Any]], generated_at: str) -> dict
         "latest_generated_at": latest,
         "source_summary": f"{loaded_count} loaded, {len(sources) - loaded_count} missing",
     }
+
+
+def _receipt_freshness_projection(receipt: dict[str, Any]) -> dict[str, Any]:
+    """Project the landed receipt contract without re-evaluating freshness."""
+
+    summary = _dict(receipt.get("summary"))
+    authority = _dict(receipt.get("authority"))
+    source_counts = _dict(summary.get("source_counts"))
+    eligibility = _dict(summary.get("current_state_claim_eligible"))
+    return {
+        "schema_version": str(receipt.get("schema_version", "")),
+        "capture_id": str(receipt.get("capture_id", "")),
+        "assessed_at": str(receipt.get("assessed_at", "")),
+        "observation_mode": str(receipt.get("observation_mode", "")),
+        "authority": dict(authority),
+        "source_counts": dict(source_counts),
+        "current_state_claim_eligible": dict(eligibility),
+        "required_missing": _int(summary.get("required_missing")),
+        "required_invalid": _int(summary.get("required_invalid")),
+        "statement": str(authority.get("statement", "")),
+        "point_in_time": authority.get("point_in_time") is True,
+        "live": authority.get("live") is True,
+    }
+
+
+def _priority_items(
+    *,
+    health: dict[str, Any],
+    validation: dict[str, Any],
+    smoke: dict[str, Any],
+    status: dict[str, Any],
+    receipt: dict[str, Any],
+    review_actions: list[dict[str, Any]],
+    validation_path: str,
+    smoke_path: str,
+    status_path: str,
+) -> list[dict[str, Any]]:
+    """Build one deterministic, deduplicated, review-only priority queue."""
+
+    receipt_sources = _list(receipt.get("sources"))
+    receipt_projects = {
+        str(item.get("project_id", "")): item
+        for item in _list(receipt.get("projects"))
+        if isinstance(item, dict)
+    }
+    required_projects = {
+        key for key, item in receipt_projects.items() if item.get("required") is True
+    }
+    candidates: dict[str, dict[str, Any]] = {}
+
+    def evidence_for(path: str, project_key: str | None = None) -> dict[str, Any]:
+        normalized = _normalized_evidence_path(path)
+        exact = [
+            item
+            for item in receipt_sources
+            if isinstance(item, dict)
+            and _normalized_evidence_path(str(item.get("source_path", ""))) == normalized
+        ]
+        if exact:
+            return dict(sorted(exact, key=lambda item: str(item.get("source_id", "")))[0])
+        if project_key:
+            live_id = f"{project_key}.live_status_observation"
+            for item in receipt_sources:
+                if isinstance(item, dict) and item.get("source_id") == live_id:
+                    return dict(item)
+        return {
+            "source_id": "dashboard-production-surface",
+            "source_path": path,
+            "freshness_state": "not_applicable",
+            "temporal_state": "not_applicable",
+            "revision_binding_state": "not_applicable",
+            "current_state_claim_eligible": False,
+            "assessed_at": str(receipt.get("assessed_at", "")),
+            "fresh_through": None,
+            "content_sha256": None,
+            "authority_classification": "review_metadata",
+            "reason_codes": ["manual_visual_acceptance_pending"],
+        }
+
+    def add(
+        *,
+        condition_key: str,
+        precedence: int,
+        project_key: str,
+        required: bool,
+        evidence_path: str,
+        raw_condition: str,
+        action_ja: str,
+        action_en: str,
+        reason_ja: str,
+        reason_en: str,
+        decision_ja: str,
+        decision_en: str,
+        outcome_ja: str,
+        outcome_en: str,
+        owner_id: str,
+        owner_ja: str,
+        owner_en: str,
+        evidence: dict[str, Any] | None = None,
+    ) -> None:
+        dedupe_key = f"{project_key}:{condition_key}"
+        item = candidates.get(dedupe_key)
+        if item is not None:
+            ref = _priority_evidence_ref(evidence or evidence_for(evidence_path, project_key))
+            if ref not in item["evidence_refs"]:
+                item["evidence_refs"].append(ref)
+                item["evidence_refs"].sort(key=lambda value: (value["source_path"], value["source_id"]))
+            return
+        evidence_row = evidence or evidence_for(evidence_path, project_key)
+        candidates[dedupe_key] = {
+            "condition_key": condition_key,
+            "precedence": precedence,
+            "project_key": project_key,
+            "required": required,
+            "state": _priority_state(precedence),
+            "action": {"ja": action_ja, "en": action_en},
+            "reason": {"ja": reason_ja, "en": reason_en},
+            "decision": {"ja": decision_ja, "en": decision_en},
+            "desired_outcome": {"ja": outcome_ja, "en": outcome_en},
+            "owner": {"id": owner_id, "ja": owner_ja, "en": owner_en},
+            "raw_condition": raw_condition,
+            "primary_evidence_id": str(evidence_row.get("source_id", "")),
+            "primary_evidence_path": str(evidence_row.get("source_path", evidence_path)),
+            "evidence_refs": [_priority_evidence_ref(evidence_row)],
+            "review_action_refs": [],
+            "claim_class": "derived",
+            "evidence_claim_class": "observed",
+            "display_copy_claim_class": "editorial",
+            "ranking_policy_claim_class": "policy",
+            "executable": False,
+            "blocked_by_gate": False,
+            "safe_next_surface": "local_review",
+        }
+
+    failed_required_check_keys = {
+        str(item.get("check_key", "unknown"))
+        for item in _list(validation.get("checks"))
+        if isinstance(item, dict)
+        and str(item.get("result", "")).lower() in {"fail", "failed", "error"}
+        and str(item.get("severity", "")).lower() == "required"
+    }
+    for source_name, payload, evidence_path in (
+        ("validation", validation, validation_path),
+        ("smoke", smoke, smoke_path),
+    ):
+        explicit_blockers = sorted(
+            {
+                str(value)
+                for value in _list(_dict(payload.get("health")).get("blockers"))
+                if str(value)
+            }
+        )
+        for blocker in explicit_blockers:
+            matching_check = next(
+                (key for key in sorted(failed_required_check_keys) if key.lower() in blocker.lower()),
+                None,
+            )
+            condition_key = (
+                f"validation_check:{matching_check}"
+                if source_name == "validation" and matching_check
+                else f"blocker:{source_name}:{_condition_code(blocker)}"
+            )
+            add(
+                condition_key=condition_key,
+                precedence=1,
+                project_key="devcockpitcore",
+                required=True,
+                evidence_path=evidence_path,
+                raw_condition=blocker,
+                action_ja="必須ブロッカーを解消する",
+                action_en="Resolve the required blocker",
+                reason_ja="必須の停止条件が証拠に記録されています。",
+                reason_en=f"A required stop condition is reported: {blocker}",
+                decision_ja="この停止条件を解消するために、どの最小修正が必要か。",
+                decision_en="What is the smallest correction that clears this stop condition?",
+                outcome_ja="必須ゲートが停止条件なしで再検証される。",
+                outcome_en="The required gate is revalidated without a stop condition.",
+                owner_id="operator",
+                owner_ja="運用担当",
+                owner_en="Operator",
+            )
+        summary_failed = str(_dict(payload.get("summary")).get("result", "")).lower() == "fail"
+        concrete_failure_exists = bool(explicit_blockers) or (
+            source_name == "validation" and bool(failed_required_check_keys)
+        )
+        if summary_failed and not concrete_failure_exists:
+            add(
+                condition_key=f"blocker:{source_name}:summary_failed",
+                precedence=1,
+                project_key="devcockpitcore",
+                required=True,
+                evidence_path=evidence_path,
+                raw_condition=f"{source_name} summary result is fail",
+                action_ja=f"{source_name}の停止結果を調査する",
+                action_en=f"Investigate the {source_name} stop result",
+                reason_ja="具体的な失敗行を伴わない停止結果が報告されています。",
+                reason_en=f"The {source_name} summary reports failure without a concrete blocker row.",
+                decision_ja="停止結果を説明する具体的な証拠行はどれか。",
+                decision_en="Which concrete evidence row explains the stop result?",
+                outcome_ja="停止結果が具体的な原因と修正へ結び付く。",
+                outcome_en="The stop result is tied to a concrete cause and correction.",
+                owner_id="operator",
+                owner_ja="運用担当",
+                owner_en="Operator",
+            )
+
+    status_health = _dict(status.get("health"))
+    status_is_blocking = str(status_health.get("status", "")).lower() in {"red", "fail", "failed"}
+    if status_is_blocking:
+        raw_status = "; ".join(str(value) for value in _list(status_health.get("notes"))) or "status snapshot health is red"
+        add(
+            condition_key=_condition_code(raw_status),
+            precedence=1,
+            project_key="devcockpitcore",
+            required=True,
+            evidence_path=status_path,
+            raw_condition=raw_status,
+            action_ja="状態snapshotの停止条件を解消する",
+            action_en="Resolve the status snapshot stop condition",
+            reason_ja="状態snapshotが停止状態を報告しています。",
+            reason_en=f"The status snapshot reports a stop condition: {raw_status}",
+            decision_ja="停止状態を解消する最小の確認または修正は何か。",
+            decision_en="What is the smallest review or correction that clears the stop state?",
+            outcome_ja="状態snapshotが停止条件なしで再生成される。",
+            outcome_en="The status snapshot is regenerated without a stop condition.",
+            owner_id="operator",
+            owner_ja="運用担当",
+            owner_en="Operator",
+        )
+
+    for check in sorted(
+        (item for item in _list(validation.get("checks")) if isinstance(item, dict)),
+        key=lambda item: str(item.get("check_key", "")),
+    ):
+        if str(check.get("result", "")).lower() not in {"fail", "failed", "error"}:
+            continue
+        if str(check.get("severity", "")).lower() != "required":
+            continue
+        check_key = str(check.get("check_key", "unknown"))
+        raw = _first_finding_text(check) or f"required validation check failed: {check_key}"
+        human_check = check_key.replace("_", " ").strip() or "required validation"
+        add(
+            condition_key=f"validation_check:{check_key}",
+            precedence=2,
+            project_key="devcockpitcore",
+            required=True,
+            evidence_path=validation_path,
+            raw_condition=raw,
+            action_ja="必須検証の失敗を修復する",
+            action_en=f"Repair required validation check '{human_check}'",
+            reason_ja="必須検証が失敗しています。機械判定の詳細は隣接する根拠で確認できます。",
+            reason_en=f"A required validation check failed: {raw}",
+            decision_ja="失敗原因を除去する最小の変更は何か。",
+            decision_en="What is the smallest change that removes the failure?",
+            outcome_ja="対象検証がpassになり、他の必須検証を退行させない。",
+            outcome_en="The check passes without regressing other required validation.",
+            owner_id="developer",
+            owner_ja="開発担当",
+            owner_en="Developer",
+        )
+
+    input_paths = {validation_path, smoke_path, status_path}
+    for project_key in sorted(required_projects):
+        backing = [
+            item
+            for item in receipt_sources
+            if isinstance(item, dict)
+            and item.get("project_id") == project_key
+            and (
+                _normalized_evidence_path(str(item.get("source_path", "")))
+                in {_normalized_evidence_path(path) for path in input_paths}
+                or item.get("source_id") == f"{project_key}.live_status_observation"
+            )
+        ]
+        if any(item.get("current_state_claim_eligible") is True for item in backing):
+            continue
+        reason_codes = sorted(
+            {
+                str(code)
+                for item in backing
+                for code in _list(item.get("reason_codes"))
+                if str(code)
+            }
+        )
+        primary = sorted(
+            backing,
+            key=lambda item: (
+                0 if item.get("source_id") == f"{project_key}.live_status_observation" else 1,
+                str(item.get("source_id", "")),
+            ),
+        )[0] if backing else evidence_for(status_path, project_key)
+        raw = ", ".join(reason_codes) or "no eligible current-state evidence source"
+        add(
+            condition_key="current_claim_ineligible",
+            precedence=3,
+            project_key=project_key,
+            required=True,
+            evidence_path=str(primary.get("source_path", status_path)),
+            raw_condition=raw,
+            action_ja="現状根拠を更新して適格性を回復する",
+            action_en="Refresh evidence and restore current-state eligibility",
+            reason_ja="必須プロジェクトを現在状態として扱える根拠がありません。",
+            reason_en="No evidence for the required project is eligible for a current-state claim.",
+            decision_ja="どの読み取り専用観測を更新すれば、現在状態を安全に判断できるか。",
+            decision_en="Which read-only observation must be refreshed before current state can be judged safely?",
+            outcome_ja="新しい鮮度証跡で、少なくとも1つの必須観測が現状根拠として使用可能になる。",
+            outcome_en="A new receipt makes at least one required observation current-state eligible.",
+            owner_id="operator",
+            owner_ja="運用担当",
+            owner_en="Operator",
+            evidence=primary,
+        )
+
+    for check in sorted(
+        (item for item in _list(validation.get("checks")) if isinstance(item, dict)),
+        key=lambda item: str(item.get("check_key", "")),
+    ):
+        if str(check.get("result", "")).lower() != "warn":
+            continue
+        check_key = str(check.get("check_key", "unknown"))
+        raw = _first_finding_text(check) or f"validation warning: {check_key}"
+        label_ja, label_en = _validation_check_label(check_key)
+        add(
+            condition_key=f"validation_check:{check_key}",
+            precedence=4,
+            project_key="devcockpitcore",
+            required=True,
+            evidence_path=validation_path,
+            raw_condition=raw,
+            action_ja=label_ja,
+            action_en=label_en,
+            reason_ja="追跡済み検証packが、確認の必要な衛生上の警告を1件記録しています。",
+            reason_en="The tracked validation pack records one hygiene warning that needs classification.",
+            decision_ja="既知fixtureとして維持するか、衛生上の残留として除去するか。",
+            decision_en="Should this remain as a known fixture or be removed as hygiene residue?",
+            outcome_ja="警告の意図と次の扱いが記録される。",
+            outcome_en="The warning's intent and next treatment are recorded.",
+            owner_id="operator",
+            owner_ja="運用担当",
+            owner_en="Operator",
+        )
+
+    project_rows = [item for item in _list(smoke.get("projects")) if isinstance(item, dict)]
+    for project in sorted(project_rows, key=lambda item: str(item.get("project_key", ""))):
+        project_key = str(project.get("project_key", "unknown"))
+        project_name = str(project.get("project", project_key))
+        receipt_project = _dict(receipt_projects.get(project_key))
+        if receipt_project and receipt_project.get("available") is False:
+            continue
+        required = bool(project.get("required")) or project_key in required_projects
+        status_snapshot = _dict(project.get("status_snapshot"))
+        for warning in sorted({str(value) for value in _list(status_snapshot.get("warnings")) if str(value)}):
+            condition = _condition_code(warning)
+            warning_ja = _warning_reason_ja(warning)
+            precedence = 4 if required else 5
+            add(
+                condition_key=condition,
+                precedence=precedence,
+                project_key=project_key,
+                required=required,
+                evidence_path=smoke_path,
+                raw_condition=warning,
+                action_ja=f"{project_name} の観測警告を確認する",
+                action_en=f"Review the {project_name} observation warning",
+                reason_ja=f"読み取り専用観測の報告: {warning_ja}",
+                reason_en=f"The read-only observation reports: {warning}",
+                decision_ja="想定内の観測状態か、当該プロジェクトの専用laneへ送るべきか。",
+                decision_en="Is this expected observer state, or should it be routed to that project's own lane?",
+                outcome_ja="DevCockpitCoreから書き戻さず、所有者と次の確認先が明確になる。",
+                outcome_en="Owner and next review surface are clear without writeback from DevCockpitCore.",
+                owner_id="project_owner" if not required else "operator",
+                owner_ja="プロジェクト所有者" if not required else "運用担当",
+                owner_en="Project owner" if not required else "Operator",
+                evidence=evidence_for(smoke_path, project_key),
+            )
+
+    status_snapshot = _dict(status.get("health"))
+    status_notes = [] if status_is_blocking else sorted(
+        {str(value) for value in _list(status_snapshot.get("notes")) if str(value)}
+    )
+    for note in status_notes:
+        condition = _condition_code(note)
+        add(
+            condition_key=condition,
+            precedence=4,
+            project_key="devcockpitcore",
+            required=True,
+            evidence_path=status_path,
+            raw_condition=note,
+            action_ja="DevCockpitCoreの状態注記を確認する",
+            action_en="Review the DevCockpitCore status note",
+            reason_ja=f"状態snapshotの注記: {_warning_reason_ja(note)}",
+            reason_en=f"The status snapshot contains a note: {note}",
+            decision_ja="この状態は現在の作業境界として想定内か。",
+            decision_en="Is this state expected within the current work boundary?",
+            outcome_ja="状態注記が想定内か要対応かに分類される。",
+            outcome_en="The note is classified as expected or requiring follow-up.",
+            owner_id="operator",
+            owner_ja="運用担当",
+            owner_en="Operator",
+        )
+
+    for project_key, project in sorted(receipt_projects.items()):
+        if project.get("required") is True or project.get("available") is not False:
+            continue
+        raw = ", ".join(str(value) for value in _list(project.get("reason_codes"))) or "optional project missing"
+        add(
+            condition_key="optional_project_missing",
+            precedence=6,
+            project_key=project_key,
+            required=False,
+            evidence_path=f"git-observation:../{project_key}",
+            raw_condition=raw,
+            action_ja=f"任意プロジェクト {project_key} の欠落を記録する",
+            action_en=f"Record missing optional project {project_key}",
+            reason_ja="任意観測先が見つかりません。必須ゲートは停止しません。",
+            reason_en="The optional observation target is missing and does not stop the required gate.",
+            decision_ja="次回観測まで参考情報として残すか。",
+            decision_en="Should this remain informational until the next observation?",
+            outcome_ja="任意欠落が必須問題と混同されない。",
+            outcome_en="Optional absence is not confused with a required problem.",
+            owner_id="observer",
+            owner_ja="観測担当",
+            owner_en="Observer",
+            evidence=evidence_for(f"git-observation:../{project_key}", project_key),
+        )
+
+    matched_review_action_ids = _attach_priority_review_actions(candidates, review_actions)
+    owner_labels = {
+        "operator": ("運用担当", "Operator"),
+        "developer": ("開発担当", "Developer"),
+        "supervisor": ("監修担当", "Supervisor"),
+    }
+    for raw_action in review_actions:
+        action = _dict(raw_action)
+        action_id = str(action.get("action_id", ""))
+        if action_id in matched_review_action_ids or not _priority_eligible_review_action(action):
+            continue
+        source_type = str(action.get("source_type", ""))
+        project_key = str(action.get("project_key") or "devcockpitcore")
+        action_receipt_project = _dict(receipt_projects.get(project_key))
+        if (
+            source_type in {"cross_project_smoke", "status_snapshot"}
+            and action_receipt_project
+            and action_receipt_project.get("available") is False
+        ):
+            continue
+        required = project_key in required_projects or project_key == "devcockpitcore"
+        severity = str(action.get("severity", "warning")).lower()
+        precedence = 1 if severity == "blocker" else 4 if required else 5
+        reason = str(action.get("reason", "review action requires classification"))
+        evidence_path = str(action.get("evidence_path") or action.get("source_path") or status_path)
+        owner_id = str(action.get("owner_hint") or "operator")
+        owner_ja, owner_en = owner_labels.get(owner_id, ("担当者", owner_id.replace("_", " ").title()))
+        source_labels = {
+            "validation_pack": ("検証警告", "validation warning"),
+            "cross_project_smoke": ("横断観測警告", "cross-project observation warning"),
+            "status_snapshot": ("状態注記", "status note"),
+        }
+        source_ja, source_en = source_labels.get(source_type, ("確認項目", "review item"))
+        add(
+            condition_key=f"review_action:{source_type}:{_condition_code(reason)}",
+            precedence=precedence,
+            project_key=project_key,
+            required=required,
+            evidence_path=evidence_path,
+            raw_condition=reason,
+            action_ja=f"担当付き{source_ja}を確認する",
+            action_en=f"Review the owned {source_en}",
+            reason_ja="既存の非実行review actionが、担当者付きの確認項目を報告しています。",
+            reason_en=f"An existing non-executable review action reports: {reason}",
+            decision_ja="この確認項目は想定内か、所有laneへ送るべきか。",
+            decision_en="Is this expected, or should it be routed to the owning lane?",
+            outcome_ja="確認結果と次の所有者が記録される。",
+            outcome_en="The classification and next owner are recorded.",
+            owner_id=owner_id,
+            owner_ja=owner_ja,
+            owner_en=owner_en,
+        )
+    _attach_priority_review_actions(candidates, review_actions)
+
+    if not candidates:
+        eligible_sources = [
+            item
+            for item in receipt_sources
+            if isinstance(item, dict)
+            and item.get("project_id") == "devcockpitcore"
+            and item.get("current_state_claim_eligible") is True
+        ]
+        primary = (
+            sorted(eligible_sources, key=lambda item: str(item.get("source_id", "")))[0]
+            if eligible_sources
+            else evidence_for(status_path, "devcockpitcore")
+        )
+        add(
+            condition_key="routine_observation_review",
+            precedence=5,
+            project_key="devcockpitcore",
+            required=True,
+            evidence_path=str(primary.get("source_path", status_path)),
+            raw_condition="no blocker or actionable warning; current evidence eligible",
+            action_ja="現状根拠を確認して観測を継続する",
+            action_en="Confirm current evidence and continue observation",
+            reason_ja="停止条件と担当付き警告はなく、必須の現状根拠を使用できます。",
+            reason_en="No stop condition or owned warning is present, and required current-state evidence is eligible.",
+            decision_ja="この状態を次のhandoffに使えるか。",
+            decision_en="Can this state support the next handoff?",
+            outcome_ja="健全な状態が明示され、次の観測時点が分かる。",
+            outcome_en="The healthy state is explicit and the next observation point is clear.",
+            owner_id="observer",
+            owner_ja="観測担当",
+            owner_en="Observer",
+            evidence=primary,
+        )
+
+    ordered = sorted(
+        candidates.values(),
+        key=lambda item: (
+            _int(item.get("precedence")),
+            0 if item.get("required") is True else 1,
+            str(item.get("project_key", "")),
+            str(item.get("condition_key", "")),
+            str(item.get("primary_evidence_path", "")),
+        ),
+    )
+    for rank, item in enumerate(ordered, start=1):
+        identity = f"{item['project_key']}:{item['condition_key']}"
+        item["priority_id"] = f"priority-{hashlib.sha256(identity.encode('utf-8')).hexdigest()[:12]}"
+        item["rank"] = rank
+    return ordered
+
+
+def _priority_evidence_ref(source: dict[str, Any]) -> dict[str, Any]:
+    return {
+        key: source.get(key)
+        for key in (
+            "source_id",
+            "source_path",
+            "freshness_state",
+            "temporal_state",
+            "revision_binding_state",
+            "current_state_claim_eligible",
+            "assessed_at",
+            "fresh_through",
+            "content_sha256",
+            "authority_classification",
+            "reason_codes",
+        )
+    }
+
+
+def _attach_priority_review_actions(
+    candidates: dict[str, dict[str, Any]],
+    review_actions: list[dict[str, Any]],
+) -> set[str]:
+    """Bind compatible review-action evidence without turning it into execution."""
+
+    matched_ids: set[str] = set()
+    for candidate in candidates.values():
+        condition_key = str(candidate.get("condition_key", ""))
+        project_key = str(candidate.get("project_key", ""))
+        refs: list[dict[str, Any]] = []
+        for raw_action in review_actions:
+            action = _dict(raw_action)
+            if not _priority_eligible_review_action(action):
+                continue
+            source_type = str(action.get("source_type", ""))
+            reason = str(action.get("reason", ""))
+            lowered = reason.lower()
+            action_project = str(action.get("project_key") or "")
+            if action_project and action_project != project_key:
+                continue
+            action_condition = _condition_code(reason)
+            condition_matches = (
+                action_condition == condition_key
+                or condition_key.endswith(action_condition)
+                or (
+                    condition_key.startswith("validation_check:")
+                    and condition_key.split(":", 1)[1] in lowered
+                    and source_type == "validation_pack"
+                )
+            )
+            if not condition_matches:
+                continue
+            refs.append(
+                {
+                    "action_id": str(action.get("action_id", "")),
+                    "source_type": source_type,
+                    "severity": str(action.get("severity", "")),
+                    "owner_hint": str(action.get("owner_hint", "")),
+                    "evidence_path": str(action.get("evidence_path", "")),
+                    "executable": False,
+                }
+            )
+            matched_ids.add(str(action.get("action_id", "")))
+        candidate["review_action_refs"] = sorted(
+            {item["action_id"]: item for item in refs if item["action_id"]}.values(),
+            key=lambda item: item["action_id"],
+        )
+    return {value for value in matched_ids if value}
+
+
+def _priority_eligible_review_action(action: dict[str, Any]) -> bool:
+    if action.get("executable") is not False:
+        return False
+    if str(action.get("source_type", "")) not in {
+        "validation_pack",
+        "cross_project_smoke",
+        "status_snapshot",
+    }:
+        return False
+    if str(action.get("severity", "")).lower() not in {"blocker", "warning"}:
+        return False
+    if not str(action.get("owner_hint", "")).strip():
+        return False
+    reason = str(action.get("reason", ""))
+    lowered = reason.lower()
+    if (
+        "summary result is" in lowered
+        or lowered == "report hygiene warnings present"
+        or (str(action.get("project_key") or "") == "" and lowered.endswith(": warn"))
+    ):
+        return False
+    return True
+
+
+def _priority_state(precedence: int) -> dict[str, str]:
+    states = {
+        1: {"key": "blocked", "ja": "停止", "en": "Blocked"},
+        2: {"key": "failed", "ja": "失敗", "en": "Failed"},
+        3: {"key": "evidence_ineligible", "ja": "根拠更新待ち", "en": "Evidence refresh needed"},
+        4: {"key": "review", "ja": "要確認", "en": "Review"},
+        5: {"key": "decision", "ja": "判断待ち", "en": "Decision pending"},
+        6: {"key": "informational", "ja": "参考", "en": "Informational"},
+    }
+    return dict(states.get(precedence, states[6]))
+
+
+def _condition_code(value: str) -> str:
+    lowered = value.strip().lower()
+    known = (
+        ("worktree is dirty", "worktree_dirty"),
+        ("runtime state document is absent", "runtime_state_missing"),
+        ("project context document is absent", "project_context_missing"),
+        ("differs from adapter default", "branch_differs_from_default"),
+        ("pseudo_git_tag", "pseudo_git_tag_residue"),
+    )
+    for needle, code in known:
+        if needle in lowered:
+            return code
+    digest = hashlib.sha256(lowered.encode("utf-8")).hexdigest()[:12]
+    return f"observed_condition_{digest}"
+
+
+def _warning_reason_ja(value: str) -> str:
+    lowered = value.strip().lower()
+    if "worktree is dirty" in lowered:
+        return "作業ツリーに未確定変更があります。"
+    if "runtime state document is absent" in lowered:
+        return "runtime-state文書がありません。"
+    if "project context document is absent" in lowered:
+        return "project-context文書がありません。"
+    if "differs from adapter default" in lowered:
+        return "現在のbranchがadapterの既定branchと異なります。"
+    return "詳細は隣接する根拠と由来情報で確認してください。"
+
+
+def _first_finding_text(check: dict[str, Any]) -> str:
+    findings = _list(check.get("findings"))
+    if not findings:
+        return ""
+    first = findings[0]
+    if isinstance(first, dict):
+        return json.dumps(first, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return str(first)
+
+
+def _validation_check_label(check_key: str) -> tuple[str, str]:
+    if check_key == "pseudo_git_tag_scan":
+        return (
+            "サンプル報告内のGit UI表記を確認する",
+            "Review Git UI markers in the sample report",
+        )
+    human = check_key.replace("_", " ").strip() or "validation warning"
+    return (f"検証警告「{human}」を判定する", f"Classify validation warning '{human}'")
+
+
+def _normalized_evidence_path(value: str) -> str:
+    return value.strip().replace("\\", "/").lower()
 
 
 def _aggregate_health(
@@ -1734,6 +2792,72 @@ def write_review_actions_markdown(package: dict[str, Any], output_path: str | Pa
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(render_review_actions_markdown(package), encoding="utf-8", newline="\n")
+
+
+def priority_readback(model: dict[str, Any]) -> dict[str, Any]:
+    """Return the deterministic machine readback consumed by capture QA."""
+
+    freshness = _dict(model.get("evidence_freshness"))
+    priority_output = _dict(model.get("priority_readback"))
+    priorities = [dict(item) for item in _list(model.get("priority_items")) if isinstance(item, dict)]
+    receipt_path = _source_path(_list(model.get("sources")), "evidence_freshness_receipt")
+    return {
+        "schema_version": "devcockpit_priority_readback.v1",
+        "artifact_id": "priority-review-console-production-observation-surface-v1",
+        "generated_at": str(model.get("generated_at", "")),
+        "producer": PRODUCER,
+        "surface": {
+            "selected_direction": "priority-review-console",
+            "production": True,
+            "b_and_c_production_tabs": False,
+            "selected_priority_id": model.get("selected_priority_id"),
+            "priority_count": len(priorities),
+            "default_language": "ja",
+            "languages": ["ja", "en"],
+            "user_visual_acceptance": str(model.get("user_visual_acceptance", "pending")),
+            "executable": False,
+        },
+        "priority_policy": [dict(item) for item in _list(model.get("priority_policy")) if isinstance(item, dict)],
+        "freshness_receipt": {
+            "path": receipt_path,
+            "schema_version": freshness.get("schema_version"),
+            "capture_id": freshness.get("capture_id"),
+            "assessed_at": freshness.get("assessed_at"),
+            "observation_mode": freshness.get("observation_mode"),
+            "authority": _dict(freshness.get("authority")),
+            "source_counts": _dict(freshness.get("source_counts")),
+            "current_state_claim_eligible": _dict(
+                freshness.get("current_state_claim_eligible")
+            ),
+        },
+        "priority_output": dict(priority_output),
+        "priorities": priorities,
+        "scope_boundary": {
+            "observer_first": True,
+            "offline_static": True,
+            "target_repository_writeback": False,
+            "execution_automation": False,
+            "external_publication": False,
+            "locked_lanes_excluded_from_priorities": True,
+        },
+    }
+
+
+def write_priority_readback(
+    package: dict[str, Any],
+    output_path: str | Path,
+    *,
+    pretty: bool = False,
+) -> None:
+    output = Path(output_path)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    text = json.dumps(
+        package,
+        ensure_ascii=False,
+        indent=2 if pretty else None,
+        sort_keys=True,
+    )
+    output.write_text(f"{text}\n", encoding="utf-8", newline="\n")
 
 
 def _source_path(sources: list[dict[str, Any]], label: str) -> str:
@@ -2168,22 +3292,22 @@ def _review_checkpoints(
     warning_count = len(_list(health.get("warnings")))
     return [
         {
-                "label": "1. Report Clarity",
-                "state": f"{blocker_count} blocker(s), {warning_count} warning signal(s)",
-            "prompt": "Confirm the first screen reads as a concise current-status report.",
-            "evidence": "Current Status Report",
+            "label": "1. Priority Comprehension",
+            "state": f"{blocker_count} blocker(s), {warning_count} warning signal(s)",
+            "prompt": "Confirm rank 1 exposes action, reason, state, owner, and next operation.",
+            "evidence": "Priority Lane / Active Decision",
         },
         {
-            "label": "2. Review Map Linkage",
-            "state": "6 compact review-map links",
-            "prompt": "Confirm each Review Map link lands on the matching detail panel and back link.",
-            "evidence": "Linked Detail Map",
+            "label": "2. Selection Synchronization",
+            "state": "priority, decision, and evidence share one selected ID",
+            "prompt": "Confirm click and keyboard selection keep the decision and evidence inspector synchronized.",
+            "evidence": "Priority Review Console",
         },
         {
-            "label": "3. Evidence Freshness",
+            "label": "3. Evidence Eligibility",
             "state": f"validation {validation_summary.get('result', 'unknown')} / smoke {smoke_summary.get('result', 'unknown')}",
-            "prompt": "Verify source generated_at values are current enough for the review decision.",
-            "evidence": "Sources and Access",
+            "prompt": "Verify the receipt's freshness, revision binding, authority, and current-claim eligibility.",
+            "evidence": "Evidence Inspector / receipt ledger",
         },
     ]
 
@@ -2237,7 +3361,7 @@ def _dict(value: Any) -> dict[str, Any]:
 
 
 def _list(value: Any) -> list[Any]:
-    return value if isinstance(value, list) else []
+    return list(value) if isinstance(value, list) else []
 
 
 def _int(value: Any) -> int:
@@ -2302,70 +3426,174 @@ def _utc_now_iso() -> str:
 def _dashboard_script() -> str:
     return """
 (function () {
-  var search = document.querySelector("[data-dashboard-search]");
-  var buttons = Array.prototype.slice.call(document.querySelectorAll("[data-filter-result]"));
-  var cards = Array.prototype.slice.call(document.querySelectorAll("[data-dashboard-project]"));
-  var actionSearch = document.querySelector("[data-action-search]");
-  var actionButtons = Array.prototype.slice.call(document.querySelectorAll("[data-filter-action-severity]"));
-  var actionCards = Array.prototype.slice.call(document.querySelectorAll("[data-review-action]"));
-  var active = "all";
-  var activeActionSeverity = "all";
+  "use strict";
+  var modelNode = document.getElementById("priority-model");
+  var priorities = modelNode ? JSON.parse(modelNode.textContent || "[]") : [];
+  var byId = new Map(priorities.map(function (item) { return [item.priority_id, item]; }));
+  var priorityButtons = Array.prototype.slice.call(document.querySelectorAll("button[data-priority-id]"));
+  var languageButtons = Array.prototype.slice.call(document.querySelectorAll("button[data-language]"));
+  var decision = document.querySelector('[data-landmark="active-decision"]');
+  var inspector = document.querySelector('[data-landmark="evidence-inspector"]');
+  var selectedId = priorityButtons.length ? priorityButtons[0].dataset.priorityId : null;
 
-  function applyFilters() {
-    var query = search ? search.value.trim().toLowerCase() : "";
-    cards.forEach(function (card) {
-      var result = card.getAttribute("data-result") || "unknown";
-      var text = card.getAttribute("data-search") || "";
-      var resultMatch = active === "all" || result === active;
-      var textMatch = query === "" || text.indexOf(query) !== -1;
-      card.hidden = !(resultMatch && textMatch);
+  function compactPath(value) {
+    var normalized = String(value || "").replaceAll("\\\\", "/").replace(/[/]$/u, "");
+    if (normalized.startsWith("git-observation:")) return normalized;
+    return normalized.split("/").pop() || "n/a";
+  }
+
+  function humanSourceLabel(sourceId) {
+    var known = {
+      "validation-pack-sample": { ja: "検証pack結果", en: "Validation pack result" },
+      "cross-project-smoke-sample": { ja: "横断観測結果", en: "Cross-project observation" },
+      "status-snapshot-sample": { ja: "状態snapshot", en: "Status snapshot" },
+      "intent-comparison-manifest-v2": { ja: "比較履歴", en: "Comparison history" }
+    };
+    if (known[sourceId]) return known[sourceId];
+    if (String(sourceId || "").endsWith(".live_status_observation")) {
+      var project = sourceId.split(".", 1)[0];
+      return { ja: project + " 読み取り専用観測", en: project + " read-only observation" };
+    }
+    return { ja: "証拠ソース", en: "Evidence source" };
+  }
+
+  function localizedEvidenceLabels(evidence) {
+    var freshness = {
+      fresh: { ja: "鮮度内", en: "Fresh" },
+      stale: { ja: "期限超過", en: "Stale" },
+      unknown: { ja: "鮮度不明", en: "Freshness unknown" },
+      not_applicable: { ja: "対象外", en: "Not applicable" }
+    }[evidence.freshness_state] || { ja: "鮮度不明", en: String(evidence.freshness_state || "Unknown") };
+    var temporal = {
+      fresh: { ja: "鮮度内", en: "Fresh" },
+      stale: { ja: "期限超過", en: "Stale" },
+      unknown: { ja: "不明", en: "Unknown" },
+      not_applicable: { ja: "対象外", en: "Not applicable" }
+    }[evidence.temporal_state] || { ja: "不明", en: String(evidence.temporal_state || "Unknown") };
+    var revision = {
+      match: { ja: "一致", en: "Match" },
+      mismatch: { ja: "不一致", en: "Mismatch" },
+      unknown: { ja: "不明", en: "Unknown" },
+      not_applicable: { ja: "対象外", en: "Not applicable" }
+    }[evidence.revision_binding_state] || { ja: "不明", en: String(evidence.revision_binding_state || "Unknown") };
+    var eligibility = evidence.current_state_claim_eligible === true
+      ? { ja: "使用可", en: "Eligible" }
+      : { ja: "使用不可", en: "Ineligible" };
+    return {
+      classification: {
+        ja: freshness.ja + "・現状根拠" + eligibility.ja,
+        en: freshness.en + " · claim-" + eligibility.en.toLowerCase()
+      },
+      eligibility: eligibility,
+      temporal: temporal,
+      revision: revision
+    };
+  }
+
+  function bilingual(container, value) {
+    if (!container) return;
+    var pair = value || {};
+    var ja = container.querySelector(".lang-ja");
+    var en = container.querySelector(".lang-en");
+    if (ja) ja.textContent = pair.ja || "";
+    if (en) en.textContent = pair.en || "";
+  }
+
+  function text(target, value) {
+    var node = document.querySelector(target);
+    if (node) node.textContent = value == null ? "n/a" : String(value);
+  }
+
+  function selectPriority(priorityId, focus) {
+    var item = byId.get(priorityId);
+    if (!item || !decision || !inspector) return;
+    selectedId = priorityId;
+    priorityButtons.forEach(function (button) {
+      var isSelected = button.dataset.priorityId === priorityId;
+      button.setAttribute("aria-selected", isSelected ? "true" : "false");
+      button.tabIndex = isSelected ? 0 : -1;
+      if (isSelected && focus) button.focus();
+    });
+    decision.dataset.priorityId = priorityId;
+    decision.dataset.selectedPriorityId = priorityId;
+    inspector.dataset.priorityId = priorityId;
+    inspector.dataset.selectedPriorityId = priorityId;
+    decision.querySelector('[data-field="rank"]').textContent = "#" + item.rank;
+    bilingual(decision.querySelector('[data-field="state"]'), item.state);
+    bilingual(decision.querySelector('[data-field="action"]'), item.action);
+    bilingual(decision.querySelector('[data-field="reason"]'), item.reason);
+    bilingual(decision.querySelector('[data-field="decision"]'), item.decision);
+    bilingual(decision.querySelector('[data-field="outcome"]'), item.desired_outcome);
+    bilingual(decision.querySelector('[data-field="owner"]'), item.owner);
+    var evidence = (item.evidence_refs || [])[0] || {};
+    var evidenceLabels = localizedEvidenceLabels(evidence);
+    inspector.dataset.evidenceId = evidence.source_id || "";
+    bilingual(inspector.querySelector('[data-field="freshness"]'), evidenceLabels.classification);
+    bilingual(inspector.querySelector('[data-field="source-label"]'), humanSourceLabel(evidence.source_id));
+    text('#evidence-inspector [data-field="source-route"]', compactPath(evidence.source_path));
+    bilingual(inspector.querySelector('[data-field="eligible"]'), evidenceLabels.eligibility);
+    bilingual(inspector.querySelector('[data-field="temporal"]'), evidenceLabels.temporal);
+    bilingual(inspector.querySelector('[data-field="revision"]'), evidenceLabels.revision);
+    text('#evidence-inspector [data-field="assessed"]', evidence.assessed_at || "n/a");
+    text('#evidence-inspector [data-field="fresh-through"]', evidence.fresh_through || "n/a");
+    text('#evidence-inspector [data-field="source-id"]', evidence.source_id || "n/a");
+    text('#evidence-inspector [data-field="source-path"]', evidence.source_path || "n/a");
+    text('#evidence-inspector [data-field="authority"]', evidence.authority_classification || "unknown");
+    text('#evidence-inspector [data-field="reason-codes"]', (evidence.reason_codes || []).join(", ") || "none");
+    text(
+      '#evidence-inspector [data-field="review-actions"]',
+      (item.review_action_refs || []).map(function (ref) { return ref.action_id; }).join(", ") || "none"
+    );
+    text('#evidence-inspector [data-field="content-sha"]', evidence.content_sha256 || "n/a");
+  }
+
+  function setLanguage(language, focus) {
+    if (language !== "ja" && language !== "en") return;
+    document.documentElement.lang = language;
+    document.documentElement.dataset.language = language;
+    Array.prototype.slice.call(document.querySelectorAll("[data-aria-ja][data-aria-en]")).forEach(function (node) {
+      node.setAttribute("aria-label", node.dataset[language === "ja" ? "ariaJa" : "ariaEn"] || "");
+    });
+    languageButtons.forEach(function (button) {
+      var isSelected = button.dataset.language === language;
+      button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+      button.tabIndex = isSelected ? 0 : -1;
+      button.setAttribute("aria-label", button.dataset[language === "ja" ? "ariaJa" : "ariaEn"] || button.textContent);
+      if (isSelected && focus) button.focus();
     });
   }
 
-  buttons.forEach(function (button) {
-    button.addEventListener("click", function () {
-      active = button.getAttribute("data-filter-result") || "all";
-      buttons.forEach(function (item) { item.setAttribute("aria-pressed", "false"); });
-      button.setAttribute("aria-pressed", "true");
-      applyFilters();
+  priorityButtons.forEach(function (button, index) {
+    button.addEventListener("click", function () { selectPriority(button.dataset.priorityId, false); });
+    button.addEventListener("keydown", function (event) {
+      var target = index;
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") target = (index + 1) % priorityButtons.length;
+      else if (event.key === "ArrowUp" || event.key === "ArrowLeft") target = (index - 1 + priorityButtons.length) % priorityButtons.length;
+      else if (event.key === "Home") target = 0;
+      else if (event.key === "End") target = priorityButtons.length - 1;
+      else return;
+      event.preventDefault();
+      selectPriority(priorityButtons[target].dataset.priorityId, true);
     });
   });
 
-  if (search) {
-    search.addEventListener("input", applyFilters);
-  }
-
-  if (buttons.length) {
-    buttons[0].setAttribute("aria-pressed", "true");
-  }
-
-  function applyActionFilters() {
-    var query = actionSearch ? actionSearch.value.trim().toLowerCase() : "";
-    actionCards.forEach(function (card) {
-      var severity = card.getAttribute("data-severity") || "info";
-      var text = card.getAttribute("data-search") || "";
-      var severityMatch = activeActionSeverity === "all" || severity === activeActionSeverity;
-      var textMatch = query === "" || text.indexOf(query) !== -1;
-      card.hidden = !(severityMatch && textMatch);
-    });
-  }
-
-  actionButtons.forEach(function (button) {
-    button.addEventListener("click", function () {
-      activeActionSeverity = button.getAttribute("data-filter-action-severity") || "all";
-      actionButtons.forEach(function (item) { item.setAttribute("aria-pressed", "false"); });
-      button.setAttribute("aria-pressed", "true");
-      applyActionFilters();
+  languageButtons.forEach(function (button, index) {
+    button.addEventListener("click", function () { setLanguage(button.dataset.language, false); });
+    button.addEventListener("keydown", function (event) {
+      var target = index;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") target = (index + 1) % languageButtons.length;
+      else if (event.key === "ArrowLeft" || event.key === "ArrowUp") target = (index - 1 + languageButtons.length) % languageButtons.length;
+      else if (event.key === "Home") target = 0;
+      else if (event.key === "End") target = languageButtons.length - 1;
+      else return;
+      event.preventDefault();
+      setLanguage(languageButtons[target].dataset.language, true);
     });
   });
 
-  if (actionSearch) {
-    actionSearch.addEventListener("input", applyActionFilters);
-  }
-
-  if (actionButtons.length) {
-    actionButtons[0].setAttribute("aria-pressed", "true");
-  }
+  var requestedLanguage = new URLSearchParams(window.location.search).get("language");
+  setLanguage(requestedLanguage === "en" ? "en" : "ja", false);
+  if (selectedId) selectPriority(selectedId, false);
 }());
 """.strip()
 
@@ -2387,14 +3615,247 @@ def _stylesheet() -> str:
   --teal: #66c6a6;
   --amber-soft: #3a301c;
   --shadow: rgba(0, 0, 0, 0.35);
+  --priority: #e4ba58;
+  --decision: #75c8d5;
+  --evidence: #72c996;
+  --console-bg: #0d100e;
+  --console-panel: #171c18;
+  --console-deep: #121613;
+  --console-line: #3a463d;
 }
 * { box-sizing: border-box; }
+html[data-language="ja"] .lang-en,
+html[data-language="en"] .lang-ja { display: none !important; }
 body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
   font-family: "Segoe UI", Arial, sans-serif;
   line-height: 1.45;
+}
+.production-header {
+  padding: 20px 24px 14px;
+  background: var(--console-bg);
+  border-bottom: 1px solid var(--console-line);
+}
+.production-title-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: start;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+.production-title-copy { min-width: 0; }
+.production-title-copy h1 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+.production-deck {
+  max-width: 58rem;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.header-controls {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+.language-switch {
+  display: inline-flex;
+  border: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.language-switch button {
+  min-height: 38px;
+  padding: 7px 14px;
+  border: 0;
+  border-right: 1px solid var(--console-line);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+}
+.language-switch button:last-child { border-right: 0; }
+.language-switch button[aria-pressed="true"] { background: var(--decision); color: #081012; }
+.acceptance-state {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.acceptance-state strong { color: var(--priority); }
+.current-state-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 1480px;
+  margin: 16px auto 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.current-state-strip > div {
+  min-width: 0;
+  padding: 8px 12px;
+  border-right: 1px solid var(--console-line);
+}
+.current-state-strip > div:last-child { border-right: 0; }
+.current-state-strip dt { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.current-state-strip dd { margin: 2px 0 0; color: var(--ink); font-weight: 850; overflow-wrap: anywhere; }
+.receipt-line {
+  max-width: 1480px;
+  margin: 8px auto 0;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.production-page {
+  min-width: 0;
+  padding: 16px 24px 42px;
+  background: var(--console-bg);
+}
+.priority-workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 29fr) minmax(400px, 42fr) minmax(280px, 29fr);
+  gap: 12px;
+  max-width: 1480px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+@media (min-width: 1121px) {
+  .priority-workspace { height: min(880px, calc(100vh - 320px)); min-height: 760px; }
+}
+.console-panel {
+  min-width: 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-panel);
+  overflow: hidden;
+}
+.priority-lane { border-top: 3px solid var(--priority); }
+.active-decision { border-top: 3px solid var(--decision); }
+.evidence-inspector { border-top: 3px solid var(--evidence); }
+.console-panel-head {
+  position: relative;
+  min-height: 84px;
+  padding: 13px 16px 12px;
+  border-bottom: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.console-panel-head p {
+  margin: 0 0 5px;
+  color: var(--muted);
+  font: 700 10px/1.2 Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+}
+.console-panel-head h2 { margin: 0; font-size: 20px; line-height: 1.2; }
+.panel-hint {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: var(--muted);
+  font: 700 11px/1.2 Consolas, "Courier New", monospace;
+}
+.priority-list {
+  display: grid;
+  max-height: 680px;
+  overflow-y: auto;
+  scrollbar-color: var(--priority) var(--console-deep);
+}
+.priority-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 94px;
+  padding: 13px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--console-line);
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.priority-row:hover { background: #1c231e; }
+.priority-row[aria-selected="true"] { border-left-color: var(--priority); background: #252116; }
+.priority-rank { color: var(--priority); font: 800 14px/1.4 Consolas, "Courier New", monospace; }
+.priority-copy { display: grid; min-width: 0; gap: 5px; }
+.priority-copy strong { font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.priority-copy small { color: var(--muted); font-size: 11.5px; line-height: 1.4; overflow-wrap: anywhere; }
+.priority-meta { display: flex; flex-wrap: wrap; gap: 5px 10px; color: var(--priority); font-size: 11px; font-weight: 800; }
+.queue-note { margin: 0; padding: 11px 14px; color: var(--muted); font-size: 10.5px; line-height: 1.45; }
+.decision-body, .evidence-body { padding: 18px; }
+.decision-kicker {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 3px 8px;
+  border: 1px solid var(--decision);
+  color: var(--decision);
+  font-size: 11px;
+  font-weight: 800;
+}
+.decision-body h3 { margin: 0 0 10px; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.2; overflow-wrap: anywhere; }
+.decision-reason { margin: 0 0 18px; color: var(--muted); overflow-wrap: anywhere; }
+.decision-grid, .evidence-grid, .provenance-grid { display: grid; gap: 0; margin: 0; }
+.decision-grid > div, .evidence-grid > div, .provenance-grid > div {
+  padding: 11px 0;
+  border-top: 1px solid var(--console-line);
+}
+.decision-grid dt, .evidence-grid dt, .provenance-grid dt {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.decision-grid dd, .evidence-grid dd, .provenance-grid dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.evidence-grid dd small { display: block; margin-top: 3px; color: var(--muted); font: 11px/1.35 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+.evidence-status {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 5px 9px;
+  border: 1px solid var(--evidence);
+  color: var(--evidence);
+  font: 800 12px/1.2 Consolas, "Courier New", monospace;
+  text-transform: uppercase;
+}
+.provenance-details { margin-top: 12px; border-top: 1px solid var(--console-line); }
+.provenance-details summary { padding: 12px 0; color: var(--evidence); cursor: pointer; font-weight: 800; }
+.provenance-grid { font-family: Consolas, "Courier New", monospace; font-size: 11px; }
+.full-path, .hash-value { overflow-wrap: anywhere; word-break: normal; }
+.receipt-id { margin: 14px 0 0; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+.evidence-appendix {
+  max-width: 1480px;
+  margin: 16px auto 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.evidence-appendix > summary {
+  display: grid;
+  grid-template-columns: minmax(160px, auto) minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 800;
+}
+.evidence-appendix > summary small { color: var(--muted); font-weight: 400; }
+.appendix-content { display: grid; gap: 24px; padding: 0 16px 18px; }
+.appendix-content section { min-width: 0; }
+.noscript-notice {
+  max-width: 1480px;
+  margin: 0 auto 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--priority);
+  background: #252116;
 }
 a { color: var(--teal); }
 a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
@@ -2843,6 +4304,7 @@ h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
   align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
+  flex-wrap: wrap;
 }
 .project-card h3 { margin-bottom: 8px; }
 .filter-panel {
@@ -2962,6 +4424,10 @@ code {
     animation-duration: 0.01ms !important;
   }
 }
+@media (max-width: 1120px) {
+  .priority-workspace { grid-template-columns: 1fr; }
+  .priority-lane, .active-decision, .evidence-inspector { min-height: auto; }
+}
 @media (max-width: 980px) {
   .report-front-grid { grid-template-columns: 1fr; }
   .report-next { padding-top: 0; }
@@ -2970,6 +4436,18 @@ code {
   .filter-panel { grid-template-columns: 1fr; }
 }
 @media (max-width: 640px) {
+  .production-header { padding: 16px 14px 12px; }
+  .production-title-row { grid-template-columns: 1fr; gap: 14px; }
+  .header-controls { justify-items: start; }
+  .current-state-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .current-state-strip > div:nth-child(2) { border-right: 0; }
+  .current-state-strip > div:nth-child(-n+2) { border-bottom: 1px solid var(--console-line); }
+  .production-page { padding: 12px 14px 30px; }
+  .dashboard-nav { padding: 8px 14px; }
+  .console-panel-head { min-height: 74px; padding: 11px 13px; }
+  .priority-row { min-height: 82px; padding: 11px; }
+  .decision-body, .evidence-body { padding: 14px; }
+  .evidence-appendix > summary { grid-template-columns: 1fr; }
   .top-strip { padding: 22px 18px; }
   .page { padding: 18px; }
   .summary-grid, .grid-three, .overview-board, .top-kpis, .review-map-list, .review-stack-grid { grid-template-columns: 1fr; }
@@ -3002,7 +4480,7 @@ code {
     --paper: #ffffff;
     --soft: #eeeeee;
   }
-  .skip-link, .dashboard-nav, .filter-panel, script {
+  .skip-link, .dashboard-nav, .filter-panel, .language-switch, script {
     display: none !important;
   }
   .top-strip, .dashboard-footer, .metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card, .review-map-item, .stack-card, .detail-anchor-panel {
@@ -3026,6 +4504,15 @@ code {
   .page {
     padding: 0;
   }
+  .production-header, .production-page, .console-panel, .evidence-appendix {
+    background: #ffffff;
+    color: #000000;
+    border-color: #777777;
+  }
+  .production-page { padding: 0; }
+  .priority-workspace { grid-template-columns: 1fr; }
+  .priority-row, .console-panel-head { background: #ffffff; color: #000000; }
+  .evidence-appendix:not([open]) > :not(summary) { display: block; }
   .section {
     break-inside: avoid;
     page-break-inside: avoid;

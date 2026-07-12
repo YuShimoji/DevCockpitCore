@@ -49,7 +49,6 @@ MARKDOWN_PATH = SAMPLE_DIR / "evidence_freshness_receipt_v1.md"
 ASSESSED_AT = "2026-07-12T00:00:00Z"
 REVISION_A = "a" * 40
 REVISION_B = "b" * 40
-PRODUCTION_GENERATOR_BLOB = "8e047f50f9e9525533f5fbd6d784b27508b6d10f"
 
 RECEIPT_KEYS = {
     "schema_version",
@@ -562,18 +561,6 @@ class EvidenceFreshnessTests(unittest.TestCase):
             result = main(["--policy", "missing-policy.json"])
         self.assertEqual(2, result)
         self.assertIn("evidence freshness error:", stderr.getvalue())
-
-    def test_production_dashboard_generator_blob_remains_unchanged(self) -> None:
-        completed = subprocess.run(
-            ["git", "hash-object", "src/dev_cockpit/dashboard.py"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-        )
-        self.assertEqual(PRODUCTION_GENERATOR_BLOB, completed.stdout.strip())
-
 
 def _policy(source_path: str) -> dict[str, object]:
     return {
