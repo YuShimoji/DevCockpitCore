@@ -15,6 +15,8 @@ sys.path.insert(0, str(ROOT / "src"))
 from dev_cockpit.cross_project_smoke import (
     RESULT_SCHEMA_VERSION,
     CrossProjectSmokeError,
+    _observation_signature,
+    _observation_signature_sha256,
     default_smoke,
     run_cross_project_smoke,
     scan_weak_meter_cells_text,
@@ -57,6 +59,15 @@ class CrossProjectSmokeTests(unittest.TestCase):
         ):
             self.assertIn(key, result)
         self.assertEqual(result["schema_version"], RESULT_SCHEMA_VERSION)
+        self.assertEqual(result["generated_at"], "2026-01-01T00:00:00Z")
+        self.assertEqual(
+            result["projects"][0]["status_snapshot"]["observed_at"],
+            result["generated_at"],
+        )
+        self.assertRegex(
+            result["projects"][0]["status_snapshot"]["head_revision"],
+            r"\A[0-9a-f]{40,64}\Z",
+        )
 
     def test_required_devcockpitcore_self_project_is_present(self) -> None:
         result = run_cross_project_smoke(_self_smoke(), repo_path=ROOT, generated_at="2026-01-01T00:00:00Z")
@@ -95,6 +106,28 @@ class CrossProjectSmokeTests(unittest.TestCase):
         self.assertIn("target_repo_modified", boundary)
         self.assertEqual(boundary["target_repo_commands"], "read_only_git_status_only")
         self.assertFalse(boundary["default_validation_executed"])
+        observation = boundary["target_repo_observation"]
+        for field in (
+            "signature_before",
+            "signature_after",
+            "sha256_before",
+            "sha256_after",
+            "unchanged",
+        ):
+            self.assertIn(field, observation)
+        self.assertTrue(observation["unchanged"])
+        self.assertEqual(observation["sha256_before"], observation["sha256_after"])
+        self.assertEqual(
+            observation["signature_before"]["head_revision"],
+            observation["signature_after"]["head_revision"],
+        )
+        self.assertEqual(
+            observation["signature_before"]["remote_parity"]["evidence_basis"],
+            "local_tracking_reference_no_fetch",
+        )
+        self.assertFalse(
+            observation["signature_before"]["remote_parity"]["fetch_performed"]
+        )
 
     def test_no_target_repo_writeback_is_attempted(self) -> None:
         before = _short_status(ROOT)
@@ -102,6 +135,36 @@ class CrossProjectSmokeTests(unittest.TestCase):
         after = _short_status(ROOT)
         self.assertEqual(before, after)
         self.assertFalse(result["projects"][0]["scope_boundary"]["target_repo_modified"])
+        self.assertTrue(
+            result["projects"][0]["scope_boundary"]["target_repo_observation"]["unchanged"]
+        )
+
+    def test_observation_signature_hash_changes_with_full_head_revision(self) -> None:
+        base = {
+            "exists": True,
+            "is_git_repo": True,
+            "branch": "main",
+            "head_revision": "a" * 40,
+            "upstream": "origin/main",
+            "remote_parity": {
+                "ahead": 0,
+                "behind": 0,
+                "status": "in_sync",
+                "tracking_ref": "origin/main",
+                "evidence_basis": "local_tracking_reference_no_fetch",
+                "fetch_performed": False,
+            },
+            "worktree": {"state": "clean", "short_status": []},
+        }
+        changed = {**base, "head_revision": "b" * 40}
+
+        base_signature = _observation_signature(base)
+        changed_signature = _observation_signature(changed)
+
+        self.assertNotEqual(
+            _observation_signature_sha256(base_signature),
+            _observation_signature_sha256(changed_signature),
+        )
 
     def test_branch_mismatch_is_warning_not_fail(self) -> None:
         smoke = _self_smoke(expected_default_branch="not-the-current-branch")

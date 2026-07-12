@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
+import os
 from pathlib import Path
 import subprocess
 from typing import Any
@@ -28,15 +30,22 @@ class GitCommandResult:
         return self.stderr.strip()
 
 
-def inspect_repo(repo_path: str | Path) -> tuple[dict[str, Any], list[str]]:
+def inspect_repo(
+    repo_path: str | Path,
+    *,
+    observed_at: str | None = None,
+) -> tuple[dict[str, Any], list[str]]:
     repo = Path(repo_path)
+    observation_time = observed_at or _utc_now_iso()
     notes: list[str] = []
     base = {
         "path": str(repo_path),
+        "observed_at": observation_time,
         "exists": repo.exists(),
         "is_git_repo": False,
         "branch": None,
         "head": None,
+        "head_revision": None,
         "upstream": None,
         "latest_commit": None,
         "remote_parity": {
@@ -45,6 +54,9 @@ def inspect_repo(repo_path: str | Path) -> tuple[dict[str, Any], list[str]]:
             "raw": None,
             "status": "unknown",
             "reason": "repo_not_inspected",
+            "tracking_ref": None,
+            "evidence_basis": "local_tracking_reference_no_fetch",
+            "fetch_performed": False,
         },
         "worktree": {
             "state": "unknown",
@@ -77,6 +89,7 @@ def inspect_repo(repo_path: str | Path) -> tuple[dict[str, Any], list[str]]:
     base["branch"] = branch or _branch_from_status_header(branch_header)
 
     base["head"] = _stdout_or_none(_run_git(repo, ("rev-parse", "--short", "HEAD")))
+    base["head_revision"] = _stdout_or_none(_run_git(repo, ("rev-parse", "HEAD")))
     base["latest_commit"] = _stdout_or_none(_run_git(repo, ("log", "-1", "--oneline")))
 
     upstream_result = _run_git(repo, ("rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"))
@@ -89,6 +102,9 @@ def inspect_repo(repo_path: str | Path) -> tuple[dict[str, Any], list[str]]:
             "raw": None,
             "status": "unknown",
             "reason": "missing_upstream",
+            "tracking_ref": None,
+            "evidence_basis": "local_tracking_reference_no_fetch",
+            "fetch_performed": False,
         }
         return base, notes
 
@@ -101,15 +117,20 @@ def inspect_repo(repo_path: str | Path) -> tuple[dict[str, Any], list[str]]:
             "raw": parity_result.stripped_stdout or None,
             "status": "unknown",
             "reason": "parity_unavailable",
+            "tracking_ref": upstream,
+            "evidence_basis": "local_tracking_reference_no_fetch",
+            "fetch_performed": False,
         }
         return base, notes
 
     raw = parity_result.stripped_stdout
-    base["remote_parity"] = _parse_parity(raw)
+    base["remote_parity"] = _parse_parity(raw, tracking_ref=upstream)
     return base, notes
 
 
 def _run_git(repo: Path, args: tuple[str, ...]) -> GitCommandResult:
+    env = os.environ.copy()
+    env["GIT_OPTIONAL_LOCKS"] = "0"
     completed = subprocess.run(
         ["git", "-C", str(repo), *args],
         capture_output=True,
@@ -117,6 +138,7 @@ def _run_git(repo: Path, args: tuple[str, ...]) -> GitCommandResult:
         encoding="utf-8",
         errors="replace",
         check=False,
+        env=env,
     )
     return GitCommandResult(
         args=args,
@@ -143,7 +165,7 @@ def _branch_from_status_header(header: str | None) -> str | None:
     return branch or None
 
 
-def _parse_parity(raw: str) -> dict[str, Any]:
+def _parse_parity(raw: str, *, tracking_ref: str | None = None) -> dict[str, Any]:
     parts = raw.replace("\t", " ").split()
     if len(parts) != 2:
         return {
@@ -152,6 +174,9 @@ def _parse_parity(raw: str) -> dict[str, Any]:
             "raw": raw,
             "status": "unknown",
             "reason": "unexpected_parity_output",
+            "tracking_ref": tracking_ref,
+            "evidence_basis": "local_tracking_reference_no_fetch",
+            "fetch_performed": False,
         }
 
     try:
@@ -164,6 +189,9 @@ def _parse_parity(raw: str) -> dict[str, Any]:
             "raw": raw,
             "status": "unknown",
             "reason": "unexpected_parity_output",
+            "tracking_ref": tracking_ref,
+            "evidence_basis": "local_tracking_reference_no_fetch",
+            "fetch_performed": False,
         }
 
     if ahead == 0 and behind == 0:
@@ -180,9 +208,16 @@ def _parse_parity(raw: str) -> dict[str, Any]:
         "behind": behind,
         "raw": raw,
         "status": status,
+        "tracking_ref": tracking_ref,
+        "evidence_basis": "local_tracking_reference_no_fetch",
+        "fetch_performed": False,
     }
 
 
 def _git_failure_note(prefix: str, result: GitCommandResult) -> str:
     detail = result.stripped_stderr or result.stripped_stdout or f"exit {result.returncode}"
     return f"{prefix}: {detail}"
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")

@@ -4,15 +4,15 @@ flowchart LR
     SS["status_snapshot.v1"]
     AD["adapter_manifest.v1"]
     RT["runtime/project context"]
-    GEN["dev_cockpit.dashboard generator"]
+    GEN["dev_cockpit.dashboard generator<br/>(production unchanged)"]
     IA["designer/operator IA model"]
     AUDIT["current dashboard audit"]
     RESEARCH["layout research and current audit"]
-    INTENT_PACK["same-data three-direction intent pack"]
+    INTENT_PACK["verified observation surface intent pack v2"]
     OPTION_A["A: Priority Review Console"]
     OPTION_B["B: Narrative Status Brief"]
-    OPTION_C["C: Lane And Project Matrix"]
-    USER_REVIEW["user direction review"]
+    OPTION_C["C: Lane And Project Overview"]
+    USER_REVIEW["user direction review (pending)"]
     REDESIGN["future production dashboard redesign"]
     ACT["non-executable review action package"]
     A11Y["accessibility-oriented handoff layer"]
@@ -25,12 +25,22 @@ flowchart LR
     MD["samples/dashboard/devcockpitcore_review_actions.md"]
     TRIAGE["warning triage + project cards"]
     REVIEW["local human review"]
+    FRESH_POLICY["evidence freshness policy v1"]
+    FRESH_CLI["python -m dev_cockpit.evidence_freshness"]
+    FRESH_RECEIPT["evidence_freshness_receipt.v1<br/>point-in-time / non-live"]
 
     VP --> GEN
     SM --> GEN
     SS --> GEN
     AD --> GEN
     RT --> GEN
+    VP --> FRESH_RECEIPT
+    SM --> FRESH_RECEIPT
+    SS --> FRESH_RECEIPT
+    AD --> FRESH_RECEIPT
+    RT --> FRESH_RECEIPT
+    FRESH_POLICY --> FRESH_RECEIPT
+    FRESH_CLI --> FRESH_RECEIPT
     GEN --> IA
     IA --> AUDIT
     AUDIT --> RESEARCH
@@ -58,6 +68,7 @@ flowchart LR
     TRIAGE --> REVIEW
     JSON --> REVIEW
     MD --> REVIEW
+    FRESH_RECEIPT --> REVIEW
 
     LOCK["locked: runner, scheduler, external services, credentials, writeback"]
     LOCK -. "shown as locked, not executable" .-> ACT

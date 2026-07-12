@@ -157,6 +157,34 @@ class ProjectStateContractTests(unittest.TestCase):
                     {"fresh", "stale", "unknown"},
                 )
 
+    def test_navigation_identifies_v2_overview_pending_choice_and_freshness_entry(self) -> None:
+        cockpit = _read("docs/PROJECT_COCKPIT.md")
+        runtime = _read("docs/runtime-state.md")
+        pipeline = _read("docs/PROJECT_PIPELINE.mmd")
+        combined = "\n".join((cockpit, runtime, pipeline))
+
+        for document in (cockpit, runtime):
+            with self.subTest(document=document.splitlines()[0]):
+                self.assertIn(
+                    "current_review_artifact: verified-observation-surface-intent-pack-v2",
+                    document,
+                )
+                self.assertIn("Lane And Project Overview", document)
+                self.assertRegex(document, r"(?i)user (?:direction )?selection remains\s+pending")
+                self.assertRegex(document, r"(?i)production dashboard (?:and )?generator[^.]*unchanged")
+                self.assertIn("python -m dev_cockpit.evidence_freshness", document)
+
+        self.assertIn('OPTION_C["C: Lane And Project Overview"]', pipeline)
+        self.assertIn('USER_REVIEW["user direction review (pending)"]', pipeline)
+        self.assertIn('GEN["dev_cockpit.dashboard generator<br/>(production unchanged)"]', pipeline)
+        self.assertIn('FRESH_CLI["python -m dev_cockpit.evidence_freshness"]', pipeline)
+        self.assertIn("evidence_freshness_receipt.v1", pipeline)
+        self.assertNotIn("verified-observation-surface-intent-pack-v1", combined)
+        self.assertNotIn("Lane And Project Matrix", combined)
+        self.assertIn("persisted navigation snapshot", cockpit)
+        self.assertIn("not live development control", cockpit)
+        self.assertIn("does not act as a development workflow controller", runtime)
+
 
 if __name__ == "__main__":
     unittest.main()

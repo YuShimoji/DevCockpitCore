@@ -1,0 +1,543 @@
+{
+  "schema_version": "evidence_freshness_receipt.v1",
+  "capture_id": "efr-cbae922571043527b800",
+  "assessed_at": "2026-07-12T00:00:00Z",
+  "producer": "dev_cockpit.evidence_freshness",
+  "policy": {
+    "schema_version": "evidence_freshness_policy.v1",
+    "policy_id": "devcockpitcore-24-hour-v1",
+    "threshold_seconds": 86400,
+    "threshold_hours": 24.0,
+    "temporal_boundary": "age_seconds <= threshold_seconds",
+    "cross_project_smoke_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke.json",
+    "tracked_sources": [
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "cross-project-smoke-sample",
+        "required": true,
+        "path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        "source_kind": "tracked_point_in_time_artifact",
+        "schema_path": [
+          "schema_version"
+        ],
+        "timestamp_kind": "generated_at",
+        "timestamp_path": [
+          "generated_at"
+        ],
+        "revision_path": [
+          "projects",
+          0,
+          "status_snapshot",
+          "head"
+        ]
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "intent-comparison-manifest-v2",
+        "required": true,
+        "path": "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
+        "source_kind": "tracked_point_in_time_artifact",
+        "schema_path": [
+          "schema_version"
+        ],
+        "timestamp_kind": "observed_at",
+        "timestamp_path": [
+          "observed_at"
+        ],
+        "revision_path": [
+          "source_commit"
+        ]
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "status-snapshot-sample",
+        "required": true,
+        "path": "samples/status_snapshots/devcockpitcore_status.json",
+        "source_kind": "tracked_point_in_time_artifact",
+        "schema_path": [
+          "schema_version"
+        ],
+        "timestamp_kind": "generated_at",
+        "timestamp_path": [
+          "generated_at"
+        ],
+        "revision_path": [
+          "repo",
+          "head"
+        ]
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "validation-pack-sample",
+        "required": true,
+        "path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        "source_kind": "tracked_point_in_time_artifact",
+        "schema_path": [
+          "schema_version"
+        ],
+        "timestamp_kind": "generated_at",
+        "timestamp_path": [
+          "generated_at"
+        ],
+        "revision_path": [
+          "repo",
+          "head"
+        ]
+      }
+    ],
+    "policy_content_sha256": "732261f29b8f5b653a7821f38704b3842080c07d35f582773d914551c0ef8fc7",
+    "future_timestamp_state": "unknown",
+    "missing_or_invalid_timestamp_state": "unknown",
+    "revision_mismatch_state": "stale"
+  },
+  "authority": {
+    "classification": "point_in_time_non_live",
+    "point_in_time": true,
+    "live": false,
+    "tracked_example": true,
+    "authoritative_for_live_state": false,
+    "may_support_current_state_at_assessed_at": false,
+    "statement": "Tracked deterministic example; never authoritative for live state."
+  },
+  "observation_mode": "injected_deterministic_observations",
+  "remote_parity_evidence": {
+    "basis": "local_tracking_reference_no_fetch",
+    "fetch_performed": false,
+    "live_remote_state_claimed": false
+  },
+  "projects": [
+    {
+      "project_id": "clippipegen",
+      "required": false,
+      "available": true,
+      "path": "../ClipPipeGen",
+      "schema_version": "status_snapshot.v1",
+      "observed_at": "2026-07-12T00:00:00Z",
+      "branch": "main",
+      "head_revision": "1111111111111111111111111111111111111111",
+      "worktree_state": "dirty",
+      "before_head_revision": "1111111111111111111111111111111111111111",
+      "after_head_revision": "1111111111111111111111111111111111111111",
+      "before_worktree_state": "dirty",
+      "after_worktree_state": "dirty",
+      "upstream": "origin/main",
+      "remote_parity": {
+        "status": "in_sync",
+        "ahead": 0,
+        "behind": 0,
+        "tracking_ref": "origin/main",
+        "evidence_basis": "local_tracking_reference_no_fetch",
+        "fetch_performed": false
+      },
+      "observation_unchanged": true,
+      "target_repo_modified": false,
+      "before_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "after_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "reason_codes": []
+    },
+    {
+      "project_id": "devcockpitcore",
+      "required": true,
+      "available": true,
+      "path": ".",
+      "schema_version": "status_snapshot.v1",
+      "observed_at": "2026-07-12T00:00:00Z",
+      "branch": "main",
+      "head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "worktree_state": "clean",
+      "before_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "after_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "before_worktree_state": "clean",
+      "after_worktree_state": "clean",
+      "upstream": "origin/main",
+      "remote_parity": {
+        "status": "in_sync",
+        "ahead": 0,
+        "behind": 0,
+        "tracking_ref": "origin/main",
+        "evidence_basis": "local_tracking_reference_no_fetch",
+        "fetch_performed": false
+      },
+      "observation_unchanged": true,
+      "target_repo_modified": false,
+      "before_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "after_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "reason_codes": []
+    },
+    {
+      "project_id": "nlmytgen",
+      "required": false,
+      "available": true,
+      "path": "../NLMYTGen",
+      "schema_version": "status_snapshot.v1",
+      "observed_at": "2026-07-12T00:00:00Z",
+      "branch": "master",
+      "head_revision": "2222222222222222222222222222222222222222",
+      "worktree_state": "clean",
+      "before_head_revision": "2222222222222222222222222222222222222222",
+      "after_head_revision": "2222222222222222222222222222222222222222",
+      "before_worktree_state": "clean",
+      "after_worktree_state": "clean",
+      "upstream": "origin/master",
+      "remote_parity": {
+        "status": "unknown",
+        "ahead": null,
+        "behind": null,
+        "tracking_ref": "origin/master",
+        "evidence_basis": "local_tracking_reference_no_fetch",
+        "fetch_performed": false
+      },
+      "observation_unchanged": true,
+      "target_repo_modified": false,
+      "before_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "after_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "reason_codes": []
+    },
+    {
+      "project_id": "writingpage",
+      "required": false,
+      "available": false,
+      "path": "../WritingPage",
+      "schema_version": null,
+      "observed_at": "2026-07-12T00:00:00Z",
+      "branch": null,
+      "head_revision": null,
+      "worktree_state": "unknown",
+      "before_head_revision": null,
+      "after_head_revision": null,
+      "before_worktree_state": null,
+      "after_worktree_state": null,
+      "upstream": null,
+      "remote_parity": {
+        "status": "unknown",
+        "ahead": null,
+        "behind": null,
+        "tracking_ref": null,
+        "evidence_basis": "local_tracking_reference_no_fetch",
+        "fetch_performed": false
+      },
+      "observation_unchanged": null,
+      "target_repo_modified": null,
+      "before_sha256": null,
+      "after_sha256": null,
+      "reason_codes": [
+        "optional_project_missing"
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "project_id": "clippipegen",
+      "source_id": "clippipegen.live_status_observation",
+      "source_kind": "live_project_observation",
+      "required": false,
+      "availability": "available",
+      "schema_version": "status_snapshot.v1",
+      "source_path": "git-observation:../ClipPipeGen",
+      "content_sha256": "26cc50320d94b1b1e98df78e9020cbfbe33d1aa66853e6913467b72ac4d297a3",
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": null,
+      "observed_at": "2026-07-12T00:00:00Z",
+      "timestamp_field": "observed_at",
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": 0,
+      "fresh_through": "2026-07-13T00:00:00Z",
+      "temporal_state": "fresh",
+      "source_revision": "1111111111111111111111111111111111111111",
+      "observed_revision": "1111111111111111111111111111111111111111",
+      "revision_binding_state": "match",
+      "freshness_state": "fresh",
+      "reason_codes": [
+        "receipt_not_authoritative_for_live_state",
+        "revision_match",
+        "timestamp_within_threshold",
+        "worktree_not_clean_or_unknown"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "cross-project-smoke-sample",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "availability": "available",
+      "schema_version": "cross_project_smoke_result.v1",
+      "source_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "content_sha256": "55d248ef4133f87867836bd57b2a60ed2b2b05964a8ae84c4a645b4069df60fb",
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": "2026-07-06T07:56:16Z",
+      "observed_at": null,
+      "timestamp_field": "generated_at",
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": 489824,
+      "fresh_through": "2026-07-07T07:56:16Z",
+      "temporal_state": "stale",
+      "source_revision": "2e5e924",
+      "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "revision_binding_state": "mismatch",
+      "freshness_state": "stale",
+      "reason_codes": [
+        "receipt_not_authoritative_for_live_state",
+        "revision_mismatch",
+        "timestamp_threshold_exceeded"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "devcockpitcore.live_status_observation",
+      "source_kind": "live_project_observation",
+      "required": true,
+      "availability": "available",
+      "schema_version": "status_snapshot.v1",
+      "source_path": "git-observation:.",
+      "content_sha256": "5914ab9662ecadb36287eb0a6b8c6308e764fc4cf383f9fd5b29c30282d773f0",
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": null,
+      "observed_at": "2026-07-12T00:00:00Z",
+      "timestamp_field": "observed_at",
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": 0,
+      "fresh_through": "2026-07-13T00:00:00Z",
+      "temporal_state": "fresh",
+      "source_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "revision_binding_state": "match",
+      "freshness_state": "fresh",
+      "reason_codes": [
+        "receipt_not_authoritative_for_live_state",
+        "revision_match",
+        "timestamp_within_threshold"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "intent-comparison-manifest-v2",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "availability": "available",
+      "schema_version": "intent_comparison_manifest.v2",
+      "source_path": "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
+      "content_sha256": "1c3a8f13aee8dfd48113f8201180f7d3a254f270358367d9e018b12342b189bd",
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": null,
+      "observed_at": "2026-07-06T07:56:16Z",
+      "timestamp_field": "observed_at",
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": 489824,
+      "fresh_through": "2026-07-07T07:56:16Z",
+      "temporal_state": "stale",
+      "source_revision": "2e5e924",
+      "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "revision_binding_state": "mismatch",
+      "freshness_state": "stale",
+      "reason_codes": [
+        "receipt_not_authoritative_for_live_state",
+        "revision_mismatch",
+        "timestamp_threshold_exceeded"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "status-snapshot-sample",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "availability": "available",
+      "schema_version": "status_snapshot.v1",
+      "source_path": "samples/status_snapshots/devcockpitcore_status.json",
+      "content_sha256": "311de6f138c588ee137f72275edd085be2e30f1eb6a41beff525ec95bedb3958",
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": "2026-07-06T07:55:33Z",
+      "observed_at": null,
+      "timestamp_field": "generated_at",
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": 489867,
+      "fresh_through": "2026-07-07T07:55:33Z",
+      "temporal_state": "stale",
+      "source_revision": "2e5e924",
+      "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "revision_binding_state": "mismatch",
+      "freshness_state": "stale",
+      "reason_codes": [
+        "receipt_not_authoritative_for_live_state",
+        "revision_mismatch",
+        "timestamp_threshold_exceeded"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "validation-pack-sample",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "availability": "available",
+      "schema_version": "validation_pack_result.v1",
+      "source_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "content_sha256": "91bc955113ecc00c5ddb008eeb447a30efe9eba74be6b2e3babef649cbbcf313",
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": "2026-07-06T07:55:56Z",
+      "observed_at": null,
+      "timestamp_field": "generated_at",
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": 489844,
+      "fresh_through": "2026-07-07T07:55:56Z",
+      "temporal_state": "stale",
+      "source_revision": "2e5e924",
+      "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+      "revision_binding_state": "mismatch",
+      "freshness_state": "stale",
+      "reason_codes": [
+        "receipt_not_authoritative_for_live_state",
+        "revision_mismatch",
+        "timestamp_threshold_exceeded"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    },
+    {
+      "project_id": "nlmytgen",
+      "source_id": "nlmytgen.live_status_observation",
+      "source_kind": "live_project_observation",
+      "required": false,
+      "availability": "available",
+      "schema_version": "status_snapshot.v1",
+      "source_path": "git-observation:../NLMYTGen",
+      "content_sha256": "ec5099e92f06eb7f5743dc84b3ab5818f4f8fe59c42be8014cb394cc6e5cca4b",
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": null,
+      "observed_at": "2026-07-12T00:00:00Z",
+      "timestamp_field": "observed_at",
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": 0,
+      "fresh_through": "2026-07-13T00:00:00Z",
+      "temporal_state": "fresh",
+      "source_revision": "2222222222222222222222222222222222222222",
+      "observed_revision": "2222222222222222222222222222222222222222",
+      "revision_binding_state": "match",
+      "freshness_state": "fresh",
+      "reason_codes": [
+        "receipt_not_authoritative_for_live_state",
+        "revision_match",
+        "timestamp_within_threshold"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    },
+    {
+      "project_id": "writingpage",
+      "source_id": "writingpage.live_status_observation",
+      "source_kind": "live_project_observation",
+      "required": false,
+      "availability": "missing",
+      "schema_version": null,
+      "source_path": "git-observation:../WritingPage",
+      "content_sha256": null,
+      "hash_basis": "canonical_json_utf8_v1",
+      "generated_at": null,
+      "observed_at": null,
+      "timestamp_field": null,
+      "assessed_at": "2026-07-12T00:00:00Z",
+      "age_seconds": null,
+      "fresh_through": null,
+      "temporal_state": "unknown",
+      "source_revision": null,
+      "observed_revision": null,
+      "revision_binding_state": "unknown",
+      "freshness_state": "unknown",
+      "reason_codes": [
+        "optional_project_missing"
+      ],
+      "current_state_claim_eligible": false,
+      "authority_classification": "point_in_time_non_live"
+    }
+  ],
+  "summary": {
+    "project_counts": {
+      "observed": 3,
+      "missing_required": 0,
+      "missing_optional": 1,
+      "total": 4
+    },
+    "source_counts": {
+      "fresh": 3,
+      "stale": 4,
+      "unknown": 1,
+      "total": 8
+    },
+    "current_state_claim_eligible": {
+      "eligible": 0,
+      "ineligible": 8
+    },
+    "required_missing": 0,
+    "required_invalid": 0
+  },
+  "scope_boundary": {
+    "target_repositories_observed_read_only": true,
+    "target_repo_commands": "read_only_git_status_rev_parse_log_and_local_tracking_parity",
+    "fetch_performed": false,
+    "default_validation_executed": false,
+    "target_repo_modified": false,
+    "all_available_observations_unchanged": true,
+    "target_observations": [
+      {
+        "project_id": "clippipegen",
+        "required": false,
+        "available": true,
+        "before_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "after_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "before_head_revision": "1111111111111111111111111111111111111111",
+        "after_head_revision": "1111111111111111111111111111111111111111",
+        "before_worktree_state": "dirty",
+        "after_worktree_state": "dirty",
+        "observation_unchanged": true,
+        "target_repo_modified": false
+      },
+      {
+        "project_id": "devcockpitcore",
+        "required": true,
+        "available": true,
+        "before_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "after_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "before_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "after_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "before_worktree_state": "clean",
+        "after_worktree_state": "clean",
+        "observation_unchanged": true,
+        "target_repo_modified": false
+      },
+      {
+        "project_id": "nlmytgen",
+        "required": false,
+        "available": true,
+        "before_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "after_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "before_head_revision": "2222222222222222222222222222222222222222",
+        "after_head_revision": "2222222222222222222222222222222222222222",
+        "before_worktree_state": "clean",
+        "after_worktree_state": "clean",
+        "observation_unchanged": true,
+        "target_repo_modified": false
+      },
+      {
+        "project_id": "writingpage",
+        "required": false,
+        "available": false,
+        "before_sha256": null,
+        "after_sha256": null,
+        "before_head_revision": null,
+        "after_head_revision": null,
+        "before_worktree_state": null,
+        "after_worktree_state": null,
+        "observation_unchanged": null,
+        "target_repo_modified": null
+      }
+    ]
+  }
+}

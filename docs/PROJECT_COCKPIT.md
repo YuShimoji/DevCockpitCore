@@ -2,7 +2,7 @@
 
 updated_at: 2026-07-12
 snapshot_kind: persisted_navigation_snapshot
-current_review_artifact: verified-observation-surface-intent-pack-v1
+current_review_artifact: verified-observation-surface-intent-pack-v2
 current_review_artifact_path: samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html
 source_commit: 2e5e924b12a311260bf10c7b252c0695cac7f80c
 observed_at: 2026-07-06T16:56:16+09:00
@@ -22,13 +22,14 @@ Supervisor carries current development direction.
 DevCockpitCore provides read-only repository observation, normalized report
 readback, gate classification, local validation evidence, cross-project smoke
 observation, and a static review dashboard. The production dashboard generator
-is unchanged while its next information architecture is compared at low
-fidelity.
+is unchanged while its next information architecture remains at the user
+direction review gate.
 
-The current layout research recommends Priority Review Console as one strong
-candidate. That recommendation is not user acceptance. Narrative Status Brief
-and Lane And Project Matrix remain materially different candidates for the
-same observation data.
+The v2 comparison pack is accepted as user-review-ready. Its research
+recommendation presents Priority Review Console as one strong candidate, but
+that recommendation is not user acceptance and the user selection remains
+pending. Narrative Status Brief and Lane And Project Overview remain materially
+different candidates for the same observation data.
 
 ## Capability Summary
 
@@ -45,13 +46,13 @@ same observation data.
 ## Current Review Artifact
 
 - [Dashboard layout research](design/DASHBOARD_LAYOUT_RESEARCH_V1.md)
-- [Three-direction low-fidelity intent comparison](../samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
+- [Three-direction v2 intent comparison](../samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html)
 - [Machine-readable comparison manifest](../samples/dashboard/intent_comparison/intent_comparison_manifest.json)
 - [Automated interaction and screenshot readback](../samples/dashboard/intent_comparison/intent_comparison_readback.json)
 - [Current production dashboard](../samples/dashboard/devcockpitcore_dashboard.html)
 
-The comparison pack is research evidence only. It keeps the same semantic data
-and wording across A, B, and C, defaults to Japanese, provides an English
+The comparison pack is research evidence only. It preserves the same 24
+material claims across A, B, and C, defaults to Japanese, provides an English
 toggle, and does not modify or select the production dashboard implementation.
 
 ## Evidence Freshness
@@ -65,6 +66,24 @@ claim about the current checkout. Tracked dashboard, status, validation, smoke,
 and review-action samples may remain valid historical evidence while being
 stale for current-state claims.
 
+Generate a read-only freshness and provenance receipt with:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.evidence_freshness
+```
+
+The tracked policy and deterministic example outputs are:
+
+- [Freshness policy](../samples/evidence_freshness/evidence_freshness_policy_v1.json)
+- [Machine-readable receipt](../samples/evidence_freshness/evidence_freshness_receipt_v1.json)
+- [Human-readable receipt](../samples/evidence_freshness/evidence_freshness_receipt_v1.md)
+
+These receipts are point-in-time, non-live observer outputs. The tracked
+example is reproducible navigation evidence, not authority for a current
+checkout; a current-state claim requires a newly generated and assessed local
+receipt.
+
 ## Navigation
 
 - [Durable mission, architecture, and capability boundaries](project-context.md)
@@ -76,6 +95,6 @@ stale for current-state claims.
 ## Next Product Decision
 
 Choose A (Priority Review Console), B (Narrative Status Brief), or C (Lane And
-Project Matrix) according to which makes current state and next action easiest
+Project Overview) according to which makes current state and next action easiest
 to understand. A remains the research recommendation, not an acceptance
 decision. Do not change the production generator until that selection exists.

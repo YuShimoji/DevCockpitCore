@@ -35,8 +35,9 @@ def build_status_snapshot(
     *,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
+    observation_time = generated_at or _utc_now_iso()
     adapter = load_adapter(adapter_path)
-    repo_status, git_notes = inspect_repo(repo_path)
+    repo_status, git_notes = inspect_repo(repo_path, observed_at=observation_time)
     repo = Path(repo_path)
 
     project_state = inspect_project_state(repo, adapter)
@@ -49,7 +50,7 @@ def build_status_snapshot(
 
     return {
         "schema_version": SCHEMA_VERSION,
-        "generated_at": generated_at or _utc_now_iso(),
+        "generated_at": observation_time,
         "producer": PRODUCER,
         "adapter": adapter.to_snapshot(str(adapter_path)),
         "repo": repo_status,

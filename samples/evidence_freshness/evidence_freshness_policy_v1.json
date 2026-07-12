@@ -1,0 +1,53 @@
+{
+  "schema_version": "evidence_freshness_policy.v1",
+  "policy_id": "devcockpitcore-24-hour-v1",
+  "threshold_seconds": 86400,
+  "temporal_boundary": "age_seconds <= threshold_seconds",
+  "cross_project_smoke_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke.json",
+  "tracked_sources": [
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "cross-project-smoke-sample",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "schema_path": ["schema_version"],
+      "timestamp_kind": "generated_at",
+      "timestamp_path": ["generated_at"],
+      "revision_path": ["projects", 0, "status_snapshot", "head"]
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "intent-comparison-manifest-v2",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "path": "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
+      "schema_path": ["schema_version"],
+      "timestamp_kind": "observed_at",
+      "timestamp_path": ["observed_at"],
+      "revision_path": ["source_commit"]
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "status-snapshot-sample",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "path": "samples/status_snapshots/devcockpitcore_status.json",
+      "schema_path": ["schema_version"],
+      "timestamp_kind": "generated_at",
+      "timestamp_path": ["generated_at"],
+      "revision_path": ["repo", "head"]
+    },
+    {
+      "project_id": "devcockpitcore",
+      "source_id": "validation-pack-sample",
+      "source_kind": "tracked_point_in_time_artifact",
+      "required": true,
+      "path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "schema_path": ["schema_version"],
+      "timestamp_kind": "generated_at",
+      "timestamp_path": ["generated_at"],
+      "revision_path": ["repo", "head"]
+    }
+  ]
+}

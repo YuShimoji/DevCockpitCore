@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path, PurePosixPath
 import re
@@ -156,14 +157,18 @@ def run_cross_project_smoke(
     """Run read-only observations for every adapter in a validated smoke config."""
 
     repo = Path(repo_path).resolve()
-    projects = [_observe_project(repo, item) for item in smoke["adapters"]]
+    observation_time = generated_at or _utc_now_iso()
+    projects = [
+        _observe_project(repo, item, observed_at=observation_time)
+        for item in smoke["adapters"]
+    ]
     hygiene = _hygiene(repo)
     summary = _summary(projects, hygiene)
     health = _health(summary, projects, hygiene)
 
     return {
         "schema_version": RESULT_SCHEMA_VERSION,
-        "generated_at": generated_at or _utc_now_iso(),
+        "generated_at": observation_time,
         "producer": PRODUCER,
         "smoke": {
             "smoke_key": smoke["smoke_key"],
@@ -262,7 +267,12 @@ def _smoke_adapter(
     }
 
 
-def _observe_project(repo: Path, config: dict[str, Any]) -> dict[str, Any]:
+def _observe_project(
+    repo: Path,
+    config: dict[str, Any],
+    *,
+    observed_at: str,
+) -> dict[str, Any]:
     adapter_path = repo / config["adapter_path"]
     required = bool(config["required"])
     base_project = {
@@ -317,9 +327,13 @@ def _observe_project(repo: Path, config: dict[str, Any]) -> dict[str, Any]:
             "missing": 3,
         }
 
-    before_status, before_notes = inspect_repo(selected_path)
+    before_status, before_notes = inspect_repo(selected_path, observed_at=observed_at)
     try:
-        snapshot = build_status_snapshot(selected_path, adapter_path)
+        snapshot = build_status_snapshot(
+            selected_path,
+            adapter_path,
+            generated_at=observed_at,
+        )
     except (AdapterError, OSError) as exc:
         result = "fail" if required else "warn"
         return {
@@ -333,13 +347,19 @@ def _observe_project(repo: Path, config: dict[str, Any]) -> dict[str, Any]:
             "meter": make_meter(2, 4, result=result, missing=2),
             "missing": 2,
         }
-    after_status, after_notes = inspect_repo(selected_path)
+    after_status, after_notes = inspect_repo(selected_path, observed_at=observed_at)
 
     modified = before_status.get("worktree") != after_status.get("worktree")
-    boundary = _scope_boundary(snapshot_generated=True, target_repo_modified=modified)
+    boundary = _scope_boundary(
+        snapshot_generated=True,
+        target_repo_modified=modified,
+        before_status=before_status,
+        after_status=after_status,
+    )
+    observation_unchanged = boundary["target_repo_observation"]["unchanged"]
     status_summary = _status_summary(snapshot, selected_path, before_notes + after_notes)
-    warnings = _project_warnings(snapshot, config, modified)
-    result = "fail" if modified else "warn" if warnings else "pass"
+    warnings = _project_warnings(snapshot, config, modified, observation_unchanged)
+    result = "fail" if modified or observation_unchanged is False else "warn" if warnings else "pass"
     if result == "fail" and not required:
         result = "warn"
     done = 4 if result != "fail" else 3
@@ -411,8 +431,10 @@ def _status_summary(snapshot: dict[str, Any], path: Path, notes: list[str]) -> d
         "generated": True,
         "path": _redact_value(str(path)),
         "schema_version": snapshot.get("schema_version"),
+        "observed_at": repo.get("observed_at") or snapshot.get("generated_at"),
         "branch": repo.get("branch"),
         "head": repo.get("head"),
+        "head_revision": repo.get("head_revision"),
         "worktree": worktree,
         "remote_parity": remote_parity,
         "health": health.get("status"),
@@ -420,7 +442,12 @@ def _status_summary(snapshot: dict[str, Any], path: Path, notes: list[str]) -> d
     }
 
 
-def _project_warnings(snapshot: dict[str, Any], config: dict[str, Any], modified: bool) -> list[str]:
+def _project_warnings(
+    snapshot: dict[str, Any],
+    config: dict[str, Any],
+    modified: bool,
+    observation_unchanged: bool | None,
+) -> list[str]:
     repo = snapshot.get("repo") if isinstance(snapshot.get("repo"), dict) else {}
     health = snapshot.get("health") if isinstance(snapshot.get("health"), dict) else {}
     worktree = repo.get("worktree") if isinstance(repo.get("worktree"), dict) else {}
@@ -438,6 +465,8 @@ def _project_warnings(snapshot: dict[str, Any], config: dict[str, Any], modified
         warnings.append(f"remote parity is {parity.get('status')}")
     if modified:
         warnings.append("target repository worktree changed during observation")
+    if observation_unchanged is False:
+        warnings.append("target repository observation signature changed during observation")
     return warnings
 
 
@@ -455,8 +484,10 @@ def _empty_status_snapshot(notes: list[str] | None = None) -> dict[str, Any]:
         "generated": False,
         "path": None,
         "schema_version": None,
+        "observed_at": None,
         "branch": None,
         "head": None,
+        "head_revision": None,
         "worktree": None,
         "remote_parity": None,
         "health": "unknown",
@@ -464,12 +495,78 @@ def _empty_status_snapshot(notes: list[str] | None = None) -> dict[str, Any]:
     }
 
 
-def _scope_boundary(snapshot_generated: bool, target_repo_modified: bool) -> dict[str, Any]:
+def _scope_boundary(
+    snapshot_generated: bool,
+    target_repo_modified: bool,
+    *,
+    before_status: dict[str, Any] | None = None,
+    after_status: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    if before_status is None or after_status is None:
+        observation = {
+            "signature_before": None,
+            "signature_after": None,
+            "sha256_before": None,
+            "sha256_after": None,
+            "unchanged": None,
+        }
+    else:
+        signature_before = _observation_signature(before_status)
+        signature_after = _observation_signature(after_status)
+        sha256_before = _observation_signature_sha256(signature_before)
+        sha256_after = _observation_signature_sha256(signature_after)
+        observation = {
+            "signature_before": signature_before,
+            "signature_after": signature_after,
+            "sha256_before": sha256_before,
+            "sha256_after": sha256_after,
+            "unchanged": sha256_before == sha256_after,
+        }
     return {
         "target_repo_modified": target_repo_modified,
         "target_repo_commands": "read_only_git_status_only" if snapshot_generated else "none",
         "default_validation_executed": False,
+        "target_repo_observation": observation,
     }
+
+
+def _observation_signature(status: dict[str, Any]) -> dict[str, Any]:
+    remote_parity = status.get("remote_parity")
+    if not isinstance(remote_parity, dict):
+        remote_parity = {}
+    worktree = status.get("worktree")
+    if not isinstance(worktree, dict):
+        worktree = {}
+    return {
+        "exists": status.get("exists"),
+        "is_git_repo": status.get("is_git_repo"),
+        "branch": status.get("branch"),
+        "head_revision": status.get("head_revision"),
+        "upstream": status.get("upstream"),
+        "remote_parity": {
+            "ahead": remote_parity.get("ahead"),
+            "behind": remote_parity.get("behind"),
+            "status": remote_parity.get("status"),
+            "reason": remote_parity.get("reason"),
+            "tracking_ref": remote_parity.get("tracking_ref"),
+            "evidence_basis": remote_parity.get("evidence_basis"),
+            "fetch_performed": remote_parity.get("fetch_performed"),
+        },
+        "worktree": {
+            "state": worktree.get("state"),
+            "short_status": list(worktree.get("short_status", [])),
+        },
+    }
+
+
+def _observation_signature_sha256(signature: dict[str, Any]) -> str:
+    payload = json.dumps(
+        signature,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
 
 
 def _summary(projects: list[dict[str, Any]], hygiene: dict[str, Any]) -> dict[str, Any]:

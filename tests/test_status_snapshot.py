@@ -7,12 +7,14 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from dev_cockpit.status_snapshot import build_status_snapshot, dumps_snapshot, write_snapshot
+from dev_cockpit.git_status import _run_git
 
 
 def _git_available() -> bool:
@@ -33,11 +35,54 @@ class StatusSnapshotTests(unittest.TestCase):
             self.assertEqual(clean["repo"]["worktree"]["state"], "clean")
             self.assertEqual(clean["repo"]["remote_parity"]["status"], "unknown")
             self.assertEqual(clean["repo"]["remote_parity"]["reason"], "missing_upstream")
+            self.assertEqual(clean["generated_at"], "2026-01-01T00:00:00Z")
+            self.assertEqual(clean["repo"]["observed_at"], clean["generated_at"])
+            self.assertEqual(clean["repo"]["head_revision"], _git_output(repo, "rev-parse", "HEAD"))
+            self.assertEqual(
+                clean["repo"]["remote_parity"]["evidence_basis"],
+                "local_tracking_reference_no_fetch",
+            )
+            self.assertFalse(clean["repo"]["remote_parity"]["fetch_performed"])
 
             (repo / "notes.txt").write_text("dirty\n", encoding="utf-8")
             dirty = build_status_snapshot(repo, adapter, generated_at="2026-01-01T00:00:00Z")
             self.assertEqual(dirty["repo"]["worktree"]["state"], "dirty")
             self.assertIn("?? notes.txt", dirty["repo"]["worktree"]["short_status"])
+
+    def test_remote_parity_is_explicitly_local_tracking_reference(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
+            repo = _init_repo(tmp / "repo")
+            remote = tmp / "remote.git"
+            _run(["git", "init", "--bare", str(remote)], tmp)
+            _run(["git", "branch", "-M", "main"], repo)
+            _run(["git", "remote", "add", "origin", str(remote)], repo)
+            _run(["git", "push", "-u", "origin", "main"], repo)
+            adapter = _write_adapter(tmp / "adapter.json")
+
+            snapshot = build_status_snapshot(
+                repo,
+                adapter,
+                generated_at="2026-01-01T00:00:00Z",
+            )
+
+        parity = snapshot["repo"]["remote_parity"]
+        self.assertEqual(parity["status"], "in_sync")
+        self.assertEqual(parity["tracking_ref"], "origin/main")
+        self.assertEqual(parity["evidence_basis"], "local_tracking_reference_no_fetch")
+        self.assertFalse(parity["fetch_performed"])
+
+    def test_git_inspection_disables_optional_locks(self) -> None:
+        with patch("dev_cockpit.git_status.subprocess.run") as run_mock:
+            run_mock.return_value = subprocess.CompletedProcess(
+                args=["git"],
+                returncode=0,
+                stdout="",
+                stderr="",
+            )
+            _run_git(Path("."), ("status", "--short"))
+
+        self.assertEqual(run_mock.call_args.kwargs["env"]["GIT_OPTIONAL_LOCKS"], "0")
 
     def test_missing_target_repo_is_structured_snapshot(self) -> None:
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -146,6 +191,16 @@ def _write_adapter(path: Path) -> Path:
 
 def _run(command: list[str], cwd: Path) -> None:
     subprocess.run(command, cwd=cwd, check=True, capture_output=True, text=True)
+
+
+def _git_output(cwd: Path, *args: str) -> str:
+    return subprocess.run(
+        ["git", *args],
+        cwd=cwd,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
 
 
 if __name__ == "__main__":
