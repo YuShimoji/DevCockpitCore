@@ -18,6 +18,54 @@ MANIFEST_SCHEMA_VERSION = "task_report_manifest.v1"
 PACKET_SCHEMA_VERSION = "cross_project_supervision_packet.v1"
 PRODUCER = "dev_cockpit.supervision_packet"
 PACKET_ARTIFACT_ID = "cross-project-supervision-packet-v1"
+PACKET_KEYS = frozenset(
+    {
+        "artifact_id",
+        "attention_policy",
+        "closed_or_informational",
+        "coverage",
+        "generated_at",
+        "global_attention_queue",
+        "producer",
+        "project_worksets",
+        "schema_version",
+        "scope_boundary",
+        "source_bindings",
+    }
+)
+TASK_KEYS = frozenset(
+    {
+        "artifact_id",
+        "attention_class",
+        "attention_precedence",
+        "authority_basis",
+        "current_state",
+        "evidence_class",
+        "evidence_references",
+        "executable",
+        "gate_decision",
+        "gate_stop_class",
+        "global_rank",
+        "lane_id",
+        "next_state",
+        "outcome_summary",
+        "project_key",
+        "required",
+        "slice_id",
+        "source_report_path",
+        "source_report_sha256",
+        "task_id",
+        "thread_id",
+    }
+)
+NEXT_STATE_KEYS = frozenset(
+    {
+        "agent_work",
+        "owner",
+        "recommended_slice",
+        "user_work",
+    }
+)
 FIXTURE_COVERAGE_STATEMENT = (
     "Deterministic non-live fixture coverage from explicit manifest-bound reports."
 )
@@ -215,7 +263,16 @@ def load_packet(path: str | Path) -> dict[str, Any]:
 
 
 def validate_packet(value: Any) -> dict[str, Any]:
-    packet = _require_object(value, "packet")
+    packet = _require_exact_object(value, PACKET_KEYS, "packet")
+    active = _require_list(packet.get("global_attention_queue"), "packet.global_attention_queue")
+    closed = _require_list(packet.get("closed_or_informational"), "packet.closed_or_informational")
+    active_tasks = _task_objects(active, "global_attention_queue")
+    closed_tasks = _task_objects(closed, "closed_or_informational")
+    for index, task in enumerate(active_tasks):
+        _validate_task_shape(task, f"packet.global_attention_queue[{index}]")
+    for index, task in enumerate(closed_tasks):
+        _validate_task_shape(task, f"packet.closed_or_informational[{index}]")
+
     if packet.get("schema_version") != PACKET_SCHEMA_VERSION:
         raise SupervisionPacketError(
             f"packet schema_version must be {PACKET_SCHEMA_VERSION!r}"
@@ -225,10 +282,6 @@ def validate_packet(value: Any) -> dict[str, Any]:
     if packet.get("producer") != PRODUCER:
         raise SupervisionPacketError("packet producer is invalid")
     _require_timestamp(packet.get("generated_at"), "packet.generated_at")
-    active = _require_list(packet.get("global_attention_queue"), "packet.global_attention_queue")
-    closed = _require_list(packet.get("closed_or_informational"), "packet.closed_or_informational")
-    active_tasks = _task_objects(active, "global_attention_queue")
-    closed_tasks = _task_objects(closed, "closed_or_informational")
     all_tasks = [*active_tasks, *closed_tasks]
     if not all_tasks:
         raise SupervisionPacketError("packet must contain at least one manifest-bound task")
@@ -354,7 +407,17 @@ def validate_packet(value: Any) -> dict[str, Any]:
     return packet
 
 
+def _validate_task_shape(task: dict[str, Any], label: str) -> None:
+    task = _require_exact_object(task, TASK_KEYS, label)
+    _require_exact_object(
+        task.get("next_state"),
+        NEXT_STATE_KEYS,
+        f"{label}.next_state",
+    )
+
+
 def _validate_task(task: dict[str, Any], label: str, *, collection: str) -> None:
+    next_state = task["next_state"]
     for field in (
         "task_id", "project_key", "thread_id", "lane_id", "slice_id",
         "artifact_id", "attention_class", "outcome_summary", "current_state",
@@ -377,7 +440,6 @@ def _validate_task(task: dict[str, Any], label: str, *, collection: str) -> None
         or task.get("attention_precedence") != ATTENTION_PRECEDENCE[attention_class]
     ):
         raise SupervisionPacketError(f"{label}.attention_precedence does not match class")
-    next_state = _require_object(task.get("next_state"), f"{label}.next_state")
     semantic_class = _semantic_attention_class(task, next_state)
     if semantic_class is not None and attention_class != semantic_class:
         raise SupervisionPacketError(
@@ -783,6 +845,26 @@ def _require_object(value: Any, label: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise SupervisionPacketError(f"{label} must be an object")
     return value
+
+
+def _require_exact_object(
+    value: Any,
+    expected_keys: frozenset[str],
+    label: str,
+) -> dict[str, Any]:
+    result = _require_object(value, label)
+    actual_keys = set(result)
+    missing = sorted(expected_keys - actual_keys)
+    unexpected = sorted(
+        actual_keys - expected_keys,
+        key=lambda key: (type(key).__name__, repr(key)),
+    )
+    if missing or unexpected:
+        raise SupervisionPacketError(
+            f"{label} keys are invalid; missing keys: {missing!r}; "
+            f"unexpected keys: {unexpected!r}"
+        )
+    return result
 
 
 def _require_list(value: Any, label: str) -> list[Any]:

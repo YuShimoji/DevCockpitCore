@@ -1,6 +1,6 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-13
+updated_at: 2026-07-14
 snapshot_kind: persisted_navigation_snapshot
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -137,8 +137,17 @@ priority rather than a sequential execution schedule.
 The tracked packet is deterministic non-live fixture evidence covering two
 fictional projects and four reports. It proves task identity, global ranking,
 closed-item separation, and project-workset reprojection, but does not claim
-live coverage. Live reports remain explicit future inputs; absent live coverage
-does not block this contract or dashboard integration.
+live coverage. H1 authentic/live AGENT_REPORT round-trip remains input-gated;
+absent live coverage does not block this contract or dashboard integration and
+the deterministic fixture must not be promoted to live evidence.
+
+`QD-PACKET-UNKNOWN-KEY-01` is closed. The packet root, every active or closed
+task, and every `task.next_state` now reject missing or unexpected keys before
+Dashboard model or HTML projection. Existing nested packet objects remain exact
+through strict equality or deterministic reprojection. JSON object key order is
+still accepted, schema identity remains `cross_project_supervision_packet.v1`,
+and the canonical JSON, Markdown, Dashboard, and accepted visual state are
+unchanged.
 
 The integrity-ready intake preserves canonical v6.5 ROUTE identity exactly,
 keeps the legacy report dialect compatible, and rejects conflicting aliases.

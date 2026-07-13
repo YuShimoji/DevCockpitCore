@@ -91,13 +91,28 @@ Each task carries project/thread/lane/slice/artifact identity, stable task ID,
 global rank, classification, required state, outcome/current/next state,
 report path/hash, evidence references, and `executable: false`.
 
+Every declared object within the v1 packet is an exact-key surface. The packet
+root accepts exactly its 11 declared fields, each task accepts exactly its 21
+declared fields, and `task.next_state` accepts exactly `owner`,
+`recommended_slice`, `user_work`, and `agent_work`. Missing and unexpected keys
+fail closed before type, value, identity, binding, rank, queue, workset,
+coverage, policy, or scope validation. Source bindings, coverage, attention
+policy entries, evidence references, project worksets, rank references, and the
+scope boundary remain exact through strict equality or deterministic
+reprojection. JSON object key order is not significant, and valid values such
+as `recommended_slice: null` remain accepted.
+
+`cross_project_supervision_packet.v1` has no open field set or extension
+namespace. A future field or extension mechanism requires a new schema version
+rather than silently widening v1.
+
 Loaded-packet validation does not trust internal projections. It recomputes
 task IDs from the five-field identity, class precedence, queue order, source
 binding bijection, active/closed membership, project worksets, project-local
 first tasks, global rank references, gate/safe references, coverage totals,
 attention policy, and the complete observer-only scope boundary. Any missing,
-duplicate, cross-project, reordered, or type-changed projection fails closed
-with `SupervisionPacketError`.
+unexpected, duplicate, cross-project, reordered, or type-changed projection
+fails closed with `SupervisionPacketError`.
 
 ## Priority Review Console integration
 

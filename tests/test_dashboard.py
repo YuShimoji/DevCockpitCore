@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from dev_cockpit.dashboard import (
+    DashboardError,
     _packet_attention_summary,
     _priority_items,
     build_dashboard_model,
@@ -139,6 +140,45 @@ class DashboardTests(unittest.TestCase):
             model["evidence_freshness_receipt"]["capture_id"],
             inspector,
         )
+
+    def test_supervision_packet_unknown_keys_fail_before_dashboard_projection(self) -> None:
+        source = json.loads(
+            (
+                ROOT
+                / "samples"
+                / "supervision_packets"
+                / "cross_project_supervision_packet_v1.json"
+            ).read_text(encoding="utf-8")
+        )
+        cases = {
+            "packet_root": lambda packet: packet.__setitem__("execution_schedule", True),
+            "task": lambda packet: packet["global_attention_queue"][0].__setitem__(
+                "action", {"executable": True, "command": "echo rejected"}
+            ),
+            "next_state": lambda packet: packet["global_attention_queue"][0][
+                "next_state"
+            ].__setitem__("executable", True),
+        }
+
+        for name, mutate in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                packet = copy.deepcopy(source)
+                mutate(packet)
+                packet_path = Path(temporary) / f"{name}.json"
+                packet_path.write_text(
+                    json.dumps(packet, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+
+                with self.assertRaisesRegex(
+                    DashboardError,
+                    r"invalid cross-project supervision packet.*unexpected keys",
+                ):
+                    build_dashboard_model(
+                        repo_root=ROOT,
+                        supervision_packet_path=packet_path,
+                        generated_at="2026-07-13T08:00:00Z",
+                    )
 
     def test_all_closed_packet_renders_empty_priority_and_closed_evidence(self) -> None:
         manifest = copy.deepcopy(

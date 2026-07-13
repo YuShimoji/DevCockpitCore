@@ -114,6 +114,134 @@ class SupervisionPacketTests(unittest.TestCase):
         self.assertEqual(render_packet_markdown(first), MARKDOWN_PATH.read_text(encoding="utf-8"))
         self.assertEqual(first, load_packet(PACKET_PATH))
 
+    def test_loaded_packet_rejects_known_unknown_key_payloads(self) -> None:
+        cases = {
+            "packet_execution_schedule": (
+                lambda packet: packet.__setitem__("execution_schedule", True),
+                r"unexpected keys: \['execution_schedule'\]",
+            ),
+            "task_action": (
+                lambda packet: packet["global_attention_queue"][0].__setitem__(
+                    "action",
+                    {"executable": True, "command": "echo should-not-be-accepted"},
+                ),
+                r"unexpected keys: \['action'\]",
+            ),
+            "next_state_executable": (
+                lambda packet: packet["global_attention_queue"][0]["next_state"].__setitem__(
+                    "executable", True
+                ),
+                r"unexpected keys: \['executable'\]",
+            ),
+        }
+
+        for name, (mutate, pattern) in cases.items():
+            with self.subTest(name=name):
+                self._assert_loaded_mutation_rejected(mutate, pattern)
+
+    def test_unknown_key_rejection_is_value_independent(self) -> None:
+        for value in (None, False, 0, "harmless", {}, []):
+            with self.subTest(value=value):
+                self._assert_loaded_mutation_rejected(
+                    lambda packet, value=value: packet.__setitem__(
+                        "harmless_metadata", value
+                    ),
+                    r"unexpected keys: \['harmless_metadata'\]",
+                )
+
+    def test_active_and_closed_tasks_reject_unknown_keys(self) -> None:
+        for collection in ("global_attention_queue", "closed_or_informational"):
+            for surface in ("task", "next_state"):
+                with self.subTest(collection=collection, surface=surface):
+                    def mutate(packet, collection=collection, surface=surface):
+                        target = packet[collection][0]
+                        if surface == "next_state":
+                            target = target["next_state"]
+                        target["harmless_metadata"] = None
+
+                    self._assert_loaded_mutation_rejected(
+                        mutate,
+                        r"unexpected keys: \['harmless_metadata'\]",
+                    )
+
+    def test_required_keys_are_rejected_with_sorted_diagnostics(self) -> None:
+        def mutate_packet(packet) -> None:
+            packet.pop("producer")
+            packet.pop("artifact_id")
+            packet["zeta"] = None
+            packet["alpha"] = None
+
+        self._assert_loaded_mutation_rejected(
+            mutate_packet,
+            r"packet keys are invalid; missing keys: \['artifact_id', 'producer'\]; "
+            r"unexpected keys: \['alpha', 'zeta'\]",
+        )
+        self._assert_loaded_mutation_rejected(
+            lambda packet: packet["global_attention_queue"][0].pop("outcome_summary"),
+            r"missing keys: \['outcome_summary'\]",
+        )
+        self._assert_loaded_mutation_rejected(
+            lambda packet: packet["global_attention_queue"][0]["next_state"].pop("owner"),
+            r"missing keys: \['owner'\]",
+        )
+
+    def test_exact_key_shape_prepass_precedes_value_validation(self) -> None:
+        def invalid_schema_and_unknown_task_key(packet) -> None:
+            packet["schema_version"] = "wrong"
+            packet["global_attention_queue"][0]["action"] = {"executable": True}
+
+        self._assert_loaded_mutation_rejected(
+            invalid_schema_and_unknown_task_key,
+            r"packet\.global_attention_queue\[0\] keys are invalid.*"
+            r"unexpected keys: \['action'\]",
+        )
+
+        def invalid_first_task_and_later_unknown_key(packet) -> None:
+            packet["global_attention_queue"][0]["executable"] = True
+            packet["global_attention_queue"][1]["harmless_metadata"] = None
+
+        self._assert_loaded_mutation_rejected(
+            invalid_first_task_and_later_unknown_key,
+            r"packet\.global_attention_queue\[1\] keys are invalid.*"
+            r"unexpected keys: \['harmless_metadata'\]",
+        )
+
+    def test_json_object_key_order_is_not_significant(self) -> None:
+        def reversed_object(value):
+            return dict(reversed(list(value.items())))
+
+        packet = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
+        packet = reversed_object(packet)
+        for collection in ("global_attention_queue", "closed_or_informational"):
+            reordered_tasks = []
+            for task in packet[collection]:
+                reordered_task = reversed_object(task)
+                reordered_task["next_state"] = reversed_object(
+                    reordered_task["next_state"]
+                )
+                reordered_tasks.append(reordered_task)
+            packet[collection] = reordered_tasks
+
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "reordered-packet.json"
+            path.write_text(json.dumps(packet, ensure_ascii=False), encoding="utf-8")
+            loaded = load_packet(path)
+
+        self.assertEqual(packet, loaded)
+
+    def test_recommended_slice_null_remains_valid(self) -> None:
+        packet = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
+        packet["global_attention_queue"][0]["next_state"]["recommended_slice"] = None
+
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "nullable-recommended-slice.json"
+            path.write_text(json.dumps(packet, ensure_ascii=False), encoding="utf-8")
+            loaded = load_packet(path)
+
+        self.assertIsNone(
+            loaded["global_attention_queue"][0]["next_state"]["recommended_slice"]
+        )
+
     def test_manifest_nested_duplicate_key_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "manifest.json"
@@ -371,6 +499,60 @@ class SupervisionPacketTests(unittest.TestCase):
             "scope boundary",
         )
 
+    def test_loaded_packet_rejects_unknown_keys_in_nested_objects(self) -> None:
+        cases = {
+            "source_binding": (
+                lambda packet: packet["source_bindings"][0].__setitem__(
+                    "harmless_metadata", None
+                ),
+                "source bindings",
+            ),
+            "coverage": (
+                lambda packet: packet["coverage"].__setitem__("harmless_metadata", None),
+                "coverage fields",
+            ),
+            "attention_policy": (
+                lambda packet: packet["attention_policy"][0].__setitem__(
+                    "harmless_metadata", None
+                ),
+                "attention policy",
+            ),
+            "source_evidence_reference": (
+                lambda packet: packet["global_attention_queue"][0][
+                    "evidence_references"
+                ][0].__setitem__("harmless_metadata", None),
+                "source evidence binding",
+            ),
+            "derived_evidence_reference": (
+                lambda packet: packet["global_attention_queue"][0][
+                    "evidence_references"
+                ][1].__setitem__("harmless_metadata", None),
+                "derived evidence binding",
+            ),
+            "project_workset": (
+                lambda packet: packet["project_worksets"][0].__setitem__(
+                    "harmless_metadata", None
+                ),
+                "worksets",
+            ),
+            "global_rank_reference": (
+                lambda packet: packet["project_worksets"][0][
+                    "global_rank_references"
+                ][0].__setitem__("harmless_metadata", None),
+                "worksets",
+            ),
+            "scope_boundary": (
+                lambda packet: packet["scope_boundary"].__setitem__(
+                    "harmless_metadata", None
+                ),
+                "scope boundary",
+            ),
+        }
+
+        for name, (mutate, pattern) in cases.items():
+            with self.subTest(name=name):
+                self._assert_loaded_mutation_rejected(mutate, pattern)
+
     def test_every_task_remains_non_executable(self) -> None:
         packet = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
         locations = [
@@ -526,13 +708,13 @@ The current slice is not yet complete.
             source = PACKET_PATH.read_text(encoding="utf-8")
             path.write_text(
                 source.replace(
-                    '{\n  "schema_version":',
-                    '{\n  "schema_version": "duplicate",\n  "schema_version":',
+                    '      "next_state": {\n        "owner":',
+                    '      "next_state": {\n        "owner": "duplicate",\n        "owner":',
                     1,
                 ),
                 encoding="utf-8",
             )
-            with self.assertRaisesRegex(SupervisionPacketError, "duplicate JSON key"):
+            with self.assertRaisesRegex(SupervisionPacketError, "duplicate JSON key: owner"):
                 load_packet(path)
 
     def _assert_loaded_mutation_rejected(self, mutate, pattern: str) -> None:

@@ -1,6 +1,6 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-13
+updated_at: 2026-07-14
 projection_kind: repository_restart_and_artifact_access
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -69,6 +69,13 @@ all-closed packets remain valid with zero priorities and browsable closed
 evidence. Tracked capture provenance contains no user-specific absolute path,
 and declared timestamp overrides are marked ineligible as current observation.
 
+`QD-PACKET-UNKNOWN-KEY-01` is closed. Exact-key validation rejects missing or
+unexpected fields at the packet root, task, and `task.next_state` surfaces
+before Dashboard model or HTML projection. Existing nested packet objects stay
+exact through strict equality or deterministic reprojection. The v1 schema,
+canonical generated artifacts, production UI, and accepted visual state are
+unchanged.
+
 Production direction A is selected for the production dashboard and
 `user_visual_acceptance` is `accepted`.
 
@@ -94,7 +101,9 @@ by dashboard regeneration.
 
 H1 authentic/live round-trip remains input-gated: another project's current
 AGENT_REPORT must be supplied through an explicit manifest binding. The
-deterministic fixture is not promoted to live coverage.
+deterministic fixture is not promoted to live coverage. Resume H1 only after an
+exact current external AGENT_REPORT is explicitly manifest-bound, then rerun
+packet and Dashboard validation against that input.
 
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
