@@ -206,6 +206,26 @@ class SupervisionPacketTests(unittest.TestCase):
             r"unexpected keys: \['harmless_metadata'\]",
         )
 
+        def invalid_next_state_and_later_unknown_key(packet) -> None:
+            packet["global_attention_queue"][0]["next_state"]["user_work"] = {}
+            packet["closed_or_informational"][0]["next_state"]["zeta"] = None
+
+        self._assert_loaded_mutation_rejected(
+            invalid_next_state_and_later_unknown_key,
+            r"packet\.closed_or_informational\[0\]\.next_state keys are invalid.*"
+            r"unexpected keys: \['zeta'\]",
+        )
+
+        def invalid_schema_and_next_state_value(packet) -> None:
+            packet["schema_version"] = "wrong"
+            packet["global_attention_queue"][0]["next_state"]["user_work"] = {}
+
+        self._assert_loaded_mutation_rejected(
+            invalid_schema_and_next_state_value,
+            r"packet\.global_attention_queue\[0\]\.next_state\.user_work "
+            r"must be a non-empty string",
+        )
+
     def test_json_object_key_order_is_not_significant(self) -> None:
         def reversed_object(value):
             return dict(reversed(list(value.items())))
@@ -229,31 +249,185 @@ class SupervisionPacketTests(unittest.TestCase):
 
         self.assertEqual(packet, loaded)
 
-    def test_recommended_slice_null_remains_valid(self) -> None:
-        packet = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
-        packet["global_attention_queue"][0]["next_state"]["recommended_slice"] = None
+    def test_next_state_values_are_typed_for_active_and_closed_tasks(self) -> None:
+        invalid_values = {
+            "owner": (None, "", "   ", False, 0, [], {}),
+            "recommended_slice": ("", "   ", False, 0, [], {}),
+            "user_work": (None, "", "   ", False, 0, [], {}),
+            "agent_work": (None, "", "   ", False, 0, [], {}),
+        }
+        for collection in ("global_attention_queue", "closed_or_informational"):
+            for field, values in invalid_values.items():
+                for value in values:
+                    with self.subTest(collection=collection, field=field, value=value):
+                        self._assert_loaded_mutation_rejected(
+                            lambda packet, collection=collection, field=field, value=value: packet[
+                                collection
+                            ][0]["next_state"].__setitem__(field, value),
+                            rf"next_state\.{field} must be",
+                        )
 
-        with tempfile.TemporaryDirectory() as temporary:
-            path = Path(temporary) / "nullable-recommended-slice.json"
-            path.write_text(json.dumps(packet, ensure_ascii=False), encoding="utf-8")
-            loaded = load_packet(path)
+    def test_recommended_slice_null_remains_valid_for_active_and_closed_tasks(self) -> None:
+        for collection in ("global_attention_queue", "closed_or_informational"):
+            with self.subTest(collection=collection):
+                packet = json.loads(PACKET_PATH.read_text(encoding="utf-8"))
+                packet[collection][0]["next_state"]["recommended_slice"] = None
 
-        self.assertIsNone(
-            loaded["global_attention_queue"][0]["next_state"]["recommended_slice"]
+                with tempfile.TemporaryDirectory() as temporary:
+                    path = Path(temporary) / "nullable-recommended-slice.json"
+                    path.write_text(json.dumps(packet, ensure_ascii=False), encoding="utf-8")
+                    loaded = load_packet(path)
+
+                self.assertIsNone(
+                    loaded[collection][0]["next_state"]["recommended_slice"]
+                )
+
+    def test_manifest_root_and_entries_reject_unknown_keys(self) -> None:
+        cases = {
+            "root_harmless": (
+                lambda manifest: manifest.__setitem__("harmless_metadata", None),
+                r"manifest keys are invalid.*unexpected keys: \['harmless_metadata'\]",
+            ),
+            "root_executable": (
+                lambda manifest: manifest.__setitem__("execution_schedule", True),
+                r"manifest keys are invalid.*unexpected keys: \['execution_schedule'\]",
+            ),
+            "entry_harmless": (
+                lambda manifest: manifest["reports"][0].__setitem__(
+                    "harmless_metadata", None
+                ),
+                r"manifest\.reports\[0\] keys are invalid.*"
+                r"unexpected keys: \['harmless_metadata'\]",
+            ),
+            "entry_executable": (
+                lambda manifest: manifest["reports"][0].__setitem__(
+                    "command", "run-me"
+                ),
+                r"manifest\.reports\[0\] keys are invalid.*"
+                r"unexpected keys: \['command'\]",
+            ),
+        }
+
+        for name, (mutate, pattern) in cases.items():
+            with self.subTest(name=name):
+                self._assert_manifest_mutation_rejected(mutate, pattern)
+
+    def test_programmatic_build_rejects_manifest_unknown_keys(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        manifest["execution_schedule"] = True
+
+        with self.assertRaisesRegex(
+            SupervisionPacketError,
+            r"manifest keys are invalid.*unexpected keys: \['execution_schedule'\]",
+        ):
+            build_supervision_packet(manifest, repo_root=ROOT)
+
+    def test_manifest_missing_and_unexpected_keys_have_sorted_path_diagnostics(self) -> None:
+        def mutate_root(manifest) -> None:
+            manifest.pop("artifact_id")
+            manifest.pop("generated_at")
+            manifest["zeta"] = None
+            manifest["alpha"] = None
+
+        self._assert_manifest_mutation_rejected(
+            mutate_root,
+            r"manifest keys are invalid; missing keys: \['artifact_id', 'generated_at'\]; "
+            r"unexpected keys: \['alpha', 'zeta'\]",
         )
 
-    def test_manifest_nested_duplicate_key_is_rejected(self) -> None:
+        def mutate_entry(manifest) -> None:
+            entry = manifest["reports"][0]
+            entry.pop("authority_basis")
+            entry.pop("project_key")
+            entry["zeta"] = None
+            entry["alpha"] = None
+
+        self._assert_manifest_mutation_rejected(
+            mutate_entry,
+            r"manifest\.reports\[0\] keys are invalid; "
+            r"missing keys: \['authority_basis', 'project_key'\]; "
+            r"unexpected keys: \['alpha', 'zeta'\]",
+        )
+
+    def test_manifest_shape_prepass_precedes_semantic_validation(self) -> None:
+        def mutate(manifest) -> None:
+            manifest["schema_version"] = "wrong"
+            manifest["reports"][-1]["execution_schedule"] = True
+
+        self._assert_manifest_mutation_rejected(
+            mutate,
+            r"manifest\.reports\[3\] keys are invalid.*"
+            r"unexpected keys: \['execution_schedule'\]",
+        )
+
+    def test_manifest_wrong_types_are_rejected(self) -> None:
+        cases = {
+            "root": ([], r"manifest must be an object"),
+            "reports": (
+                {**self.manifest, "reports": {}},
+                r"manifest\.reports must be a non-empty array",
+            ),
+            "entry": (
+                {**self.manifest, "reports": [None]},
+                r"manifest\.reports\[0\] must be an object",
+            ),
+            "artifact_id": (
+                {**self.manifest, "artifact_id": False},
+                r"manifest\.artifact_id must be a non-empty string",
+            ),
+            "required": (
+                {
+                    **self.manifest,
+                    "reports": [
+                        {**self.manifest["reports"][0], "required": 1}
+                    ],
+                },
+                r"manifest\.reports\[0\]\.required must be boolean",
+            ),
+        }
+
+        for name, (manifest, pattern) in cases.items():
+            with self.subTest(name=name):
+                self._assert_manifest_value_rejected(manifest, pattern)
+
+    def test_manifest_json_object_key_order_is_not_significant(self) -> None:
+        manifest = dict(reversed(list(self.manifest.items())))
+        manifest["reports"] = [
+            dict(reversed(list(entry.items())))
+            for entry in self.manifest["reports"]
+        ]
+
         with tempfile.TemporaryDirectory() as temporary:
-            path = Path(temporary) / "manifest.json"
-            path.write_text(
+            path = Path(temporary) / "reordered-manifest.json"
+            path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+            loaded = load_manifest(path)
+
+        self.assertEqual(manifest, loaded)
+
+    def test_manifest_nested_duplicate_key_is_rejected(self) -> None:
+        sources = {
+            "root": (
+                '{"schema_version":"task_report_manifest.v1",'
+                '"schema_version":"task_report_manifest.v1"}',
+                "schema_version",
+            ),
+            "entry": (
                 '{"schema_version":"task_report_manifest.v1",'
                 '"artifact_id":"fixture","generated_at":"2026-07-13T06:30:00Z",'
                 '"reports":[{"project_key":"alpha","project_key":"beta"}]}',
-                encoding="utf-8",
-            )
+                "project_key",
+            ),
+        }
+        for name, (source, duplicate_key) in sources.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary) / "manifest.json"
+                path.write_text(source, encoding="utf-8")
 
-            with self.assertRaisesRegex(SupervisionPacketError, "duplicate JSON key: project_key"):
-                load_manifest(path)
+                with self.assertRaisesRegex(
+                    SupervisionPacketError,
+                    f"duplicate JSON key: {duplicate_key}",
+                ):
+                    load_manifest(path)
 
     def test_manifest_hash_change_fails_closed(self) -> None:
         manifest = copy.deepcopy(self.manifest)
@@ -275,12 +449,29 @@ class SupervisionPacketTests(unittest.TestCase):
                 build_supervision_packet(self.manifest, repo_root=root)
 
     def test_duplicate_task_identity_is_rejected(self) -> None:
-        manifest = copy.deepcopy(self.manifest)
-        duplicate = copy.deepcopy(manifest["reports"][0])
-        duplicate["report_path"] = manifest["reports"][0]["report_path"]
-        manifest["reports"].append(duplicate)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original = copy.deepcopy(self.manifest["reports"][0])
+            source = ROOT / original["report_path"]
+            copied = root / original["report_path"]
+            copied.parent.mkdir(parents=True)
+            shutil.copyfile(source, copied)
+            duplicate = copy.deepcopy(original)
+            duplicate["report_path"] = (
+                copied.parent / "duplicate-task-identity.txt"
+            ).relative_to(root).as_posix()
+            shutil.copyfile(source, root / duplicate["report_path"])
+            manifest = copy.deepcopy(self.manifest)
+            manifest["reports"] = [original, duplicate]
 
-        with self.assertRaisesRegex(SupervisionPacketError, "duplicate task identity"):
+            with self.assertRaisesRegex(SupervisionPacketError, "duplicate task identity"):
+                build_supervision_packet(manifest, repo_root=root)
+
+    def test_duplicate_manifest_report_path_is_rejected(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        manifest["reports"].append(copy.deepcopy(manifest["reports"][0]))
+
+        with self.assertRaisesRegex(SupervisionPacketError, "duplicate manifest report_path"):
             build_supervision_packet(manifest, repo_root=ROOT)
 
     def test_cli_writes_strict_json_and_markdown(self) -> None:
@@ -716,6 +907,18 @@ The current slice is not yet complete.
             )
             with self.assertRaisesRegex(SupervisionPacketError, "duplicate JSON key: owner"):
                 load_packet(path)
+
+    def _assert_manifest_mutation_rejected(self, mutate, pattern: str) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        mutate(manifest)
+        self._assert_manifest_value_rejected(manifest, pattern)
+
+    def _assert_manifest_value_rejected(self, manifest, pattern: str) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "manifest.json"
+            path.write_text(json.dumps(manifest, ensure_ascii=False), encoding="utf-8")
+            with self.assertRaisesRegex(SupervisionPacketError, pattern):
+                load_manifest(path)
 
     def _assert_loaded_mutation_rejected(self, mutate, pattern: str) -> None:
         packet = json.loads(PACKET_PATH.read_text(encoding="utf-8"))

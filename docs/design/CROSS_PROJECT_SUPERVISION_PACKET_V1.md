@@ -25,6 +25,12 @@ contains:
 | `authority_basis` | Why this exact report is allowed into the packet. |
 | `content_sha256` | Required byte-level binding for fail-closed input. |
 
+The manifest root is an exact-key object containing only `schema_version`,
+`artifact_id`, `generated_at`, and `reports`. Every report entry is an
+exact-key object containing only the six fields listed above. Missing and
+unexpected keys fail closed with their object path and sorted diagnostics;
+JSON object key order is not significant.
+
 The loader rejects duplicate JSON keys at any nesting depth, absolute or
 escaping report paths, duplicate paths, missing files, invalid UTF-8, hash
 drift, duplicate task identity, and malformed packet projection.
@@ -102,6 +108,14 @@ scope boundary remain exact through strict equality or deterministic
 reprojection. JSON object key order is not significant, and valid values such
 as `recommended_slice: null` remain accepted.
 
+After the packet-wide exact-key prepass, every active and closed task applies
+the same typed `next_state` contract before semantic classification:
+`owner`, `user_work`, and `agent_work` are non-empty strings, while
+`recommended_slice` is either `null` or a non-empty string. Empty or
+whitespace-only strings, booleans, numbers, arrays, and objects fail closed.
+The Dashboard converts that packet-ingress failure to `DashboardError` before
+model or HTML projection.
+
 `cross_project_supervision_packet.v1` has no open field set or extension
 namespace. A future field or extension mechanism requires a new schema version
 rather than silently widening v1.
@@ -146,8 +160,32 @@ layout, server, runner, scheduler, or executable action.
 The sample manifest contains four deterministic non-live reports across two
 fictional projects and multiple threads/lanes. It proves contract behavior,
 ranking, closed-item separation, and projection identity. It is not live
-coverage of user projects and does not complete the later report-routing
+coverage of user projects and does not complete the H2 authentic report-routing
 round-trip horizon.
+
+`content_sha256` binds the report's raw checked-out bytes; application code
+does not normalize newlines before hashing. The repository-root
+`.gitattributes` contract, `* text=auto eol=lf`, keeps tracked text blobs and
+working-tree text at LF across operating systems while leaving files detected
+as binary unconverted. This checkout-transport rule also keeps deterministic
+JSON, Markdown, and HTML text artifacts byte-stable without changing the hash
+contract or manifest values.
+
+Standalone packet validation guarantees self-consistency of schema, types,
+identity, classification, queue, worksets, binding references, coverage,
+policy, and scope. `source_report_sha256` is a reference to source evidence,
+not a signature. Narrative fields such as `outcome_summary`, `current_state`,
+and the textual contents of `next_state` can be reprojected from source only
+during generation or intake, when the manifest and source report are available
+and verified together. A standalone stored packet must therefore not be
+promoted by itself to live or current authority.
+
+`QD-PACKET-NARRATIVE-REPROJECTION-01` records the remaining quality debt:
+standalone stored packet evidence cannot independently re-prove that narrative
+text came from its source report. Revisit this boundary during the H2 authentic
+round-trip, or before `live_coverage` or `current_claim_eligible` is first
+allowed to become true. This debt does not block typed ingress or LF checkout
+transport closure.
 
 Capture manifests keep source paths repository-relative or redacted. Capture
 timestamps distinguish `actual_browser_observation` from

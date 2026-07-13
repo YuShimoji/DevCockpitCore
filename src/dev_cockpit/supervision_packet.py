@@ -18,6 +18,24 @@ MANIFEST_SCHEMA_VERSION = "task_report_manifest.v1"
 PACKET_SCHEMA_VERSION = "cross_project_supervision_packet.v1"
 PRODUCER = "dev_cockpit.supervision_packet"
 PACKET_ARTIFACT_ID = "cross-project-supervision-packet-v1"
+MANIFEST_KEYS = frozenset(
+    {
+        "artifact_id",
+        "generated_at",
+        "reports",
+        "schema_version",
+    }
+)
+MANIFEST_REPORT_KEYS = frozenset(
+    {
+        "authority_basis",
+        "content_sha256",
+        "evidence_class",
+        "project_key",
+        "report_path",
+        "required",
+    }
+)
 PACKET_KEYS = frozenset(
     {
         "artifact_id",
@@ -91,21 +109,33 @@ def load_manifest(path: str | Path) -> dict[str, Any]:
 
     manifest_path = Path(path)
     data = _read_strict_json(manifest_path, label="manifest")
-    _require_object(data, "manifest")
+    return _validate_manifest(data)
+
+
+def _validate_manifest(value: Any) -> dict[str, Any]:
+    data = _require_exact_object(value, MANIFEST_KEYS, "manifest")
+    reports = data.get("reports")
+    if not isinstance(reports, list) or not reports:
+        raise SupervisionPacketError("manifest.reports must be a non-empty array")
+    entries = [
+        _require_exact_object(
+            raw_entry,
+            MANIFEST_REPORT_KEYS,
+            f"manifest.reports[{index}]",
+        )
+        for index, raw_entry in enumerate(reports)
+    ]
+
     if data.get("schema_version") != MANIFEST_SCHEMA_VERSION:
         raise SupervisionPacketError(
             f"manifest schema_version must be {MANIFEST_SCHEMA_VERSION!r}"
         )
     _require_nonempty_string(data, "artifact_id", "manifest")
     _require_timestamp(data.get("generated_at"), "manifest.generated_at")
-    reports = data.get("reports")
-    if not isinstance(reports, list) or not reports:
-        raise SupervisionPacketError("manifest.reports must be a non-empty array")
 
     seen_paths: set[str] = set()
-    for index, raw_entry in enumerate(reports):
+    for index, entry in enumerate(entries):
         label = f"manifest.reports[{index}]"
-        entry = _require_object(raw_entry, label)
         for field in (
             "project_key",
             "report_path",
@@ -135,6 +165,7 @@ def build_supervision_packet(
 ) -> dict[str, Any]:
     """Normalize, classify, rank, and project explicitly bound report tasks."""
 
+    manifest = _validate_manifest(manifest)
     root = Path(repo_root).resolve()
     assessed_at = generated_at or str(manifest["generated_at"])
     _require_timestamp(assessed_at, "generated_at")
@@ -272,6 +303,16 @@ def validate_packet(value: Any) -> dict[str, Any]:
         _validate_task_shape(task, f"packet.global_attention_queue[{index}]")
     for index, task in enumerate(closed_tasks):
         _validate_task_shape(task, f"packet.closed_or_informational[{index}]")
+    for index, task in enumerate(active_tasks):
+        _validate_next_state(
+            task["next_state"],
+            f"packet.global_attention_queue[{index}].next_state",
+        )
+    for index, task in enumerate(closed_tasks):
+        _validate_next_state(
+            task["next_state"],
+            f"packet.closed_or_informational[{index}].next_state",
+        )
 
     if packet.get("schema_version") != PACKET_SCHEMA_VERSION:
         raise SupervisionPacketError(
@@ -414,6 +455,20 @@ def _validate_task_shape(task: dict[str, Any], label: str) -> None:
         NEXT_STATE_KEYS,
         f"{label}.next_state",
     )
+
+
+def _validate_next_state(value: Any, label: str) -> None:
+    next_state = _require_object(value, label)
+    _require_nonempty_string(next_state, "owner", label)
+    recommended_slice = next_state.get("recommended_slice")
+    if recommended_slice is not None and (
+        not isinstance(recommended_slice, str) or not recommended_slice.strip()
+    ):
+        raise SupervisionPacketError(
+            f"{label}.recommended_slice must be null or a non-empty string"
+        )
+    _require_nonempty_string(next_state, "user_work", label)
+    _require_nonempty_string(next_state, "agent_work", label)
 
 
 def _validate_task(task: dict[str, Any], label: str, *, collection: str) -> None:

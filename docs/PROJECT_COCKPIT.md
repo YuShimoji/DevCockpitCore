@@ -137,7 +137,7 @@ priority rather than a sequential execution schedule.
 The tracked packet is deterministic non-live fixture evidence covering two
 fictional projects and four reports. It proves task identity, global ranking,
 closed-item separation, and project-workset reprojection, but does not claim
-live coverage. H1 authentic/live AGENT_REPORT round-trip remains input-gated;
+live coverage. H2 authentic/live AGENT_REPORT round-trip remains input-gated;
 absent live coverage does not block this contract or dashboard integration and
 the deterministic fixture must not be promoted to live evidence.
 
@@ -148,6 +148,26 @@ through strict equality or deterministic reprojection. JSON object key order is
 still accepted, schema identity remains `cross_project_supervision_packet.v1`,
 and the canonical JSON, Markdown, Dashboard, and accepted visual state are
 unchanged.
+
+Packet ingress and checkout transport are closed for H1. The manifest root and
+each report entry now reject missing or unexpected keys against their exact
+four-key and six-key surfaces. Every active or closed `task.next_state`
+requires non-empty string values for `owner`, `user_work`, and `agent_work`,
+with `recommended_slice` limited to `null` or a non-empty string. Invalid
+values become `DashboardError` before model or HTML projection. The
+repository-root `* text=auto eol=lf` Git transport contract preserves the
+existing raw-byte report hashes and canonical JSON/Markdown bytes on Windows
+checkouts without changing schema or hash semantics.
+
+`QD-PACKET-NARRATIVE-REPROJECTION-01` remains accepted quality debt. A
+standalone stored packet proves schema, typed structure, identity,
+classification, queue/workset, binding-reference, coverage, policy, and scope
+self-consistency, but cannot independently re-prove that its narrative text
+came from the referenced source report. `source_report_sha256` is a source
+reference, not a signature; narrative reprojection belongs to generation or
+intake with the manifest and report verified together. Revisit this debt during
+the H2 authentic round-trip, or before live/current claim eligibility is first
+enabled. A standalone packet is not live/current authority.
 
 The integrity-ready intake preserves canonical v6.5 ROUTE identity exactly,
 keeps the legacy report dialect compatible, and rejects conflicting aliases.

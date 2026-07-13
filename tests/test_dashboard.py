@@ -9,6 +9,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -179,6 +180,51 @@ class DashboardTests(unittest.TestCase):
                         supervision_packet_path=packet_path,
                         generated_at="2026-07-13T08:00:00Z",
                     )
+
+    def test_supervision_packet_invalid_next_state_types_fail_before_dashboard_projection(self) -> None:
+        source = json.loads(
+            (
+                ROOT
+                / "samples"
+                / "supervision_packets"
+                / "cross_project_supervision_packet_v1.json"
+            ).read_text(encoding="utf-8")
+        )
+        cases = {
+            "active_original_crash_payload": (
+                "global_attention_queue",
+                {"recommended_slice": None, "user_work": {}},
+            ),
+            "closed_agent_work_array": (
+                "closed_or_informational",
+                {"agent_work": []},
+            ),
+        }
+
+        for name, (collection, invalid_values) in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                packet = copy.deepcopy(source)
+                packet[collection][0]["next_state"].update(invalid_values)
+                packet_path = Path(temporary) / f"{name}.json"
+                packet_path.write_text(
+                    json.dumps(packet, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                html_path = Path(temporary) / "should-not-exist.html"
+
+                with patch("dev_cockpit.dashboard._packet_task_items") as projection:
+                    with self.assertRaisesRegex(
+                        DashboardError,
+                        r"invalid cross-project supervision packet.*next_state.*must be",
+                    ):
+                        build_dashboard_model(
+                            repo_root=ROOT,
+                            supervision_packet_path=packet_path,
+                            output_path=html_path,
+                            generated_at="2026-07-13T08:00:00Z",
+                        )
+                    projection.assert_not_called()
+                self.assertFalse(html_path.exists())
 
     def test_all_closed_packet_renders_empty_priority_and_closed_evidence(self) -> None:
         manifest = copy.deepcopy(

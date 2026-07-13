@@ -76,6 +76,25 @@ exact through strict equality or deterministic reprojection. The v1 schema,
 canonical generated artifacts, production UI, and accepted visual state are
 unchanged.
 
+H1 packet ingress and checkout transport are closed. The manifest root and
+report entries are exact four-key and six-key objects. Active and closed
+`task.next_state` values use one typed contract: `owner`, `user_work`, and
+`agent_work` are non-empty strings, while `recommended_slice` is `null` or a
+non-empty string. Invalid external packets are rejected as `DashboardError`
+before model or HTML projection. The repository-root
+`* text=auto eol=lf` Git transport rule keeps raw manifest-bound report hashes
+and deterministic text artifacts LF-stable without newline normalization in
+application code or a hash/schema change.
+
+`QD-PACKET-NARRATIVE-REPROJECTION-01` remains non-blocking quality debt.
+Standalone packet validation proves schema, typed structure, identity,
+classification, queue/workset, binding-reference, coverage, policy, and scope
+self-consistency; `source_report_sha256` is a source reference rather than a
+signature. Narrative source reprojection requires generation or intake with
+the manifest and source report verified together. Revisit during the H2
+authentic round-trip, or before live/current claim eligibility is enabled. Do
+not promote a standalone stored packet to live/current authority.
+
 Production direction A is selected for the production dashboard and
 `user_visual_acceptance` is `accepted`.
 
@@ -99,9 +118,9 @@ in the console. A live claim requires a newly generated receipt assessed
 against its recorded policy, observation time, and revision binding, followed
 by dashboard regeneration.
 
-H1 authentic/live round-trip remains input-gated: another project's current
+H2 authentic/live round-trip remains input-gated: another project's current
 AGENT_REPORT must be supplied through an explicit manifest binding. The
-deterministic fixture is not promoted to live coverage. Resume H1 only after an
+deterministic fixture is not promoted to live coverage. Resume H2 only after an
 exact current external AGENT_REPORT is explicitly manifest-bound, then rerun
 packet and Dashboard validation against that input.
 
