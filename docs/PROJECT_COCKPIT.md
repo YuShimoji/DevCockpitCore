@@ -130,11 +130,3 @@ remains `pending`.
 This document is navigation and decision context, not live workflow authority.
 Verify Git state, the receipt authority boundary, generated readback, raster
 manifest, and local tests before treating any status as current.
-
-## Preserved Historical Context
-
-The uppercase Project Capsule documents, dated review artifacts under
-`artifacts/review/`, and the 2026-07-11 supervisor report were recovered during
-the 2026-07-13 remote sync. They preserve prior research, validation, and
-roadmap reasoning but are non-authoritative historical inputs. The lowercase
-runtime projection and this Cockpit remain the restart navigation surfaces.

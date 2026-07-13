@@ -12,8 +12,6 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
-latest_sync_handoff_path: docs/handoffs/2026-07-13-main-sync-resume-handoff-v1.md
-preserved_local_context_report_path: docs/handoffs/2026-07-11-main-sync-supervisor-roadmap-report-v1.md
 durable_context_path: docs/project-context.md
 layout_research_path: docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
 production_dashboard_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -79,15 +77,6 @@ by dashboard regeneration.
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
 the receipt authority boundary directly.
-
-## Restart Note
-
-The 2026-07-13 sync fast-forwarded `main` to the production Priority Review
-Console checkpoint and preserved the earlier local Project Capsule documents
-and review evidence. The uppercase Capsule files are retained as historical
-research/validation context only; they do not supersede this lowercase runtime
-projection or `docs/PROJECT_COCKPIT.md`. Resume from
-`docs/handoffs/2026-07-13-main-sync-resume-handoff-v1.md`.
 
 ## Local Validation Entry
 

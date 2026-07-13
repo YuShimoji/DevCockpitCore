@@ -3,37 +3,6 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
-## 2026-07-13 - Preserve Local Capsule Context After Main Sync
-
-Purpose: synchronize the checkout with the latest remote production review
-surface without losing locally accumulated research, validation evidence, or
-roadmap context.
-
-Decision: fast-forward `main` to the current `origin/main`, retain the uppercase
-Project Capsule files and dated `artifacts/review/` outputs as historical
-context, and keep `docs/PROJECT_COCKPIT.md` plus `docs/runtime-state.md` as the
-current restart navigation surfaces.
-
-Effect: another terminal can recover both the current production Priority
-Review Console state and the earlier supervisor analysis without treating two
-parallel status systems as authoritative.
-
-Requirements preserved: the observer-first boundary, exactly two C3 help-only
-keys, exactly one bounded C4 validation-pack key, static/local/non-executable
-review surfaces, and no runner expansion, scheduler, external service, or
-target-repository writeback.
-
-State: sync and handoff refresh in progress on `main`; final commit, validation,
-push, and parity are recorded in
-`docs/handoffs/2026-07-13-main-sync-resume-handoff-v1.md`.
-
-Owner: Agent maintains and pushes the restart packet. User owns the pending
-free-form visual/comprehension acceptance of the production dashboard.
-
-Next move: open the production dashboard and judge whether the first viewport
-reveals current state, first priority, next operation, owner, evidence route,
-and current-claim status.
-
 ## 2026-07-13 - Priority Review Console Selected For Production
 
 Purpose: close the A/B/C material-direction gate and make the selected
