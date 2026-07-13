@@ -184,6 +184,34 @@ The sample output lives at
 `samples/gate_classifications/adapter_manifest_v1_gate.json`. The next roadmap
 step is `validation-pack-v1`; there is still no execution automation.
 
+## Cross-project supervision packet
+
+Cross-Project Supervision Packet V1 reads only reports explicitly named by a
+`task_report_manifest.v1`. Each report is SHA-256 bound, normalized with the
+existing report normalizer, classified with the existing gate classifier, and
+projected into one global attention queue plus project-local worksets.
+
+Global rank means attention/review priority, not execution order. Safe work in
+different projects may continue in parallel. Project worksets reference the
+same task IDs and global ranks; they do not recalculate priority.
+
+Regenerate the deterministic two-project, four-report fixture:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.supervision_packet `
+  --manifest samples/supervision_packets/task_report_manifest_v1.json `
+  --output-json samples/supervision_packets/cross_project_supervision_packet_v1.json `
+  --output-markdown samples/supervision_packets/cross_project_supervision_packet_v1.md `
+  --pretty
+```
+
+The tracked fixture is non-live evidence. The generator does not search a
+directory for a newest report, infer reports from conversation history, write
+to sibling repositories, schedule execution, or make actions executable. See
+`docs/design/CROSS_PROJECT_SUPERVISION_PACKET_V1.md` and
+`samples/supervision_packets/README.md` for the contracts and boundary.
+
 ## Validation pack
 
 The validation pack runs a fixed allowlist of safe checks for this repository and
@@ -293,7 +321,8 @@ Generate all default dashboard artifacts from PowerShell with:
 
 ```powershell
 $env:PYTHONPATH = "src"
-python -m dev_cockpit.dashboard
+python -m dev_cockpit.dashboard `
+  --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json
 ```
 
 To generate a current local package outside the worktree, write the live
@@ -309,6 +338,7 @@ python -m dev_cockpit.evidence_freshness `
   --pretty
 python -m dev_cockpit.dashboard `
   --freshness-receipt "$live\evidence_freshness_receipt_v1.json" `
+  --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json `
   --output "$live\devcockpitcore_dashboard.html" `
   --priority-readback "$live\devcockpitcore_priority_readback.json" `
   --review-actions-json "$live\devcockpitcore_review_actions.json" `
@@ -317,6 +347,7 @@ Start-Process "$live\devcockpitcore_dashboard.html"
 ```
 
 The input and output paths can be overridden with `--freshness-receipt`,
+`--supervision-packet`,
 `--output`, `--priority-readback`, `--review-actions-json`, and
 `--review-actions-md`. The console script name is also wired in
 `pyproject.toml`:
@@ -340,6 +371,13 @@ Dashboard inputs default to:
 - `docs/runtime-state.md`
 - `docs/project-context.md`
 - `samples/evidence_freshness/evidence_freshness_receipt_v1.json`
+- optional `samples/supervision_packets/cross_project_supervision_packet_v1.json`
+
+When `--supervision-packet` is supplied, its tasks populate the same Priority
+Lane and expose project/thread/lane identity, report hash, and a secondary
+project-workset disclosure. When omitted, the existing evidence-derived
+dashboard path is preserved. No project tab, matrix, B/C primary layout, or
+execution schedule is added.
 
 Japanese is the default; the in-page language switch presents the same
 priorities and evidence in English. Priority selection synchronizes the Active
@@ -349,9 +387,9 @@ progressive disclosure. These are accessibility-oriented review affordances,
 not a formal compliance claim.
 
 Production raster evidence, its capture manifest, and machine readback are
-kept under `samples/dashboard/production_capture/`. The current review asks the
-user only for one free-form production visual/comprehension judgment;
-`user_visual_acceptance` remains `pending` until that review occurs.
+kept under `samples/dashboard/production_capture/`. The user accepted the
+production Priority Review Console; `user_visual_acceptance` is `accepted` and
+the same surface does not require another visual/comprehension gate.
 
 The earlier v2 A/B/C comparison remains historical research evidence at
 `samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`.

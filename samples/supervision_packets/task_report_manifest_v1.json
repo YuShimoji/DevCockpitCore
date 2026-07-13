@@ -1,0 +1,39 @@
+{
+  "schema_version": "task_report_manifest.v1",
+  "artifact_id": "cross-project-supervision-packet-fixture-manifest-v1",
+  "generated_at": "2026-07-13T06:30:00Z",
+  "reports": [
+    {
+      "project_key": "alpha-project",
+      "report_path": "samples/supervision_packets/reports/alpha_required_validation_stop.txt",
+      "required": true,
+      "evidence_class": "deterministic_non_live_fixture",
+      "authority_basis": "explicit_manifest_binding",
+      "content_sha256": "ca04d6de029931b7bc7ba20148a3284d29e765618aa7fdddc0cb442f0c0b7154"
+    },
+    {
+      "project_key": "alpha-project",
+      "report_path": "samples/supervision_packets/reports/alpha_safe_continuation.txt",
+      "required": true,
+      "evidence_class": "deterministic_non_live_fixture",
+      "authority_basis": "explicit_manifest_binding",
+      "content_sha256": "f5b4bc713230a317e0a56149c1e027a6dace010bdf93fa30b5fb6d721f15a9eb"
+    },
+    {
+      "project_key": "beta-project",
+      "report_path": "samples/supervision_packets/reports/beta_material_decision_gate.txt",
+      "required": false,
+      "evidence_class": "deterministic_non_live_fixture",
+      "authority_basis": "explicit_manifest_binding",
+      "content_sha256": "727d235dbf13dfaffd1c3b9c4dae4a3f35f2468a059a34103a43a0c53b8fbfbd"
+    },
+    {
+      "project_key": "beta-project",
+      "report_path": "samples/supervision_packets/reports/beta_closed_observation.txt",
+      "required": false,
+      "evidence_class": "deterministic_non_live_fixture",
+      "authority_basis": "explicit_manifest_binding",
+      "content_sha256": "4cce88440533cf08bd71d2e5a09f0e4c44b8d40e291c90c82920d38375ca29e2"
+    }
+  ]
+}

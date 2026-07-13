@@ -3,6 +3,49 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-13 - Explicit Cross-Project Supervision Packet V1
+
+Purpose: make multiple project/thread reports reviewable in one accepted
+Priority Review Console without implying a sequential execution schedule.
+
+Decision: accept `task_report_manifest.v1` as the only report-ingress contract
+for Cross-Project Supervision Packet V1. Every report must be explicitly named,
+repository-relative, UTF-8, and SHA-256 bound. Existing report normalization
+and gate classification remain the interpretation path.
+
+Effect: the packet emits one global attention queue, project-local worksets
+using the same task IDs, and a separate closed/informational collection. Rank
+is assigned once globally as attention/review priority. Project worksets never
+recalculate it. The Priority Review Console can consume the packet explicitly
+and shows project/thread/lane identity plus source report/hash while preserving
+Priority Lane / Active Decision / Evidence Inspector.
+
+Boundary: the tracked two-project, four-report package is deterministic
+non-live fixture evidence. There is no latest-file discovery, conversation
+inference, sibling-repository writeback, execution schedule, project tab,
+matrix, B/C primary layout, or executable action. Live report routing and
+round-trip resolution evidence remain later horizons.
+
+## 2026-07-13 - Priority Review Console Visual Acceptance Closed
+
+Purpose: close the remaining visual/comprehension gate without reopening the
+A/B/C direction decision or expanding the production layout.
+
+Decision: record `user_visual_acceptance: accepted` for A / Priority Review
+Console. The user confirmed that the elements, layout, descriptions,
+Japanese-first display, English switch, and Priority Lane / Active Decision /
+Evidence Inspector structure are understandable. The same production surface
+must not request another visual review.
+
+Effect: the generator, generated dashboard, priority readback, production
+capture readback, Project Cockpit, runtime projection, pipeline, and tests use
+one accepted state. Worker raster inspection remains a separate hash-bound QA
+record and does not replace or reset the user decision.
+
+Boundary: acceptance applies to the current A skeleton. It does not turn global
+attention rank into execution order, reopen B/C, authorize a project matrix or
+new primary layout, or add any executable action.
+
 ## 2026-07-13 - Priority Review Console Selected For Production
 
 Purpose: close the A/B/C material-direction gate and make the selected
@@ -41,17 +84,18 @@ Requirements preserved:
   external services, and target-repository writeback remain absent.
 - C3 and C4 capability boundaries remain unchanged.
 
-State: the A/B/C direction gate is closed. The production artifact, priority
-readback, and capture package are the review surfaces. User production visual
-acceptance is still pending and is not implied by Worker image inspection.
+State at selection time: the A/B/C direction gate was closed and the production
+artifact, priority readback, and capture package became the review surfaces.
+The later acceptance entry above supersedes the then-pending visual gate.
 
-Owner: Agent maintains the local production generator and evidence package;
-the user owns one free-form production visual/comprehension judgment.
+Historical owner at selection time: Agent maintained the local production
+generator and evidence package; the user owned one free-form production
+visual/comprehension judgment, now completed.
 
-Next move: open `samples/dashboard/devcockpitcore_dashboard.html` and judge
-whether the first viewport exposes current state, first priority, next
-operation, owner, evidence location, and current-claim status. Do not reopen an
-A/B/C choice unless a later explicit product decision supersedes this entry.
+Historical next move (completed): inspect whether the first viewport exposed
+current state, first priority, next operation, owner, evidence location, and
+current-claim status. Do not reopen an A/B/C choice unless a later explicit
+product decision supersedes this entry.
 
 Navigation note: README, Project Cockpit, runtime-state, pipeline, and this log
 are navigation and decision records, not live workflow authority. Verify Git,

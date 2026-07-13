@@ -12,6 +12,7 @@ import sys
 from typing import Any
 
 from .evidence_freshness import EvidenceFreshnessError, load_receipt
+from .supervision_packet import SupervisionPacketError, load_packet
 
 
 PRODUCER = "dev_cockpit.dashboard"
@@ -108,6 +109,7 @@ def build_dashboard_model(
     review_actions_json_path: str | Path = DEFAULT_REVIEW_ACTIONS_JSON_PATH,
     review_actions_md_path: str | Path = DEFAULT_REVIEW_ACTIONS_MD_PATH,
     priority_readback_path: str | Path = DEFAULT_PRIORITY_READBACK_PATH,
+    supervision_packet_path: str | Path | None = None,
     verify_freshness_hashes: bool = False,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
@@ -134,6 +136,24 @@ def build_dashboard_model(
     project_context_text, project_context_source = _read_text_source(
         root, project_context_path, "project_context"
     )
+    supervision_packet: dict[str, Any] = {}
+    supervision_packet_source: dict[str, Any] | None = None
+    if supervision_packet_path is not None:
+        packet_full_path = _resolve(root, supervision_packet_path)
+        try:
+            supervision_packet = load_packet(packet_full_path)
+        except (SupervisionPacketError, OSError) as exc:
+            raise DashboardError(
+                f"invalid cross-project supervision packet {supervision_packet_path}: {exc}"
+            ) from exc
+        supervision_packet_source = {
+            "label": "cross_project_supervision_packet",
+            "repo_relative_path": _display_path(root, supervision_packet_path),
+            "state": "loaded",
+            "schema_version": str(supervision_packet.get("schema_version", "unknown")),
+            "generated_at": str(supervision_packet.get("generated_at", "")),
+            "artifact_id": str(supervision_packet.get("artifact_id", "")),
+        }
     freshness_receipt_source = {
         "label": "evidence_freshness_receipt",
         "repo_relative_path": _display_path(root, freshness_receipt_path),
@@ -154,6 +174,7 @@ def build_dashboard_model(
         runtime_source,
         project_context_source,
         freshness_receipt_source,
+        *([supervision_packet_source] if supervision_packet_source else []),
     )
     health = _aggregate_health(validation, smoke, status, source_warnings)
     output_rel = _display_path(root, output_path)
@@ -169,6 +190,8 @@ def build_dashboard_model(
         project_context_source,
         freshness_receipt_source,
     ]
+    if supervision_packet_source:
+        sources.append(supervision_packet_source)
     warning_triage = _warning_triage(health, validation, smoke, status, sources)
     review_checkpoints = _review_checkpoints(health, validation, smoke)
     review_actions = _review_actions(
@@ -184,16 +207,20 @@ def build_dashboard_model(
     action_summary = _review_action_summary(review_actions)
     source_freshness = _freshness_summary(sources, generated)
     evidence_freshness = _receipt_freshness_projection(freshness_receipt)
-    priority_items = _priority_items(
-        health=health,
-        validation=validation,
-        smoke=smoke,
-        status=status,
-        receipt=freshness_receipt,
-        review_actions=review_actions,
-        validation_path=_display_path(root, validation_result_path),
-        smoke_path=_display_path(root, cross_project_smoke_result_path),
-        status_path=_display_path(root, status_snapshot_path),
+    priority_items = (
+        _packet_priority_items(supervision_packet)
+        if supervision_packet
+        else _priority_items(
+            health=health,
+            validation=validation,
+            smoke=smoke,
+            status=status,
+            receipt=freshness_receipt,
+            review_actions=review_actions,
+            validation_path=_display_path(root, validation_result_path),
+            smoke_path=_display_path(root, cross_project_smoke_result_path),
+            status_path=_display_path(root, status_snapshot_path),
+        )
     )
     decision_meters = _decision_meters(
         health,
@@ -240,10 +267,15 @@ def build_dashboard_model(
         "source_freshness": source_freshness,
         "evidence_freshness": evidence_freshness,
         "evidence_freshness_receipt": freshness_receipt,
-        "priority_policy": [dict(item) for item in PRIORITY_POLICY],
+        "supervision_packet": supervision_packet,
+        "priority_policy": (
+            [dict(item) for item in _list(supervision_packet.get("attention_policy"))]
+            if supervision_packet
+            else [dict(item) for item in PRIORITY_POLICY]
+        ),
         "priority_items": priority_items,
         "selected_priority_id": priority_items[0]["priority_id"] if priority_items else None,
-        "user_visual_acceptance": "pending",
+        "user_visual_acceptance": "accepted",
         "validation_pack": {
             "summary": _dict(validation.get("summary")),
             "health": _dict(validation.get("health")),
@@ -293,6 +325,7 @@ def render_dashboard(model: dict[str, Any]) -> str:
     output = _dict(model.get("output"))
     freshness = _dict(model.get("evidence_freshness"))
     receipt = _dict(model.get("evidence_freshness_receipt"))
+    supervision_packet = _dict(model.get("supervision_packet"))
     priorities = [item for item in _list(model.get("priority_items")) if isinstance(item, dict)]
     if not priorities:
         raise DashboardError("priority console requires at least one priority item")
@@ -330,7 +363,7 @@ def render_dashboard(model: dict[str, Any]) -> str:
         '          <button type="button" data-language="ja" aria-pressed="true" data-aria-ja="日本語を表示" data-aria-en="Show Japanese">日本語</button>',
         '          <button type="button" data-language="en" aria-pressed="false" data-aria-ja="英語を表示" data-aria-en="Show English">English</button>',
         "        </div>",
-        '        <div class="acceptance-state"><span class="lang-ja">視覚受入</span><span class="lang-en">Visual acceptance</span><strong><span class="lang-ja">判断待ち</span><span class="lang-en">Pending</span></strong></div>',
+        '        <div class="acceptance-state"><span class="lang-ja">視覚受入</span><span class="lang-en">Visual acceptance</span><strong><span class="lang-ja">受入済み</span><span class="lang-en">Accepted</span></strong></div>',
         "      </div>",
         "    </div>",
         '    <dl class="current-state-strip">',
@@ -345,6 +378,7 @@ def render_dashboard(model: dict[str, Any]) -> str:
         '    <a href="#priority-lane"><span class="lang-ja">優先一覧</span><span class="lang-en">Priorities</span></a>',
         '    <a href="#active-decision"><span class="lang-ja">判断</span><span class="lang-en">Decision</span></a>',
         '    <a href="#evidence-inspector"><span class="lang-ja">根拠</span><span class="lang-en">Evidence</span></a>',
+        ('    <a href="#project-worksets"><span class="lang-ja">プロジェクト別</span><span class="lang-en">Project worksets</span></a>' if supervision_packet else ""),
         '    <a href="#evidence-appendix"><span class="lang-ja">証拠付録</span><span class="lang-en">Evidence appendix</span></a>',
         "  </nav>",
         '  <main id="main-content" class="production-page" tabindex="-1">',
@@ -354,6 +388,7 @@ def render_dashboard(model: dict[str, Any]) -> str:
         _active_decision(selected),
         _evidence_inspector(selected, receipt),
         "    </div>",
+        _packet_worksets_section(supervision_packet),
         _production_appendix(model, validation, smoke, action_package, action_summary, output, receipt),
         "  </main>",
         _dashboard_footer(model),
@@ -381,13 +416,17 @@ def _priority_lane(priorities: list[dict[str, Any]]) -> str:
         evidence = evidence_refs[0] if evidence_refs else {}
         evidence_route = _compact_path(str(evidence.get("source_path", item.get("primary_evidence_path", ""))))
         evidence_classification = _localized_evidence_labels(evidence)["classification"]
+        project_key = str(item.get("project_key", "unknown"))
+        thread_id = str(item.get("thread_id", "local-observation"))
+        lane_id = str(item.get("lane_id", "observer"))
         first_hook = ' data-landmark="priority-first"' if index == 0 else ""
         buttons.append(
             f'<button type="button" class="priority-row state-{_e(state.get("key", "informational"))}" '
-            f'data-priority-id="{_e(priority_id)}" data-evidence-id="{_e(evidence_id)}" role="option" aria-selected="{"true" if index == 0 else "false"}" '
+            f'data-priority-id="{_e(priority_id)}" data-evidence-id="{_e(evidence_id)}" data-project-key="{_e(project_key)}" data-thread-id="{_e(thread_id)}" data-lane-id="{_e(lane_id)}" role="option" aria-selected="{"true" if index == 0 else "false"}" '
             f'aria-controls="active-decision evidence-inspector" tabindex="{"0" if index == 0 else "-1"}"{first_hook}>'
             f'<span class="priority-rank">#{_e(item.get("rank", index + 1))}</span>'
             '<span class="priority-copy">'
+            f'<span class="priority-identity">{_e(project_key)} · {_e(thread_id)} · {_e(lane_id)}</span>'
             f'<strong><span class="lang-ja">{_e(action.get("ja", ""))}</span><span class="lang-en">{_e(action.get("en", ""))}</span></strong>'
             f'<small><span class="lang-ja">{_e(reason.get("ja", ""))}</span><span class="lang-en">{_e(reason.get("en", ""))}</span></small>'
             '<span class="priority-meta">'
@@ -400,10 +439,10 @@ def _priority_lane(priorities: list[dict[str, Any]]) -> str:
         '      <section id="priority-lane" class="console-panel priority-lane" data-landmark="priority-lane" aria-labelledby="priority-lane-title">'
         '<header class="console-panel-head"><p>01 / PRIORITY LANE</p>'
         '<h2 id="priority-lane-title"><span class="lang-ja">優先事項</span><span class="lang-en">Priorities</span></h2>'
-        '<span class="panel-hint"><span class="lang-ja">上から対応</span><span class="lang-en">Work top-down</span></span></header>'
+        '<span class="panel-hint"><span class="lang-ja">確認優先度</span><span class="lang-en">Review attention</span></span></header>'
         f'<div class="priority-list" role="listbox" aria-label="優先レビュー一覧" data-aria-ja="優先レビュー一覧" data-aria-en="Priority review queue">{"".join(buttons)}</div>'
-        '<p class="queue-note"><span class="lang-ja">順位は必須ブロッカー → 必須検証失敗 → 現状根拠不適格 → 担当付き警告 → 保守判断 → 任意情報。固定の同順位規則で決定します。</span>'
-        '<span class="lang-en">Order: required blocker → required validation failure → ineligible current evidence → owned warning → maintenance decision → optional information. Stable tie-breaks apply.</span></p>'
+        '<p class="queue-note"><span class="lang-ja">global rank は確認・判断の優先度であり、実行順ではありません。異なるprojectの安全な継続は並行できます。</span>'
+        '<span class="lang-en">Global rank is attention and review priority, not execution order. Safe continuations in different projects may proceed in parallel.</span></p>'
         "</section>"
     )
 
@@ -415,6 +454,10 @@ def _active_decision(item: dict[str, Any]) -> str:
     outcome = _dict(item.get("desired_outcome"))
     state = _dict(item.get("state"))
     owner = _dict(item.get("owner"))
+    project_key = str(item.get("project_key", "unknown"))
+    thread_id = str(item.get("thread_id", "local-observation"))
+    lane_id = str(item.get("lane_id", "observer"))
+    slice_id = str(item.get("slice_id", "local-review"))
     priority_id = str(item.get("priority_id", ""))
     return (
         f'      <section id="active-decision" class="console-panel active-decision" data-landmark="active-decision" data-priority-id="{_e(priority_id)}" data-selected-priority-id="{_e(priority_id)}" aria-labelledby="active-decision-title">'
@@ -426,6 +469,10 @@ def _active_decision(item: dict[str, Any]) -> str:
         f'<h3 data-field="action"><span class="lang-ja">{_e(action.get("ja", ""))}</span><span class="lang-en">{_e(action.get("en", ""))}</span></h3>'
         f'<p class="decision-reason" data-field="reason"><span class="lang-ja">{_e(reason.get("ja", ""))}</span><span class="lang-en">{_e(reason.get("en", ""))}</span></p>'
         '<dl class="decision-grid">'
+        '<div><dt><span class="lang-ja">project / thread</span><span class="lang-en">Project / thread</span></dt>'
+        f'<dd data-field="project-identity">{_e(project_key)} / {_e(thread_id)}</dd></div>'
+        '<div><dt><span class="lang-ja">lane / slice</span><span class="lang-en">Lane / slice</span></dt>'
+        f'<dd data-field="lane-identity">{_e(lane_id)} / {_e(slice_id)}</dd></div>'
         '<div><dt><span class="lang-ja">判断すること</span><span class="lang-en">Decision</span></dt>'
         f'<dd data-field="decision"><span class="lang-ja">{_e(decision.get("ja", ""))}</span><span class="lang-en">{_e(decision.get("en", ""))}</span></dd></div>'
         '<div><dt><span class="lang-ja">望ましい結果</span><span class="lang-en">Desired outcome</span></dt>'
@@ -475,6 +522,7 @@ def _evidence_inspector(item: dict[str, Any], receipt: dict[str, Any]) -> str:
         '<details class="provenance-details" data-landmark="provenance"><summary><span class="lang-ja">由来の詳細</span><span class="lang-en">Provenance details</span></summary>'
         '<dl class="provenance-grid">'
         f'<div><dt>source_id</dt><dd data-field="source-id">{_e(evidence.get("source_id", ""))}</dd></div>'
+        f'<div><dt>attention_class</dt><dd data-field="attention-class">{_e(item.get("attention_class", "local_evidence_priority"))}</dd></div>'
         f'<div><dt>full_path</dt><dd class="full-path" data-field="source-path">{_e(path)}</dd></div>'
         f'<div><dt>authority</dt><dd data-field="authority">{_e(evidence.get("authority_classification", "unknown"))}</dd></div>'
         f'<div><dt>reason_codes</dt><dd data-field="reason-codes">{_e(reason_codes)}</dd></div>'
@@ -483,6 +531,41 @@ def _evidence_inspector(item: dict[str, Any], receipt: dict[str, Any]) -> str:
         "</dl></details>"
         f'<p class="receipt-id">receipt <code>{_e(receipt.get("capture_id", ""))}</code></p>'
         "</div></aside>"
+    )
+
+
+def _packet_worksets_section(packet: dict[str, Any]) -> str:
+    if not packet:
+        return ""
+    cards: list[str] = []
+    for raw_workset in _list(packet.get("project_worksets")):
+        workset = _dict(raw_workset)
+        project_key = str(workset.get("project_key", "unknown"))
+        active_ids = ", ".join(str(value) for value in _list(workset.get("active_task_ids"))) or "none"
+        closed_ids = ", ".join(
+            str(value) for value in _list(workset.get("closed_or_informational_task_ids"))
+        ) or "none"
+        ranks = ", ".join(
+            f"#{_e(_dict(value).get('global_rank'))} {_e(_dict(value).get('task_id'))}"
+            for value in _list(workset.get("global_rank_references"))
+        ) or "none"
+        cards.append(
+            '<article class="workset-card">'
+            f'<h3>{_e(project_key)}</h3>'
+            '<dl>'
+            f'<div><dt><span class="lang-ja">project内の先頭task</span><span class="lang-en">Project-local first task</span></dt><dd><code>{_e(workset.get("project_local_first_task_id") or "none")}</code></dd></div>'
+            f'<div><dt><span class="lang-ja">global rank参照</span><span class="lang-en">Global rank references</span></dt><dd>{ranks}</dd></div>'
+            f'<div><dt><span class="lang-ja">active task</span><span class="lang-en">Active tasks</span></dt><dd>{_e(active_ids)}</dd></div>'
+            f'<div><dt><span class="lang-ja">user / supervisor gate</span><span class="lang-en">User / supervisor gate</span></dt><dd>{_e(workset.get("user_or_supervisor_gate", "none"))}</dd></div>'
+            f'<div><dt><span class="lang-ja">安全な継続</span><span class="lang-en">Safe continuation</span></dt><dd>{_e(workset.get("safe_continuation", "none"))}</dd></div>'
+            f'<div><dt><span class="lang-ja">closed / informational</span><span class="lang-en">Closed / informational</span></dt><dd>{_e(closed_ids)}</dd></div>'
+            '</dl></article>'
+        )
+    return (
+        '    <details id="project-worksets" class="project-worksets">'
+        '<summary><span><span class="lang-ja">project別 workset</span><span class="lang-en">Project worksets</span></span>'
+        '<small><span class="lang-ja">同じtask IDをproject単位で再投影します。</span><span class="lang-en">The same task IDs are reprojected by project; ranks are not recalculated.</span></small></summary>'
+        f'<div class="workset-grid">{"".join(cards)}</div></details>'
     )
 
 
@@ -684,6 +767,13 @@ def main(argv: list[str] | None = None) -> int:
         help="Output deterministic priority/readback JSON path.",
     )
     parser.add_argument(
+        "--supervision-packet",
+        help=(
+            "Optional cross_project_supervision_packet.v1 JSON path. "
+            "When omitted, preserve the existing evidence-derived priority path."
+        ),
+    )
+    parser.add_argument(
         "--generated-at",
         help="Optional deterministic dashboard generation timestamp; defaults to receipt assessed_at.",
     )
@@ -708,6 +798,7 @@ def main(argv: list[str] | None = None) -> int:
             review_actions_json_path=args.review_actions_json,
             review_actions_md_path=args.review_actions_md,
             priority_readback_path=args.priority_readback,
+            supervision_packet_path=args.supervision_packet,
             verify_freshness_hashes=not args.skip_freshness_hash_verification,
             generated_at=args.generated_at,
         )
@@ -1708,6 +1799,105 @@ def _receipt_freshness_projection(receipt: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _packet_priority_items(packet: dict[str, Any]) -> list[dict[str, Any]]:
+    """Project manifest-bound report tasks into the accepted Priority Console shape."""
+
+    first_by_project = {
+        str(_dict(workset).get("project_key", "")): str(
+            _dict(workset).get("project_local_first_task_id", "")
+        )
+        for workset in _list(packet.get("project_worksets"))
+    }
+    state_labels = {
+        "true_stop_or_required_failure": {"key": "blocked", "ja": "停止", "en": "Blocked"},
+        "user_authorization_or_material_decision": {"key": "decision", "ja": "判断待ち", "en": "Decision required"},
+        "awaiting_supervisor_acceptance": {"key": "review", "ja": "監修確認", "en": "Supervisor review"},
+        "active_safe_continuation": {"key": "continue", "ja": "安全に継続", "en": "Safe continuation"},
+        "unknown_requiring_review": {"key": "review", "ja": "要確認", "en": "Review required"},
+    }
+    items: list[dict[str, Any]] = []
+    for raw_task in _list(packet.get("global_attention_queue")):
+        task = _dict(raw_task)
+        project_key = str(task.get("project_key", "unknown"))
+        task_id = str(task.get("task_id", ""))
+        attention_class = str(task.get("attention_class", "unknown_requiring_review"))
+        next_state = _dict(task.get("next_state"))
+        next_text = str(
+            next_state.get("recommended_slice")
+            or (
+                "user work: " + str(next_state.get("user_work"))
+                if next_state.get("user_work") not in {None, "none"}
+                else next_state.get("agent_work") or "review classification"
+            )
+        )
+        source_path = str(task.get("source_report_path", ""))
+        source_hash = str(task.get("source_report_sha256", ""))
+        evidence = {
+            "source_id": f"{task_id}.source_report",
+            "source_path": source_path,
+            "freshness_state": "not_applicable",
+            "temporal_state": "not_applicable",
+            "revision_binding_state": "match",
+            "current_state_claim_eligible": False,
+            "assessed_at": str(packet.get("generated_at", "")),
+            "fresh_through": None,
+            "content_sha256": source_hash,
+            "authority_classification": "explicit_manifest_bound_report",
+            "reason_codes": [attention_class, str(task.get("gate_stop_class", "UNKNOWN"))],
+        }
+        items.append(
+            {
+                "condition_key": f"supervision_packet:{task_id}",
+                "precedence": int(task.get("attention_precedence", 5)),
+                "project_key": project_key,
+                "thread_id": str(task.get("thread_id", "unknown-thread")),
+                "lane_id": str(task.get("lane_id", "unknown-lane")),
+                "slice_id": str(task.get("slice_id", "unknown-slice")),
+                "artifact_id": str(task.get("artifact_id", "unknown-artifact")),
+                "attention_class": attention_class,
+                "global_rank_meaning": "attention_and_review_priority_only",
+                "project_local_first": first_by_project.get(project_key) == task_id,
+                "required": bool(task.get("required")),
+                "state": state_labels.get(attention_class, state_labels["unknown_requiring_review"]),
+                "action": {
+                    "ja": f"{project_key}: {task.get('outcome_summary', 'reportを確認')}",
+                    "en": str(task.get("outcome_summary", "Review report")),
+                },
+                "reason": {
+                    "ja": f"現在: {task.get('current_state', 'unknown')}",
+                    "en": f"Current state: {task.get('current_state', 'unknown')}",
+                },
+                "decision": {
+                    "ja": f"確認分類: {attention_class}",
+                    "en": f"Attention class: {attention_class}",
+                },
+                "desired_outcome": {"ja": next_text, "en": next_text},
+                "owner": {
+                    "id": _slug(next_state.get("owner") or "supervisor"),
+                    "ja": str(next_state.get("owner") or "Supervisor"),
+                    "en": str(next_state.get("owner") or "Supervisor"),
+                },
+                "raw_condition": str(task.get("gate_decision", "unknown")),
+                "primary_evidence_id": evidence["source_id"],
+                "primary_evidence_path": source_path,
+                "evidence_refs": [evidence],
+                "review_action_refs": [],
+                "source_report_sha256": source_hash,
+                "claim_class": "derived",
+                "evidence_claim_class": "observed_report",
+                "display_copy_claim_class": "editorial",
+                "ranking_policy_claim_class": "policy",
+                "executable": False,
+                "blocked_by_gate": attention_class
+                in {"true_stop_or_required_failure", "user_authorization_or_material_decision"},
+                "safe_next_surface": "local_review",
+                "priority_id": task_id,
+                "rank": int(task.get("global_rank", len(items) + 1)),
+            }
+        )
+    return items
+
+
 def _priority_items(
     *,
     health: dict[str, Any],
@@ -1759,7 +1949,7 @@ def _priority_items(
             "fresh_through": None,
             "content_sha256": None,
             "authority_classification": "review_metadata",
-            "reason_codes": ["manual_visual_acceptance_pending"],
+            "reason_codes": ["review_metadata_not_current_state_evidence"],
         }
 
     def add(
@@ -2800,6 +2990,7 @@ def priority_readback(model: dict[str, Any]) -> dict[str, Any]:
     freshness = _dict(model.get("evidence_freshness"))
     priority_output = _dict(model.get("priority_readback"))
     priorities = [dict(item) for item in _list(model.get("priority_items")) if isinstance(item, dict)]
+    supervision_packet = _dict(model.get("supervision_packet"))
     receipt_path = _source_path(_list(model.get("sources")), "evidence_freshness_receipt")
     return {
         "schema_version": "devcockpit_priority_readback.v1",
@@ -2814,10 +3005,22 @@ def priority_readback(model: dict[str, Any]) -> dict[str, Any]:
             "priority_count": len(priorities),
             "default_language": "ja",
             "languages": ["ja", "en"],
-            "user_visual_acceptance": str(model.get("user_visual_acceptance", "pending")),
+            "user_visual_acceptance": str(model.get("user_visual_acceptance", "accepted")),
             "executable": False,
         },
         "priority_policy": [dict(item) for item in _list(model.get("priority_policy")) if isinstance(item, dict)],
+        "supervision_packet": {
+            "loaded": bool(supervision_packet),
+            "schema_version": supervision_packet.get("schema_version"),
+            "artifact_id": supervision_packet.get("artifact_id"),
+            "coverage": _dict(supervision_packet.get("coverage")),
+            "project_worksets": [
+                dict(item)
+                for item in _list(supervision_packet.get("project_worksets"))
+                if isinstance(item, dict)
+            ],
+            "scope_boundary": _dict(supervision_packet.get("scope_boundary")),
+        },
         "freshness_receipt": {
             "path": receipt_path,
             "schema_version": freshness.get("schema_version"),
@@ -3525,6 +3728,8 @@ def _dashboard_script() -> str:
     bilingual(decision.querySelector('[data-field="decision"]'), item.decision);
     bilingual(decision.querySelector('[data-field="outcome"]'), item.desired_outcome);
     bilingual(decision.querySelector('[data-field="owner"]'), item.owner);
+    text('#active-decision [data-field="project-identity"]', (item.project_key || "unknown") + " / " + (item.thread_id || "local-observation"));
+    text('#active-decision [data-field="lane-identity"]', (item.lane_id || "observer") + " / " + (item.slice_id || "local-review"));
     var evidence = (item.evidence_refs || [])[0] || {};
     var evidenceLabels = localizedEvidenceLabels(evidence);
     inspector.dataset.evidenceId = evidence.source_id || "";
@@ -3537,6 +3742,7 @@ def _dashboard_script() -> str:
     text('#evidence-inspector [data-field="assessed"]', evidence.assessed_at || "n/a");
     text('#evidence-inspector [data-field="fresh-through"]', evidence.fresh_through || "n/a");
     text('#evidence-inspector [data-field="source-id"]', evidence.source_id || "n/a");
+    text('#evidence-inspector [data-field="attention-class"]', item.attention_class || "local_evidence_priority");
     text('#evidence-inspector [data-field="source-path"]', evidence.source_path || "n/a");
     text('#evidence-inspector [data-field="authority"]', evidence.authority_classification || "unknown");
     text('#evidence-inspector [data-field="reason-codes"]', (evidence.reason_codes || []).join(", ") || "none");
@@ -3786,6 +3992,7 @@ body {
 .priority-row[aria-selected="true"] { border-left-color: var(--priority); background: #252116; }
 .priority-rank { color: var(--priority); font: 800 14px/1.4 Consolas, "Courier New", monospace; }
 .priority-copy { display: grid; min-width: 0; gap: 5px; }
+.priority-identity { color: var(--teal); font: 700 10px/1.3 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
 .priority-copy strong { font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
 .priority-copy small { color: var(--muted); font-size: 11.5px; line-height: 1.4; overflow-wrap: anywhere; }
 .priority-meta { display: flex; flex-wrap: wrap; gap: 5px 10px; color: var(--priority); font-size: 11px; font-weight: 800; }
@@ -3832,6 +4039,27 @@ body {
 .provenance-grid { font-family: Consolas, "Courier New", monospace; font-size: 11px; }
 .full-path, .hash-value { overflow-wrap: anywhere; word-break: normal; }
 .receipt-id { margin: 14px 0 0; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+.project-worksets {
+  max-width: 1480px;
+  margin: 16px auto 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-panel);
+}
+.project-worksets > summary {
+  display: grid;
+  grid-template-columns: minmax(160px, auto) minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-weight: 800;
+}
+.project-worksets > summary small { color: var(--muted); font-weight: 400; }
+.workset-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; padding: 0 16px 16px; }
+.workset-card { min-width: 0; padding: 14px; border: 1px solid var(--console-line); background: var(--console-deep); }
+.workset-card h3 { margin: 0 0 10px; color: var(--teal); }
+.workset-card dl { display: grid; gap: 8px; margin: 0; }
+.workset-card dt { color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.workset-card dd { margin: 2px 0 0; font: 11px/1.4 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
 .evidence-appendix {
   max-width: 1480px;
   margin: 16px auto 0;
@@ -4447,6 +4675,7 @@ code {
   .console-panel-head { min-height: 74px; padding: 11px 13px; }
   .priority-row { min-height: 82px; padding: 11px; }
   .decision-body, .evidence-body { padding: 14px; }
+  .project-worksets > summary { grid-template-columns: 1fr; }
   .evidence-appendix > summary { grid-template-columns: 1fr; }
   .top-strip { padding: 22px 18px; }
   .page { padding: 18px; }
@@ -4504,7 +4733,7 @@ code {
   .page {
     padding: 0;
   }
-  .production-header, .production-page, .console-panel, .evidence-appendix {
+  .production-header, .production-page, .console-panel, .project-worksets, .evidence-appendix {
     background: #ffffff;
     color: #000000;
     border-color: #777777;
@@ -4512,6 +4741,7 @@ code {
   .production-page { padding: 0; }
   .priority-workspace { grid-template-columns: 1fr; }
   .priority-row, .console-panel-head { background: #ffffff; color: #000000; }
+  .project-worksets:not([open]) > :not(summary) { display: block; }
   .evidence-appendix:not([open]) > :not(summary) { display: block; }
   .section {
     break-inside: avoid;

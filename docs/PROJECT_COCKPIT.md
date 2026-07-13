@@ -5,9 +5,11 @@ snapshot_kind: persisted_navigation_snapshot
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
 priority_readback_path: samples/dashboard/devcockpitcore_priority_readback.json
+supervision_packet_path: samples/supervision_packets/cross_project_supervision_packet_v1.json
+supervision_packet_manifest_path: samples/supervision_packets/task_report_manifest_v1.json
 selected_information_architecture: A_priority_review_console
 selection_state: closed
-user_visual_acceptance: pending
+user_visual_acceptance: accepted
 tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
@@ -25,7 +27,8 @@ Supervisor carries current development direction.
 
 DevCockpitCore provides read-only repository observation, normalized report
 readback, gate classification, local validation evidence, cross-project smoke
-observation, and a static review dashboard. A / Priority Review Console is the
+observation, explicit manifest-bound cross-project supervision packets, and a
+static review dashboard. A / Priority Review Console is the
 selected production information architecture, and the A/B/C direction gate is
 closed. Its first viewport is organized as current state, ordered priority,
 Active Decision, and adjacent Evidence Inspector rather than the earlier
@@ -39,7 +42,7 @@ keeps review actions non-executable. B / Narrative Status Brief is retained
 only as a possible future handoff or summary view. C / Lane And Project
 Overview is retained only as a possible future cross-project overview. Neither
 is a production tab or an active slice. User production visual acceptance of A
-remains pending.
+is recorded as accepted.
 
 ## Capability Summary
 
@@ -48,6 +51,7 @@ remains pending.
 | Repository observation and adapter validation | available | read-only against target repositories |
 | Report normalization and gate classification | available | interpretation only; no prompt generation |
 | Validation pack and cross-project smoke | available | local evidence; missing optional siblings warn |
+| Cross-Project Supervision Packet V1 | available | explicit manifest-bound reports; global rank is attention, not execution |
 | Priority Review Console and review actions | available | local, static, bilingual, and non-executable |
 | Evidence Freshness V1 integration | available | consumes a validated point-in-time receipt; does not infer live authority |
 | C3 probes | bounded | exactly two fixed help-only keys |
@@ -63,12 +67,15 @@ remains pending.
 - [Production capture manifest](../samples/dashboard/production_capture/production_capture_manifest.json)
 - [Production capture readback](../samples/dashboard/production_capture/production_capture_readback.json)
 - [Production contact sheet](../samples/dashboard/production_capture/screenshots/priority-review-console-contact-sheet.png)
+- [Cross-project supervision packet](../samples/supervision_packets/cross_project_supervision_packet_v1.json)
+- [Project-aware packet readback](../samples/supervision_packets/cross_project_supervision_packet_v1.md)
 
 Generate the default artifacts from the repository root in PowerShell:
 
 ```powershell
 $env:PYTHONPATH = "src"
-python -m dev_cockpit.dashboard
+python -m dev_cockpit.dashboard `
+  --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json
 Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```
 
@@ -120,12 +127,18 @@ assessed local receipt followed by dashboard regeneration.
 
 ## Current Review Decision
 
-A / Priority Review Console is selected and is the production direction. The
-remaining user decision is one free-form visual/comprehension review of the
-production artifact: can the first viewport reveal current state, first
-priority, next operation, owner, evidence location, and current-claim status?
-This snapshot does not claim that acceptance; `user_visual_acceptance`
-remains `pending`.
+A / Priority Review Console is selected and is the accepted production
+direction. The user confirmed the elements, layout, Japanese-first display,
+English switch, and Priority Lane / Active Decision / Evidence Inspector
+structure. `user_visual_acceptance` is therefore `accepted`; this surface does
+not request the same visual review again. Global attention rank remains review
+priority rather than a sequential execution schedule.
+
+The tracked packet is deterministic non-live fixture evidence covering two
+fictional projects and four reports. It proves task identity, global ranking,
+closed-item separation, and project-workset reprojection, but does not claim
+live coverage. Live reports remain explicit future inputs; absent live coverage
+does not block this contract or dashboard integration.
 
 This document is navigation and decision context, not live workflow authority.
 Verify Git state, the receipt authority boundary, generated readback, raster

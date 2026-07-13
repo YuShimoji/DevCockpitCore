@@ -1,8 +1,8 @@
 {
   "schema_version": "production_capture_readback.v1",
   "artifact_id": "priority-review-console-production-observation-surface-v1",
-  "capture_id": "priority-review-console-f160ca3a7b90e3b19d4f0e46",
-  "captured_at": "2026-07-12T00:00:00.000Z",
+  "capture_id": "priority-review-console-f228d9eea5e8885d0a6a58e1",
+  "captured_at": "2026-07-13T07:10:00.000Z",
   "source_binding": {
     "status": "pass",
     "checks": {
@@ -17,40 +17,31 @@
       "priority_to_freshness_capture_id_match": true
     },
     "declared_freshness_path_candidates": [
-      "c:\\users\\thank\\storage\\media contents projects\\devcockpitcore-priority-console-v1\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json",
-      "c:\\users\\thank\\storage\\media contents projects\\devcockpitcore-priority-console-v1\\samples\\dashboard\\production_capture\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json"
+      "c:\\users\\planner007\\devcockpitcore-supervision-packet-v1\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json",
+      "c:\\users\\planner007\\devcockpitcore-supervision-packet-v1\\samples\\dashboard\\production_capture\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json"
     ],
-    "actual_freshness_path": "c:\\users\\thank\\storage\\media contents projects\\devcockpitcore-priority-console-v1\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json"
+    "actual_freshness_path": "c:\\users\\planner007\\devcockpitcore-supervision-packet-v1\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json"
   },
   "automated_semantic_parity": {
     "status": "pass",
     "expected_priority_contract": {
       "priority_ids": [
-        "priority-4c6fe193f4e7",
-        "priority-3978971f158b",
-        "priority-75a6f2949a8b",
-        "priority-aeb1cd4b54d7",
-        "priority-2bba5e675add",
-        "priority-a89ed06a4a15",
-        "priority-8b555b987fdc"
+        "task-de0aa9c2efa92270",
+        "task-b12276783e599eb2",
+        "task-72cd8ffa26a76611"
       ],
       "evidence_ids": [
-        "devcockpitcore.live_status_observation",
-        "validation-pack-sample",
-        "cross-project-smoke-sample",
-        "writingpage.live_status_observation"
+        "task-de0aa9c2efa92270.source_report",
+        "task-b12276783e599eb2.source_report",
+        "task-72cd8ffa26a76611.source_report"
       ],
-      "selected_priority_id": "priority-4c6fe193f4e7",
+      "selected_priority_id": "task-de0aa9c2efa92270",
       "evidence_by_priority_id": {
-        "priority-4c6fe193f4e7": "devcockpitcore.live_status_observation",
-        "priority-3978971f158b": "validation-pack-sample",
-        "priority-75a6f2949a8b": "cross-project-smoke-sample",
-        "priority-aeb1cd4b54d7": "cross-project-smoke-sample",
-        "priority-2bba5e675add": "cross-project-smoke-sample",
-        "priority-a89ed06a4a15": "cross-project-smoke-sample",
-        "priority-8b555b987fdc": "writingpage.live_status_observation"
+        "task-de0aa9c2efa92270": "task-de0aa9c2efa92270.source_report",
+        "task-b12276783e599eb2": "task-b12276783e599eb2.source_report",
+        "task-72cd8ffa26a76611": "task-72cd8ffa26a76611.source_report"
       },
-      "priorities_sha256": "16df44d10a2c18f16abe56e04eb50c41b6909919a194e300afc536cb13e9f11c"
+      "priorities_sha256": "96a9b7f5a2820d88b074fa263bd5dda94f0d3f9dd8e1a2f3617af911b0374307"
     },
     "checks": {
       "expected_priority_count_nonzero": true,
@@ -71,31 +62,53 @@
       "japanese_embedded_priority_model": true,
       "english_embedded_priority_model": true,
       "japanese_landmarks": true,
-      "english_landmarks": true
+      "english_landmarks": true,
+      "japanese_project_identity": true,
+      "english_project_identity": true,
+      "japanese_lane_identity": true,
+      "english_lane_identity": true,
+      "japanese_attention_class": true,
+      "english_attention_class": true
     },
     "japanese": {
       "language": "ja",
       "priority_ids": [
-        "priority-4c6fe193f4e7",
-        "priority-3978971f158b",
-        "priority-75a6f2949a8b",
-        "priority-aeb1cd4b54d7",
-        "priority-2bba5e675add",
-        "priority-a89ed06a4a15",
-        "priority-8b555b987fdc"
+        "task-de0aa9c2efa92270",
+        "task-b12276783e599eb2",
+        "task-72cd8ffa26a76611"
       ],
       "evidence_ids": [
-        "devcockpitcore.live_status_observation",
-        "validation-pack-sample",
-        "cross-project-smoke-sample",
-        "writingpage.live_status_observation"
+        "task-de0aa9c2efa92270.source_report",
+        "task-b12276783e599eb2.source_report",
+        "task-72cd8ffa26a76611.source_report"
       ],
       "selected_priority_ids": [
-        "priority-4c6fe193f4e7"
+        "task-de0aa9c2efa92270"
       ],
-      "decision_priority_id": "priority-4c6fe193f4e7",
-      "inspector_priority_id": "priority-4c6fe193f4e7",
-      "inspector_evidence_id": "devcockpitcore.live_status_observation",
+      "decision_priority_id": "task-de0aa9c2efa92270",
+      "inspector_priority_id": "task-de0aa9c2efa92270",
+      "inspector_evidence_id": "task-de0aa9c2efa92270.source_report",
+      "project_identity": {
+        "expected": "alpha-project / alpha-release-thread",
+        "rendered": {
+          "text": "alpha-project / alpha-release-thread",
+          "visible": true
+        }
+      },
+      "lane_identity": {
+        "expected": "RELEASE VALIDATION / alpha-release-validation-v1",
+        "rendered": {
+          "text": "RELEASE VALIDATION / alpha-release-validation-v1",
+          "visible": true
+        }
+      },
+      "attention_class": {
+        "expected": "true_stop_or_required_failure",
+        "rendered": {
+          "text": "true_stop_or_required_failure",
+          "visible": true
+        }
+      },
       "visible_landmarks": {
         "current-state": true,
         "priority-lane": true,
@@ -105,31 +118,47 @@
         "freshness-status": true,
         "provenance": true
       },
-      "embedded_priorities_sha256": "16df44d10a2c18f16abe56e04eb50c41b6909919a194e300afc536cb13e9f11c"
+      "embedded_priorities_sha256": "96a9b7f5a2820d88b074fa263bd5dda94f0d3f9dd8e1a2f3617af911b0374307"
     },
     "english": {
       "language": "en",
       "priority_ids": [
-        "priority-4c6fe193f4e7",
-        "priority-3978971f158b",
-        "priority-75a6f2949a8b",
-        "priority-aeb1cd4b54d7",
-        "priority-2bba5e675add",
-        "priority-a89ed06a4a15",
-        "priority-8b555b987fdc"
+        "task-de0aa9c2efa92270",
+        "task-b12276783e599eb2",
+        "task-72cd8ffa26a76611"
       ],
       "evidence_ids": [
-        "devcockpitcore.live_status_observation",
-        "validation-pack-sample",
-        "cross-project-smoke-sample",
-        "writingpage.live_status_observation"
+        "task-de0aa9c2efa92270.source_report",
+        "task-b12276783e599eb2.source_report",
+        "task-72cd8ffa26a76611.source_report"
       ],
       "selected_priority_ids": [
-        "priority-4c6fe193f4e7"
+        "task-de0aa9c2efa92270"
       ],
-      "decision_priority_id": "priority-4c6fe193f4e7",
-      "inspector_priority_id": "priority-4c6fe193f4e7",
-      "inspector_evidence_id": "devcockpitcore.live_status_observation",
+      "decision_priority_id": "task-de0aa9c2efa92270",
+      "inspector_priority_id": "task-de0aa9c2efa92270",
+      "inspector_evidence_id": "task-de0aa9c2efa92270.source_report",
+      "project_identity": {
+        "expected": "alpha-project / alpha-release-thread",
+        "rendered": {
+          "text": "alpha-project / alpha-release-thread",
+          "visible": true
+        }
+      },
+      "lane_identity": {
+        "expected": "RELEASE VALIDATION / alpha-release-validation-v1",
+        "rendered": {
+          "text": "RELEASE VALIDATION / alpha-release-validation-v1",
+          "visible": true
+        }
+      },
+      "attention_class": {
+        "expected": "true_stop_or_required_failure",
+        "rendered": {
+          "text": "true_stop_or_required_failure",
+          "visible": true
+        }
+      },
       "visible_landmarks": {
         "current-state": true,
         "priority-lane": true,
@@ -139,21 +168,21 @@
         "freshness-status": true,
         "provenance": true
       },
-      "embedded_priorities_sha256": "16df44d10a2c18f16abe56e04eb50c41b6909919a194e300afc536cb13e9f11c"
+      "embedded_priorities_sha256": "96a9b7f5a2820d88b074fa263bd5dda94f0d3f9dd8e1a2f3617af911b0374307"
     }
   },
   "automated_priority_click_sync": {
     "status": "pass",
     "mode": "multi_priority_navigation",
-    "target_priority_id": "priority-3978971f158b",
+    "target_priority_id": "task-b12276783e599eb2",
     "state": {
       "selected_priority_ids": [
-        "priority-3978971f158b"
+        "task-b12276783e599eb2"
       ],
-      "decision_priority_id": "priority-3978971f158b",
-      "inspector_priority_id": "priority-3978971f158b",
-      "inspector_evidence_id": "validation-pack-sample",
-      "focused_priority_id": "priority-3978971f158b",
+      "decision_priority_id": "task-b12276783e599eb2",
+      "inspector_priority_id": "task-b12276783e599eb2",
+      "inspector_evidence_id": "task-b12276783e599eb2.source_report",
+      "focused_priority_id": "task-b12276783e599eb2",
       "pass": true
     }
   },
@@ -163,60 +192,60 @@
     "steps": [
       {
         "key": "End",
-        "expected_priority_id": "priority-8b555b987fdc",
+        "expected_priority_id": "task-72cd8ffa26a76611",
         "state": {
           "selected_priority_ids": [
-            "priority-8b555b987fdc"
+            "task-72cd8ffa26a76611"
           ],
-          "decision_priority_id": "priority-8b555b987fdc",
-          "inspector_priority_id": "priority-8b555b987fdc",
-          "inspector_evidence_id": "writingpage.live_status_observation",
-          "focused_priority_id": "priority-8b555b987fdc",
+          "decision_priority_id": "task-72cd8ffa26a76611",
+          "inspector_priority_id": "task-72cd8ffa26a76611",
+          "inspector_evidence_id": "task-72cd8ffa26a76611.source_report",
+          "focused_priority_id": "task-72cd8ffa26a76611",
           "pass": true
         },
         "pass": true
       },
       {
         "key": "Home",
-        "expected_priority_id": "priority-4c6fe193f4e7",
+        "expected_priority_id": "task-de0aa9c2efa92270",
         "state": {
           "selected_priority_ids": [
-            "priority-4c6fe193f4e7"
+            "task-de0aa9c2efa92270"
           ],
-          "decision_priority_id": "priority-4c6fe193f4e7",
-          "inspector_priority_id": "priority-4c6fe193f4e7",
-          "inspector_evidence_id": "devcockpitcore.live_status_observation",
-          "focused_priority_id": "priority-4c6fe193f4e7",
+          "decision_priority_id": "task-de0aa9c2efa92270",
+          "inspector_priority_id": "task-de0aa9c2efa92270",
+          "inspector_evidence_id": "task-de0aa9c2efa92270.source_report",
+          "focused_priority_id": "task-de0aa9c2efa92270",
           "pass": true
         },
         "pass": true
       },
       {
         "key": "ArrowDown",
-        "expected_priority_id": "priority-3978971f158b",
+        "expected_priority_id": "task-b12276783e599eb2",
         "state": {
           "selected_priority_ids": [
-            "priority-3978971f158b"
+            "task-b12276783e599eb2"
           ],
-          "decision_priority_id": "priority-3978971f158b",
-          "inspector_priority_id": "priority-3978971f158b",
-          "inspector_evidence_id": "validation-pack-sample",
-          "focused_priority_id": "priority-3978971f158b",
+          "decision_priority_id": "task-b12276783e599eb2",
+          "inspector_priority_id": "task-b12276783e599eb2",
+          "inspector_evidence_id": "task-b12276783e599eb2.source_report",
+          "focused_priority_id": "task-b12276783e599eb2",
           "pass": true
         },
         "pass": true
       },
       {
         "key": "ArrowUp",
-        "expected_priority_id": "priority-4c6fe193f4e7",
+        "expected_priority_id": "task-de0aa9c2efa92270",
         "state": {
           "selected_priority_ids": [
-            "priority-4c6fe193f4e7"
+            "task-de0aa9c2efa92270"
           ],
-          "decision_priority_id": "priority-4c6fe193f4e7",
-          "inspector_priority_id": "priority-4c6fe193f4e7",
-          "inspector_evidence_id": "devcockpitcore.live_status_observation",
-          "focused_priority_id": "priority-4c6fe193f4e7",
+          "decision_priority_id": "task-de0aa9c2efa92270",
+          "inspector_priority_id": "task-de0aa9c2efa92270",
+          "inspector_evidence_id": "task-de0aa9c2efa92270.source_report",
+          "focused_priority_id": "task-de0aa9c2efa92270",
           "pass": true
         },
         "pass": true
@@ -225,7 +254,7 @@
   },
   "automated_language_switch": {
     "status": "pass",
-    "preserved_priority_id": "priority-3978971f158b",
+    "preserved_priority_id": "task-b12276783e599eb2",
     "click": {
       "language_state": {
         "language": "en",
@@ -235,11 +264,11 @@
       },
       "synchronized_state": {
         "selected_priority_ids": [
-          "priority-3978971f158b"
+          "task-b12276783e599eb2"
         ],
-        "decision_priority_id": "priority-3978971f158b",
-        "inspector_priority_id": "priority-3978971f158b",
-        "inspector_evidence_id": "validation-pack-sample",
+        "decision_priority_id": "task-b12276783e599eb2",
+        "inspector_priority_id": "task-b12276783e599eb2",
+        "inspector_evidence_id": "task-b12276783e599eb2.source_report",
         "focused_priority_id": null,
         "pass": true
       }
@@ -254,11 +283,11 @@
       },
       "synchronized_state": {
         "selected_priority_ids": [
-          "priority-3978971f158b"
+          "task-b12276783e599eb2"
         ],
-        "decision_priority_id": "priority-3978971f158b",
-        "inspector_priority_id": "priority-3978971f158b",
-        "inspector_evidence_id": "validation-pack-sample",
+        "decision_priority_id": "task-b12276783e599eb2",
+        "inspector_priority_id": "task-b12276783e599eb2",
+        "inspector_evidence_id": "task-b12276783e599eb2.source_report",
         "focused_priority_id": null,
         "pass": true
       }
@@ -266,7 +295,7 @@
   },
   "automated_visible_focus": {
     "status": "pass",
-    "priority_id": "priority-3978971f158b",
+    "priority_id": "task-b12276783e599eb2",
     "matches_focus_visible": true,
     "outline_style": "solid",
     "outline_width": "3px",
@@ -276,12 +305,12 @@
   "automated_no_javascript_fallback": {
     "status": "pass",
     "language": "ja",
-    "first_priority_id": "priority-4c6fe193f4e7",
-    "decision_priority_id": "priority-4c6fe193f4e7",
-    "inspector_priority_id": "priority-4c6fe193f4e7",
-    "evidence_id": "devcockpitcore.live_status_observation",
-    "first_text_length": 270,
-    "inspector_text_length": 688,
+    "first_priority_id": "task-de0aa9c2efa92270",
+    "decision_priority_id": "task-de0aa9c2efa92270",
+    "inspector_priority_id": "task-de0aa9c2efa92270",
+    "evidence_id": "task-de0aa9c2efa92270.source_report",
+    "first_text_length": 425,
+    "inspector_text_length": 733,
     "freshness_visible": true,
     "provenance_visible": true,
     "pass": true
@@ -389,9 +418,9 @@
       "[data-landmark=\"evidence-inspector\"]"
     ],
     "top_positions": [
-      452.828125,
-      1275.265625,
-      1892.421875
+      496.015625,
+      1188.25,
+      1944.0625
     ],
     "dom_order": true,
     "visual_order": true,
@@ -450,15 +479,15 @@
               "x": 25,
               "y": 387.58,
               "width": 394.72,
-              "height": 124.95,
+              "height": 185.58,
               "right": 419.72,
-              "bottom": 512.53
+              "bottom": 573.16
             },
             "raster_rect": {
               "x": 25,
               "y": 387,
               "width": 395,
-              "height": 126
+              "height": 187
             },
             "fully_visible": true,
             "pass": true
@@ -596,15 +625,15 @@
               "x": 25,
               "y": 387.58,
               "width": 394.72,
-              "height": 143.84,
+              "height": 166.69,
               "right": 419.72,
-              "bottom": 531.42
+              "bottom": 554.27
             },
             "raster_rect": {
               "x": 25,
               "y": 387,
               "width": 395,
-              "height": 145
+              "height": 168
             },
             "fully_visible": true,
             "pass": true
@@ -655,15 +684,15 @@
             "rect": {
               "x": 1038.27,
               "y": 406.58,
-              "width": 178.34,
+              "width": 237.73,
               "height": 26.39,
-              "right": 1216.61,
+              "right": 1276,
               "bottom": 432.97
             },
             "raster_rect": {
               "x": 1038,
               "y": 406,
-              "width": 179,
+              "width": 238,
               "height": 27
             },
             "fully_visible": true,
@@ -720,17 +749,17 @@
             "count": 1,
             "rect": {
               "x": 14,
-              "y": 452.83,
+              "y": 496.02,
               "width": 362,
-              "height": 810.44,
+              "height": 680.23,
               "right": 376,
-              "bottom": 1263.27
+              "bottom": 1176.25
             },
             "raster_rect": {
               "x": 14,
-              "y": 452,
+              "y": 496,
               "width": 362,
-              "height": 812
+              "height": 681
             },
             "fully_visible": true,
             "pass": true
@@ -740,17 +769,17 @@
             "count": 1,
             "rect": {
               "x": 15,
-              "y": 529.83,
+              "y": 573.02,
               "width": 360,
-              "height": 120.95,
+              "height": 194.58,
               "right": 375,
-              "bottom": 650.78
+              "bottom": 767.59
             },
             "raster_rect": {
               "x": 15,
-              "y": 529,
+              "y": 573,
               "width": 360,
-              "height": 122
+              "height": 195
             },
             "fully_visible": true,
             "pass": true
@@ -760,17 +789,17 @@
             "count": 1,
             "rect": {
               "x": 14,
-              "y": 1275.27,
+              "y": 1188.25,
               "width": 362,
-              "height": 605.16,
+              "height": 743.81,
               "right": 376,
-              "bottom": 1880.42
+              "bottom": 1932.06
             },
             "raster_rect": {
               "x": 14,
-              "y": 1275,
+              "y": 1188,
               "width": 362,
-              "height": 606
+              "height": 745
             },
             "fully_visible": true,
             "pass": true
@@ -780,15 +809,15 @@
             "count": 1,
             "rect": {
               "x": 14,
-              "y": 1892.42,
+              "y": 1944.06,
               "width": 362,
               "height": 651.11,
               "right": 376,
-              "bottom": 2543.53
+              "bottom": 2595.17
             },
             "raster_rect": {
               "x": 14,
-              "y": 1892,
+              "y": 1944,
               "width": 362,
               "height": 652
             },
@@ -800,15 +829,15 @@
             "count": 1,
             "rect": {
               "x": 29,
-              "y": 1984.42,
+              "y": 2036.06,
               "width": 176,
               "height": 26.39,
               "right": 205,
-              "bottom": 2010.81
+              "bottom": 2062.45
             },
             "raster_rect": {
               "x": 29,
-              "y": 1984,
+              "y": 2036,
               "width": 176,
               "height": 27
             },
@@ -820,15 +849,15 @@
             "count": 1,
             "rect": {
               "x": 29,
-              "y": 2449.41,
+              "y": 2501.05,
               "width": 332,
               "height": 48.19,
               "right": 361,
-              "bottom": 2497.59
+              "bottom": 2549.23
             },
             "raster_rect": {
               "x": 29,
-              "y": 2449,
+              "y": 2501,
               "width": 332,
               "height": 49
             },
@@ -845,68 +874,68 @@
     "captures": [
       {
         "id": "ja-desktop",
-        "rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 332640,
-            "luminance_mean": 26.5385,
-            "luminance_variance": 1556.5154,
+            "luminance_mean": 26.5181,
+            "luminance_variance": 1555.6378,
             "near_black_ratio": 0,
-            "quantized_color_count": 489,
-            "dominant_color_ratio": 0.681578,
+            "quantized_color_count": 473,
+            "dominant_color_ratio": 0.681734,
             "pass": true
           },
           "priority_lane": {
             "sampled_pixels": 349757,
-            "luminance_mean": 42.2832,
-            "luminance_variance": 2097.0322,
+            "luminance_mean": 40.2191,
+            "luminance_variance": 1876.5737,
             "near_black_ratio": 0,
-            "quantized_color_count": 404,
-            "dominant_color_ratio": 0.745143,
+            "quantized_color_count": 511,
+            "dominant_color_ratio": 0.710753,
             "pass": true
           },
           "priority_first": {
-            "sampled_pixels": 49770,
-            "luminance_mean": 49.7941,
-            "luminance_variance": 2219.871,
+            "sampled_pixels": 73865,
+            "luminance_mean": 49.6964,
+            "luminance_variance": 2341.4508,
             "near_black_ratio": 0,
-            "quantized_color_count": 172,
-            "dominant_color_ratio": 0.851678,
+            "quantized_color_count": 221,
+            "dominant_color_ratio": 0.858106,
             "pass": true
           },
           "active_decision": {
             "sampled_pixels": 507456,
-            "luminance_mean": 34.8208,
-            "luminance_variance": 1481.2116,
+            "luminance_mean": 36.9599,
+            "luminance_variance": 1861.5691,
             "near_black_ratio": 0,
-            "quantized_color_count": 454,
-            "dominant_color_ratio": 0.930906,
+            "quantized_color_count": 409,
+            "dominant_color_ratio": 0.917479,
             "pass": true
           },
           "evidence_inspector": {
             "sampled_pixels": 349757,
-            "luminance_mean": 31.4805,
-            "luminance_variance": 773.7693,
+            "luminance_mean": 30.7693,
+            "luminance_variance": 644.3712,
             "near_black_ratio": 0,
-            "quantized_color_count": 394,
-            "dominant_color_ratio": 0.946434,
+            "quantized_color_count": 391,
+            "dominant_color_ratio": 0.950937,
             "pass": true
           },
           "freshness_status": {
             "sampled_pixels": 4779,
-            "luminance_mean": 64.9207,
-            "luminance_variance": 4143.6042,
+            "luminance_mean": 63.8654,
+            "luminance_variance": 4066.3156,
             "near_black_ratio": 0,
             "quantized_color_count": 17,
-            "dominant_color_ratio": 0.654949,
+            "dominant_color_ratio": 0.663319,
             "pass": true
           },
           "provenance": {
             "sampled_pixels": 17591,
-            "luminance_mean": 33.5318,
-            "luminance_variance": 813.0878,
+            "luminance_mean": 33.529,
+            "luminance_variance": 811.5864,
             "near_black_ratio": 0,
-            "quantized_color_count": 102,
+            "quantized_color_count": 99,
             "dominant_color_ratio": 0.927804,
             "pass": true
           }
@@ -915,66 +944,66 @@
       },
       {
         "id": "en-desktop",
-        "rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 332640,
-            "luminance_mean": 26.8937,
-            "luminance_variance": 1630.6822,
+            "luminance_mean": 26.8692,
+            "luminance_variance": 1628.8252,
             "near_black_ratio": 0,
-            "quantized_color_count": 419,
-            "dominant_color_ratio": 0.681803,
+            "quantized_color_count": 408,
+            "dominant_color_ratio": 0.681866,
             "pass": true
           },
           "priority_lane": {
             "sampled_pixels": 349757,
-            "luminance_mean": 40.7511,
-            "luminance_variance": 1914.9024,
+            "luminance_mean": 39.4905,
+            "luminance_variance": 1758.6317,
             "near_black_ratio": 0,
-            "quantized_color_count": 350,
-            "dominant_color_ratio": 0.739899,
+            "quantized_color_count": 479,
+            "dominant_color_ratio": 0.733732,
             "pass": true
           },
           "priority_first": {
-            "sampled_pixels": 57275,
-            "luminance_mean": 48.1088,
-            "luminance_variance": 2074.5516,
+            "sampled_pixels": 66360,
+            "luminance_mean": 50.789,
+            "luminance_variance": 2423.9316,
             "near_black_ratio": 0,
-            "quantized_color_count": 138,
-            "dominant_color_ratio": 0.862767,
+            "quantized_color_count": 218,
+            "dominant_color_ratio": 0.845916,
             "pass": true
           },
           "active_decision": {
             "sampled_pixels": 507456,
-            "luminance_mean": 34.3682,
-            "luminance_variance": 1382.2933,
+            "luminance_mean": 36.1027,
+            "luminance_variance": 1693.5272,
             "near_black_ratio": 0,
-            "quantized_color_count": 406,
-            "dominant_color_ratio": 0.932402,
+            "quantized_color_count": 392,
+            "dominant_color_ratio": 0.921707,
             "pass": true
           },
           "evidence_inspector": {
             "sampled_pixels": 349757,
-            "luminance_mean": 31.828,
-            "luminance_variance": 812.3539,
+            "luminance_mean": 31.6172,
+            "luminance_variance": 764.9483,
             "near_black_ratio": 0,
-            "quantized_color_count": 356,
-            "dominant_color_ratio": 0.944018,
+            "quantized_color_count": 359,
+            "dominant_color_ratio": 0.944947,
             "pass": true
           },
           "freshness_status": {
-            "sampled_pixels": 4833,
-            "luminance_mean": 54.9696,
-            "luminance_variance": 3148.2277,
+            "sampled_pixels": 6426,
+            "luminance_mean": 55.1116,
+            "luminance_variance": 3151.7216,
             "near_black_ratio": 0,
-            "quantized_color_count": 38,
-            "dominant_color_ratio": 0.760397,
+            "quantized_color_count": 46,
+            "dominant_color_ratio": 0.757703,
             "pass": true
           },
           "provenance": {
             "sampled_pixels": 17591,
-            "luminance_mean": 35.3967,
-            "luminance_variance": 1066.8273,
+            "luminance_mean": 35.3927,
+            "luminance_variance": 1066.4012,
             "near_black_ratio": 0,
             "quantized_color_count": 47,
             "dominant_color_ratio": 0.914786,
@@ -985,69 +1014,69 @@
       },
       {
         "id": "ja-narrow",
-        "rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 151710,
-            "luminance_mean": 34.1112,
-            "luminance_variance": 2519.7909,
+            "luminance_mean": 34.0721,
+            "luminance_variance": 2517.1246,
             "near_black_ratio": 0,
-            "quantized_color_count": 474,
-            "dominant_color_ratio": 0.597311,
+            "quantized_color_count": 466,
+            "dominant_color_ratio": 0.597653,
             "pass": true
           },
           "priority_lane": {
-            "sampled_pixels": 293944,
-            "luminance_mean": 45.0772,
-            "luminance_variance": 2430.2526,
+            "sampled_pixels": 246522,
+            "luminance_mean": 45.8403,
+            "luminance_variance": 2542.5761,
             "near_black_ratio": 0,
-            "quantized_color_count": 400,
-            "dominant_color_ratio": 0.718314,
+            "quantized_color_count": 515,
+            "dominant_color_ratio": 0.604112,
             "pass": true
           },
           "priority_first": {
-            "sampled_pixels": 43920,
-            "luminance_mean": 51.9341,
-            "luminance_variance": 2467.7966,
+            "sampled_pixels": 70200,
+            "luminance_mean": 50.4606,
+            "luminance_variance": 2455.5618,
             "near_black_ratio": 0,
-            "quantized_color_count": 173,
-            "dominant_color_ratio": 0.834107,
+            "quantized_color_count": 225,
+            "dominant_color_ratio": 0.862151,
             "pass": true
           },
           "active_decision": {
-            "sampled_pixels": 219372,
-            "luminance_mean": 41.1421,
-            "luminance_variance": 2397.9463,
+            "sampled_pixels": 269690,
+            "luminance_mean": 40.2763,
+            "luminance_variance": 2281.1031,
             "near_black_ratio": 0,
-            "quantized_color_count": 431,
-            "dominant_color_ratio": 0.882683,
+            "quantized_color_count": 417,
+            "dominant_color_ratio": 0.891231,
             "pass": true
           },
           "evidence_inspector": {
             "sampled_pixels": 236024,
-            "luminance_mean": 33.8007,
-            "luminance_variance": 1115.3601,
+            "luminance_mean": 32.7266,
+            "luminance_variance": 928.2401,
             "near_black_ratio": 0,
-            "quantized_color_count": 380,
-            "dominant_color_ratio": 0.92619,
+            "quantized_color_count": 387,
+            "dominant_color_ratio": 0.931363,
             "pass": true
           },
           "freshness_status": {
             "sampled_pixels": 4752,
-            "luminance_mean": 65.2022,
-            "luminance_variance": 4163.5892,
+            "luminance_mean": 64.0769,
+            "luminance_variance": 4081.5049,
             "near_black_ratio": 0,
             "quantized_color_count": 17,
-            "dominant_color_ratio": 0.652567,
+            "dominant_color_ratio": 0.661406,
             "pass": true
           },
           "provenance": {
             "sampled_pixels": 16268,
-            "luminance_mean": 33.9603,
-            "luminance_variance": 876.8344,
+            "luminance_mean": 33.9583,
+            "luminance_variance": 876.8119,
             "near_black_ratio": 0,
-            "quantized_color_count": 103,
-            "dominant_color_ratio": 0.923715,
+            "quantized_color_count": 105,
+            "dominant_color_ratio": 0.923838,
             "pass": true
           }
         },
@@ -1058,29 +1087,29 @@
       "landmarks": {
         "ja-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.6141,
-          "luminance_variance": 1045.8744,
+          "luminance_mean": 33.7125,
+          "luminance_variance": 1115.1253,
           "near_black_ratio": 0,
-          "quantized_color_count": 536,
-          "dominant_color_ratio": 0.661619,
+          "quantized_color_count": 543,
+          "dominant_color_ratio": 0.655061,
           "pass": true
         },
         "en-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.1817,
-          "luminance_variance": 980.0692,
+          "luminance_mean": 33.447,
+          "luminance_variance": 1040.0897,
           "near_black_ratio": 0,
-          "quantized_color_count": 531,
-          "dominant_color_ratio": 0.653568,
+          "quantized_color_count": 549,
+          "dominant_color_ratio": 0.648925,
           "pass": true
         },
         "ja-narrow": {
           "sampled_pixels": 37128,
-          "luminance_mean": 35.6292,
-          "luminance_variance": 1022.3623,
+          "luminance_mean": 36.3215,
+          "luminance_variance": 1119.0745,
           "near_black_ratio": 0,
-          "quantized_color_count": 512,
-          "dominant_color_ratio": 0.665347,
+          "quantized_color_count": 527,
+          "dominant_color_ratio": 0.641133,
           "pass": true
         }
       },
@@ -1092,68 +1121,68 @@
     "captures": [
       {
         "id": "ja-desktop",
-        "rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 332640,
-            "luminance_mean": 26.5385,
-            "luminance_variance": 1556.5154,
+            "luminance_mean": 26.5181,
+            "luminance_variance": 1555.6378,
             "near_black_ratio": 0,
-            "quantized_color_count": 489,
-            "dominant_color_ratio": 0.681578,
+            "quantized_color_count": 473,
+            "dominant_color_ratio": 0.681734,
             "pass": true
           },
           "priority_lane": {
             "sampled_pixels": 349757,
-            "luminance_mean": 42.2832,
-            "luminance_variance": 2097.0322,
+            "luminance_mean": 40.2191,
+            "luminance_variance": 1876.5737,
             "near_black_ratio": 0,
-            "quantized_color_count": 404,
-            "dominant_color_ratio": 0.745143,
+            "quantized_color_count": 511,
+            "dominant_color_ratio": 0.710753,
             "pass": true
           },
           "priority_first": {
-            "sampled_pixels": 49770,
-            "luminance_mean": 49.7941,
-            "luminance_variance": 2219.871,
+            "sampled_pixels": 73865,
+            "luminance_mean": 49.6964,
+            "luminance_variance": 2341.4508,
             "near_black_ratio": 0,
-            "quantized_color_count": 172,
-            "dominant_color_ratio": 0.851678,
+            "quantized_color_count": 221,
+            "dominant_color_ratio": 0.858106,
             "pass": true
           },
           "active_decision": {
             "sampled_pixels": 507456,
-            "luminance_mean": 34.8208,
-            "luminance_variance": 1481.2116,
+            "luminance_mean": 36.9599,
+            "luminance_variance": 1861.5691,
             "near_black_ratio": 0,
-            "quantized_color_count": 454,
-            "dominant_color_ratio": 0.930906,
+            "quantized_color_count": 409,
+            "dominant_color_ratio": 0.917479,
             "pass": true
           },
           "evidence_inspector": {
             "sampled_pixels": 349757,
-            "luminance_mean": 31.4805,
-            "luminance_variance": 773.7693,
+            "luminance_mean": 30.7693,
+            "luminance_variance": 644.3712,
             "near_black_ratio": 0,
-            "quantized_color_count": 394,
-            "dominant_color_ratio": 0.946434,
+            "quantized_color_count": 391,
+            "dominant_color_ratio": 0.950937,
             "pass": true
           },
           "freshness_status": {
             "sampled_pixels": 4779,
-            "luminance_mean": 64.9207,
-            "luminance_variance": 4143.6042,
+            "luminance_mean": 63.8654,
+            "luminance_variance": 4066.3156,
             "near_black_ratio": 0,
             "quantized_color_count": 17,
-            "dominant_color_ratio": 0.654949,
+            "dominant_color_ratio": 0.663319,
             "pass": true
           },
           "provenance": {
             "sampled_pixels": 17591,
-            "luminance_mean": 33.5318,
-            "luminance_variance": 813.0878,
+            "luminance_mean": 33.529,
+            "luminance_variance": 811.5864,
             "near_black_ratio": 0,
-            "quantized_color_count": 102,
+            "quantized_color_count": 99,
             "dominant_color_ratio": 0.927804,
             "pass": true
           }
@@ -1162,66 +1191,66 @@
       },
       {
         "id": "en-desktop",
-        "rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 332640,
-            "luminance_mean": 26.8937,
-            "luminance_variance": 1630.6822,
+            "luminance_mean": 26.8692,
+            "luminance_variance": 1628.8252,
             "near_black_ratio": 0,
-            "quantized_color_count": 419,
-            "dominant_color_ratio": 0.681803,
+            "quantized_color_count": 408,
+            "dominant_color_ratio": 0.681866,
             "pass": true
           },
           "priority_lane": {
             "sampled_pixels": 349757,
-            "luminance_mean": 40.7511,
-            "luminance_variance": 1914.9024,
+            "luminance_mean": 39.4905,
+            "luminance_variance": 1758.6317,
             "near_black_ratio": 0,
-            "quantized_color_count": 350,
-            "dominant_color_ratio": 0.739899,
+            "quantized_color_count": 479,
+            "dominant_color_ratio": 0.733732,
             "pass": true
           },
           "priority_first": {
-            "sampled_pixels": 57275,
-            "luminance_mean": 48.1088,
-            "luminance_variance": 2074.5516,
+            "sampled_pixels": 66360,
+            "luminance_mean": 50.789,
+            "luminance_variance": 2423.9316,
             "near_black_ratio": 0,
-            "quantized_color_count": 138,
-            "dominant_color_ratio": 0.862767,
+            "quantized_color_count": 218,
+            "dominant_color_ratio": 0.845916,
             "pass": true
           },
           "active_decision": {
             "sampled_pixels": 507456,
-            "luminance_mean": 34.3682,
-            "luminance_variance": 1382.2933,
+            "luminance_mean": 36.1027,
+            "luminance_variance": 1693.5272,
             "near_black_ratio": 0,
-            "quantized_color_count": 406,
-            "dominant_color_ratio": 0.932402,
+            "quantized_color_count": 392,
+            "dominant_color_ratio": 0.921707,
             "pass": true
           },
           "evidence_inspector": {
             "sampled_pixels": 349757,
-            "luminance_mean": 31.828,
-            "luminance_variance": 812.3539,
+            "luminance_mean": 31.6172,
+            "luminance_variance": 764.9483,
             "near_black_ratio": 0,
-            "quantized_color_count": 356,
-            "dominant_color_ratio": 0.944018,
+            "quantized_color_count": 359,
+            "dominant_color_ratio": 0.944947,
             "pass": true
           },
           "freshness_status": {
-            "sampled_pixels": 4833,
-            "luminance_mean": 54.9696,
-            "luminance_variance": 3148.2277,
+            "sampled_pixels": 6426,
+            "luminance_mean": 55.1116,
+            "luminance_variance": 3151.7216,
             "near_black_ratio": 0,
-            "quantized_color_count": 38,
-            "dominant_color_ratio": 0.760397,
+            "quantized_color_count": 46,
+            "dominant_color_ratio": 0.757703,
             "pass": true
           },
           "provenance": {
             "sampled_pixels": 17591,
-            "luminance_mean": 35.3967,
-            "luminance_variance": 1066.8273,
+            "luminance_mean": 35.3927,
+            "luminance_variance": 1066.4012,
             "near_black_ratio": 0,
             "quantized_color_count": 47,
             "dominant_color_ratio": 0.914786,
@@ -1232,69 +1261,69 @@
       },
       {
         "id": "ja-narrow",
-        "rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 151710,
-            "luminance_mean": 34.1112,
-            "luminance_variance": 2519.7909,
+            "luminance_mean": 34.0721,
+            "luminance_variance": 2517.1246,
             "near_black_ratio": 0,
-            "quantized_color_count": 474,
-            "dominant_color_ratio": 0.597311,
+            "quantized_color_count": 466,
+            "dominant_color_ratio": 0.597653,
             "pass": true
           },
           "priority_lane": {
-            "sampled_pixels": 293944,
-            "luminance_mean": 45.0772,
-            "luminance_variance": 2430.2526,
+            "sampled_pixels": 246522,
+            "luminance_mean": 45.8403,
+            "luminance_variance": 2542.5761,
             "near_black_ratio": 0,
-            "quantized_color_count": 400,
-            "dominant_color_ratio": 0.718314,
+            "quantized_color_count": 515,
+            "dominant_color_ratio": 0.604112,
             "pass": true
           },
           "priority_first": {
-            "sampled_pixels": 43920,
-            "luminance_mean": 51.9341,
-            "luminance_variance": 2467.7966,
+            "sampled_pixels": 70200,
+            "luminance_mean": 50.4606,
+            "luminance_variance": 2455.5618,
             "near_black_ratio": 0,
-            "quantized_color_count": 173,
-            "dominant_color_ratio": 0.834107,
+            "quantized_color_count": 225,
+            "dominant_color_ratio": 0.862151,
             "pass": true
           },
           "active_decision": {
-            "sampled_pixels": 219372,
-            "luminance_mean": 41.1421,
-            "luminance_variance": 2397.9463,
+            "sampled_pixels": 269690,
+            "luminance_mean": 40.2763,
+            "luminance_variance": 2281.1031,
             "near_black_ratio": 0,
-            "quantized_color_count": 431,
-            "dominant_color_ratio": 0.882683,
+            "quantized_color_count": 417,
+            "dominant_color_ratio": 0.891231,
             "pass": true
           },
           "evidence_inspector": {
             "sampled_pixels": 236024,
-            "luminance_mean": 33.8007,
-            "luminance_variance": 1115.3601,
+            "luminance_mean": 32.7266,
+            "luminance_variance": 928.2401,
             "near_black_ratio": 0,
-            "quantized_color_count": 380,
-            "dominant_color_ratio": 0.92619,
+            "quantized_color_count": 387,
+            "dominant_color_ratio": 0.931363,
             "pass": true
           },
           "freshness_status": {
             "sampled_pixels": 4752,
-            "luminance_mean": 65.2022,
-            "luminance_variance": 4163.5892,
+            "luminance_mean": 64.0769,
+            "luminance_variance": 4081.5049,
             "near_black_ratio": 0,
             "quantized_color_count": 17,
-            "dominant_color_ratio": 0.652567,
+            "dominant_color_ratio": 0.661406,
             "pass": true
           },
           "provenance": {
             "sampled_pixels": 16268,
-            "luminance_mean": 33.9603,
-            "luminance_variance": 876.8344,
+            "luminance_mean": 33.9583,
+            "luminance_variance": 876.8119,
             "near_black_ratio": 0,
-            "quantized_color_count": 103,
-            "dominant_color_ratio": 0.923715,
+            "quantized_color_count": 105,
+            "dominant_color_ratio": 0.923838,
             "pass": true
           }
         },
@@ -1305,29 +1334,29 @@
       "landmarks": {
         "ja-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.6141,
-          "luminance_variance": 1045.8744,
+          "luminance_mean": 33.7125,
+          "luminance_variance": 1115.1253,
           "near_black_ratio": 0,
-          "quantized_color_count": 536,
-          "dominant_color_ratio": 0.661619,
+          "quantized_color_count": 543,
+          "dominant_color_ratio": 0.655061,
           "pass": true
         },
         "en-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.1817,
-          "luminance_variance": 980.0692,
+          "luminance_mean": 33.447,
+          "luminance_variance": 1040.0897,
           "near_black_ratio": 0,
-          "quantized_color_count": 531,
-          "dominant_color_ratio": 0.653568,
+          "quantized_color_count": 549,
+          "dominant_color_ratio": 0.648925,
           "pass": true
         },
         "ja-narrow": {
           "sampled_pixels": 37128,
-          "luminance_mean": 35.6292,
-          "luminance_variance": 1022.3623,
+          "luminance_mean": 36.3215,
+          "luminance_variance": 1119.0745,
           "near_black_ratio": 0,
-          "quantized_color_count": 512,
-          "dominant_color_ratio": 0.665347,
+          "quantized_color_count": 527,
+          "dominant_color_ratio": 0.641133,
           "pass": true
         }
       },
@@ -1340,29 +1369,29 @@
     "captures": [
       {
         "id": "ja-desktop",
-        "browser_rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
-        "ffmpeg_rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
-        "browser_roundtrip_ffmpeg_rgba_sha256": "2c4e5cf4008c69a4a6ae54c10df2890fc6eacdb7807d9344b99a68db8de8f467",
+        "browser_rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
+        "ffmpeg_rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
         "pass": true
       },
       {
         "id": "en-desktop",
-        "browser_rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
-        "ffmpeg_rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
-        "browser_roundtrip_ffmpeg_rgba_sha256": "4c25a0bba431bb4de882e485838341ddddd8b0ff07cc3b4370ec4352e175ecae",
+        "browser_rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
+        "ffmpeg_rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
         "pass": true
       },
       {
         "id": "ja-narrow",
-        "browser_rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
-        "ffmpeg_rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
-        "browser_roundtrip_ffmpeg_rgba_sha256": "de20aa01809fdac1b5d51f9509b8d963d5904ef7a902358fb0351d3ab4ee5c1a",
+        "browser_rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
+        "ffmpeg_rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
         "pass": true
       }
     ],
     "contact_sheet": {
-      "browser_rgba_sha256": "5afadc2f7cda219a8d304e6ebe7f98e1e9ecb4757172a19e8573abcdfe3c9348",
-      "ffmpeg_rgba_sha256": "5afadc2f7cda219a8d304e6ebe7f98e1e9ecb4757172a19e8573abcdfe3c9348",
+      "browser_rgba_sha256": "7531c5114df49f01d4d7fca12f8c2feb01319554fcb593ed1a1eecbe9f2cb41b",
+      "ffmpeg_rgba_sha256": "7531c5114df49f01d4d7fca12f8c2feb01319554fcb593ed1a1eecbe9f2cb41b",
       "pass": true
     }
   },
@@ -1374,7 +1403,7 @@
     "browser_canvas": {
       "detector_rejected": true,
       "analysis": {
-        "sampled_pixels": 49770,
+        "sampled_pixels": 73865,
         "luminance_mean": 0,
         "luminance_variance": 0,
         "near_black_ratio": 1,
@@ -1386,7 +1415,7 @@
     "ffmpeg": {
       "detector_rejected": true,
       "analysis": {
-        "sampled_pixels": 49770,
+        "sampled_pixels": 73865,
         "luminance_mean": 0,
         "luminance_variance": 0,
         "near_black_ratio": 1,
@@ -1402,19 +1431,19 @@
   },
   "worker_raster_inspection": {
     "status": "pass",
-    "inspected_at": "2026-07-12T18:55:28.263Z",
-    "inspected_capture_id": "priority-review-console-f160ca3a7b90e3b19d4f0e46",
+    "inspected_at": "2026-07-13T07:12:00.000Z",
+    "inspected_capture_id": "priority-review-console-f228d9eea5e8885d0a6a58e1",
     "method": "Worker opened the JA desktop, EN desktop, JA narrow, and contact-sheet PNGs after automated readback; this record is bound to their current SHA-256 hashes.",
     "inspected_sources": [
       {
         "role": "html",
         "path": "samples/dashboard/devcockpitcore_dashboard.html",
-        "sha256": "958e6bb99cc4ab65ac9169abed880548b8a5e5e71083f868166e21ccf8c8bd90"
+        "sha256": "012311723805fe74c7a2be0d30bca441148276857e2be0731f02f1c36fa3c4f9"
       },
       {
         "role": "priority_readback",
         "path": "samples/dashboard/devcockpitcore_priority_readback.json",
-        "sha256": "e130e4cb78de357248502b782e3ecc10d14f7da37495ffd1bf15d657984c5e70"
+        "sha256": "e587271a2231e9bdaba7d660c52bf88c2f00d5bf93902278aa6347a56ea459f3"
       },
       {
         "role": "freshness_receipt",
@@ -1424,45 +1453,43 @@
       {
         "role": "capture_script",
         "path": "capture_priority_review_console.mjs",
-        "sha256": "f705a4483958715d01db537ae3cdd3a04f6c76dead8d4ee788c7ef9cb04f4581"
+        "sha256": "1f90124a8a1146ef3ffe4ca9e7baf36ecabc60374896014082b888651370bfc9"
       },
       {
         "role": "production_generator",
         "path": "src/dev_cockpit/dashboard.py",
-        "blob": "96bdaa97e0b3ee547a202065033709ed5a6bd285"
+        "blob": "6218e5b321efceceb7238504822d5e63e55b33d0"
       }
     ],
     "inspected_files": [
       {
         "path": "screenshots/priority-review-console-ja-desktop.png",
-        "sha256": "dd32a79f89637c19b17bee08aa6a167895d5cbe91d41a35ea1d449b28161e978"
+        "sha256": "a78a75d257a9980c969349ec564697e9be68ed7f934171031a90617b3b5c1b54"
       },
       {
         "path": "screenshots/priority-review-console-en-desktop.png",
-        "sha256": "b2ad17f2f76d3403ea4d006c93ef860260f84a8fd69fd0b1846e2639156137a5"
+        "sha256": "bc127df5a766ee83d796cfa831233d103a1163a0ccfe300aeebd7276e052b790"
       },
       {
         "path": "screenshots/priority-review-console-ja-narrow.png",
-        "sha256": "36e6e0886fb55f38e1aaa684621412effb11dccac545e86c40da2c6017ad48c3"
+        "sha256": "6215d021cc99c3abf46565ce2ff82d1944d89bc5f6af03904d120cef2e854c5b"
       },
       {
         "path": "screenshots/priority-review-console-contact-sheet.png",
-        "sha256": "58fb705dc7604ed75ef3e15b3b73fe865389356fefd48aae0c0fe3194cb8fd47"
+        "sha256": "a32ac77f816bcec2fb5dbecbf848869eac840e792d54a52db755b8a6f1c20cfa"
       }
     ],
     "findings": {
       "raster_completeness": "No blank, black, missing, clipped, or undecoded required production landmark was visible.",
       "priority_synchronization": "The selected priority, Active Decision, and Evidence Inspector presented one coherent item.",
       "localization": "Japanese and English desktop captures were readable; the Japanese narrow capture retained Priority Lane, Active Decision, and Evidence Inspector order.",
-      "provenance": "Freshness and provenance remained visible without claiming user visual acceptance."
+      "provenance": "Freshness and provenance remained visible while preserving the recorded user visual acceptance."
     }
   },
   "user_visual_acceptance": {
-    "status": "pending",
+    "status": "accepted",
     "selected_direction": "A",
     "production_artifact": "priority-review-console"
   },
-  "remaining_review_debt": [
-    "User visual acceptance of the production Priority Review Console remains pending."
-  ]
+  "remaining_review_debt": []
 }

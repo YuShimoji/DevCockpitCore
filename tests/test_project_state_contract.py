@@ -11,11 +11,26 @@ STATE_DOCUMENTS = (
     "docs/PROJECT_COCKPIT.md",
     "docs/runtime-state.md",
 )
+FORBIDDEN_COMPETING_AUTHORITY_PATHS = (
+    "docs/ARTIFACT_INDEX.md",
+    "docs/DECISION_LOG.md",
+    "docs/PROJECT_BRIEF.md",
+    "docs/RESEARCH_NOTES.md",
+    "docs/RESEARCH_TODO.md",
+    "docs/ROADMAP.md",
+    "docs/RUNTIME_STATE.md",
+    "docs/UI_RUBRIC.md",
+    "docs/VALIDATION.md",
+    "docs/handoffs/2026-07-11-main-sync-supervisor-roadmap-report-v1.md",
+    "docs/handoffs/2026-07-13-main-sync-resume-handoff-v1.md",
+)
 SHARED_PROJECTION_FIELDS = {
     "updated_at",
     "current_review_artifact",
     "current_review_artifact_path",
     "priority_readback_path",
+    "supervision_packet_path",
+    "supervision_packet_manifest_path",
     "selected_information_architecture",
     "selection_state",
     "user_visual_acceptance",
@@ -39,6 +54,8 @@ KNOWN_LIVE_STATE_FIELDS = {
     "observed_at",
     "pull_request",
     "priority_readback_path",
+    "supervision_packet_path",
+    "supervision_packet_manifest_path",
     "resume_branch",
     "selected_information_architecture",
     "selection_state",
@@ -92,6 +109,24 @@ def _frontmatter_labels(markdown: str) -> dict[str, str]:
 
 
 class ProjectStateContractTests(unittest.TestCase):
+    def test_competing_capsule_and_dated_restart_authority_are_absent(self) -> None:
+        for relative_path in FORBIDDEN_COMPETING_AUTHORITY_PATHS:
+            with self.subTest(relative_path=relative_path):
+                self.assertFalse((ROOT / relative_path).exists(), relative_path)
+        review_root = ROOT / "artifacts" / "review"
+        self.assertFalse(review_root.exists(), str(review_root))
+
+        cockpit = _read("docs/PROJECT_COCKPIT.md")
+        runtime = _read("docs/runtime-state.md")
+        for stale_authority_key in (
+            "latest_sync_handoff_path:",
+            "preserved_local_context_report_path:",
+            "Preserved Historical Context",
+            "## Restart Note",
+        ):
+            with self.subTest(stale_authority_key=stale_authority_key):
+                self.assertNotIn(stale_authority_key, cockpit + "\n" + runtime)
+
     def test_state_documents_are_strictly_parseable_with_unique_keys(self) -> None:
         for relative_path in STATE_DOCUMENTS:
             with self.subTest(relative_path=relative_path):
@@ -163,7 +198,7 @@ class ProjectStateContractTests(unittest.TestCase):
                     "A_priority_review_console",
                 )
                 self.assertEqual(labels["selection_state"], "closed")
-                self.assertEqual(labels["user_visual_acceptance"], "pending")
+                self.assertEqual(labels["user_visual_acceptance"], "accepted")
                 self.assertRegex(
                     labels["tracked_receipt_capture_id"],
                     r"\Aefr-[0-9a-f]{20}\Z",
@@ -204,14 +239,14 @@ class ProjectStateContractTests(unittest.TestCase):
             cockpit,
         )
         self.assertIn("selection_state: closed", cockpit)
-        self.assertIn("user_visual_acceptance: pending", cockpit)
+        self.assertIn("user_visual_acceptance: accepted", cockpit)
         self.assertIn("Production direction A is selected", runtime)
-        self.assertRegex(runtime, r"(?i)user_visual_acceptance[^.]*pending")
+        self.assertRegex(runtime, r"(?i)user_visual_acceptance[^.]*accepted")
 
         self.assertIn('OPTION_A["A: Priority Review Console<br/>selected production direction"]', pipeline)
         self.assertIn('GEN["dev_cockpit.dashboard<br/>production generator"]', pipeline)
         self.assertIn('PRIORITY_JSON["devcockpitcore_priority_readback.json"]', pipeline)
-        self.assertIn('USER_REVIEW["free-form production visual review<br/>pending"]', pipeline)
+        self.assertIn('USER_REVIEW["production visual acceptance<br/>accepted"]', pipeline)
         self.assertIn('FRESH_CLI["python -m dev_cockpit.evidence_freshness"]', pipeline)
         self.assertIn("evidence_freshness_receipt.v1", pipeline)
         self.assertNotIn('USER_REVIEW["user direction review (pending)"]', pipeline)

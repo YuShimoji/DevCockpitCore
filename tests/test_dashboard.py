@@ -29,6 +29,68 @@ from dev_cockpit.dashboard import (
 
 
 class DashboardTests(unittest.TestCase):
+    def test_supervision_packet_projects_project_identity_without_changing_layout(self) -> None:
+        packet_path = "samples/supervision_packets/cross_project_supervision_packet_v1.json"
+        model = build_dashboard_model(
+            repo_root=ROOT,
+            supervision_packet_path=packet_path,
+            generated_at="2026-07-13T06:30:00Z",
+        )
+        html = render_dashboard(model)
+        readback = priority_readback(model)
+
+        priorities = model["priority_items"]
+        self.assertEqual([1, 2, 3], [item["rank"] for item in priorities])
+        self.assertEqual(
+            [
+                "true_stop_or_required_failure",
+                "user_authorization_or_material_decision",
+                "active_safe_continuation",
+            ],
+            [item["attention_class"] for item in priorities],
+        )
+        self.assertTrue(all(item["executable"] is False for item in priorities))
+        self.assertTrue(all(item["project_key"] for item in priorities))
+        self.assertTrue(all(item["thread_id"] for item in priorities))
+        self.assertTrue(all(item["lane_id"] for item in priorities))
+        self.assertEqual(
+            "attention_and_review_priority_only",
+            priorities[0]["global_rank_meaning"],
+        )
+        for expected in (
+            'id="priority-lane"',
+            'id="active-decision"',
+            'id="evidence-inspector"',
+            'id="project-worksets"',
+            'data-project-key="alpha-project"',
+            'data-thread-id="alpha-release-thread"',
+            'data-field="project-identity"',
+            'data-field="lane-identity"',
+            'data-field="attention-class"',
+            "Global rank is attention and review priority, not execution order.",
+        ):
+            self.assertIn(expected, html)
+        self.assertNotIn('role="tablist"', html)
+        self.assertNotIn('data-direction="lane-and-project-overview"', html)
+        self.assertTrue(readback["supervision_packet"]["loaded"])
+        self.assertEqual(2, readback["supervision_packet"]["coverage"]["project_count"])
+        projected_ids = {
+            task_id
+            for workset in readback["supervision_packet"]["project_worksets"]
+            for task_id in (
+                workset["active_task_ids"]
+                + workset["closed_or_informational_task_ids"]
+            )
+        }
+        packet_ids = {
+            task["task_id"]
+            for task in (
+                model["supervision_packet"]["global_attention_queue"]
+                + model["supervision_packet"]["closed_or_informational"]
+            )
+        }
+        self.assertEqual(packet_ids, projected_ids)
+
     def test_model_loads_receipt_and_builds_priority_console_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
@@ -64,7 +126,7 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual([item["precedence"] for item in model["priority_policy"]], list(range(1, 7)))
         self.assertGreaterEqual(len(model["priority_items"]), 1)
         self.assertEqual(model["selected_priority_id"], model["priority_items"][0]["priority_id"])
-        self.assertEqual(model["user_visual_acceptance"], "pending")
+        self.assertEqual(model["user_visual_acceptance"], "accepted")
 
     def test_receipt_projection_is_consumed_without_re_evaluating_freshness(self) -> None:
         receipt = json.loads(
@@ -404,7 +466,7 @@ class DashboardTests(unittest.TestCase):
         self.assertGreaterEqual(package["summary"]["warning"], 1)
         self.assertEqual(package["package"]["access_state"], "worker_generated_not_user_opened")
 
-    def test_priority_readback_records_selected_production_surface_and_pending_acceptance(self) -> None:
+    def test_priority_readback_records_selected_production_surface_and_accepted_state(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             _write_fixture_tree(root)
@@ -423,7 +485,7 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(written["surface"]["selected_direction"], "priority-review-console")
         self.assertIs(written["surface"]["production"], True)
         self.assertIs(written["surface"]["b_and_c_production_tabs"], False)
-        self.assertEqual(written["surface"]["user_visual_acceptance"], "pending")
+        self.assertEqual(written["surface"]["user_visual_acceptance"], "accepted")
         self.assertIs(written["surface"]["executable"], False)
         self.assertEqual(written["priorities"], model["priority_items"])
         self.assertEqual(

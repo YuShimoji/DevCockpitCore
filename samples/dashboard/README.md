@@ -20,6 +20,13 @@ non-executable and carry `executable: false`. Equal-precedence items place
 required before optional, then sort by project, condition, and primary evidence
 path; duplicate project-and-condition identities collapse into one priority.
 
+An explicit `--supervision-packet` input projects manifest-bound report tasks
+into the same Priority Lane. Each row shows project identity; Active Decision
+adds thread/lane/slice identity; Evidence Inspector keeps the source report,
+hash, and attention class synchronized. Project worksets are a secondary
+disclosure using the same task IDs and global ranks. Without this option, the
+existing evidence-derived dashboard route remains unchanged.
+
 ## Production capture package
 
 The tracked production review package is under
@@ -35,8 +42,8 @@ The tracked production review package is under
 
 The manifest and readback bind language, viewport, selected priority,
 freshness/provenance landmarks, overflow checks, and final PNG hashes. Worker
-inspection is capture-bound; user production visual acceptance remains
-`pending` until the user reviews the generated production surface.
+inspection is capture-bound; user production visual acceptance is recorded as
+`accepted` for this production surface.
 
 ## Historical three-direction intent comparison
 

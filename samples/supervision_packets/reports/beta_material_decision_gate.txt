@@ -1,0 +1,19 @@
+[ROUTE: BetaProject | WORKER->SUPERVISOR | slice:beta-information-architecture-v1 | target:beta-product-thread | artifact_current:beta-layout-decision-v1 | reply:User/Supervisor | confidence:high]
+[PROGRESS: PRODUCT REVIEW [####-] 4/5 | current:two viable information architectures remain | next:beta-layout-selection-v1 | blocker:material decision | user_work:review]
+[ACTION: decision=user decision required | now_owner:User | deliverable:beta-layout-decision-v1 | trigger:visual comparison]
+[STATUS: health=yellow | gates=4/5 | stop_class=INTEGRATE_AND_CONTINUE]
+
+**Outcome**
+Beta implementation is waiting for one material information-architecture decision.
+
+**Validation**
+- Both low-cost comparison variants passed semantic checks.
+
+**Continuation State**
+Record the selected information architecture before production implementation.
+
+**User-Side Work**
+review one visual comparison
+
+**Handoff Gate**
+pass; no blocked handoff required.

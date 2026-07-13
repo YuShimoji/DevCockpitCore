@@ -5,9 +5,11 @@ projection_kind: repository_restart_and_artifact_access
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
 priority_readback_path: samples/dashboard/devcockpitcore_priority_readback.json
+supervision_packet_path: samples/supervision_packets/cross_project_supervision_packet_v1.json
+supervision_packet_manifest_path: samples/supervision_packets/task_report_manifest_v1.json
 selected_information_architecture: A_priority_review_console
 selection_state: closed
-user_visual_acceptance: pending
+user_visual_acceptance: accepted
 tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
@@ -21,6 +23,8 @@ review_actions_markdown_path: samples/dashboard/devcockpitcore_review_actions.md
 production_capture_manifest_path: samples/dashboard/production_capture/production_capture_manifest.json
 production_capture_readback_path: samples/dashboard/production_capture/production_capture_readback.json
 production_contact_sheet_path: samples/dashboard/production_capture/screenshots/priority-review-console-contact-sheet.png
+supervision_packet_markdown_path: samples/supervision_packets/cross_project_supervision_packet_v1.md
+supervision_packet_design_path: docs/design/CROSS_PROJECT_SUPERVISION_PACKET_V1.md
 capability_state: bounded_c3_c4
 evidence_freshness_policy_path: samples/evidence_freshness/evidence_freshness_policy_v1.json
 evidence_freshness_receipt_json_path: samples/evidence_freshness/evidence_freshness_receipt_v1.json
@@ -51,17 +55,23 @@ closed and A is the production direction. Its deterministic priority readback,
 non-executable review actions, capture manifest, capture readback, and contact
 sheet are at the paths declared above.
 
-Production direction A is selected for the production dashboard;
-`user_visual_acceptance` remains `pending`.
+The console can consume the explicit Cross-Project Supervision Packet V1 path
+declared above. Its global queue ranks attention/review across projects while
+its secondary worksets reuse the same task IDs and ranks by project. The
+tracked fixture covers two fictional projects and four reports and is
+deterministic non-live evidence, not a live multi-project claim.
+
+Production direction A is selected for the production dashboard and
+`user_visual_acceptance` is `accepted`.
 
 The historical v2 comparison remains at
 `samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`
 as selection provenance only. B / Narrative Status Brief is parked as a
 possible future handoff or summary view. C / Lane And Project Overview is
 parked as a possible future cross-project overview. Neither is part of the
-production UI or current implementation scope. The only open user gate is one
-free-form production visual/comprehension review; production visual acceptance
-remains pending.
+production UI or current implementation scope. The production
+visual/comprehension gate is closed and must not be requested again for the
+same accepted surface.
 
 ## Freshness
 
@@ -87,6 +97,12 @@ $env:PYTHONPATH = "src"
 python -m unittest discover
 python -m dev_cockpit.validation_pack --default --pretty
 python -m dev_cockpit.evidence_freshness
-python -m dev_cockpit.dashboard
+python -m dev_cockpit.supervision_packet `
+  --manifest samples/supervision_packets/task_report_manifest_v1.json `
+  --output-json samples/supervision_packets/cross_project_supervision_packet_v1.json `
+  --output-markdown samples/supervision_packets/cross_project_supervision_packet_v1.md `
+  --pretty
+python -m dev_cockpit.dashboard `
+  --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json
 Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```

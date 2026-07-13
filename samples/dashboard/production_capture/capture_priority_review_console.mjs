@@ -435,6 +435,24 @@ async function semanticSnapshot(page, htmlPath, language) {
     const embeddedPriorities = JSON.parse(
       document.getElementById("priority-model")?.textContent || "[]",
     );
+    const selectedTask = embeddedPriorities.find(
+      (item) => item.priority_id === selected[0],
+    ) || {};
+    const visibleField = (selector) => {
+      const item = document.querySelector(selector);
+      const style = item ? getComputedStyle(item) : null;
+      const text = item?.textContent?.trim() || "";
+      return {
+        text,
+        visible: Boolean(
+          item
+          && item.getClientRects().length
+          && style?.display !== "none"
+          && style?.visibility !== "hidden"
+          && text
+        ),
+      };
+    };
     const visibleLandmarks = {};
     for (const name of [
       "current-state",
@@ -457,6 +475,18 @@ async function semanticSnapshot(page, htmlPath, language) {
       inspector_priority_id: inspector?.dataset.priorityId || null,
       inspector_evidence_id: inspector?.dataset.evidenceId || null,
       embedded_priorities: embeddedPriorities,
+      project_identity: {
+        expected: `${selectedTask.project_key || "unknown"} / ${selectedTask.thread_id || "local-observation"}`,
+        rendered: visibleField('#active-decision [data-field="project-identity"]'),
+      },
+      lane_identity: {
+        expected: `${selectedTask.lane_id || "observer"} / ${selectedTask.slice_id || "local-review"}`,
+        rendered: visibleField('#active-decision [data-field="lane-identity"]'),
+      },
+      attention_class: {
+        expected: selectedTask.attention_class || "local_evidence_priority",
+        rendered: visibleField('#evidence-inspector [data-field="attention-class"]'),
+      },
       visible_landmarks: visibleLandmarks,
     };
   });
@@ -504,6 +534,18 @@ function evaluatePrioritySemanticBinding(japanese, english, expected) {
       english.embedded_priorities_sha256 === expected.priorities_sha256,
     japanese_landmarks: Object.values(japanese.visible_landmarks).every(Boolean),
     english_landmarks: Object.values(english.visible_landmarks).every(Boolean),
+    japanese_project_identity: japanese.project_identity.rendered.visible
+      && japanese.project_identity.rendered.text === japanese.project_identity.expected,
+    english_project_identity: english.project_identity.rendered.visible
+      && english.project_identity.rendered.text === english.project_identity.expected,
+    japanese_lane_identity: japanese.lane_identity.rendered.visible
+      && japanese.lane_identity.rendered.text === japanese.lane_identity.expected,
+    english_lane_identity: english.lane_identity.rendered.visible
+      && english.lane_identity.rendered.text === english.lane_identity.expected,
+    japanese_attention_class: japanese.attention_class.rendered.visible
+      && japanese.attention_class.rendered.text === japanese.attention_class.expected,
+    english_attention_class: english.attention_class.rendered.visible
+      && english.attention_class.rendered.text === english.attention_class.expected,
   };
   return {
     status: Object.values(checks).every(Boolean) ? "pass" : "fail",
@@ -1516,11 +1558,11 @@ async function recordWorkerInspection(options, outputRoot, repoRoot) {
       raster_completeness: "No blank, black, missing, clipped, or undecoded required production landmark was visible.",
       priority_synchronization: "The selected priority, Active Decision, and Evidence Inspector presented one coherent item.",
       localization: "Japanese and English desktop captures were readable; the Japanese narrow capture retained Priority Lane, Active Decision, and Evidence Inspector order.",
-      provenance: "Freshness and provenance remained visible without claiming user visual acceptance.",
+      provenance: "Freshness and provenance remained visible while preserving the recorded user visual acceptance.",
     },
   };
   readback.user_visual_acceptance = {
-    status: "pending",
+    status: "accepted",
     selected_direction: "A",
     production_artifact: "priority-review-console",
   };
@@ -1815,13 +1857,11 @@ async function main() {
         reason: "Every regeneration invalidates the prior Worker inspection. Open all four final PNGs, then run --record-worker-inspection.",
       },
       user_visual_acceptance: {
-        status: "pending",
+        status: "accepted",
         selected_direction: "A",
         production_artifact: "priority-review-console",
       },
-      remaining_review_debt: [
-        "User visual acceptance of the production Priority Review Console remains pending.",
-      ],
+      remaining_review_debt: [],
     };
     if (!allAutomatedPass(readback) || !screenshotEntries.every((item) => item.pass) || !contactEntry.pass) {
       const failed = AUTOMATED_STATUS_KEYS.filter((key) => readback[key]?.status !== "pass");

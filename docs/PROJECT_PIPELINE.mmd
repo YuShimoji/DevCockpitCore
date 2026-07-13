@@ -10,6 +10,14 @@ flowchart LR
     FRESH_CLI["python -m dev_cockpit.evidence_freshness"]
     FRESH_RECEIPT["evidence_freshness_receipt.v1<br/>validated point-in-time input"]
 
+    REPORT_MANIFEST["task_report_manifest.v1<br/>explicit paths + SHA-256"]
+    AGENT_REPORTS["manifest-bound AGENT_REPORT files"]
+    NORMALIZER["report_normalizer"]
+    CLASSIFIER["gate_classifier"]
+    PACKET["cross_project_supervision_packet.v1<br/>non-executable"]
+    GLOBAL_QUEUE["global attention queue<br/>rank is review priority"]
+    WORKSETS["project worksets<br/>same task IDs + ranks"]
+
     GEN["dev_cockpit.dashboard<br/>production generator"]
     POLICY["deterministic priority policy<br/>rank + deduplicate"]
     OPTION_A["A: Priority Review Console<br/>selected production direction"]
@@ -25,7 +33,7 @@ flowchart LR
     ACTION_JSON["devcockpitcore_review_actions.json"]
     ACTION_MD["devcockpitcore_review_actions.md"]
     CAPTURE["production_capture<br/>JA desktop + EN desktop + JA narrow"]
-    USER_REVIEW["free-form production visual review<br/>pending"]
+    USER_REVIEW["production visual acceptance<br/>accepted"]
 
     HISTORY["v2 A/B/C comparison<br/>historical selection provenance"]
     OPTION_B["B: Narrative Status Brief<br/>possible future handoff/summary only"]
@@ -40,12 +48,20 @@ flowchart LR
     FRESH_POLICY --> FRESH_RECEIPT
     FRESH_CLI --> FRESH_RECEIPT
 
+    REPORT_MANIFEST --> AGENT_REPORTS
+    AGENT_REPORTS --> NORMALIZER
+    NORMALIZER --> CLASSIFIER
+    CLASSIFIER --> PACKET
+    PACKET --> GLOBAL_QUEUE
+    PACKET --> WORKSETS
+
     VP --> GEN
     SM --> GEN
     SS --> GEN
     AD --> GEN
     RT --> GEN
     FRESH_RECEIPT --> GEN
+    PACKET -. "explicit --supervision-packet" .-> GEN
     GEN --> POLICY
     GEN --> ACT_SOURCE
     ACT_SOURCE --> POLICY
@@ -58,6 +74,8 @@ flowchart LR
     DECISION --> EVIDENCE
     SURFACE --> APPENDIX
     EVIDENCE --> APPENDIX
+    GLOBAL_QUEUE --> PRIORITY
+    WORKSETS -. "secondary same-ID projection" .-> APPENDIX
 
     STATE --> HTML
     PRIORITY --> HTML

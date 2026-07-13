@@ -43,6 +43,7 @@ Its durable components are:
 | Status snapshot | Read repository, document, artifact, and validation-hint state without modifying the target. |
 | Report normalizer | Convert AGENT_REPORT-like text into structured readback. |
 | Gate classifier | Separate readiness, residue, validation, user-work, and execution gates. |
+| Supervision packet | Rank explicit manifest-bound report tasks for attention and reproject the same IDs into project worksets. |
 | Validation pack | Run a fixed allowlist of DevCockpitCore-local checks. |
 | Cross-project smoke | Observe optional sibling repositories and return warnings when unavailable. |
 | Static dashboard | Render local checkpoint evidence for human review without a server. |
@@ -84,6 +85,8 @@ credentials, database, target-repository writeback, C5, or C6.
   ignorable work, and evidence route before presenting raw inventories.
 - Generated evidence remains source-backed and reviewable.
 - Review actions remain non-executable.
+- Cross-project rank means attention/review priority, never execution order.
+- Reports enter cross-project supervision only through explicit manifest and hash binding.
 - The dashboard remains local, static, and usable without JavaScript for core
   content.
 - Raw validation, smoke, action, and source data should be secondary to the

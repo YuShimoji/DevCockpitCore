@@ -1,0 +1,19 @@
+[ROUTE: AlphaProject | WORKER->SUPERVISOR | slice:alpha-release-validation-v1 | target:alpha-release-thread | artifact_current:alpha-release-candidate-v1 | reply:Supervisor | confidence:high]
+[PROGRESS: RELEASE VALIDATION [###--] 3/5 | current:required validation failed | next:alpha-release-validation-repair-v1 | blocker:validation failure | user_work:none]
+[ACTION: decision=blocked | now_owner:Alpha developer | deliverable:alpha-release-candidate-v1 | trigger:required validation repair]
+[STATUS: health=red | gates=3/5 | stop_class=VALIDATION_FAILED]
+
+**Outcome**
+The Alpha release candidate is stopped because its required contract test failed.
+
+**Validation**
+- Required contract test failed with one deterministic assertion.
+
+**Continuation State**
+Repair the contract assertion and rerun the bounded validation set.
+
+**User-Side Work**
+none
+
+**Handoff Gate**
+pass; no blocked handoff required.

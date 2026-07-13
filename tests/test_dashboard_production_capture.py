@@ -362,6 +362,27 @@ class ProductionCaptureSemanticRejectionTests(unittest.TestCase):
                 "inspector_evidence_id": "evidence-only",
                 "embedded_priorities": embedded_priorities,
                 "visible_landmarks": visible,
+                "project_identity": {
+                    "expected": "DevCockpitCore / supervision-fixture",
+                    "rendered": {
+                        "visible": True,
+                        "text": "DevCockpitCore / supervision-fixture",
+                    },
+                },
+                "lane_identity": {
+                    "expected": "Foundation Observer Readiness / fixture",
+                    "rendered": {
+                        "visible": True,
+                        "text": "Foundation Observer Readiness / fixture",
+                    },
+                },
+                "attention_class": {
+                    "expected": "active_safe_continuation",
+                    "rendered": {
+                        "visible": True,
+                        "text": "active_safe_continuation",
+                    },
+                },
             }
 
         fixture = {
@@ -655,7 +676,7 @@ class ProductionCaptureTrackedPackageTests(unittest.TestCase):
         self.assertTrue(negative["browser_canvas"]["detector_rejected"])
         self.assertTrue(negative["ffmpeg"]["detector_rejected"])
 
-    def test_worker_inspection_is_current_hash_bound_but_user_acceptance_is_pending(self) -> None:
+    def test_worker_inspection_is_current_hash_bound_and_user_acceptance_is_accepted(self) -> None:
         worker = self.readback["worker_raster_inspection"]
         self.assertEqual("pass", worker["status"])
         self.assertEqual(self.manifest["capture_id"], worker["inspected_capture_id"])
@@ -679,7 +700,7 @@ class ProductionCaptureTrackedPackageTests(unittest.TestCase):
         )
         self.assertEqual(
             {
-                "status": "pending",
+                "status": "accepted",
                 "selected_direction": "A",
                 "production_artifact": "priority-review-console",
             },
