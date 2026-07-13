@@ -212,6 +212,13 @@ to sibling repositories, schedule execution, or make actions executable. See
 `docs/design/CROSS_PROJECT_SUPERVISION_PACKET_V1.md` and
 `samples/supervision_packets/README.md` for the contracts and boundary.
 
+The normalizer accepts canonical v6.5 ROUTE identity (`thread`, `lane`,
+`slice`, `artifact`) and the existing legacy dialect. Explicit canonical and
+legacy aliases must agree. `load_packet()` recomputes task IDs, bindings,
+queue/workset projections, counts, policy, and scope instead of trusting the
+serialized packet. ACTION is optional for a structurally complete current
+report.
+
 ## Validation pack
 
 The validation pack runs a fixed allowlist of safe checks for this repository and
@@ -309,6 +316,12 @@ Every review action remains review-only with `executable: false`. The dashboard
 does not add a server, scheduler, database, credentials, external service,
 notification integration, or target-repository writeback.
 
+With a supervision packet loaded, the header separates local observer health
+from packet stop/decision/active/closed counts. An all-closed packet renders a
+zero-priority all-clear state and keeps closed report evidence browsable. The
+packet and local freshness receipt remain visibly different evidence
+populations.
+
 Evidence Freshness V1 is an input contract, not dashboard-local re-evaluation.
 The generator loads and validates
 `samples/evidence_freshness/evidence_freshness_receipt_v1.json`, including its
@@ -389,7 +402,11 @@ not a formal compliance claim.
 Production raster evidence, its capture manifest, and machine readback are
 kept under `samples/dashboard/production_capture/`. The user accepted the
 production Priority Review Console; `user_visual_acceptance` is `accepted` and
-the same surface does not require another visual/comprehension gate.
+capture provenance stores no user-specific absolute path. Declared capture or
+inspection timestamp overrides are labeled deterministic and are not current
+observation evidence; a capture without an override records actual browser
+observation authority.
+The same surface does not require another visual/comprehension gate.
 
 The earlier v2 A/B/C comparison remains historical research evidence at
 `samples/dashboard/intent_comparison/verified_observation_surface_intent_pack.html`.

@@ -9,7 +9,12 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from dev_cockpit.report_normalizer import normalize_report, redact_absolute_user_paths
+from dev_cockpit.report_normalizer import (
+    ReportNormalizationError,
+    normalize_report,
+    redact_absolute_user_paths,
+)
+from dev_cockpit.gate_classifier import classify_gate
 
 
 SAMPLE_REPORT = """[ROUTE: DevCockpitCore | AGENT->SUPERVISOR | slice:common-foundation-adapter-manifest-v1 | turn:T+3 | target:ChatGPT Common Foundation supervisor thread | artifact_current:adapter-manifest-v1 | artifact_next:report-normalizer-v1 | reply:User/Supervisor | confidence:high]
@@ -42,8 +47,120 @@ pass; no blocked handoff required.
 ::git-push{cwd="C:\\Users\\<redacted>\\DevCockpitCore" branch="main"}
 """
 
+CANONICAL_V65_REPORT = """[ROUTE: DevCockpitCore | WORKER->SUPERVISOR | thread:devcockpitcore-cross-project-supervision-packet-v1 | lane:CROSS_PROJECT_SUPERVISION | slice:authority-repair-and-project-aware-packet-v1 | artifact:cross-project-supervision-packet-v1 | reply:Web Supervisor | confidence:high]
+[PROGRESS: supervision-packet [#####] 20/20 | current:integrity repair completed | next:H1-live-report-round-trip | blocker:none | user_work:none]
+[STATUS: health=green | gates=20/20 | stop_class=NONE]
+
+## 到達した状態
+
+Integrity repair completed in commit 2a8673f and pushed. The worktree is clean and remote parity is 0 0.
+
+## 残る不確実性と次の取っ掛かり
+
+H1 requires authentic manifest-bound reports.
+
+## 引き継ぎゲート
+
+pass; no blocked handoff required.
+"""
+
 
 class ReportNormalizerTests(unittest.TestCase):
+    def test_canonical_v65_identity_round_trips_without_action(self) -> None:
+        result = normalize_report(
+            CANONICAL_V65_REPORT,
+            generated_at="2026-07-13T08:00:00Z",
+        )
+
+        self.assertEqual("canonical_v6_5", result["routing"]["dialect"])
+        self.assertEqual(
+            "devcockpitcore-cross-project-supervision-packet-v1",
+            result["routing"]["thread_id"],
+        )
+        self.assertEqual("CROSS_PROJECT_SUPERVISION", result["routing"]["lane_id"])
+        self.assertEqual(
+            "authority-repair-and-project-aware-packet-v1",
+            result["routing"]["slice_id"],
+        )
+        self.assertEqual(
+            "cross-project-supervision-packet-v1",
+            result["routing"]["artifact_id"],
+        )
+        self.assertEqual("supervision-packet", result["progress"]["lane"])
+        self.assertEqual("green", result["health"]["normalization_status"])
+        self.assertNotIn("action header missing", result["health"]["warnings"])
+        self.assertTrue(result["normalized_outcome"]["summary"])
+        self.assertTrue(result["progress"]["current"])
+        self.assertTrue(result["next"]["recommended_next_slice"])
+
+        gate = classify_gate(result, generated_at="2026-07-13T08:00:00Z")
+        self.assertNotEqual("unknown_review_required", gate["classification"]["decision"])
+        self.assertEqual("NONE", gate["classification"]["stop_class"])
+
+    def test_legacy_route_identity_remains_available(self) -> None:
+        result = normalize_report(SAMPLE_REPORT, generated_at="2026-01-01T00:00:00Z")
+
+        self.assertEqual("legacy_compatible", result["routing"]["dialect"])
+        self.assertEqual(
+            "ChatGPT Common Foundation supervisor thread",
+            result["routing"]["thread_id"],
+        )
+        self.assertEqual("FOUNDATION OBSERVER READINESS", result["routing"]["lane_id"])
+        self.assertEqual("adapter-manifest-v1", result["routing"]["artifact_id"])
+
+    def test_matching_canonical_and_legacy_aliases_are_accepted(self) -> None:
+        report = CANONICAL_V65_REPORT.replace(
+            " | reply:Web Supervisor",
+            " | target:devcockpitcore-cross-project-supervision-packet-v1"
+            " | artifact_current:cross-project-supervision-packet-v1"
+            " | reply:Web Supervisor",
+        )
+
+        result = normalize_report(report, generated_at="2026-07-13T08:00:00Z")
+        self.assertEqual("canonical_v6_5", result["routing"]["dialect"])
+
+    def test_conflicting_canonical_and_legacy_identity_fails_closed(self) -> None:
+        cases = {
+            "thread": CANONICAL_V65_REPORT.replace(
+                " | reply:Web Supervisor",
+                " | target:different-thread | reply:Web Supervisor",
+            ),
+            "artifact_current": CANONICAL_V65_REPORT.replace(
+                " | reply:Web Supervisor",
+                " | artifact_current:different-artifact | reply:Web Supervisor",
+            ),
+            "duplicate_thread": CANONICAL_V65_REPORT.replace(
+                " | lane:CROSS_PROJECT_SUPERVISION",
+                " | thread:different-thread | lane:CROSS_PROJECT_SUPERVISION",
+            ),
+        }
+        for name, report in cases.items():
+            with self.subTest(name=name):
+                with self.assertRaises(ReportNormalizationError):
+                    normalize_report(report, generated_at="2026-07-13T08:00:00Z")
+
+    def test_matching_current_artifact_does_not_mask_conflicting_action_deliverable(self) -> None:
+        report = CANONICAL_V65_REPORT.replace(
+            " | reply:Web Supervisor",
+            " | artifact_current:cross-project-supervision-packet-v1"
+            " | reply:Web Supervisor",
+        ).replace(
+            "[STATUS:",
+            "[ACTION: decision=completed | deliverable:different-artifact]\n[STATUS:",
+        )
+
+        with self.assertRaises(ReportNormalizationError):
+            normalize_report(report, generated_at="2026-07-13T08:00:00Z")
+
+    def test_conflicting_legacy_current_artifact_claims_fail_closed(self) -> None:
+        report = SAMPLE_REPORT.replace(
+            "deliverable:adapter-manifest-v1",
+            "deliverable:different-artifact",
+        )
+
+        with self.assertRaises(ReportNormalizationError):
+            normalize_report(report, generated_at="2026-01-01T00:00:00Z")
+
     def test_route_progress_action_status_parse(self) -> None:
         result = normalize_report(SAMPLE_REPORT, generated_at="2026-01-01T00:00:00Z")
         self.assertEqual(result["schema_version"], "report_normalization.v1")
@@ -61,6 +178,10 @@ class ReportNormalizerTests(unittest.TestCase):
         self.assertIsNone(result["routing"]["route"])
         self.assertEqual(result["sections"]["outcome"], "Partial report only.")
         self.assertEqual(result["health"]["normalization_status"], "yellow")
+        self.assertEqual(
+            ["current_state", "next_state"],
+            result["health"]["unknown_fields"],
+        )
 
     def test_markdown_sections_and_commit_reference(self) -> None:
         result = normalize_report(SAMPLE_REPORT, generated_at="2026-01-01T00:00:00Z")

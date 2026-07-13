@@ -1,8 +1,16 @@
 {
   "schema_version": "production_capture_readback.v1",
   "artifact_id": "priority-review-console-production-observation-surface-v1",
-  "capture_id": "priority-review-console-f228d9eea5e8885d0a6a58e1",
-  "captured_at": "2026-07-13T07:10:00.000Z",
+  "capture_id": "priority-review-console-3a67969467536a4c0be75cd5",
+  "captured_at": "2026-07-13T08:30:00.000Z",
+  "capture_timestamp": {
+    "value": "2026-07-13T08:30:00.000Z",
+    "authority": "deterministic_declared_override",
+    "event": "browser_capture_completed",
+    "actual_observed_at": null,
+    "declared_at": "2026-07-13T08:30:00.000Z",
+    "current_observation_eligible": false
+  },
   "source_binding": {
     "status": "pass",
     "checks": {
@@ -17,10 +25,10 @@
       "priority_to_freshness_capture_id_match": true
     },
     "declared_freshness_path_candidates": [
-      "c:\\users\\planner007\\devcockpitcore-supervision-packet-v1\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json",
-      "c:\\users\\planner007\\devcockpitcore-supervision-packet-v1\\samples\\dashboard\\production_capture\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json"
+      "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+      "samples/evidence_freshness/evidence_freshness_receipt_v1.json"
     ],
-    "actual_freshness_path": "c:\\users\\planner007\\devcockpitcore-supervision-packet-v1\\samples\\evidence_freshness\\evidence_freshness_receipt_v1.json"
+    "actual_freshness_path": "samples/evidence_freshness/evidence_freshness_receipt_v1.json"
   },
   "automated_semantic_parity": {
     "status": "pass",
@@ -36,12 +44,14 @@
         "task-72cd8ffa26a76611.source_report"
       ],
       "selected_priority_id": "task-de0aa9c2efa92270",
+      "mode": "active_queue",
+      "packet_loaded": true,
       "evidence_by_priority_id": {
         "task-de0aa9c2efa92270": "task-de0aa9c2efa92270.source_report",
         "task-b12276783e599eb2": "task-b12276783e599eb2.source_report",
         "task-72cd8ffa26a76611": "task-72cd8ffa26a76611.source_report"
       },
-      "priorities_sha256": "96a9b7f5a2820d88b074fa263bd5dda94f0d3f9dd8e1a2f3617af911b0374307"
+      "priorities_sha256": "a53abe2e9cb8f0820035f48c3ffc178cb7692838e3e62e8c894cbbad21b615e8"
     },
     "checks": {
       "expected_priority_count_nonzero": true,
@@ -111,14 +121,17 @@
       },
       "visible_landmarks": {
         "current-state": true,
+        "local-observer-health": true,
+        "packet-attention": true,
         "priority-lane": true,
         "priority-first": true,
+        "priority-empty-state": false,
         "active-decision": true,
         "evidence-inspector": true,
         "freshness-status": true,
         "provenance": true
       },
-      "embedded_priorities_sha256": "96a9b7f5a2820d88b074fa263bd5dda94f0d3f9dd8e1a2f3617af911b0374307"
+      "embedded_priorities_sha256": "a53abe2e9cb8f0820035f48c3ffc178cb7692838e3e62e8c894cbbad21b615e8"
     },
     "english": {
       "language": "en",
@@ -161,14 +174,17 @@
       },
       "visible_landmarks": {
         "current-state": true,
+        "local-observer-health": true,
+        "packet-attention": true,
         "priority-lane": true,
         "priority-first": true,
+        "priority-empty-state": false,
         "active-decision": true,
         "evidence-inspector": true,
         "freshness-status": true,
         "provenance": true
       },
-      "embedded_priorities_sha256": "96a9b7f5a2820d88b074fa263bd5dda94f0d3f9dd8e1a2f3617af911b0374307"
+      "embedded_priorities_sha256": "a53abe2e9cb8f0820035f48c3ffc178cb7692838e3e62e8c894cbbad21b615e8"
     }
   },
   "automated_priority_click_sync": {
@@ -310,7 +326,7 @@
     "inspector_priority_id": "task-de0aa9c2efa92270",
     "evidence_id": "task-de0aa9c2efa92270.source_report",
     "first_text_length": 425,
-    "inspector_text_length": 733,
+    "inspector_text_length": 801,
     "freshness_visible": true,
     "provenance_visible": true,
     "pass": true
@@ -418,9 +434,9 @@
       "[data-landmark=\"evidence-inspector\"]"
     ],
     "top_positions": [
-      496.015625,
-      1188.25,
-      1944.0625
+      576.328125,
+      1268.5625,
+      2024.375
     ],
     "dom_order": true,
     "visual_order": true,
@@ -452,6 +468,26 @@
             "fully_visible": true,
             "pass": true
           },
+          "local_observer_health": {
+            "selector": "[data-landmark=\"local-observer-health\"]",
+            "count": 1,
+            "rect": {
+              "x": 25,
+              "y": 131.88,
+              "width": 278,
+              "height": 57.13,
+              "right": 303,
+              "bottom": 189
+            },
+            "raster_rect": {
+              "x": 25,
+              "y": 131,
+              "width": 278,
+              "height": 58
+            },
+            "fully_visible": true,
+            "pass": true
+          },
           "priority_lane": {
             "selector": "[data-landmark=\"priority-lane\"]",
             "count": 1,
@@ -459,15 +495,15 @@
               "x": 24,
               "y": 300.58,
               "width": 396.72,
-              "height": 880,
+              "height": 876,
               "right": 420.72,
-              "bottom": 1180.58
+              "bottom": 1176.58
             },
             "raster_rect": {
               "x": 24,
               "y": 300,
               "width": 397,
-              "height": 881
+              "height": 877
             },
             "fully_visible": true,
             "pass": true
@@ -499,15 +535,15 @@
               "x": 432.72,
               "y": 300.58,
               "width": 574.55,
-              "height": 880,
+              "height": 876,
               "right": 1007.27,
-              "bottom": 1180.58
+              "bottom": 1176.58
             },
             "raster_rect": {
               "x": 432,
               "y": 300,
               "width": 576,
-              "height": 881
+              "height": 877
             },
             "fully_visible": true,
             "pass": true
@@ -519,15 +555,15 @@
               "x": 1019.27,
               "y": 300.58,
               "width": 396.73,
-              "height": 880,
+              "height": 876,
               "right": 1416,
-              "bottom": 1180.58
+              "bottom": 1176.58
             },
             "raster_rect": {
               "x": 1019,
               "y": 300,
               "width": 397,
-              "height": 881
+              "height": 877
             },
             "fully_visible": true,
             "pass": true
@@ -557,17 +593,37 @@
             "count": 1,
             "rect": {
               "x": 1038.27,
-              "y": 871.56,
+              "y": 937.69,
               "width": 358.73,
               "height": 48.19,
               "right": 1397,
-              "bottom": 919.75
+              "bottom": 985.88
             },
             "raster_rect": {
               "x": 1038,
-              "y": 871,
+              "y": 937,
               "width": 359,
               "height": 49
+            },
+            "fully_visible": true,
+            "pass": true
+          },
+          "packet_attention": {
+            "selector": "[data-landmark=\"packet-attention\"]",
+            "count": 1,
+            "rect": {
+              "x": 303,
+              "y": 131.88,
+              "width": 278,
+              "height": 57.13,
+              "right": 581,
+              "bottom": 189
+            },
+            "raster_rect": {
+              "x": 303,
+              "y": 131,
+              "width": 278,
+              "height": 58
             },
             "fully_visible": true,
             "pass": true
@@ -585,15 +641,35 @@
               "x": 0,
               "y": 0,
               "width": 1440,
-              "height": 230.39,
+              "height": 253.58,
               "right": 1440,
-              "bottom": 230.39
+              "bottom": 253.58
             },
             "raster_rect": {
               "x": 0,
               "y": 0,
               "width": 1440,
-              "height": 231
+              "height": 254
+            },
+            "fully_visible": true,
+            "pass": true
+          },
+          "local_observer_health": {
+            "selector": "[data-landmark=\"local-observer-health\"]",
+            "count": 1,
+            "rect": {
+              "x": 25,
+              "y": 131.88,
+              "width": 278,
+              "height": 80.31,
+              "right": 303,
+              "bottom": 212.19
+            },
+            "raster_rect": {
+              "x": 25,
+              "y": 131,
+              "width": 278,
+              "height": 82
             },
             "fully_visible": true,
             "pass": true
@@ -603,17 +679,17 @@
             "count": 1,
             "rect": {
               "x": 24,
-              "y": 300.58,
+              "y": 323.77,
               "width": 396.72,
-              "height": 880,
+              "height": 876,
               "right": 420.72,
-              "bottom": 1180.58
+              "bottom": 1199.77
             },
             "raster_rect": {
               "x": 24,
-              "y": 300,
+              "y": 323,
               "width": 397,
-              "height": 881
+              "height": 877
             },
             "fully_visible": true,
             "pass": true
@@ -623,15 +699,15 @@
             "count": 1,
             "rect": {
               "x": 25,
-              "y": 387.58,
+              "y": 410.77,
               "width": 394.72,
               "height": 166.69,
               "right": 419.72,
-              "bottom": 554.27
+              "bottom": 577.45
             },
             "raster_rect": {
               "x": 25,
-              "y": 387,
+              "y": 410,
               "width": 395,
               "height": 168
             },
@@ -643,17 +719,17 @@
             "count": 1,
             "rect": {
               "x": 432.72,
-              "y": 300.58,
+              "y": 323.77,
               "width": 574.55,
-              "height": 880,
+              "height": 876,
               "right": 1007.27,
-              "bottom": 1180.58
+              "bottom": 1199.77
             },
             "raster_rect": {
               "x": 432,
-              "y": 300,
+              "y": 323,
               "width": 576,
-              "height": 881
+              "height": 877
             },
             "fully_visible": true,
             "pass": true
@@ -663,17 +739,17 @@
             "count": 1,
             "rect": {
               "x": 1019.27,
-              "y": 300.58,
+              "y": 323.77,
               "width": 396.73,
-              "height": 880,
+              "height": 876,
               "right": 1416,
-              "bottom": 1180.58
+              "bottom": 1199.77
             },
             "raster_rect": {
               "x": 1019,
-              "y": 300,
+              "y": 323,
               "width": 397,
-              "height": 881
+              "height": 877
             },
             "fully_visible": true,
             "pass": true
@@ -683,17 +759,17 @@
             "count": 1,
             "rect": {
               "x": 1038.27,
-              "y": 406.58,
+              "y": 429.77,
               "width": 237.73,
               "height": 26.39,
               "right": 1276,
-              "bottom": 432.97
+              "bottom": 456.16
             },
             "raster_rect": {
               "x": 1038,
-              "y": 406,
+              "y": 429,
               "width": 238,
-              "height": 27
+              "height": 28
             },
             "fully_visible": true,
             "pass": true
@@ -703,17 +779,37 @@
             "count": 1,
             "rect": {
               "x": 1038.27,
-              "y": 871.56,
+              "y": 960.88,
               "width": 358.73,
               "height": 48.19,
               "right": 1397,
-              "bottom": 919.75
+              "bottom": 1009.06
             },
             "raster_rect": {
               "x": 1038,
-              "y": 871,
+              "y": 960,
               "width": 359,
-              "height": 49
+              "height": 50
+            },
+            "fully_visible": true,
+            "pass": true
+          },
+          "packet_attention": {
+            "selector": "[data-landmark=\"packet-attention\"]",
+            "count": 1,
+            "rect": {
+              "x": 303,
+              "y": 131.88,
+              "width": 278,
+              "height": 80.31,
+              "right": 581,
+              "bottom": 212.19
+            },
+            "raster_rect": {
+              "x": 303,
+              "y": 131,
+              "width": 278,
+              "height": 82
             },
             "fully_visible": true,
             "pass": true
@@ -731,15 +827,35 @@
               "x": 0,
               "y": 0,
               "width": 390,
-              "height": 388.64,
+              "height": 468.95,
               "right": 390,
-              "bottom": 388.64
+              "bottom": 468.95
             },
             "raster_rect": {
               "x": 0,
               "y": 0,
               "width": 390,
-              "height": 389
+              "height": 469
+            },
+            "fully_visible": true,
+            "pass": true
+          },
+          "local_observer_health": {
+            "selector": "[data-landmark=\"local-observer-health\"]",
+            "count": 1,
+            "rect": {
+              "x": 15,
+              "y": 216.61,
+              "width": 180,
+              "height": 81.31,
+              "right": 195,
+              "bottom": 297.92
+            },
+            "raster_rect": {
+              "x": 15,
+              "y": 216,
+              "width": 180,
+              "height": 82
             },
             "fully_visible": true,
             "pass": true
@@ -749,15 +865,15 @@
             "count": 1,
             "rect": {
               "x": 14,
-              "y": 496.02,
+              "y": 576.33,
               "width": 362,
               "height": 680.23,
               "right": 376,
-              "bottom": 1176.25
+              "bottom": 1256.56
             },
             "raster_rect": {
               "x": 14,
-              "y": 496,
+              "y": 576,
               "width": 362,
               "height": 681
             },
@@ -769,15 +885,15 @@
             "count": 1,
             "rect": {
               "x": 15,
-              "y": 573.02,
+              "y": 653.33,
               "width": 360,
               "height": 194.58,
               "right": 375,
-              "bottom": 767.59
+              "bottom": 847.91
             },
             "raster_rect": {
               "x": 15,
-              "y": 573,
+              "y": 653,
               "width": 360,
               "height": 195
             },
@@ -789,15 +905,15 @@
             "count": 1,
             "rect": {
               "x": 14,
-              "y": 1188.25,
+              "y": 1268.56,
               "width": 362,
               "height": 743.81,
               "right": 376,
-              "bottom": 1932.06
+              "bottom": 2012.38
             },
             "raster_rect": {
               "x": 14,
-              "y": 1188,
+              "y": 1268,
               "width": 362,
               "height": 745
             },
@@ -809,17 +925,17 @@
             "count": 1,
             "rect": {
               "x": 14,
-              "y": 1944.06,
+              "y": 2024.38,
               "width": 362,
-              "height": 651.11,
+              "height": 716.23,
               "right": 376,
-              "bottom": 2595.17
+              "bottom": 2740.61
             },
             "raster_rect": {
               "x": 14,
-              "y": 1944,
+              "y": 2024,
               "width": 362,
-              "height": 652
+              "height": 717
             },
             "fully_visible": true,
             "pass": true
@@ -829,15 +945,15 @@
             "count": 1,
             "rect": {
               "x": 29,
-              "y": 2036.06,
+              "y": 2116.38,
               "width": 176,
               "height": 26.39,
               "right": 205,
-              "bottom": 2062.45
+              "bottom": 2142.77
             },
             "raster_rect": {
               "x": 29,
-              "y": 2036,
+              "y": 2116,
               "width": 176,
               "height": 27
             },
@@ -849,17 +965,37 @@
             "count": 1,
             "rect": {
               "x": 29,
-              "y": 2501.05,
+              "y": 2647.48,
               "width": 332,
               "height": 48.19,
               "right": 361,
-              "bottom": 2549.23
+              "bottom": 2695.67
             },
             "raster_rect": {
               "x": 29,
-              "y": 2501,
+              "y": 2647,
               "width": 332,
               "height": 49
+            },
+            "fully_visible": true,
+            "pass": true
+          },
+          "packet_attention": {
+            "selector": "[data-landmark=\"packet-attention\"]",
+            "count": 1,
+            "rect": {
+              "x": 195,
+              "y": 216.61,
+              "width": 180,
+              "height": 81.31,
+              "right": 375,
+              "bottom": 297.92
+            },
+            "raster_rect": {
+              "x": 195,
+              "y": 216,
+              "width": 180,
+              "height": 82
             },
             "fully_visible": true,
             "pass": true
@@ -874,24 +1010,33 @@
     "captures": [
       {
         "id": "ja-desktop",
-        "rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
+        "rgba_sha256": "4ff95dfde97692a71c8763fca31767fe7eb57ba61b6c95d01e1e2fd6098e9a47",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 332640,
-            "luminance_mean": 26.5181,
-            "luminance_variance": 1555.6378,
+            "luminance_mean": 27.927,
+            "luminance_variance": 1788.3569,
             "near_black_ratio": 0,
-            "quantized_color_count": 473,
-            "dominant_color_ratio": 0.681734,
+            "quantized_color_count": 501,
+            "dominant_color_ratio": 0.680513,
+            "pass": true
+          },
+          "local_observer_health": {
+            "sampled_pixels": 16124,
+            "luminance_mean": 34.1686,
+            "luminance_variance": 2038.121,
+            "near_black_ratio": 0,
+            "quantized_color_count": 187,
+            "dominant_color_ratio": 0.895311,
             "pass": true
           },
           "priority_lane": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 40.2191,
-            "luminance_variance": 1876.5737,
+            "sampled_pixels": 348169,
+            "luminance_mean": 40.2801,
+            "luminance_variance": 1884.2771,
             "near_black_ratio": 0,
             "quantized_color_count": 511,
-            "dominant_color_ratio": 0.710753,
+            "dominant_color_ratio": 0.709457,
             "pass": true
           },
           "priority_first": {
@@ -904,21 +1049,21 @@
             "pass": true
           },
           "active_decision": {
-            "sampled_pixels": 507456,
-            "luminance_mean": 36.9599,
-            "luminance_variance": 1861.5691,
+            "sampled_pixels": 505152,
+            "luminance_mean": 37.0065,
+            "luminance_variance": 1869.5543,
             "near_black_ratio": 0,
             "quantized_color_count": 409,
-            "dominant_color_ratio": 0.917479,
+            "dominant_color_ratio": 0.917134,
             "pass": true
           },
           "evidence_inspector": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 30.7693,
-            "luminance_variance": 644.3712,
+            "sampled_pixels": 348169,
+            "luminance_mean": 31.228,
+            "luminance_variance": 694.2802,
             "near_black_ratio": 0,
-            "quantized_color_count": 391,
-            "dominant_color_ratio": 0.950937,
+            "quantized_color_count": 367,
+            "dominant_color_ratio": 0.946233,
             "pass": true
           },
           "freshness_status": {
@@ -938,30 +1083,48 @@
             "quantized_color_count": 99,
             "dominant_color_ratio": 0.927804,
             "pass": true
+          },
+          "packet_attention": {
+            "sampled_pixels": 16124,
+            "luminance_mean": 43.3963,
+            "luminance_variance": 3659.121,
+            "near_black_ratio": 0,
+            "quantized_color_count": 193,
+            "dominant_color_ratio": 0.845324,
+            "pass": true
           }
         },
         "pass": true
       },
       {
         "id": "en-desktop",
-        "rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
+        "rgba_sha256": "3d6f18b72913ba6e24376eb1c53851785cdc4f98a5ae6bd0e39e007eba3c5a52",
         "landmarks": {
           "current_state": {
-            "sampled_pixels": 332640,
-            "luminance_mean": 26.8692,
-            "luminance_variance": 1628.8252,
+            "sampled_pixels": 365760,
+            "luminance_mean": 27.8043,
+            "luminance_variance": 1738.2143,
             "near_black_ratio": 0,
-            "quantized_color_count": 408,
-            "dominant_color_ratio": 0.681866,
+            "quantized_color_count": 421,
+            "dominant_color_ratio": 0.626364,
+            "pass": true
+          },
+          "local_observer_health": {
+            "sampled_pixels": 22796,
+            "luminance_mean": 31.634,
+            "luminance_variance": 1577.4822,
+            "near_black_ratio": 0,
+            "quantized_color_count": 61,
+            "dominant_color_ratio": 0.906782,
             "pass": true
           },
           "priority_lane": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 39.4905,
-            "luminance_variance": 1758.6317,
+            "sampled_pixels": 348169,
+            "luminance_mean": 39.5481,
+            "luminance_variance": 1765.884,
             "near_black_ratio": 0,
             "quantized_color_count": 479,
-            "dominant_color_ratio": 0.733732,
+            "dominant_color_ratio": 0.732541,
             "pass": true
           },
           "priority_first": {
@@ -974,39 +1137,48 @@
             "pass": true
           },
           "active_decision": {
-            "sampled_pixels": 507456,
-            "luminance_mean": 36.1027,
-            "luminance_variance": 1693.5272,
+            "sampled_pixels": 505152,
+            "luminance_mean": 36.1453,
+            "luminance_variance": 1700.8229,
             "near_black_ratio": 0,
             "quantized_color_count": 392,
-            "dominant_color_ratio": 0.921707,
+            "dominant_color_ratio": 0.921382,
             "pass": true
           },
           "evidence_inspector": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 31.6172,
-            "luminance_variance": 764.9483,
+            "sampled_pixels": 348169,
+            "luminance_mean": 32.3099,
+            "luminance_variance": 844.8252,
             "near_black_ratio": 0,
-            "quantized_color_count": 359,
-            "dominant_color_ratio": 0.944947,
+            "quantized_color_count": 340,
+            "dominant_color_ratio": 0.938366,
             "pass": true
           },
           "freshness_status": {
-            "sampled_pixels": 6426,
-            "luminance_mean": 55.1116,
-            "luminance_variance": 3151.7216,
+            "sampled_pixels": 6664,
+            "luminance_mean": 54.095,
+            "luminance_variance": 3067.0612,
             "near_black_ratio": 0,
             "quantized_color_count": 46,
-            "dominant_color_ratio": 0.757703,
+            "dominant_color_ratio": 0.766357,
             "pass": true
           },
           "provenance": {
-            "sampled_pixels": 17591,
-            "luminance_mean": 35.3927,
-            "luminance_variance": 1066.4012,
+            "sampled_pixels": 17950,
+            "luminance_mean": 35.2178,
+            "luminance_variance": 1046.5719,
             "near_black_ratio": 0,
             "quantized_color_count": 47,
-            "dominant_color_ratio": 0.914786,
+            "dominant_color_ratio": 0.91649,
+            "pass": true
+          },
+          "packet_attention": {
+            "sampled_pixels": 22796,
+            "luminance_mean": 41.1323,
+            "luminance_variance": 3246.7986,
+            "near_black_ratio": 0,
+            "quantized_color_count": 78,
+            "dominant_color_ratio": 0.854448,
             "pass": true
           }
         },
@@ -1014,24 +1186,33 @@
       },
       {
         "id": "ja-narrow",
-        "rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
+        "rgba_sha256": "f35d88403300bc77cdd315a24d403d486c197b796327f69610351e99873572ec",
         "landmarks": {
           "current_state": {
-            "sampled_pixels": 151710,
-            "luminance_mean": 34.0721,
-            "luminance_variance": 2517.1246,
+            "sampled_pixels": 182910,
+            "luminance_mean": 34.3649,
+            "luminance_variance": 2508.9644,
             "near_black_ratio": 0,
-            "quantized_color_count": 466,
-            "dominant_color_ratio": 0.597653,
+            "quantized_color_count": 503,
+            "dominant_color_ratio": 0.505779,
+            "pass": true
+          },
+          "local_observer_health": {
+            "sampled_pixels": 14760,
+            "luminance_mean": 35.718,
+            "luminance_variance": 2214.2064,
+            "near_black_ratio": 0,
+            "quantized_color_count": 187,
+            "dominant_color_ratio": 0.878523,
             "pass": true
           },
           "priority_lane": {
             "sampled_pixels": 246522,
-            "luminance_mean": 45.8403,
-            "luminance_variance": 2542.5761,
+            "luminance_mean": 45.8574,
+            "luminance_variance": 2541.7403,
             "near_black_ratio": 0,
-            "quantized_color_count": 515,
-            "dominant_color_ratio": 0.604112,
+            "quantized_color_count": 514,
+            "dominant_color_ratio": 0.605573,
             "pass": true
           },
           "priority_first": {
@@ -1045,29 +1226,29 @@
           },
           "active_decision": {
             "sampled_pixels": 269690,
-            "luminance_mean": 40.2763,
-            "luminance_variance": 2281.1031,
+            "luminance_mean": 40.2607,
+            "luminance_variance": 2281.6926,
             "near_black_ratio": 0,
             "quantized_color_count": 417,
-            "dominant_color_ratio": 0.891231,
+            "dominant_color_ratio": 0.889896,
             "pass": true
           },
           "evidence_inspector": {
-            "sampled_pixels": 236024,
-            "luminance_mean": 32.7266,
-            "luminance_variance": 928.2401,
+            "sampled_pixels": 259554,
+            "luminance_mean": 32.7985,
+            "luminance_variance": 909.0654,
             "near_black_ratio": 0,
-            "quantized_color_count": 387,
-            "dominant_color_ratio": 0.931363,
+            "quantized_color_count": 367,
+            "dominant_color_ratio": 0.932677,
             "pass": true
           },
           "freshness_status": {
             "sampled_pixels": 4752,
-            "luminance_mean": 64.0769,
-            "luminance_variance": 4081.5049,
+            "luminance_mean": 64.1409,
+            "luminance_variance": 4086.4526,
             "near_black_ratio": 0,
             "quantized_color_count": 17,
-            "dominant_color_ratio": 0.661406,
+            "dominant_color_ratio": 0.660985,
             "pass": true
           },
           "provenance": {
@@ -1078,6 +1259,15 @@
             "quantized_color_count": 105,
             "dominant_color_ratio": 0.923838,
             "pass": true
+          },
+          "packet_attention": {
+            "sampled_pixels": 14760,
+            "luminance_mean": 45.5264,
+            "luminance_variance": 3940.4609,
+            "near_black_ratio": 0,
+            "quantized_color_count": 186,
+            "dominant_color_ratio": 0.828997,
+            "pass": true
           }
         },
         "pass": true
@@ -1087,29 +1277,29 @@
       "landmarks": {
         "ja-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.7125,
-          "luminance_variance": 1115.1253,
+          "luminance_mean": 34.1148,
+          "luminance_variance": 1147.2907,
           "near_black_ratio": 0,
-          "quantized_color_count": 543,
-          "dominant_color_ratio": 0.655061,
+          "quantized_color_count": 545,
+          "dominant_color_ratio": 0.647262,
           "pass": true
         },
         "en-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.447,
-          "luminance_variance": 1040.0897,
+          "luminance_mean": 33.9004,
+          "luminance_variance": 1082.2978,
           "near_black_ratio": 0,
-          "quantized_color_count": 549,
-          "dominant_color_ratio": 0.648925,
+          "quantized_color_count": 538,
+          "dominant_color_ratio": 0.658006,
           "pass": true
         },
         "ja-narrow": {
           "sampled_pixels": 37128,
-          "luminance_mean": 36.3215,
-          "luminance_variance": 1119.0745,
+          "luminance_mean": 36.8981,
+          "luminance_variance": 1112.0411,
           "near_black_ratio": 0,
-          "quantized_color_count": 527,
-          "dominant_color_ratio": 0.641133,
+          "quantized_color_count": 536,
+          "dominant_color_ratio": 0.631114,
           "pass": true
         }
       },
@@ -1121,24 +1311,33 @@
     "captures": [
       {
         "id": "ja-desktop",
-        "rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
+        "rgba_sha256": "4ff95dfde97692a71c8763fca31767fe7eb57ba61b6c95d01e1e2fd6098e9a47",
         "landmarks": {
           "current_state": {
             "sampled_pixels": 332640,
-            "luminance_mean": 26.5181,
-            "luminance_variance": 1555.6378,
+            "luminance_mean": 27.927,
+            "luminance_variance": 1788.3569,
             "near_black_ratio": 0,
-            "quantized_color_count": 473,
-            "dominant_color_ratio": 0.681734,
+            "quantized_color_count": 501,
+            "dominant_color_ratio": 0.680513,
+            "pass": true
+          },
+          "local_observer_health": {
+            "sampled_pixels": 16124,
+            "luminance_mean": 34.1686,
+            "luminance_variance": 2038.121,
+            "near_black_ratio": 0,
+            "quantized_color_count": 187,
+            "dominant_color_ratio": 0.895311,
             "pass": true
           },
           "priority_lane": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 40.2191,
-            "luminance_variance": 1876.5737,
+            "sampled_pixels": 348169,
+            "luminance_mean": 40.2801,
+            "luminance_variance": 1884.2771,
             "near_black_ratio": 0,
             "quantized_color_count": 511,
-            "dominant_color_ratio": 0.710753,
+            "dominant_color_ratio": 0.709457,
             "pass": true
           },
           "priority_first": {
@@ -1151,21 +1350,21 @@
             "pass": true
           },
           "active_decision": {
-            "sampled_pixels": 507456,
-            "luminance_mean": 36.9599,
-            "luminance_variance": 1861.5691,
+            "sampled_pixels": 505152,
+            "luminance_mean": 37.0065,
+            "luminance_variance": 1869.5543,
             "near_black_ratio": 0,
             "quantized_color_count": 409,
-            "dominant_color_ratio": 0.917479,
+            "dominant_color_ratio": 0.917134,
             "pass": true
           },
           "evidence_inspector": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 30.7693,
-            "luminance_variance": 644.3712,
+            "sampled_pixels": 348169,
+            "luminance_mean": 31.228,
+            "luminance_variance": 694.2802,
             "near_black_ratio": 0,
-            "quantized_color_count": 391,
-            "dominant_color_ratio": 0.950937,
+            "quantized_color_count": 367,
+            "dominant_color_ratio": 0.946233,
             "pass": true
           },
           "freshness_status": {
@@ -1185,30 +1384,48 @@
             "quantized_color_count": 99,
             "dominant_color_ratio": 0.927804,
             "pass": true
+          },
+          "packet_attention": {
+            "sampled_pixels": 16124,
+            "luminance_mean": 43.3963,
+            "luminance_variance": 3659.121,
+            "near_black_ratio": 0,
+            "quantized_color_count": 193,
+            "dominant_color_ratio": 0.845324,
+            "pass": true
           }
         },
         "pass": true
       },
       {
         "id": "en-desktop",
-        "rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
+        "rgba_sha256": "3d6f18b72913ba6e24376eb1c53851785cdc4f98a5ae6bd0e39e007eba3c5a52",
         "landmarks": {
           "current_state": {
-            "sampled_pixels": 332640,
-            "luminance_mean": 26.8692,
-            "luminance_variance": 1628.8252,
+            "sampled_pixels": 365760,
+            "luminance_mean": 27.8043,
+            "luminance_variance": 1738.2143,
             "near_black_ratio": 0,
-            "quantized_color_count": 408,
-            "dominant_color_ratio": 0.681866,
+            "quantized_color_count": 421,
+            "dominant_color_ratio": 0.626364,
+            "pass": true
+          },
+          "local_observer_health": {
+            "sampled_pixels": 22796,
+            "luminance_mean": 31.634,
+            "luminance_variance": 1577.4822,
+            "near_black_ratio": 0,
+            "quantized_color_count": 61,
+            "dominant_color_ratio": 0.906782,
             "pass": true
           },
           "priority_lane": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 39.4905,
-            "luminance_variance": 1758.6317,
+            "sampled_pixels": 348169,
+            "luminance_mean": 39.5481,
+            "luminance_variance": 1765.884,
             "near_black_ratio": 0,
             "quantized_color_count": 479,
-            "dominant_color_ratio": 0.733732,
+            "dominant_color_ratio": 0.732541,
             "pass": true
           },
           "priority_first": {
@@ -1221,39 +1438,48 @@
             "pass": true
           },
           "active_decision": {
-            "sampled_pixels": 507456,
-            "luminance_mean": 36.1027,
-            "luminance_variance": 1693.5272,
+            "sampled_pixels": 505152,
+            "luminance_mean": 36.1453,
+            "luminance_variance": 1700.8229,
             "near_black_ratio": 0,
             "quantized_color_count": 392,
-            "dominant_color_ratio": 0.921707,
+            "dominant_color_ratio": 0.921382,
             "pass": true
           },
           "evidence_inspector": {
-            "sampled_pixels": 349757,
-            "luminance_mean": 31.6172,
-            "luminance_variance": 764.9483,
+            "sampled_pixels": 348169,
+            "luminance_mean": 32.3099,
+            "luminance_variance": 844.8252,
             "near_black_ratio": 0,
-            "quantized_color_count": 359,
-            "dominant_color_ratio": 0.944947,
+            "quantized_color_count": 340,
+            "dominant_color_ratio": 0.938366,
             "pass": true
           },
           "freshness_status": {
-            "sampled_pixels": 6426,
-            "luminance_mean": 55.1116,
-            "luminance_variance": 3151.7216,
+            "sampled_pixels": 6664,
+            "luminance_mean": 54.095,
+            "luminance_variance": 3067.0612,
             "near_black_ratio": 0,
             "quantized_color_count": 46,
-            "dominant_color_ratio": 0.757703,
+            "dominant_color_ratio": 0.766357,
             "pass": true
           },
           "provenance": {
-            "sampled_pixels": 17591,
-            "luminance_mean": 35.3927,
-            "luminance_variance": 1066.4012,
+            "sampled_pixels": 17950,
+            "luminance_mean": 35.2178,
+            "luminance_variance": 1046.5719,
             "near_black_ratio": 0,
             "quantized_color_count": 47,
-            "dominant_color_ratio": 0.914786,
+            "dominant_color_ratio": 0.91649,
+            "pass": true
+          },
+          "packet_attention": {
+            "sampled_pixels": 22796,
+            "luminance_mean": 41.1323,
+            "luminance_variance": 3246.7986,
+            "near_black_ratio": 0,
+            "quantized_color_count": 78,
+            "dominant_color_ratio": 0.854448,
             "pass": true
           }
         },
@@ -1261,24 +1487,33 @@
       },
       {
         "id": "ja-narrow",
-        "rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
+        "rgba_sha256": "f35d88403300bc77cdd315a24d403d486c197b796327f69610351e99873572ec",
         "landmarks": {
           "current_state": {
-            "sampled_pixels": 151710,
-            "luminance_mean": 34.0721,
-            "luminance_variance": 2517.1246,
+            "sampled_pixels": 182910,
+            "luminance_mean": 34.3649,
+            "luminance_variance": 2508.9644,
             "near_black_ratio": 0,
-            "quantized_color_count": 466,
-            "dominant_color_ratio": 0.597653,
+            "quantized_color_count": 503,
+            "dominant_color_ratio": 0.505779,
+            "pass": true
+          },
+          "local_observer_health": {
+            "sampled_pixels": 14760,
+            "luminance_mean": 35.718,
+            "luminance_variance": 2214.2064,
+            "near_black_ratio": 0,
+            "quantized_color_count": 187,
+            "dominant_color_ratio": 0.878523,
             "pass": true
           },
           "priority_lane": {
             "sampled_pixels": 246522,
-            "luminance_mean": 45.8403,
-            "luminance_variance": 2542.5761,
+            "luminance_mean": 45.8574,
+            "luminance_variance": 2541.7403,
             "near_black_ratio": 0,
-            "quantized_color_count": 515,
-            "dominant_color_ratio": 0.604112,
+            "quantized_color_count": 514,
+            "dominant_color_ratio": 0.605573,
             "pass": true
           },
           "priority_first": {
@@ -1292,29 +1527,29 @@
           },
           "active_decision": {
             "sampled_pixels": 269690,
-            "luminance_mean": 40.2763,
-            "luminance_variance": 2281.1031,
+            "luminance_mean": 40.2607,
+            "luminance_variance": 2281.6926,
             "near_black_ratio": 0,
             "quantized_color_count": 417,
-            "dominant_color_ratio": 0.891231,
+            "dominant_color_ratio": 0.889896,
             "pass": true
           },
           "evidence_inspector": {
-            "sampled_pixels": 236024,
-            "luminance_mean": 32.7266,
-            "luminance_variance": 928.2401,
+            "sampled_pixels": 259554,
+            "luminance_mean": 32.7985,
+            "luminance_variance": 909.0654,
             "near_black_ratio": 0,
-            "quantized_color_count": 387,
-            "dominant_color_ratio": 0.931363,
+            "quantized_color_count": 367,
+            "dominant_color_ratio": 0.932677,
             "pass": true
           },
           "freshness_status": {
             "sampled_pixels": 4752,
-            "luminance_mean": 64.0769,
-            "luminance_variance": 4081.5049,
+            "luminance_mean": 64.1409,
+            "luminance_variance": 4086.4526,
             "near_black_ratio": 0,
             "quantized_color_count": 17,
-            "dominant_color_ratio": 0.661406,
+            "dominant_color_ratio": 0.660985,
             "pass": true
           },
           "provenance": {
@@ -1325,6 +1560,15 @@
             "quantized_color_count": 105,
             "dominant_color_ratio": 0.923838,
             "pass": true
+          },
+          "packet_attention": {
+            "sampled_pixels": 14760,
+            "luminance_mean": 45.5264,
+            "luminance_variance": 3940.4609,
+            "near_black_ratio": 0,
+            "quantized_color_count": 186,
+            "dominant_color_ratio": 0.828997,
+            "pass": true
           }
         },
         "pass": true
@@ -1334,29 +1578,29 @@
       "landmarks": {
         "ja-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.7125,
-          "luminance_variance": 1115.1253,
+          "luminance_mean": 34.1148,
+          "luminance_variance": 1147.2907,
           "near_black_ratio": 0,
-          "quantized_color_count": 543,
-          "dominant_color_ratio": 0.655061,
+          "quantized_color_count": 545,
+          "dominant_color_ratio": 0.647262,
           "pass": true
         },
         "en-desktop": {
           "sampled_pixels": 170781,
-          "luminance_mean": 33.447,
-          "luminance_variance": 1040.0897,
+          "luminance_mean": 33.9004,
+          "luminance_variance": 1082.2978,
           "near_black_ratio": 0,
-          "quantized_color_count": 549,
-          "dominant_color_ratio": 0.648925,
+          "quantized_color_count": 538,
+          "dominant_color_ratio": 0.658006,
           "pass": true
         },
         "ja-narrow": {
           "sampled_pixels": 37128,
-          "luminance_mean": 36.3215,
-          "luminance_variance": 1119.0745,
+          "luminance_mean": 36.8981,
+          "luminance_variance": 1112.0411,
           "near_black_ratio": 0,
-          "quantized_color_count": 527,
-          "dominant_color_ratio": 0.641133,
+          "quantized_color_count": 536,
+          "dominant_color_ratio": 0.631114,
           "pass": true
         }
       },
@@ -1369,29 +1613,29 @@
     "captures": [
       {
         "id": "ja-desktop",
-        "browser_rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
-        "ffmpeg_rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
-        "browser_roundtrip_ffmpeg_rgba_sha256": "657f06d1f9a94b0adc84c002e857e48d53dd3701b5bdd0795d87bb8dc519189c",
+        "browser_rgba_sha256": "4ff95dfde97692a71c8763fca31767fe7eb57ba61b6c95d01e1e2fd6098e9a47",
+        "ffmpeg_rgba_sha256": "4ff95dfde97692a71c8763fca31767fe7eb57ba61b6c95d01e1e2fd6098e9a47",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "4ff95dfde97692a71c8763fca31767fe7eb57ba61b6c95d01e1e2fd6098e9a47",
         "pass": true
       },
       {
         "id": "en-desktop",
-        "browser_rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
-        "ffmpeg_rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
-        "browser_roundtrip_ffmpeg_rgba_sha256": "e6a3b204b93c1b95c1cb4c9839f0acd5a4decd755bae568b4290326217d41435",
+        "browser_rgba_sha256": "3d6f18b72913ba6e24376eb1c53851785cdc4f98a5ae6bd0e39e007eba3c5a52",
+        "ffmpeg_rgba_sha256": "3d6f18b72913ba6e24376eb1c53851785cdc4f98a5ae6bd0e39e007eba3c5a52",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "3d6f18b72913ba6e24376eb1c53851785cdc4f98a5ae6bd0e39e007eba3c5a52",
         "pass": true
       },
       {
         "id": "ja-narrow",
-        "browser_rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
-        "ffmpeg_rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
-        "browser_roundtrip_ffmpeg_rgba_sha256": "9002977fbe6ea49d688fc425321498ca090fa0401496d6a4c4df5bde7d5d7373",
+        "browser_rgba_sha256": "f35d88403300bc77cdd315a24d403d486c197b796327f69610351e99873572ec",
+        "ffmpeg_rgba_sha256": "f35d88403300bc77cdd315a24d403d486c197b796327f69610351e99873572ec",
+        "browser_roundtrip_ffmpeg_rgba_sha256": "f35d88403300bc77cdd315a24d403d486c197b796327f69610351e99873572ec",
         "pass": true
       }
     ],
     "contact_sheet": {
-      "browser_rgba_sha256": "7531c5114df49f01d4d7fca12f8c2feb01319554fcb593ed1a1eecbe9f2cb41b",
-      "ffmpeg_rgba_sha256": "7531c5114df49f01d4d7fca12f8c2feb01319554fcb593ed1a1eecbe9f2cb41b",
+      "browser_rgba_sha256": "1a2b0ae4afa68ffb98e90a213030cd9b46b03486f1061b61edef84087d1b88af",
+      "ffmpeg_rgba_sha256": "1a2b0ae4afa68ffb98e90a213030cd9b46b03486f1061b61edef84087d1b88af",
       "pass": true
     }
   },
@@ -1431,19 +1675,27 @@
   },
   "worker_raster_inspection": {
     "status": "pass",
-    "inspected_at": "2026-07-13T07:12:00.000Z",
-    "inspected_capture_id": "priority-review-console-f228d9eea5e8885d0a6a58e1",
+    "inspected_at": "2026-07-13T08:32:00.000Z",
+    "inspection_timestamp": {
+      "value": "2026-07-13T08:32:00.000Z",
+      "authority": "deterministic_declared_override",
+      "event": "worker_raster_inspection_completed",
+      "actual_observed_at": null,
+      "declared_at": "2026-07-13T08:32:00.000Z",
+      "current_observation_eligible": false
+    },
+    "inspected_capture_id": "priority-review-console-3a67969467536a4c0be75cd5",
     "method": "Worker opened the JA desktop, EN desktop, JA narrow, and contact-sheet PNGs after automated readback; this record is bound to their current SHA-256 hashes.",
     "inspected_sources": [
       {
         "role": "html",
         "path": "samples/dashboard/devcockpitcore_dashboard.html",
-        "sha256": "012311723805fe74c7a2be0d30bca441148276857e2be0731f02f1c36fa3c4f9"
+        "sha256": "376521d0367ddfb2e8fa2e6f3c1020baa88f1fa5a3587f7bad9fbeabca7215e1"
       },
       {
         "role": "priority_readback",
         "path": "samples/dashboard/devcockpitcore_priority_readback.json",
-        "sha256": "e587271a2231e9bdaba7d660c52bf88c2f00d5bf93902278aa6347a56ea459f3"
+        "sha256": "fb0d4ad091af5e4204c4fee15bd71231e7b3371d8399e920ca0ad0b81d85fe29"
       },
       {
         "role": "freshness_receipt",
@@ -1453,30 +1705,30 @@
       {
         "role": "capture_script",
         "path": "capture_priority_review_console.mjs",
-        "sha256": "1f90124a8a1146ef3ffe4ca9e7baf36ecabc60374896014082b888651370bfc9"
+        "sha256": "56e6fba84dfb03d2a29ef9fb56b2d7d4f3cd81d6fd86d2d7d99d63375cc787a5"
       },
       {
         "role": "production_generator",
         "path": "src/dev_cockpit/dashboard.py",
-        "blob": "6218e5b321efceceb7238504822d5e63e55b33d0"
+        "blob": "6c8032742b845c02c639411d9bfe9c2ffb9d1567"
       }
     ],
     "inspected_files": [
       {
         "path": "screenshots/priority-review-console-ja-desktop.png",
-        "sha256": "a78a75d257a9980c969349ec564697e9be68ed7f934171031a90617b3b5c1b54"
+        "sha256": "5ce51a2bcbe91fcbd667fff0904fd00f4933e8cfcaeaae8c2fa7d5aea676af4d"
       },
       {
         "path": "screenshots/priority-review-console-en-desktop.png",
-        "sha256": "bc127df5a766ee83d796cfa831233d103a1163a0ccfe300aeebd7276e052b790"
+        "sha256": "47993c8191ecb98584b78ffe0c9238bfcd259182cb3b475b8b7bbd40e622ba06"
       },
       {
         "path": "screenshots/priority-review-console-ja-narrow.png",
-        "sha256": "6215d021cc99c3abf46565ce2ff82d1944d89bc5f6af03904d120cef2e854c5b"
+        "sha256": "e0f580f3d873493ebf70289ddfd2e6df46206a2c2997c84c383825004972d819"
       },
       {
         "path": "screenshots/priority-review-console-contact-sheet.png",
-        "sha256": "a32ac77f816bcec2fb5dbecbf848869eac840e792d54a52db755b8a6f1c20cfa"
+        "sha256": "97a0f14fb26eb1defd6252960d8d0b7288cc564977c65ef11b66b0943fceec3f"
       }
     ],
     "findings": {

@@ -214,7 +214,15 @@ def _routing(report: dict[str, Any]) -> dict[str, Any]:
     source = _object(report.get("routing"))
     return {
         "route": source.get("route"),
+        "thread": source.get("thread"),
+        "lane": source.get("lane"),
         "slice": source.get("slice"),
+        "artifact": source.get("artifact"),
+        "thread_id": source.get("thread_id"),
+        "lane_id": source.get("lane_id"),
+        "slice_id": source.get("slice_id"),
+        "artifact_id": source.get("artifact_id"),
+        "dialect": source.get("dialect"),
         "artifact_current": source.get("artifact_current"),
         "artifact_next": source.get("artifact_next"),
         "confidence": source.get("confidence"),
@@ -232,7 +240,7 @@ def _input_summary(report: dict[str, Any]) -> dict[str, Any]:
     sections = _object(report.get("sections"))
 
     return {
-        "agent_decision": action.get("decision"),
+        "agent_decision": action.get("decision") or outcome.get("decision"),
         "report_health": report_health.get("normalization_status"),
         "normalized_outcome_decision": outcome.get("decision"),
         "pushed": outcome.get("pushed"),

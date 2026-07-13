@@ -46,11 +46,19 @@ Task identity is:
 project_key / thread_id / lane_id / slice_id / artifact_id
 ```
 
-`thread_id` comes from the report route target; `lane_id` comes from progress;
-slice and artifact come from the route/action fields. A SHA-256-derived
-`task_id` is stable for that identity. The report hash remains a separate
-evidence binding so wording changes fail closed instead of silently merging or
-renaming work.
+Canonical v6.5 reports preserve `thread`, `lane`, `slice`, and `artifact` from
+the ROUTE header exactly. ACTION is optional. A complete canonical ROUTE treats
+the PROGRESS prefix as a progress-stream label rather than a competing lane
+claim. Legacy reports remain compatible through `target`, the PROGRESS lane,
+`artifact_current`, ACTION `deliverable`, and finally `artifact_next` aliases.
+When a canonical identity and an explicit legacy identity alias are both
+present, equal values normalize and material conflicts fail closed.
+
+The resolved five-field identity produces a SHA-256-derived `task_id`. The
+report hash remains a separate evidence binding so wording changes fail closed
+instead of silently merging or renaming work. Japanese headings used by the
+current AGENT_REPORT style are normalized into outcome and continuation fields;
+unavailable outcome/current/next fields remain explicit unknown diagnostics.
 
 ## Global attention policy
 
@@ -83,9 +91,13 @@ Each task carries project/thread/lane/slice/artifact identity, stable task ID,
 global rank, classification, required state, outcome/current/next state,
 report path/hash, evidence references, and `executable: false`.
 
-Validation requires the task-ID set in worksets to equal the task-ID set in the
-global plus closed collections exactly. Missing and duplicate projections fail
-closed.
+Loaded-packet validation does not trust internal projections. It recomputes
+task IDs from the five-field identity, class precedence, queue order, source
+binding bijection, active/closed membership, project worksets, project-local
+first tasks, global rank references, gate/safe references, coverage totals,
+attention policy, and the complete observer-only scope boundary. Any missing,
+duplicate, cross-project, reordered, or type-changed projection fails closed
+with `SupervisionPacketError`.
 
 ## Priority Review Console integration
 
@@ -103,6 +115,13 @@ lane/slice; Evidence Inspector exposes source report, hash, and attention
 classification. Project worksets are a secondary disclosure using the same
 task IDs and original global ranks.
 
+The header reports local observer substrate health separately from packet
+attention counts. A local `Continue` therefore cannot be mistaken for a packet
+stop decision. When a valid packet has zero active tasks, Priority Lane renders
+an all-clear informational state while the closed workset and its Evidence
+Inspector remain available; closed tasks are not promoted into the active
+queue.
+
 When omitted, the existing evidence-derived single-project dashboard path is
 unchanged. The integration does not add a project tab, matrix, B/C primary
 layout, server, runner, scheduler, or executable action.
@@ -114,3 +133,12 @@ fictional projects and multiple threads/lanes. It proves contract behavior,
 ranking, closed-item separation, and projection identity. It is not live
 coverage of user projects and does not complete the later report-routing
 round-trip horizon.
+
+Capture manifests keep source paths repository-relative or redacted. Capture
+timestamps distinguish `actual_browser_observation` from
+`deterministic_declared_override`; inspection timestamps use the separate
+`actual_worker_inspection` authority when not overridden. Declared overrides
+are never eligible as current observation evidence. A future live mode would require explicit
+authority, freshness, revision binding, and current-claim eligibility fields.
+Those fields are design prerequisites, not hard-coded live success in this
+fixture slice.

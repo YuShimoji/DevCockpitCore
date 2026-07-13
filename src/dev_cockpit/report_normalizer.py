@@ -14,6 +14,10 @@ from typing import Any
 SCHEMA_VERSION = "report_normalization.v1"
 PRODUCER = "dev_cockpit.report_normalizer"
 
+
+class ReportNormalizationError(ValueError):
+    """Raised when canonical and legacy report identity claims conflict."""
+
 _HEADER_RE = re.compile(r"^\[(ROUTE|PROGRESS|ACTION|STATUS):\s*(.*?)\]\s*$", re.MULTILINE)
 _PROGRESS_RE = re.compile(
     r"^(?P<lane>.+?)\s+\[(?P<meter>[#-]+)\]\s+"
@@ -77,6 +81,23 @@ _SECTION_ALIASES = {
     "continuation_state": "continuation_state",
     "handoff_gate": "handoff_gate",
     "handoff_gate_result": "handoff_gate",
+    "結果": "outcome",
+    "成果": "outcome",
+    "到達した状態": "outcome",
+    "作業結果": "outcome",
+    "変更内容": "what_changed",
+    "変更点": "what_changed",
+    "成果物": "artifacts",
+    "成果物と実行方法": "artifacts",
+    "検証結果": "validation",
+    "確認結果": "validation",
+    "次の状態": "continuation_state",
+    "継続状態": "continuation_state",
+    "次の取っ掛かり": "continuation_state",
+    "残る不確実性と次の取っ掛かり": "continuation_state",
+    "ユーザー側の作業": "user_side_work",
+    "エージェント側の作業": "agent_side_work",
+    "引き継ぎゲート": "handoff_gate",
 }
 
 
@@ -95,11 +116,21 @@ def normalize_report(
     progress = _parse_progress(headers.get("PROGRESS"))
     action = _parse_action(headers.get("ACTION"))
     status = _parse_status(headers.get("STATUS"))
+    _resolve_report_identity(routing, progress, action)
     sections = _build_sections(section_text)
-    outcome = _build_normalized_outcome(safe_text, sections, action)
+    outcome = _build_normalized_outcome(safe_text, sections, action, progress, status)
     handoff = _build_handoff(sections, safe_text)
     next_state = _build_next(routing, progress, action, sections)
     health = _build_health(routing, progress, action, status, audit)
+    health["unknown_fields"] = [
+        field
+        for field, value in (
+            ("outcome_summary", outcome.get("summary")),
+            ("current_state", progress.get("current")),
+            ("next_state", next_state.get("recommended_next_slice")),
+        )
+        if value in {None, ""}
+    ]
 
     return {
         "schema_version": SCHEMA_VERSION,
@@ -206,7 +237,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f"input error: {exc}", file=sys.stderr)
             return 2
 
-    normalization = normalize_report(text, input_path=input_path)
+    try:
+        normalization = normalize_report(text, input_path=input_path)
+    except ReportNormalizationError as exc:
+        print(f"report normalization error: {exc}", file=sys.stderr)
+        return 2
     payload = dumps_normalization(normalization, pretty=args.pretty)
     if args.output:
         write_normalization(normalization, args.output, pretty=args.pretty)
@@ -216,20 +251,35 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _parse_headers(text: str) -> dict[str, str]:
-    return {match.group(1): match.group(2).strip() for match in _HEADER_RE.finditer(text)}
+    headers: dict[str, str] = {}
+    for match in _HEADER_RE.finditer(text):
+        key = match.group(1)
+        value = match.group(2).strip()
+        if key in headers and headers[key] != value:
+            raise ReportNormalizationError(f"conflicting duplicate {key} header")
+        headers[key] = value
+    return headers
 
 
 def _parse_route(header: str | None) -> dict[str, Any]:
     result = {
         "route": None,
         "direction": None,
+        "thread": None,
+        "lane": None,
         "slice": None,
+        "artifact": None,
         "turn": None,
         "target": None,
         "artifact_current": None,
         "artifact_next": None,
         "reply": None,
         "confidence": None,
+        "thread_id": None,
+        "lane_id": None,
+        "slice_id": None,
+        "artifact_id": None,
+        "dialect": None,
     }
     if not header:
         return result
@@ -243,8 +293,84 @@ def _parse_route(header: str | None) -> dict[str, Any]:
             continue
         key, value = _split_key_value(segment)
         if key in result:
+            existing = result.get(key)
+            if existing is not None and value is not None and not _same_identity(existing, value):
+                raise ReportNormalizationError(
+                    f"conflicting ROUTE value for {key}: {existing!r} != {value!r}"
+                )
             result[key] = value
     return result
+
+
+def _resolve_report_identity(
+    routing: dict[str, Any],
+    progress: dict[str, Any],
+    action: dict[str, Any],
+) -> None:
+    canonical_complete = all(
+        isinstance(routing.get(field), str) and str(routing[field]).strip()
+        for field in ("thread", "lane", "slice", "artifact")
+    )
+    current_artifact_claims = [
+        ("artifact_current", routing.get("artifact_current")),
+        ("ACTION deliverable", action.get("deliverable")),
+    ]
+    legacy_artifact = next(
+        (
+            value
+            for _, value in current_artifact_claims
+            if isinstance(value, str) and value.strip()
+        ),
+        routing.get("artifact_next"),
+    )
+    _reject_identity_conflict("thread", routing.get("thread"), routing.get("target"))
+    comparable_artifact_claims = [
+        (label, value)
+        for label, value in current_artifact_claims
+        if isinstance(value, str) and value.strip()
+    ]
+    if len(comparable_artifact_claims) > 1:
+        first_label, first_value = comparable_artifact_claims[0]
+        for label, value in comparable_artifact_claims[1:]:
+            _reject_identity_conflict(
+                f"legacy artifact ({first_label} vs {label})",
+                first_value,
+                value,
+            )
+    if not comparable_artifact_claims and routing.get("artifact_next"):
+        comparable_artifact_claims.append(("artifact_next", routing.get("artifact_next")))
+    for label, value in comparable_artifact_claims:
+        _reject_identity_conflict(
+            f"artifact ({label})",
+            routing.get("artifact"),
+            value,
+        )
+    # In the complete v6.5 dialect the PROGRESS prefix is a progress-stream
+    # label, not a second lane identity claim. In mixed/legacy reports it
+    # remains the historical lane alias.
+    if not canonical_complete:
+        _reject_identity_conflict("lane", routing.get("lane"), progress.get("lane"))
+
+    routing["thread_id"] = routing.get("thread") or routing.get("target") or routing.get("route")
+    routing["lane_id"] = routing.get("lane") or progress.get("lane")
+    routing["slice_id"] = routing.get("slice")
+    routing["artifact_id"] = routing.get("artifact") or legacy_artifact
+    routing["dialect"] = "canonical_v6_5" if canonical_complete else "legacy_compatible"
+
+
+def _reject_identity_conflict(field: str, canonical: Any, legacy: Any) -> None:
+    if canonical is None or legacy is None:
+        return
+    if not _same_identity(canonical, legacy):
+        raise ReportNormalizationError(
+            f"conflicting canonical/legacy {field}: {canonical!r} != {legacy!r}"
+        )
+
+
+def _same_identity(left: Any, right: Any) -> bool:
+    return re.sub(r"\s+", " ", str(left).strip()).casefold() == re.sub(
+        r"\s+", " ", str(right).strip()
+    ).casefold()
 
 
 def _parse_progress(header: str | None) -> dict[str, Any]:
@@ -368,11 +494,29 @@ def _build_normalized_outcome(
     text: str,
     sections: dict[str, Any],
     action: dict[str, Any],
+    progress: dict[str, Any],
+    status: dict[str, Any],
 ) -> dict[str, Any]:
     commits = _extract_commits(text)
+    inferred_decision = _infer_decision(text)
+    done = progress.get("done")
+    total = progress.get("total")
+    if (
+        inferred_decision is None
+        and isinstance(done, int)
+        and isinstance(total, int)
+        and done >= total
+        and str(status.get("health") or "").lower() == "green"
+        and str(status.get("stop_class") or "NONE").upper() in {"NONE", ""}
+    ):
+        inferred_decision = "completed"
     return {
-        "decision": action.get("decision") or _infer_decision(text),
-        "summary": _first_sentence(sections.get("outcome")),
+        "decision": action.get("decision") or inferred_decision,
+        "summary": (
+            _first_sentence(sections.get("outcome"))
+            or _first_sentence(progress.get("current"))
+            or _first_sentence(action.get("deliverable"))
+        ),
         "commits": commits,
         "pushed": _infer_pushed(text),
         "worktree": _infer_worktree(text),
@@ -429,8 +573,6 @@ def _build_health(
         warnings.append("route header missing")
     if not progress.get("lane"):
         warnings.append("progress header missing")
-    if not action.get("decision"):
-        warnings.append("action header missing")
     if not status.get("health"):
         warnings.append("status header missing")
     warnings.extend(audit["notes"])
@@ -504,15 +646,20 @@ def _section_heading(line: str) -> str | None:
 
     match = re.match(r"^#{1,6}\s+(.+?)\s*$", stripped)
     if match:
-        return _SECTION_ALIASES.get(_key(match.group(1)))
+        return _section_alias(match.group(1))
 
     match = re.match(r"^\*\*(.+?)\*\*$", stripped)
     if match:
-        return _SECTION_ALIASES.get(_key(match.group(1)))
+        return _section_alias(match.group(1))
 
     if len(stripped) <= 80:
-        return _SECTION_ALIASES.get(_key(stripped.rstrip(":")))
+        return _section_alias(stripped.rstrip(":"))
     return None
+
+
+def _section_alias(value: str) -> str | None:
+    title = value.strip()
+    return _SECTION_ALIASES.get(_key(title)) or _SECTION_ALIASES.get(title)
 
 
 def _clean_section_body(lines: list[str]) -> str | None:
@@ -583,7 +730,7 @@ def _infer_pushed(text: str) -> bool | None:
 def _infer_worktree(text: str) -> str | None:
     lowered = text.lower()
     if re.search(
-        r"\bclean worktree\b|\bworktree clean\b|\bclean state\b|\brepo state was clean\b",
+        r"\bclean worktree\b|\bworktree clean\b|\bworktree is clean\b|\bclean state\b|\brepo state was clean\b",
         lowered,
     ):
         return "clean"

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from contextlib import redirect_stdout
+import copy
 import io
 import json
 from pathlib import Path
@@ -14,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from dev_cockpit.dashboard import (
+    _packet_attention_summary,
     _priority_items,
     build_dashboard_model,
     main,
@@ -26,9 +28,28 @@ from dev_cockpit.dashboard import (
     write_review_actions_json,
     write_review_actions_markdown,
 )
+from dev_cockpit.supervision_packet import (
+    build_supervision_packet,
+    dumps_packet,
+    load_manifest,
+)
 
 
 class DashboardTests(unittest.TestCase):
+    def test_unknown_packet_attention_is_review_decision_not_safe_active_work(self) -> None:
+        summary = _packet_attention_summary(
+            {
+                "global_attention_queue": [
+                    {"attention_class": "unknown_requiring_review"}
+                ],
+                "closed_or_informational": [],
+            }
+        )
+
+        self.assertEqual("decision", summary["status"])
+        self.assertEqual(1, summary["decision"])
+        self.assertEqual(0, summary["active"])
+
     def test_supervision_packet_projects_project_identity_without_changing_layout(self) -> None:
         packet_path = "samples/supervision_packets/cross_project_supervision_packet_v1.json"
         model = build_dashboard_model(
@@ -90,6 +111,77 @@ class DashboardTests(unittest.TestCase):
             )
         }
         self.assertEqual(packet_ids, projected_ids)
+        self.assertEqual(
+            {
+                "loaded": True,
+                "status": "stop",
+                "stop": 1,
+                "decision": 1,
+                "active": 1,
+                "closed": 1,
+                "all_closed": False,
+                "executable": False,
+            },
+            model["packet_attention"],
+        )
+        header = html.split("</header>", 1)[0]
+        self.assertIn('data-landmark="local-observer-health"', header)
+        self.assertIn('data-landmark="packet-attention"', header)
+        self.assertIn("停止 1 / 判断 1 / 対応中 1 / 完了 1", header)
+        self.assertIn("1 stop / 1 decision / 1 active / 1 closed", header)
+        self.assertNotIn(">Stop gate<", header)
+        self.assertIn('data-field="evidence-population">packet_report', html)
+        inspector = html.split('<aside id="evidence-inspector"', 1)[1].split(
+            "</aside>", 1
+        )[0]
+        self.assertIn("manifest-bound packet evidence", inspector)
+        self.assertNotIn(
+            model["evidence_freshness_receipt"]["capture_id"],
+            inspector,
+        )
+
+    def test_all_closed_packet_renders_empty_priority_and_closed_evidence(self) -> None:
+        manifest = copy.deepcopy(
+            load_manifest(
+                ROOT / "samples" / "supervision_packets" / "task_report_manifest_v1.json"
+            )
+        )
+        manifest["reports"] = [
+            entry
+            for entry in manifest["reports"]
+            if entry["report_path"].endswith("beta_closed_observation.txt")
+        ]
+        packet = build_supervision_packet(manifest, repo_root=ROOT)
+        with tempfile.TemporaryDirectory() as temporary:
+            packet_path = Path(temporary) / "all-closed.json"
+            packet_path.write_text(dumps_packet(packet, pretty=True), encoding="utf-8")
+            model = build_dashboard_model(
+                repo_root=ROOT,
+                supervision_packet_path=packet_path,
+                generated_at="2026-07-13T08:00:00Z",
+            )
+
+        html = render_dashboard(model)
+        readback = priority_readback(model)
+        self.assertEqual([], model["priority_items"])
+        self.assertEqual(1, len(model["informational_items"]))
+        self.assertIsNone(model["selected_priority_id"])
+        self.assertTrue(model["selected_closed_evidence_id"])
+        self.assertTrue(model["packet_attention"]["all_closed"])
+        self.assertIn('data-landmark="priority-empty-state"', html)
+        self.assertIn("No active supervision tasks", html)
+        self.assertIn("Completed Information", html)
+        self.assertIn("02 / COMPLETED INFORMATION", html)
+        self.assertIn('data-item-mode="informational"', html)
+        self.assertIn('data-closed-item-id="', html)
+        self.assertIn('data-landmark="evidence-inspector"', html)
+        self.assertEqual(0, readback["surface"]["priority_count"])
+        self.assertTrue(readback["surface"]["all_closed"])
+        self.assertIsNone(readback["surface"]["selected_priority_id"])
+        self.assertTrue(readback["surface"]["selected_closed_evidence_id"])
+        self.assertTrue(
+            all(item["executable"] is False for item in readback["informational_items"])
+        )
 
     def test_model_loads_receipt_and_builds_priority_console_contract(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

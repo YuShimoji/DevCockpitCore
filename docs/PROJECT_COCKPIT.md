@@ -140,6 +140,14 @@ closed-item separation, and project-workset reprojection, but does not claim
 live coverage. Live reports remain explicit future inputs; absent live coverage
 does not block this contract or dashboard integration.
 
+The integrity-ready intake preserves canonical v6.5 ROUTE identity exactly,
+keeps the legacy report dialect compatible, and rejects conflicting aliases.
+Loaded packets are revalidated across bindings, identity-derived task IDs,
+collections, ranks, worksets, coverage, policy, and observer-only scope. The
+console separates local observer health from packet attention and treats a
+zero-active all-closed packet as a valid informational state. Capture paths are
+portable and deterministic timestamp overrides are explicitly non-current.
+
 This document is navigation and decision context, not live workflow authority.
 Verify Git state, the receipt authority boundary, generated readback, raster
 manifest, and local tests before treating any status as current.

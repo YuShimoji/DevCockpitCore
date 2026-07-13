@@ -11,12 +11,16 @@ import sys
 from typing import Any, Iterable
 
 from .gate_classifier import classify_gate
-from .report_normalizer import normalize_report
+from .report_normalizer import ReportNormalizationError, normalize_report
 
 
 MANIFEST_SCHEMA_VERSION = "task_report_manifest.v1"
 PACKET_SCHEMA_VERSION = "cross_project_supervision_packet.v1"
 PRODUCER = "dev_cockpit.supervision_packet"
+PACKET_ARTIFACT_ID = "cross-project-supervision-packet-v1"
+FIXTURE_COVERAGE_STATEMENT = (
+    "Deterministic non-live fixture coverage from explicit manifest-bound reports."
+)
 
 ATTENTION_POLICY = (
     (1, "true_stop_or_required_failure", "True stop or required acceptance failure"),
@@ -111,12 +115,17 @@ def build_supervision_packet(
         except UnicodeDecodeError as exc:
             raise SupervisionPacketError(f"report must be UTF-8: {report_path}") from exc
 
-        normalization = normalize_report(
-            text,
-            input_path=report_path,
-            input_kind="manifest_bound_agent_report",
-            generated_at=assessed_at,
-        )
+        try:
+            normalization = normalize_report(
+                text,
+                input_path=report_path,
+                input_kind="manifest_bound_agent_report",
+                generated_at=assessed_at,
+            )
+        except ReportNormalizationError as exc:
+            raise SupervisionPacketError(
+                f"report identity normalization failed for {report_path}: {exc}"
+            ) from exc
         classification = classify_gate(
             normalization,
             report_normalization_path=f"embedded:{report_path}",
@@ -157,7 +166,7 @@ def build_supervision_packet(
     worksets = _project_worksets(tasks, active, closed)
     packet = {
         "schema_version": PACKET_SCHEMA_VERSION,
-        "artifact_id": "cross-project-supervision-packet-v1",
+        "artifact_id": PACKET_ARTIFACT_ID,
         "generated_at": assessed_at,
         "producer": PRODUCER,
         "source_bindings": sorted(
@@ -173,9 +182,7 @@ def build_supervision_packet(
             "manifest_path": manifest_display,
             "manifest_artifact_id": manifest["artifact_id"],
             "live_coverage": False,
-            "coverage_statement": (
-                "Deterministic non-live fixture coverage from explicit manifest-bound reports."
-            ),
+            "coverage_statement": FIXTURE_COVERAGE_STATEMENT,
         },
         "attention_policy": [
             {"precedence": precedence, "key": key, "label": label}
@@ -213,89 +220,216 @@ def validate_packet(value: Any) -> dict[str, Any]:
         raise SupervisionPacketError(
             f"packet schema_version must be {PACKET_SCHEMA_VERSION!r}"
         )
-    if packet.get("artifact_id") != "cross-project-supervision-packet-v1":
+    if packet.get("artifact_id") != PACKET_ARTIFACT_ID:
         raise SupervisionPacketError("packet artifact_id is invalid")
+    if packet.get("producer") != PRODUCER:
+        raise SupervisionPacketError("packet producer is invalid")
     _require_timestamp(packet.get("generated_at"), "packet.generated_at")
-    scope = _require_object(packet.get("scope_boundary"), "packet.scope_boundary")
-    for field in ("sibling_repository_writeback", "target_repository_writeback", "execution_schedule", "executable"):
-        if scope.get(field) is not False:
-            raise SupervisionPacketError(f"packet.scope_boundary.{field} must be false")
-    if scope.get("global_rank_meaning") != "attention_and_review_priority_only":
-        raise SupervisionPacketError("packet global rank must be attention/review priority only")
-
     active = _require_list(packet.get("global_attention_queue"), "packet.global_attention_queue")
     closed = _require_list(packet.get("closed_or_informational"), "packet.closed_or_informational")
-    worksets = _require_list(packet.get("project_worksets"), "packet.project_worksets")
-    all_tasks = [*_task_objects(active, "global_attention_queue"), *_task_objects(closed, "closed_or_informational")]
+    active_tasks = _task_objects(active, "global_attention_queue")
+    closed_tasks = _task_objects(closed, "closed_or_informational")
+    all_tasks = [*active_tasks, *closed_tasks]
+    if not all_tasks:
+        raise SupervisionPacketError("packet must contain at least one manifest-bound task")
     task_ids: set[str] = set()
-    active_ids: list[str] = []
+    identities: set[tuple[str, str, str, str, str]] = set()
+    source_paths: set[str] = set()
+
+    for index, task in enumerate(active_tasks):
+        _validate_task(task, f"packet.global_attention_queue[{index}]", collection="active")
+        if task["global_rank"] != index + 1:
+            raise SupervisionPacketError("packet global ranks must be contiguous and ordered")
+    for index, task in enumerate(closed_tasks):
+        _validate_task(task, f"packet.closed_or_informational[{index}]", collection="closed")
+
     for index, task in enumerate(all_tasks):
         label = f"packet task[{index}]"
-        for field in (
-            "task_id",
-            "project_key",
-            "thread_id",
-            "lane_id",
-            "slice_id",
-            "artifact_id",
-            "attention_class",
-            "source_report_path",
-            "source_report_sha256",
-        ):
-            _require_nonempty_string(task, field, label)
-        if task["task_id"] in task_ids:
-            raise SupervisionPacketError(f"duplicate packet task_id: {task['task_id']}")
-        task_ids.add(str(task["task_id"]))
-        if task.get("executable") is not False:
-            raise SupervisionPacketError(f"{label}.executable must be false")
-        if task["attention_class"] not in ATTENTION_PRECEDENCE:
-            raise SupervisionPacketError(f"{label}.attention_class is invalid")
-        if not _is_sha256(str(task["source_report_sha256"])):
-            raise SupervisionPacketError(f"{label}.source_report_sha256 is invalid")
-        if task["attention_class"] in ACTIVE_ATTENTION_CLASSES:
-            if not isinstance(task.get("global_rank"), int) or task["global_rank"] < 1:
-                raise SupervisionPacketError(f"{label}.global_rank must be a positive integer")
-            active_ids.append(str(task["task_id"]))
-        elif task.get("global_rank") is not None:
-            raise SupervisionPacketError(f"{label}.global_rank must be null when closed")
-    expected_ranks = list(range(1, len(active_ids) + 1))
-    actual_ranks = [int(task["global_rank"]) for task in active]
-    if actual_ranks != expected_ranks:
-        raise SupervisionPacketError("packet global ranks must be contiguous and ordered")
-
-    projected_ids: list[str] = []
-    workset_projects: set[str] = set()
-    for index, raw_workset in enumerate(worksets):
-        label = f"packet.project_worksets[{index}]"
-        workset = _require_object(raw_workset, label)
-        project_key = _require_nonempty_string(workset, "project_key", label)
-        if project_key in workset_projects:
-            raise SupervisionPacketError(f"duplicate project workset: {project_key}")
-        workset_projects.add(project_key)
-        ids = [
-            *_string_list(workset.get("active_task_ids"), f"{label}.active_task_ids"),
-            *_string_list(workset.get("closed_or_informational_task_ids"), f"{label}.closed_or_informational_task_ids"),
-        ]
-        projected_ids.extend(ids)
-        for task_id in ids:
-            if task_id not in task_ids:
-                raise SupervisionPacketError(f"workset references unknown task_id: {task_id}")
-        first = workset.get("project_local_first_task_id")
-        if ids and first not in ids:
-            raise SupervisionPacketError(f"{label}.project_local_first_task_id must reference its own task")
-    if sorted(projected_ids) != sorted(task_ids):
-        missing = sorted(task_ids - set(projected_ids))
-        duplicate_count = len(projected_ids) - len(set(projected_ids))
-        raise SupervisionPacketError(
-            f"project workset task projection mismatch: missing={missing}, duplicate_count={duplicate_count}"
+        identity = tuple(
+            str(task[field])
+            for field in ("project_key", "thread_id", "lane_id", "slice_id", "artifact_id")
         )
+        task_id = str(task["task_id"])
+        expected_task_id = _task_id_from_identity(*identity)
+        if task_id != expected_task_id:
+            raise SupervisionPacketError(
+                f"{label}.task_id does not match identity: expected {expected_task_id}"
+            )
+        if identity in identities:
+            raise SupervisionPacketError("duplicate packet task identity: " + "/".join(identity))
+        identities.add(identity)
+        if task_id in task_ids:
+            raise SupervisionPacketError(f"duplicate packet task_id: {task_id}")
+        task_ids.add(task_id)
+        source_path = str(task["source_report_path"])
+        if source_path in source_paths:
+            raise SupervisionPacketError(f"duplicate packet source_report_path: {source_path}")
+        source_paths.add(source_path)
+
+    if [task["task_id"] for task in active_tasks] != [
+        task["task_id"] for task in sorted(active_tasks, key=_task_sort_key)
+    ]:
+        raise SupervisionPacketError("packet global attention queue order is invalid")
+    if [task["task_id"] for task in closed_tasks] != [
+        task["task_id"] for task in sorted(closed_tasks, key=_task_sort_key)
+    ]:
+        raise SupervisionPacketError("packet closed collection order is invalid")
+
+    bindings = _require_list(packet.get("source_bindings"), "packet.source_bindings")
+    expected_bindings = sorted(
+        [
+            {
+                "project_key": task["project_key"],
+                "report_path": task["source_report_path"],
+                "required": task["required"],
+                "evidence_class": task["evidence_class"],
+                "authority_basis": task["authority_basis"],
+                "content_sha256": task["source_report_sha256"],
+                "binding_status": "matched",
+            }
+            for task in all_tasks
+        ],
+        key=lambda item: (str(item["project_key"]), str(item["report_path"])),
+    )
+    if not _strict_json_equal(bindings, expected_bindings):
+        raise SupervisionPacketError("packet source bindings must exactly match tasks")
+
+    worksets = _require_list(packet.get("project_worksets"), "packet.project_worksets")
+    if not _strict_json_equal(
+        worksets,
+        _project_worksets(all_tasks, active_tasks, closed_tasks),
+    ):
+        raise SupervisionPacketError("packet project worksets must exactly reproject tasks")
 
     coverage = _require_object(packet.get("coverage"), "packet.coverage")
-    if coverage.get("report_count") != len(all_tasks):
-        raise SupervisionPacketError("packet coverage report_count does not match tasks")
-    if coverage.get("project_count") != len(workset_projects):
-        raise SupervisionPacketError("packet coverage project_count does not match worksets")
+    expected_coverage_keys = {
+        "project_count", "report_count", "active_task_count",
+        "closed_or_informational_count", "required_report_count",
+        "manifest_path", "manifest_artifact_id", "live_coverage",
+        "coverage_statement",
+    }
+    if set(coverage) != expected_coverage_keys:
+        raise SupervisionPacketError("packet coverage fields are invalid")
+    expected_counts = {
+        "project_count": len({str(task["project_key"]) for task in all_tasks}),
+        "report_count": len(all_tasks),
+        "active_task_count": len(active_tasks),
+        "closed_or_informational_count": len(closed_tasks),
+        "required_report_count": sum(1 for task in all_tasks if task["required"] is True),
+    }
+    for field, expected in expected_counts.items():
+        if type(coverage.get(field)) is not int or coverage.get(field) != expected:
+            raise SupervisionPacketError(f"packet coverage {field} does not match tasks")
+    manifest_path = coverage.get("manifest_path")
+    if manifest_path is not None:
+        if not isinstance(manifest_path, str) or not manifest_path:
+            raise SupervisionPacketError("packet coverage manifest_path is invalid")
+        _validate_repo_relative_path(manifest_path, "packet.coverage.manifest_path")
+    _require_nonempty_string(coverage, "manifest_artifact_id", "packet.coverage")
+    if coverage.get("live_coverage") is not False:
+        raise SupervisionPacketError("packet coverage live_coverage must be false")
+    if coverage.get("coverage_statement") != FIXTURE_COVERAGE_STATEMENT:
+        raise SupervisionPacketError("packet coverage statement is invalid")
+
+    expected_policy = [
+        {"precedence": precedence, "key": key, "label": label}
+        for precedence, key, label in ATTENTION_POLICY
+    ]
+    if not _strict_json_equal(packet.get("attention_policy"), expected_policy):
+        raise SupervisionPacketError("packet attention policy is invalid")
+
+    expected_scope = {
+        "observer_first": True,
+        "explicit_manifest_only": True,
+        "directory_latest_report_discovery": False,
+        "conversation_or_clipboard_inference": False,
+        "sibling_repository_writeback": False,
+        "target_repository_writeback": False,
+        "execution_schedule": False,
+        "executable": False,
+        "global_rank_meaning": "attention_and_review_priority_only",
+    }
+    if not _strict_json_equal(packet.get("scope_boundary"), expected_scope):
+        raise SupervisionPacketError("packet scope boundary is invalid")
     return packet
+
+
+def _validate_task(task: dict[str, Any], label: str, *, collection: str) -> None:
+    for field in (
+        "task_id", "project_key", "thread_id", "lane_id", "slice_id",
+        "artifact_id", "attention_class", "outcome_summary", "current_state",
+        "gate_decision", "gate_stop_class", "evidence_class", "authority_basis",
+        "source_report_path", "source_report_sha256",
+    ):
+        _require_nonempty_string(task, field, label)
+    _validate_repo_relative_path(str(task["source_report_path"]), f"{label}.source_report_path")
+    if not _is_sha256(str(task["source_report_sha256"])):
+        raise SupervisionPacketError(f"{label}.source_report_sha256 is invalid")
+    if type(task.get("required")) is not bool:
+        raise SupervisionPacketError(f"{label}.required must be boolean")
+    if task.get("executable") is not False:
+        raise SupervisionPacketError(f"{label}.executable must be false")
+    attention_class = str(task["attention_class"])
+    if attention_class not in ATTENTION_PRECEDENCE:
+        raise SupervisionPacketError(f"{label}.attention_class is invalid")
+    if (
+        type(task.get("attention_precedence")) is not int
+        or task.get("attention_precedence") != ATTENTION_PRECEDENCE[attention_class]
+    ):
+        raise SupervisionPacketError(f"{label}.attention_precedence does not match class")
+    next_state = _require_object(task.get("next_state"), f"{label}.next_state")
+    semantic_class = _semantic_attention_class(task, next_state)
+    if semantic_class is not None and attention_class != semantic_class:
+        raise SupervisionPacketError(
+            f"{label}.attention_class does not match gate semantics: expected {semantic_class}"
+        )
+    if collection == "active":
+        if attention_class not in ACTIVE_ATTENTION_CLASSES:
+            raise SupervisionPacketError(f"{label} is in the wrong collection")
+        if type(task.get("global_rank")) is not int or int(task["global_rank"]) < 1:
+            raise SupervisionPacketError(f"{label}.global_rank must be a positive integer")
+    elif attention_class != "closed_or_informational" or task.get("global_rank") is not None:
+        raise SupervisionPacketError(f"{label} is in the wrong collection")
+
+    evidence_refs = _require_list(task.get("evidence_references"), f"{label}.evidence_references")
+    if len(evidence_refs) != 2:
+        raise SupervisionPacketError(f"{label}.evidence_references must have two entries")
+    source_ref = _require_object(evidence_refs[0], f"{label}.evidence_references[0]")
+    expected_source_ref = {
+        "kind": "source_report",
+        "path": task["source_report_path"],
+        "content_sha256": task["source_report_sha256"],
+    }
+    if source_ref != expected_source_ref:
+        raise SupervisionPacketError(f"{label} source evidence binding is invalid")
+    derived_ref = _require_object(evidence_refs[1], f"{label}.evidence_references[1]")
+    expected_derived_ref = {
+        "kind": "derived_contracts",
+        "report_normalization_schema": "report_normalization.v1",
+        "gate_classification_schema": "gate_classification.v1",
+        "gate_decision": task["gate_decision"],
+    }
+    if derived_ref != expected_derived_ref:
+        raise SupervisionPacketError(f"{label} derived evidence binding is invalid")
+
+
+def _semantic_attention_class(
+    task: dict[str, Any],
+    next_state: dict[str, Any],
+) -> str | None:
+    stop_class = str(task.get("gate_stop_class") or "")
+    decision = str(task.get("gate_decision") or "")
+    if stop_class in {"TRUE_STOP", "VALIDATION_FAILED", "SAFETY_BOUNDARY"}:
+        return "true_stop_or_required_failure"
+    if stop_class in {"USER_AUTH_REQUIRED", "HANDOFF_REQUIRED"}:
+        return "user_authorization_or_material_decision"
+    if decision == "user_action_required":
+        return "user_authorization_or_material_decision"
+    if stop_class == "UNKNOWN_REVIEW_REQUIRED" or decision == "unknown_review_required":
+        return "unknown_requiring_review"
+    if decision == "supervisor_prompt_needed":
+        return "awaiting_supervisor_acceptance"
+    return None
 
 
 def dumps_packet(packet: dict[str, Any], *, pretty: bool = False) -> str:
@@ -429,20 +563,32 @@ def _task_from_report(
     gate_classification = _object(gate.get("classification"))
     gate_next = _object(gate.get("next"))
     project_key = str(entry["project_key"])
-    thread_id = str(routing.get("target") or routing.get("route") or "unknown-thread")
-    lane_id = str(progress.get("lane") or "unknown-lane")
-    slice_id = str(routing.get("slice") or "unknown-slice")
+    thread_id = str(routing.get("thread_id") or "unknown-thread")
+    lane_id = str(routing.get("lane_id") or "unknown-lane")
+    slice_id = str(routing.get("slice_id") or "unknown-slice")
     artifact_id = str(
-        routing.get("artifact_current")
-        or action.get("deliverable")
-        or routing.get("artifact_next")
+        routing.get("artifact_id")
         or "unknown-artifact"
     )
-    identity = "|".join((project_key, thread_id, lane_id, slice_id, artifact_id))
-    task_id = "task-" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
+    task_id = _task_id_from_identity(
+        project_key,
+        thread_id,
+        lane_id,
+        slice_id,
+        artifact_id,
+    )
     attention_class = _attention_class(normalization, gate)
-    summary = str(outcome.get("summary") or action.get("deliverable") or "Report requires review.")
-    current_state = str(progress.get("current") or action.get("decision") or gate_classification.get("decision") or "unknown")
+    report_path = str(entry["report_path"])
+    summary = str(
+        outcome.get("summary")
+        or action.get("deliverable")
+        or f"Unknown outcome summary in manifest-bound report: {report_path}"
+    )
+    current_state = str(
+        progress.get("current")
+        or action.get("decision")
+        or f"Unknown current state in manifest-bound report: {report_path}"
+    )
     next_state = {
         "owner": gate_classification.get("next_owner") or action.get("now_owner") or "Supervisor",
         "recommended_slice": gate_next.get("recommended_next_slice") or progress.get("next"),
@@ -512,6 +658,17 @@ def _attention_class(normalization: dict[str, Any], gate: dict[str, Any]) -> str
     if classification.get("continue_allowed") is True:
         return "active_safe_continuation"
     return "unknown_requiring_review"
+
+
+def _task_id_from_identity(
+    project_key: str,
+    thread_id: str,
+    lane_id: str,
+    slice_id: str,
+    artifact_id: str,
+) -> str:
+    identity = "|".join((project_key, thread_id, lane_id, slice_id, artifact_id))
+    return "task-" + hashlib.sha256(identity.encode("utf-8")).hexdigest()[:16]
 
 
 def _task_sort_key(task: dict[str, Any]) -> tuple[Any, ...]:
@@ -683,6 +840,15 @@ def _md(value: Any) -> str:
 
 def _object(value: Any) -> dict[str, Any]:
     return value if isinstance(value, dict) else {}
+
+
+def _strict_json_equal(left: Any, right: Any) -> bool:
+    return json.dumps(left, ensure_ascii=False, sort_keys=True, separators=(",", ":")) == json.dumps(
+        right,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
 
 
 if __name__ == "__main__":

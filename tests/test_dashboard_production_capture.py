@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from hashlib import sha256
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 import struct
@@ -22,6 +23,8 @@ EXPECTED_SCREENSHOTS = {
 }
 REQUIRED_LANDMARKS = {
     "current_state",
+    "local_observer_health",
+    "packet_attention",
     "priority_lane",
     "priority_first",
     "active_decision",
@@ -118,6 +121,7 @@ class ProductionCaptureScriptContractTests(unittest.TestCase):
             "--output-root",
             "--repo-root",
             "--captured-at",
+            "--validate-timestamp-authority",
             "--ffmpeg",
             "--validate-source-binding",
             "--validate-semantic-fixture",
@@ -129,6 +133,8 @@ class ProductionCaptureScriptContractTests(unittest.TestCase):
     def test_script_requires_production_semantic_hooks_and_interactions(self) -> None:
         for landmark in (
             "current-state",
+            "local-observer-health",
+            "packet-attention",
             "priority-lane",
             "priority-first",
             "active-decision",
@@ -168,8 +174,72 @@ class ProductionCaptureScriptContractTests(unittest.TestCase):
         self.assertIn("Priority semantic binding rejected before capture", self.script)
         self.assertIn("Source changed after capture", self.script)
         self.assertIn("Production generator changed after capture", self.script)
+        self.assertIn('event === "browser_capture_completed"', self.script)
+        self.assertIn('event === "worker_raster_inspection_completed"', self.script)
+        self.assertIn("if (!isAbsolute(path)) return path", self.script)
+        self.assertIn("priorityContract.packet_loaded", self.script)
         self.assertNotIn("intent_comparison_manifest.v2", self.script)
         self.assertNotIn("previousReadback", self.script)
+
+    def test_timestamp_authority_distinguishes_actual_and_declared_values(self) -> None:
+        before = datetime.now(timezone.utc)
+        actual = subprocess.run(
+            ["node", str(SCRIPT_PATH), "--validate-timestamp-authority"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        after = datetime.now(timezone.utc)
+        actual_payload = json.loads(actual.stdout)
+        actual_at = datetime.fromisoformat(actual_payload["value"].replace("Z", "+00:00"))
+        self.assertEqual("runtime_clock_observation", actual_payload["authority"])
+        self.assertEqual("timestamp_validation", actual_payload["event"])
+        self.assertFalse(actual_payload["current_observation_eligible"])
+        self.assertEqual(actual_payload["value"], actual_payload["actual_observed_at"])
+        self.assertIsNone(actual_payload["declared_at"])
+        self.assertLessEqual(before, actual_at)
+        self.assertLessEqual(actual_at, after)
+
+        future_value = "2099-01-01T00:00:00Z"
+        declared = subprocess.run(
+            [
+                "node",
+                str(SCRIPT_PATH),
+                "--validate-timestamp-authority",
+                "--captured-at",
+                future_value,
+            ],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        declared_payload = json.loads(declared.stdout)
+        self.assertEqual("deterministic_declared_override", declared_payload["authority"])
+        self.assertEqual("timestamp_validation", declared_payload["event"])
+        self.assertEqual("2099-01-01T00:00:00.000Z", declared_payload["value"])
+        self.assertEqual(declared_payload["value"], declared_payload["declared_at"])
+        self.assertIsNone(declared_payload["actual_observed_at"])
+        self.assertFalse(declared_payload["current_observation_eligible"])
+
+        for invalid in ("2026", "July-13-2026", "2026-02-30T00:00:00Z"):
+            with self.subTest(invalid=invalid):
+                rejected = subprocess.run(
+                    [
+                        "node",
+                        str(SCRIPT_PATH),
+                        "--validate-timestamp-authority",
+                        "--captured-at",
+                        invalid,
+                    ],
+                    cwd=ROOT,
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                )
+                self.assertNotEqual(0, rejected.returncode)
+                self.assertIn("must be an ISO-8601 timestamp", rejected.stderr)
 
 
 class ProductionCaptureSourceBindingRejectionTests(unittest.TestCase):
@@ -247,6 +317,31 @@ class ProductionCaptureSourceBindingRejectionTests(unittest.TestCase):
             self.assertTrue(
                 all(accepted_payload["source_binding"]["checks"].values())
             )
+            self.assertNotRegex(
+                json.dumps(accepted_payload).lower(),
+                r"[a-z]:[\\/]+users[\\/]",
+            )
+            self.assertEqual(
+                "receipt.json",
+                accepted_payload["source_manifest_binding"]["priority_readback"][
+                    "freshness_receipt_path"
+                ],
+            )
+
+            absolute_declared = write_case(
+                lambda value: value["freshness_receipt"].__setitem__(
+                    "path", str(freshness_path.resolve())
+                )
+            )
+            self.assertEqual(0, absolute_declared.returncode, absolute_declared.stderr)
+            absolute_payload = json.loads(absolute_declared.stdout)
+            self.assertEqual(
+                "receipt.json",
+                absolute_payload["source_manifest_binding"]["priority_readback"][
+                    "freshness_receipt_path"
+                ],
+            )
+            self.assertNotIn(str(freshness_path.resolve()), absolute_declared.stdout)
 
             cases = {
                 "missing_declared_path": (
@@ -300,6 +395,62 @@ class ProductionCaptureSourceBindingRejectionTests(unittest.TestCase):
                     self.assertNotEqual(0, rejected.returncode)
                     self.assertIn("Source binding rejected", rejected.stderr)
 
+    def test_source_binding_accepts_explicit_all_closed_priority_contract(self) -> None:
+        priority = _load(
+            ROOT / "samples" / "dashboard" / "devcockpitcore_priority_readback.json"
+        )
+        freshness = _load(
+            ROOT / "samples" / "evidence_freshness" / "evidence_freshness_receipt_v1.json"
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary_root = Path(temporary)
+            priority_path = temporary_root / "priority.json"
+            freshness_path = temporary_root / "receipt.json"
+            informational = json.loads(json.dumps(priority["priorities"][0]))
+            informational["informational_only"] = True
+            priority["priorities"] = []
+            priority["informational_items"] = [informational]
+            priority["surface"]["selected_priority_id"] = None
+            priority["surface"]["selected_closed_evidence_id"] = informational[
+                "primary_evidence_id"
+            ]
+            priority["surface"]["priority_count"] = 0
+            priority["surface"]["all_closed"] = True
+            priority["supervision_packet"]["coverage"]["active_task_count"] = 0
+            priority["supervision_packet"]["coverage"][
+                "closed_or_informational_count"
+            ] = 1
+            priority["freshness_receipt"]["path"] = "receipt.json"
+            priority["freshness_receipt"]["capture_id"] = freshness["capture_id"]
+            priority_path.write_text(json.dumps(priority), encoding="utf-8")
+            freshness_path.write_text(json.dumps(freshness), encoding="utf-8")
+
+            result = subprocess.run(
+                self._command(temporary_root, priority_path, freshness_path),
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+            rogue_priority = json.loads(json.dumps(informational))
+            rogue_priority["informational_only"] = False
+            priority["priorities"] = [rogue_priority]
+            priority["surface"]["priority_count"] = 1
+            priority_path.write_text(json.dumps(priority), encoding="utf-8")
+            inconsistent = subprocess.run(
+                self._command(temporary_root, priority_path, freshness_path),
+                cwd=ROOT,
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+        self.assertEqual(0, result.returncode, result.stderr)
+        self.assertEqual("all_closed", json.loads(result.stdout)["priority_contract"]["mode"])
+        self.assertNotEqual(0, inconsistent.returncode)
+        self.assertIn("all-closed mode requires zero active priorities", inconsistent.stderr)
+
 
 class ProductionCaptureSemanticRejectionTests(unittest.TestCase):
     def _run_fixture(
@@ -327,6 +478,7 @@ class ProductionCaptureSemanticRejectionTests(unittest.TestCase):
     ) -> None:
         visible = {
             "current-state": True,
+            "local-observer-health": True,
             "priority-lane": True,
             "priority-first": True,
             "active-decision": True,
@@ -707,6 +859,28 @@ class ProductionCaptureTrackedPackageTests(unittest.TestCase):
             self.readback["user_visual_acceptance"],
         )
         self.assertNotIn("human_visual_review", self.readback)
+
+    def test_tracked_provenance_has_no_user_absolute_path_and_declares_timestamp_authority(self) -> None:
+        serialized = json.dumps(
+            {"manifest": self.manifest, "readback": self.readback},
+            ensure_ascii=False,
+        ).lower()
+        self.assertNotRegex(serialized, r"[a-z]:[\\/]+users[\\/]")
+        self.assertNotRegex(serialized, r"/(?:home|users)/[^/\" ]+")
+
+        for payload in (self.manifest, self.readback):
+            timestamp = payload["capture_timestamp"]
+            self.assertEqual(payload["captured_at"], timestamp["value"])
+            self.assertEqual("deterministic_declared_override", timestamp["authority"])
+            self.assertFalse(timestamp["current_observation_eligible"])
+            self.assertIsNone(timestamp["actual_observed_at"])
+            self.assertEqual(timestamp["value"], timestamp["declared_at"])
+            self.assertEqual("browser_capture_completed", timestamp["event"])
+
+        inspection = self.readback["worker_raster_inspection"]["inspection_timestamp"]
+        self.assertEqual("deterministic_declared_override", inspection["authority"])
+        self.assertEqual("worker_raster_inspection_completed", inspection["event"])
+        self.assertFalse(inspection["current_observation_eligible"])
 
 
 if __name__ == "__main__":

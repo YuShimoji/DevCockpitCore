@@ -3,6 +3,27 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-13 - Supervision Packet Integrity V1.1
+
+Purpose: make canonical report intake and loaded-packet validation fail closed
+without changing the accepted Priority Review Console layout.
+
+Decision: preserve canonical v6.5 ROUTE `thread/lane/slice/artifact` identity,
+retain legacy aliases, and reject material mixed-dialect conflicts. ACTION is
+optional when structured progress/status and outcome evidence are sufficient.
+At packet load, recompute identity-derived task IDs, source bindings,
+active/closed collections, rank order, worksets, coverage, attention policy,
+and the complete observer-only scope boundary.
+
+Effect: local observer health and packet attention are separate header reads;
+all-closed packets render as zero-priority informational states. Capture paths
+are portable, and actual observation timestamps are distinguishable from
+deterministic declared overrides.
+
+Boundary: the tracked fixture remains non-live and every action remains
+`executable: false`. H1 live round-trip still requires explicitly supplied
+current AGENT_REPORT inputs; this decision does not discover or fabricate them.
+
 ## 2026-07-13 - Explicit Cross-Project Supervision Packet V1
 
 Purpose: make multiple project/thread reports reviewable in one accepted

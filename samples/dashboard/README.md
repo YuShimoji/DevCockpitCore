@@ -27,6 +27,12 @@ hash, and attention class synchronized. Project worksets are a secondary
 disclosure using the same task IDs and global ranks. Without this option, the
 existing evidence-derived dashboard route remains unchanged.
 
+The header separates local observer substrate health from packet
+stop/decision/active/closed counts. A valid all-closed packet shows an
+informational empty Priority Lane while keeping closed evidence available.
+Packet reports and local freshness receipts are labeled as different evidence
+populations.
+
 ## Production capture package
 
 The tracked production review package is under
@@ -44,6 +50,12 @@ The manifest and readback bind language, viewport, selected priority,
 freshness/provenance landmarks, overflow checks, and final PNG hashes. Worker
 inspection is capture-bound; user production visual acceptance is recorded as
 `accepted` for this production surface.
+
+Tracked provenance uses repository-relative or redacted paths. Timestamp
+metadata distinguishes actual browser capture from actual worker raster
+inspection and from deterministic `--captured-at` / `--inspection-at`
+overrides; override values are explicitly ineligible as current observation
+evidence.
 
 ## Historical three-direction intent comparison
 

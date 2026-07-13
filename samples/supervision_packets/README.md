@@ -33,3 +33,10 @@ report without updating the explicit manifest hash fails closed. The generator
 does not scan directories for a newest report, infer reports from conversation
 history, write to sibling repositories, schedule work, or make actions
 executable. Global rank is attention/review priority only.
+
+Canonical v6.5 ROUTE identity round-trips through `thread`, `lane`, `slice`,
+and `artifact`; existing legacy fixtures continue through their historical
+aliases. Conflicting explicit aliases fail closed. Loading a generated packet
+also recomputes bindings, task IDs, collection membership, ranks, worksets,
+coverage, attention policy, and observer-only scope. This remains deterministic
+non-live fixture evidence.

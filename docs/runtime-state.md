@@ -61,6 +61,14 @@ its secondary worksets reuse the same task IDs and ranks by project. The
 tracked fixture covers two fictional projects and four reports and is
 deterministic non-live evidence, not a live multi-project claim.
 
+Packet intake accepts canonical v6.5 identity and legacy aliases under one
+fail-closed normalization contract. Packet loading recomputes binding,
+identity, rank, collection, workset, coverage, policy, and scope projections.
+The dashboard displays local observer health separately from packet attention;
+all-closed packets remain valid with zero priorities and browsable closed
+evidence. Tracked capture provenance contains no user-specific absolute path,
+and declared timestamp overrides are marked ineligible as current observation.
+
 Production direction A is selected for the production dashboard and
 `user_visual_acceptance` is `accepted`.
 
@@ -83,6 +91,10 @@ revision-binding state, provenance, and current-claim eligibility are displayed
 in the console. A live claim requires a newly generated receipt assessed
 against its recorded policy, observation time, and revision binding, followed
 by dashboard regeneration.
+
+H1 authentic/live round-trip remains input-gated: another project's current
+AGENT_REPORT must be supplied through an explicit manifest binding. The
+deterministic fixture is not promoted to live coverage.
 
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and

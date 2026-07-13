@@ -2,6 +2,7 @@
 
 import { createHash } from "node:crypto";
 import { execFile } from "node:child_process";
+import { realpathSync } from "node:fs";
 import {
   access,
   copyFile,
@@ -14,7 +15,7 @@ import {
   writeFile,
 } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, isAbsolute, join, relative, resolve } from "node:path";
+import { basename, dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { promisify } from "node:util";
 
@@ -54,8 +55,9 @@ const CONTACT_SHEET = Object.freeze({
   width: 1440,
   height: 760,
 });
-const REQUIRED_LANDMARKS = Object.freeze({
+const BASE_REQUIRED_LANDMARKS = Object.freeze({
   current_state: '[data-landmark="current-state"]',
+  local_observer_health: '[data-landmark="local-observer-health"]',
   priority_lane: '[data-landmark="priority-lane"]',
   priority_first: '[data-landmark="priority-first"]',
   active_decision: '[data-landmark="active-decision"]',
@@ -63,6 +65,15 @@ const REQUIRED_LANDMARKS = Object.freeze({
   freshness_status: '[data-landmark="freshness-status"]',
   provenance: '[data-landmark="provenance"]',
 });
+
+function requiredLandmarks(priorityContract) {
+  return Object.freeze({
+    ...BASE_REQUIRED_LANDMARKS,
+    ...(priorityContract.packet_loaded
+      ? { packet_attention: '[data-landmark="packet-attention"]' }
+      : {}),
+  });
+}
 const AUTOMATED_STATUS_KEYS = Object.freeze([
   "source_binding",
   "automated_semantic_parity",
@@ -113,6 +124,10 @@ function parseArguments(argv) {
       options.validateSourceBinding = true;
       continue;
     }
+    if (argument === "--validate-timestamp-authority") {
+      options.validateTimestampAuthority = true;
+      continue;
+    }
     const key = valueOptions.get(argument);
     if (!key) throw new Error(`Unknown argument: ${argument}`);
     const value = argv[index + 1];
@@ -142,6 +157,7 @@ Options:
   --output-root PATH
   --repo-root PATH
   --captured-at ISO-8601
+  --validate-timestamp-authority
   --validate-source-binding
   --validate-semantic-fixture PATH
   --record-worker-inspection
@@ -154,10 +170,57 @@ Environment overrides:
 }
 
 function assertIsoInstant(value, optionName) {
-  if (typeof value !== "string" || !Number.isFinite(Date.parse(value))) {
+  const match = typeof value === "string"
+    ? /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,3}))?(Z|[+-]\d{2}:\d{2})$/u.exec(value)
+    : null;
+  if (!match || !Number.isFinite(Date.parse(value))) {
+    throw new Error(`${optionName} must be an ISO-8601 timestamp.`);
+  }
+  const [, year, month, day, hour, minute, second, , zone] = match;
+  const calendar = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+  const invalidCalendar = calendar.getUTCFullYear() !== Number(year)
+    || calendar.getUTCMonth() + 1 !== Number(month)
+    || calendar.getUTCDate() !== Number(day);
+  const zoneHour = zone === "Z" ? 0 : Number(zone.slice(1, 3));
+  const zoneMinute = zone === "Z" ? 0 : Number(zone.slice(4, 6));
+  if (
+    invalidCalendar
+    || Number(hour) > 23
+    || Number(minute) > 59
+    || Number(second) > 59
+    || zoneHour > 23
+    || zoneMinute > 59
+  ) {
     throw new Error(`${optionName} must be an ISO-8601 timestamp.`);
   }
   return new Date(value).toISOString();
+}
+
+function timestampAuthority(declaredValue, optionName, event) {
+  if (declaredValue) {
+    const value = assertIsoInstant(declaredValue, optionName);
+    return {
+      value,
+      authority: "deterministic_declared_override",
+      event,
+      actual_observed_at: null,
+      declared_at: value,
+      current_observation_eligible: false,
+    };
+  }
+  const value = new Date().toISOString();
+  return {
+    value,
+    authority: event === "browser_capture_completed"
+      ? "actual_browser_observation"
+      : event === "worker_raster_inspection_completed"
+        ? "actual_worker_inspection"
+        : "runtime_clock_observation",
+    event,
+    actual_observed_at: value,
+    declared_at: null,
+    current_observation_eligible: event === "browser_capture_completed",
+  };
 }
 
 async function isFile(path) {
@@ -316,7 +379,16 @@ function displayPath(path, repoRoot, outputRoot) {
   if (fromRepo && !fromRepo.startsWith("..") && !isAbsolute(fromRepo)) {
     return fromRepo.replaceAll("\\", "/");
   }
-  return absolute.replaceAll("\\", "/");
+  return `<external>/${basename(absolute)}`;
+}
+
+
+function portableRuntimePath(path) {
+  if (!isAbsolute(path)) return path.replaceAll("\\", "/");
+  const normalized = resolve(path).replaceAll("\\", "/");
+  return /^[A-Za-z]:\/Users\//iu.test(normalized) || /^\/(?:home|Users)\//u.test(normalized)
+    ? `<user-runtime>/${basename(normalized)}`
+    : normalized;
 }
 
 function manifestOutputPath(filename) {
@@ -456,8 +528,11 @@ async function semanticSnapshot(page, htmlPath, language) {
     const visibleLandmarks = {};
     for (const name of [
       "current-state",
+      "local-observer-health",
+      "packet-attention",
       "priority-lane",
       "priority-first",
+      "priority-empty-state",
       "active-decision",
       "evidence-inspector",
       "freshness-status",
@@ -502,8 +577,12 @@ function arraysEqual(left, right) {
 
 function evaluatePrioritySemanticBinding(japanese, english, expected) {
   const expectedEvidenceId = expected.evidence_by_priority_id[expected.selected_priority_id];
+  const requiredLandmarkNames = Object.values(requiredLandmarks(expected)).map(
+    (selector) => selector.match(/data-landmark="([^"]+)"/u)?.[1],
+  );
   const checks = {
-    expected_priority_count_nonzero: expected.priority_ids.length >= 1,
+    expected_priority_count_nonzero:
+      expected.mode === "all_closed" ? expected.priority_ids.length === 0 : expected.priority_ids.length >= 1,
     japanese_language: japanese.language === "ja",
     english_language: english.language === "en",
     japanese_priority_ids: arraysEqual(japanese.priority_ids, expected.priority_ids),
@@ -532,8 +611,12 @@ function evaluatePrioritySemanticBinding(japanese, english, expected) {
       japanese.embedded_priorities_sha256 === expected.priorities_sha256,
     english_embedded_priority_model:
       english.embedded_priorities_sha256 === expected.priorities_sha256,
-    japanese_landmarks: Object.values(japanese.visible_landmarks).every(Boolean),
-    english_landmarks: Object.values(english.visible_landmarks).every(Boolean),
+    japanese_landmarks: requiredLandmarkNames.every(
+      (name) => japanese.visible_landmarks[name] === true,
+    ),
+    english_landmarks: requiredLandmarkNames.every(
+      (name) => english.visible_landmarks[name] === true,
+    ),
     japanese_project_identity: japanese.project_identity.rendered.visible
       && japanese.project_identity.rendered.text === japanese.project_identity.expected,
     english_project_identity: english.project_identity.rendered.visible
@@ -799,7 +882,7 @@ async function noJavascriptFallbackCheck(browser, htmlPath) {
   }
 }
 
-async function landmarkGeometry(page, viewport) {
+async function landmarkGeometry(page, viewport, selectors) {
   return page.evaluate(({ selectors, expectedViewport }) => {
     const results = {};
     for (const [name, selector] of Object.entries(selectors)) {
@@ -838,7 +921,7 @@ async function landmarkGeometry(page, viewport) {
       };
     }
     return results;
-  }, { selectors: REQUIRED_LANDMARKS, expectedViewport: viewport });
+  }, { selectors, expectedViewport: viewport });
 }
 
 function sampleRaster(raw, width, height, rect) {
@@ -1019,7 +1102,15 @@ function geometryRegions(geometry) {
   );
 }
 
-async function captureOne(page, htmlPath, definition, stageScreenshots, ffmpeg, stageRoot) {
+async function captureOne(
+  page,
+  htmlPath,
+  definition,
+  stageScreenshots,
+  ffmpeg,
+  stageRoot,
+  captureLandmarks,
+) {
   await page.setViewportSize(definition.viewport);
   await openState(page, htmlPath, definition.language);
   const ids = await priorityIds(page);
@@ -1027,7 +1118,7 @@ async function captureOne(page, htmlPath, definition, stageScreenshots, ffmpeg, 
   await page.locator(`button[data-priority-id="${ids[0]}"]`).click();
   await settlePage(page);
   const state = await synchronizedState(page);
-  const geometry = await landmarkGeometry(page, definition.viewport);
+  const geometry = await landmarkGeometry(page, definition.viewport, captureLandmarks);
   const overflow = await overflowCheck(page, htmlPath, definition.language, definition.viewport);
   const rawPath = join(stageRoot, `raw-${definition.id}.png`);
   const finalPath = join(stageScreenshots, definition.filename);
@@ -1255,7 +1346,12 @@ function isNonEmptyString(value) {
 }
 
 function pathKey(value) {
-  const absolute = resolve(value);
+  let absolute = resolve(value);
+  try {
+    absolute = realpathSync.native(absolute);
+  } catch {
+    // Validation will report a mismatch or missing input at the caller boundary.
+  }
   return process.platform === "win32" ? absolute.toLowerCase() : absolute;
 }
 
@@ -1275,7 +1371,44 @@ function orderedUnique(values) {
 function validatePriorityContract(priorityJson) {
   const errors = [];
   const priorities = Array.isArray(priorityJson.priorities) ? priorityJson.priorities : [];
-  if (!priorities.length) errors.push("priority readback priorities must contain at least one item");
+  const informational = Array.isArray(priorityJson.informational_items)
+    ? priorityJson.informational_items
+    : [];
+  const surface = priorityJson.surface || {};
+  const packet = priorityJson.supervision_packet || {};
+  const coverage = packet.coverage || {};
+  const packetLoaded = packet.loaded === true;
+  const allClosed = surface.all_closed === true;
+  if (surface.priority_count !== priorities.length) {
+    errors.push("surface.priority_count must exactly match priorities");
+  }
+  if (priorities.some((item) => item?.executable !== false)) {
+    errors.push("every priority must remain executable:false");
+  }
+  if (informational.some(
+    (item) => item?.executable !== false || item?.informational_only !== true,
+  )) {
+    errors.push("every informational item must be informational_only:true and executable:false");
+  }
+  if (packetLoaded) {
+    if (coverage.active_task_count !== priorities.length) {
+      errors.push("packet active_task_count must exactly match priorities");
+    }
+    if (coverage.closed_or_informational_count !== informational.length) {
+      errors.push("packet closed count must exactly match informational_items");
+    }
+  }
+  if (allClosed) {
+    if (!packetLoaded) errors.push("all-closed mode requires a loaded supervision packet");
+    if (priorities.length !== 0) errors.push("all-closed mode requires zero active priorities");
+    if (informational.length === 0) errors.push("all-closed mode requires informational_items");
+    if (coverage.active_task_count !== 0) errors.push("all-closed packet active count must be zero");
+    if (coverage.closed_or_informational_count !== informational.length) {
+      errors.push("all-closed packet closed count must match informational_items");
+    }
+  } else if (!priorities.length) {
+    errors.push("priority readback priorities must contain at least one item unless packet is all-closed");
+  }
   const priorityIds = priorities.map((item) => item?.priority_id);
   const evidenceByPriorityId = Object.fromEntries(
     priorities.map((item) => [item?.priority_id, item?.primary_evidence_id]),
@@ -1289,11 +1422,20 @@ function validatePriorityContract(priorityJson) {
   if (priorities.some((item) => !isNonEmptyString(item?.primary_evidence_id))) {
     errors.push("every primary_evidence_id must be a non-empty string");
   }
-  const selectedPriorityId = priorityJson.surface?.selected_priority_id;
-  if (!isNonEmptyString(selectedPriorityId)) {
+  const selectedPriorityId = surface.selected_priority_id;
+  if (allClosed && selectedPriorityId !== null) {
+    errors.push("all-closed surface.selected_priority_id must be null");
+  } else if (!allClosed && !isNonEmptyString(selectedPriorityId)) {
     errors.push("surface.selected_priority_id must be a non-empty string");
-  } else if (!priorityIds.includes(selectedPriorityId)) {
+  } else if (!allClosed && !priorityIds.includes(selectedPriorityId)) {
     errors.push("surface.selected_priority_id must reference a declared priority");
+  }
+  if (allClosed) {
+    const closedEvidenceId = surface.selected_closed_evidence_id;
+    const informationalEvidenceIds = informational.map((item) => item?.primary_evidence_id);
+    if (!isNonEmptyString(closedEvidenceId) || !informationalEvidenceIds.includes(closedEvidenceId)) {
+      errors.push("all-closed selected evidence must reference informational_items");
+    }
   }
   if (errors.length) {
     throw new Error(`Priority readback semantic contract rejected: ${errors.join("; ")}`);
@@ -1302,6 +1444,8 @@ function validatePriorityContract(priorityJson) {
     priority_ids: priorityIds,
     evidence_ids: orderedUnique(priorities.map((item) => item.primary_evidence_id)),
     selected_priority_id: selectedPriorityId,
+    mode: allClosed ? "all_closed" : "active_queue",
+    packet_loaded: packetLoaded,
     evidence_by_priority_id: evidenceByPriorityId,
     priorities_sha256: sha256(
       Buffer.from(canonicalJson(priorities), "utf8"),
@@ -1380,7 +1524,7 @@ async function sourceBinding(options, repoRoot, outputRoot) {
       path: displayPath(priorityPath, repoRoot, outputRoot),
       schema_version: priorityJson.schema_version || null,
       artifact_id: priorityJson.artifact_id || null,
-      freshness_receipt_path: declaredReceiptPath,
+      freshness_receipt_path: displayPath(freshnessPath, repoRoot, outputRoot),
       freshness_capture_id: declaredReceiptCaptureId,
       sha256: canonicalTextSha256(priority),
     },
@@ -1408,8 +1552,10 @@ async function sourceBinding(options, repoRoot, outputRoot) {
     validation: {
       status: "pass",
       checks,
-      declared_freshness_path_candidates: declaredCandidates,
-      actual_freshness_path: pathKey(freshnessPath),
+      declared_freshness_path_candidates: declaredCandidates.map((candidate) =>
+        displayPath(candidate, repoRoot, outputRoot)
+      ),
+      actual_freshness_path: displayPath(freshnessPath, repoRoot, outputRoot),
     },
   };
 }
@@ -1543,13 +1689,16 @@ async function recordWorkerInspection(options, outputRoot, repoRoot) {
     if (currentSha !== expectedSha) throw new Error(`PNG hash changed after capture: ${entry.path}`);
     inspectedFiles.push({ path: entry.path, sha256: currentSha });
   }
-  const inspectedAt = assertIsoInstant(
-    options.inspectionAt || new Date().toISOString(),
+  const inspectionTimestamp = timestampAuthority(
+    options.inspectionAt,
     "--inspection-at",
+    "worker_raster_inspection_completed",
   );
+  const inspectedAt = inspectionTimestamp.value;
   readback.worker_raster_inspection = {
     status: "pass",
     inspected_at: inspectedAt,
+    inspection_timestamp: inspectionTimestamp,
     inspected_capture_id: manifest.capture_id,
     method: "Worker opened the JA desktop, EN desktop, JA narrow, and contact-sheet PNGs after automated readback; this record is bound to their current SHA-256 hashes.",
     inspected_sources: currentSources,
@@ -1574,6 +1723,14 @@ async function main() {
   const options = parseArguments(process.argv.slice(2));
   if (options.help) {
     printHelp();
+    return;
+  }
+  if (options.validateTimestampAuthority) {
+    console.log(JSON.stringify(
+      timestampAuthority(options.capturedAt, "--captured-at", "timestamp_validation"),
+      null,
+      2,
+    ));
     return;
   }
   if (options.validateSemanticFixture) {
@@ -1601,15 +1758,22 @@ async function main() {
     await recordWorkerInspection(options, outputRoot, repoRoot);
     return;
   }
+  if (options.capturedAt) assertIsoInstant(options.capturedAt, "--captured-at");
   const source = await sourceBinding(options, repoRoot, outputRoot);
   if (options.validateSourceBinding) {
     console.log(JSON.stringify({
       source_binding: source.validation,
+      source_manifest_binding: source.binding,
       priority_contract: source.priorityContract,
     }, null, 2));
     return;
   }
-  const capturedAt = assertIsoInstant(options.capturedAt || new Date().toISOString(), "--captured-at");
+  if (source.priorityContract.mode !== "active_queue") {
+    throw new Error(
+      "Production capture currently requires an active priority queue; all-closed rendering is verified by the dashboard contract tests.",
+    );
+  }
+  const captureLandmarks = requiredLandmarks(source.priorityContract);
   const playwrightEntry = await discoverPlaywrightEntry(options.playwrightCore);
   const browserExecutable = await discoverBrowserExecutable(options.browser);
   const ffmpegExecutable = await discoverFfmpegExecutable(options.ffmpeg);
@@ -1692,7 +1856,15 @@ async function main() {
     const captures = [];
     for (const definition of CAPTURE_DEFINITIONS) {
       captures.push(
-        await captureOne(page, source.htmlPath, definition, stageScreenshots, ffmpegExecutable, stageRoot),
+        await captureOne(
+          page,
+          source.htmlPath,
+          definition,
+          stageScreenshots,
+          ffmpegExecutable,
+          stageRoot,
+          captureLandmarks,
+        ),
       );
     }
 
@@ -1789,11 +1961,18 @@ async function main() {
       status: runtimeErrors.length === 0 ? "pass" : "fail",
       errors: runtimeErrors,
     };
+    const captureTimestamp = timestampAuthority(
+      options.capturedAt,
+      "--captured-at",
+      "browser_capture_completed",
+    );
+    const capturedAt = captureTimestamp.value;
     const manifest = {
       schema_version: MANIFEST_SCHEMA,
       artifact_id: ARTIFACT_ID,
       capture_id: identity.capture_id,
       captured_at: capturedAt,
+      capture_timestamp: captureTimestamp,
       capture_identity_sha256: identity.sha256,
       capture_identity: identity.payload,
       source_binding: source.binding,
@@ -1803,7 +1982,7 @@ async function main() {
         settling: "document.fonts.ready; two animation frames; scroll reset; two animation frames",
         captures: CAPTURE_DEFINITIONS,
         contact_sheet: CONTACT_SHEET,
-        required_landmarks: REQUIRED_LANDMARKS,
+        required_landmarks: captureLandmarks,
         language_default: "ja",
         selected_direction: "A",
         output_promotion: "All outputs staged outside OUTPUT_ROOT and copied only after every automated status passed.",
@@ -1815,8 +1994,8 @@ async function main() {
         browser_version: await browser.version(),
         playwright_core_version: pwVersion,
         ffmpeg_version: ffmpegRuntime,
-        browser_executable: browserExecutable.replaceAll("\\", "/"),
-        ffmpeg_executable: ffmpegExecutable.replaceAll("\\", "/"),
+        browser_executable: portableRuntimePath(browserExecutable),
+        ffmpeg_executable: portableRuntimePath(ffmpegExecutable),
         capture_script_path: source.binding.capture_script.path,
         capture_script_sha256: source.binding.capture_script.sha256,
         locale: ["ja-JP", "en-US"],
@@ -1836,6 +2015,7 @@ async function main() {
       artifact_id: ARTIFACT_ID,
       capture_id: identity.capture_id,
       captured_at: capturedAt,
+      capture_timestamp: captureTimestamp,
       source_binding: source.validation,
       automated_semantic_parity: semanticParity,
       automated_priority_click_sync: clickSync,

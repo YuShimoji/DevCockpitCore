@@ -12,9 +12,12 @@ flowchart LR
 
     REPORT_MANIFEST["task_report_manifest.v1<br/>explicit paths + SHA-256"]
     AGENT_REPORTS["manifest-bound AGENT_REPORT files"]
-    NORMALIZER["report_normalizer"]
+    CANONICAL_ROUTE["canonical v6.5 ROUTE<br/>thread / lane / slice / artifact"]
+    LEGACY_ROUTE["legacy report aliases<br/>compatible or fail closed"]
+    NORMALIZER["report_normalizer<br/>exact identity resolution"]
     CLASSIFIER["gate_classifier"]
     PACKET["cross_project_supervision_packet.v1<br/>non-executable"]
+    PACKET_VALIDATOR["loaded packet integrity<br/>binding + identity + projection"]
     GLOBAL_QUEUE["global attention queue<br/>rank is review priority"]
     WORKSETS["project worksets<br/>same task IDs + ranks"]
 
@@ -23,7 +26,10 @@ flowchart LR
     OPTION_A["A: Priority Review Console<br/>selected production direction"]
     SURFACE["priority-review-console-production-observation-surface-v1"]
     STATE["concise current-state strip"]
+    LOCAL_HEALTH["local observer health"]
+    PACKET_HEALTH["packet attention counts"]
     PRIORITY["ordered Priority Lane"]
+    ALL_CLOSED["all-closed informational state<br/>zero active priority"]
     DECISION["Active Decision"]
     EVIDENCE["Evidence Inspector<br/>freshness + provenance"]
     APPENDIX["subordinate evidence appendix"]
@@ -33,6 +39,7 @@ flowchart LR
     ACTION_JSON["devcockpitcore_review_actions.json"]
     ACTION_MD["devcockpitcore_review_actions.md"]
     CAPTURE["production_capture<br/>JA desktop + EN desktop + JA narrow"]
+    CAPTURE_AUTH["portable paths + timestamp authority"]
     USER_REVIEW["production visual acceptance<br/>accepted"]
 
     HISTORY["v2 A/B/C comparison<br/>historical selection provenance"]
@@ -49,11 +56,14 @@ flowchart LR
     FRESH_CLI --> FRESH_RECEIPT
 
     REPORT_MANIFEST --> AGENT_REPORTS
+    CANONICAL_ROUTE --> AGENT_REPORTS
+    LEGACY_ROUTE --> AGENT_REPORTS
     AGENT_REPORTS --> NORMALIZER
     NORMALIZER --> CLASSIFIER
     CLASSIFIER --> PACKET
-    PACKET --> GLOBAL_QUEUE
-    PACKET --> WORKSETS
+    PACKET --> PACKET_VALIDATOR
+    PACKET_VALIDATOR --> GLOBAL_QUEUE
+    PACKET_VALIDATOR --> WORKSETS
 
     VP --> GEN
     SM --> GEN
@@ -69,7 +79,10 @@ flowchart LR
     OPTION_A --> SURFACE
 
     SURFACE --> STATE
+    STATE --> LOCAL_HEALTH
+    STATE --> PACKET_HEALTH
     SURFACE --> PRIORITY
+    PRIORITY --> ALL_CLOSED
     PRIORITY --> DECISION
     DECISION --> EVIDENCE
     SURFACE --> APPENDIX
@@ -87,6 +100,7 @@ flowchart LR
     ACT_SOURCE --> ACTION_MD
     HTML --> CAPTURE
     PRIORITY_JSON --> CAPTURE
+    CAPTURE --> CAPTURE_AUTH
     CAPTURE --> USER_REVIEW
 
     HISTORY -. "A selection completed" .-> OPTION_A

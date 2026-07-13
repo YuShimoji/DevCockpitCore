@@ -27,6 +27,81 @@
     }
   },
   "generated_at": "2026-07-12T00:00:00Z",
+  "informational_items": [
+    {
+      "action": {
+        "en": "Beta observation cleanup completed and no follow-up task remains.",
+        "ja": "beta-project: Beta observation cleanup completed and no follow-up task remains."
+      },
+      "artifact_id": "beta-observation-cleanup-v1",
+      "attention_class": "closed_or_informational",
+      "blocked_by_gate": false,
+      "claim_class": "derived",
+      "condition_key": "supervision_packet:task-f1a6406e7974148a",
+      "decision": {
+        "en": "Attention class: closed_or_informational",
+        "ja": "確認分類: closed_or_informational"
+      },
+      "desired_outcome": {
+        "en": "review classification",
+        "ja": "review classification"
+      },
+      "display_copy_claim_class": "editorial",
+      "evidence_claim_class": "observed_report",
+      "evidence_refs": [
+        {
+          "assessed_at": "2026-07-13T06:30:00Z",
+          "authority_classification": "explicit_manifest_bound_report",
+          "content_sha256": "4cce88440533cf08bd71d2e5a09f0e4c44b8d40e291c90c82920d38375ca29e2",
+          "current_state_claim_eligible": false,
+          "evidence_population": "packet_report",
+          "fresh_through": null,
+          "freshness_state": "not_applicable",
+          "reason_codes": [
+            "closed_or_informational",
+            "NONE"
+          ],
+          "revision_binding_state": "match",
+          "source_id": "task-f1a6406e7974148a.source_report",
+          "source_path": "samples/supervision_packets/reports/beta_closed_observation.txt",
+          "temporal_state": "not_applicable"
+        }
+      ],
+      "executable": false,
+      "global_rank_meaning": "attention_and_review_priority_only",
+      "informational_only": true,
+      "lane_id": "OBSERVATION CLEANUP",
+      "owner": {
+        "en": "Beta worker",
+        "id": "beta-worker",
+        "ja": "Beta worker"
+      },
+      "precedence": 6,
+      "primary_evidence_id": "task-f1a6406e7974148a.source_report",
+      "primary_evidence_path": "samples/supervision_packets/reports/beta_closed_observation.txt",
+      "priority_id": "task-f1a6406e7974148a",
+      "project_key": "beta-project",
+      "project_local_first": false,
+      "rank": 0,
+      "ranking_policy_claim_class": "policy",
+      "raw_condition": "completed_continue",
+      "reason": {
+        "en": "Current state: cleanup completed",
+        "ja": "現在: cleanup completed"
+      },
+      "required": false,
+      "review_action_refs": [],
+      "safe_next_surface": "local_review",
+      "slice_id": "beta-observation-cleanup-v1",
+      "source_report_sha256": "4cce88440533cf08bd71d2e5a09f0e4c44b8d40e291c90c82920d38375ca29e2",
+      "state": {
+        "en": "Closed / informational",
+        "ja": "完了情報",
+        "key": "informational"
+      },
+      "thread_id": "beta-observer-thread"
+    }
+  ],
   "priorities": [
     {
       "action": {
@@ -54,6 +129,7 @@
           "authority_classification": "explicit_manifest_bound_report",
           "content_sha256": "ca04d6de029931b7bc7ba20148a3284d29e765618aa7fdddc0cb442f0c0b7154",
           "current_state_claim_eligible": false,
+          "evidence_population": "packet_report",
           "fresh_through": null,
           "freshness_state": "not_applicable",
           "reason_codes": [
@@ -68,6 +144,7 @@
       ],
       "executable": false,
       "global_rank_meaning": "attention_and_review_priority_only",
+      "informational_only": false,
       "lane_id": "RELEASE VALIDATION",
       "owner": {
         "en": "Alpha developer",
@@ -125,6 +202,7 @@
           "authority_classification": "explicit_manifest_bound_report",
           "content_sha256": "727d235dbf13dfaffd1c3b9c4dae4a3f35f2468a059a34103a43a0c53b8fbfbd",
           "current_state_claim_eligible": false,
+          "evidence_population": "packet_report",
           "fresh_through": null,
           "freshness_state": "not_applicable",
           "reason_codes": [
@@ -139,6 +217,7 @@
       ],
       "executable": false,
       "global_rank_meaning": "attention_and_review_priority_only",
+      "informational_only": false,
       "lane_id": "PRODUCT REVIEW",
       "owner": {
         "en": "User",
@@ -196,6 +275,7 @@
           "authority_classification": "explicit_manifest_bound_report",
           "content_sha256": "f5b4bc713230a317e0a56149c1e027a6dace010bdf93fa30b5fb6d721f15a9eb",
           "current_state_claim_eligible": false,
+          "evidence_population": "packet_report",
           "fresh_through": null,
           "freshness_state": "not_applicable",
           "reason_codes": [
@@ -210,6 +290,7 @@
       ],
       "executable": false,
       "global_rank_meaning": "attention_and_review_priority_only",
+      "informational_only": false,
       "lane_id": "OBSERVER DOCUMENTATION",
       "owner": {
         "en": "Alpha worker",
@@ -292,6 +373,16 @@
   },
   "supervision_packet": {
     "artifact_id": "cross-project-supervision-packet-v1",
+    "attention_summary": {
+      "active": 1,
+      "all_closed": false,
+      "closed": 1,
+      "decision": 1,
+      "executable": false,
+      "loaded": true,
+      "status": "stop",
+      "stop": 1
+    },
     "coverage": {
       "active_task_count": 3,
       "closed_or_informational_count": 1,
@@ -359,6 +450,7 @@
     }
   },
   "surface": {
+    "all_closed": false,
     "b_and_c_production_tabs": false,
     "default_language": "ja",
     "executable": false,
@@ -368,6 +460,7 @@
     ],
     "priority_count": 3,
     "production": true,
+    "selected_closed_evidence_id": null,
     "selected_direction": "priority-review-console",
     "selected_priority_id": "task-de0aa9c2efa92270",
     "user_visual_acceptance": "accepted"
