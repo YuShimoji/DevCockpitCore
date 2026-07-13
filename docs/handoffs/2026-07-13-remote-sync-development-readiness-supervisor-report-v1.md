@@ -1,11 +1,12 @@
 # DevCockpitCore リモート同期・開発再開 現状報告 V1
 
-updated_at: 2026-07-13 19:00 JST
+updated_at: 2026-07-13 19:03 JST
 report_for: supervising_ai_and_next_terminal
 resume_branch: codex/remote-sync-resume-context-v1
 rebased_on: 7b914b46733a7aff508d2c13fa8103a127152b7c
 remote_target: origin/codex/remote-sync-resume-context-v1
-development_readiness: validation_pending_after_context_rebase
+validated_context_commit: cf57191cd5bfa472726244a2c348cb41ba46c998
+development_readiness: ready_with_non_blocking_warning
 blocking_issue_count: 0
 
 ## 今回の引き継ぎ判断
@@ -71,6 +72,17 @@ remote や user project の live state は主張しない。
 deterministic non-live fixture である。H1 authentic/live round-trip は、別 project
 の current AGENT_REPORT と明示 manifest binding が入力されるまで未実施であり、
 fixture を live coverage へ昇格させない。
+
+## rebase 後のローカル検証
+
+`cf57191` を最新 `origin/main` (`7b914b4`) 上で検証した。source/tests compile は
+成功し、unit suite は382件すべて通過した。default validation pack は16/16を完了し、
+15 pass、1 warning、0 fail、missing 0、unknown 0 だった。warning は履歴検証と同じ
+`pseudo_git_tag_scan` fixture だけで、新しい回帰や authority 競合は検出していない。
+
+state contract 9件も通過し、削除済み Capsule / dated restart authority の復活、
+frontmatter key の重複、共有 projection の不一致、存在しない repository path はない。
+この結果により、ブランチは remote へ公開して別端末から再開できる状態である。
 
 ## 別端末での再開順
 

@@ -14,9 +14,9 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
-latest_local_validation_at: 2026-07-13T10:00:17Z
-latest_local_validation_commit: 7b914b46733a7aff508d2c13fa8103a127152b7c
-latest_local_validation_result: validation_pending_after_context_rebase
+latest_local_validation_at: 2026-07-13T10:03:13Z
+latest_local_validation_commit: cf57191cd5bfa472726244a2c348cb41ba46c998
+latest_local_validation_result: ready_with_non_blocking_warning
 latest_supervisor_report_path: docs/handoffs/2026-07-13-remote-sync-development-readiness-supervisor-report-v1.md
 durable_context_path: docs/project-context.md
 layout_research_path: docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
