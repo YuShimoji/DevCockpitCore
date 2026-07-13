@@ -14,6 +14,10 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
+latest_local_validation_at: 2026-07-13T10:00:17Z
+latest_local_validation_commit: 7b914b46733a7aff508d2c13fa8103a127152b7c
+latest_local_validation_result: validation_pending_after_context_rebase
+latest_supervisor_report_path: docs/handoffs/2026-07-13-remote-sync-development-readiness-supervisor-report-v1.md
 durable_context_path: docs/project-context.md
 layout_research_path: docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
 production_dashboard_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -99,6 +103,16 @@ deterministic fixture is not promoted to live coverage.
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
 the receipt authority boundary directly.
+
+## Continuation Context
+
+The report at `latest_supervisor_report_path` preserves the local readiness
+evidence captured at `e5ab070`, then reconciles it with the later revert of the
+competing Capsule authority and the Cross-Project Supervision Packet V1.1
+integrity checkpoint at `latest_local_validation_commit`. The historical
+checkpoint remains evidence, not current workflow authority. Continue from
+this projection, `docs/PROJECT_COCKPIT.md`, the report, and direct Git/test
+verification.
 
 ## Local Validation Entry
 

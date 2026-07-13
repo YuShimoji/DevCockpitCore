@@ -38,6 +38,10 @@ SHARED_PROJECTION_FIELDS = {
     "tracked_receipt_assessed_at",
     "tracked_receipt_authority",
     "blocking_issue_count",
+    "latest_local_validation_at",
+    "latest_local_validation_commit",
+    "latest_local_validation_result",
+    "latest_supervisor_report_path",
 }
 KNOWN_LIVE_STATE_FIELDS = {
     "active_artifact",
@@ -51,6 +55,10 @@ KNOWN_LIVE_STATE_FIELDS = {
     "freshness_state",
     "handoff",
     "last_verified_base",
+    "latest_local_validation_at",
+    "latest_local_validation_commit",
+    "latest_local_validation_result",
+    "latest_supervisor_report_path",
     "observed_at",
     "pull_request",
     "priority_readback_path",

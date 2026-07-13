@@ -14,6 +14,10 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
+latest_local_validation_at: 2026-07-13T10:00:17Z
+latest_local_validation_commit: 7b914b46733a7aff508d2c13fa8103a127152b7c
+latest_local_validation_result: validation_pending_after_context_rebase
+latest_supervisor_report_path: docs/handoffs/2026-07-13-remote-sync-development-readiness-supervisor-report-v1.md
 
 ## About This Snapshot
 
@@ -121,6 +125,7 @@ assessed local receipt followed by dashboard regeneration.
 
 - [Durable mission, architecture, and capability boundaries](project-context.md)
 - [Bounded machine-facing restart projection](runtime-state.md)
+- [Latest remote-sync and development-readiness report](handoffs/2026-07-13-remote-sync-development-readiness-supervisor-report-v1.md)
 - [Product hypotheses and parked directions](idea-ledger.md)
 - [Durable product and architecture decisions](decision-log.md)
 - [Dashboard artifact guide](../samples/dashboard/README.md)
@@ -147,6 +152,14 @@ collections, ranks, worksets, coverage, policy, and observer-only scope. The
 console separates local observer health from packet attention and treats a
 zero-active all-closed packet as a valid informational state. Capture paths are
 portable and deterministic timestamp overrides are explicitly non-current.
+
+The latest supervisor report preserves the completed `e5ab070` local-readiness
+evidence and reconciles it with the later Capsule-authority revert and
+Cross-Project Supervision Packet V1.1 integrity work at
+`latest_local_validation_commit`. The older receipt and dashboard run remain
+historical point-in-time evidence; they do not turn the tracked fixtures into
+live claims. The rebased context branch must complete the local validation
+entry below before `latest_local_validation_result` is treated as ready.
 
 This document is navigation and decision context, not live workflow authority.
 Verify Git state, the receipt authority boundary, generated readback, raster
