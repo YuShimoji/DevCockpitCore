@@ -23,7 +23,7 @@ contains:
 | `required` | Whether the report participates as required evidence. |
 | `evidence_class` | Evidence authority class, such as deterministic fixture. |
 | `authority_basis` | Why this exact report is allowed into the packet. |
-| `content_sha256` | Required byte-level binding for fail-closed input. |
+| `content_sha256` | Required SHA-256 binding over canonical UTF-8 LF bytes. CRLF checkout transport is normalized to LF before hashing. |
 
 The manifest root is an exact-key object containing only `schema_version`,
 `artifact_id`, `generated_at`, and `reports`. Every report entry is an
@@ -32,8 +32,11 @@ unexpected keys fail closed with their object path and sorted diagnostics;
 JSON object key order is not significant.
 
 The loader rejects duplicate JSON keys at any nesting depth, absolute or
-escaping report paths, duplicate paths, missing files, invalid UTF-8, hash
-drift, duplicate task identity, and malformed packet projection.
+escaping report paths, duplicate paths, missing files, invalid UTF-8,
+unsupported bare carriage returns, canonical content hash drift, duplicate
+task identity, and malformed packet projection. Git declares the tracked
+fixture reports as LF, while the loader also tolerates an existing Windows
+CRLF checkout without weakening substantive content binding.
 
 There is deliberately no directory-mtime search, latest-file heuristic,
 conversation/clipboard inference, or automatic promotion of a dated handoff to
@@ -163,13 +166,14 @@ ranking, closed-item separation, and projection identity. It is not live
 coverage of user projects and does not complete the H2 authentic report-routing
 round-trip horizon.
 
-`content_sha256` binds the report's raw checked-out bytes; application code
-does not normalize newlines before hashing. The repository-root
-`.gitattributes` contract, `* text=auto eol=lf`, keeps tracked text blobs and
-working-tree text at LF across operating systems while leaving files detected
-as binary unconverted. This checkout-transport rule also keeps deterministic
-JSON, Markdown, and HTML text artifacts byte-stable without changing the hash
-contract or manifest values.
+`content_sha256` binds canonical UTF-8 LF bytes. The loader decodes strict
+UTF-8, normalizes CRLF to LF, rejects any remaining bare carriage return, and
+then compares the canonical bytes to the explicit manifest hash. The
+repository-root `.gitattributes` contract, `* text=auto eol=lf`, keeps tracked
+text blobs and working-tree text at LF across operating systems while leaving
+files detected as binary unconverted. This transport rule and loader behavior
+keep deterministic reports usable on Windows without changing substantive
+content or weakening the manifest contract.
 
 Standalone packet validation guarantees self-consistency of schema, types,
 identity, classification, queue, worksets, binding references, coverage,

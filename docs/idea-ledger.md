@@ -6,25 +6,43 @@ it, rejects it, or shows that it is no longer timely.
 
 ## Product Exploration
 
+### Authentic Cross-Project Live Round-Trip
+
+Hypothesis: one explicitly authorized current AGENT_REPORT from a real project
+is the smallest useful bridge from deterministic fixture coverage to live
+cross-project supervision.
+
+The first pilot should bind one report through an explicit manifest, generate
+and reload the packet, render the accepted Priority Review Console, and verify
+that task identity, attention class, freshness authority, and evidence routes
+survive the round-trip. It must not scan for latest files, infer reports from
+conversation history, or write to the source project.
+
+Trigger: a Supervisor or user supplies the exact current report path,
+`project_key`, authority basis, source context, and permission to use that
+report as live pilot input. Until then H2 is input-gated, not blocked
+implementation work.
+
+### Live Authority And Revision Binding
+
+Hypothesis: an authentic packet should expose per-report observation time,
+source revision, authority basis, and current-claim eligibility instead of
+inheriting the deterministic fixture coverage statement.
+
+Explore only after the first authentic round-trip proves the real report
+dialect and input route. Keep freshness evaluation in one reusable contract;
+do not add a dashboard-local parallel evaluator.
+
 ### Dashboard Architecture Comparison
 
-Hypothesis: choosing the information architecture before production generator
-work will prevent another cycle of large delivery followed by card, copy, and
-layout correction.
+State: promoted and closed on 2026-07-13. A / Priority Review Console is the
+accepted production information architecture. The comparison pack remains
+historical provenance, not a pending decision.
 
-The current intent pack compares three low-fidelity directions with identical
-semantic values and wording:
-
-| Direction | User value | Cost to explore | Main risk | Decision unlocked |
-| --- | --- | --- | --- | --- |
-| Priority Review Console | Gives a repeat operator one ordered queue, active decision, and nearby proof. | Low; one prototype already exists. | Can feel too much like an internal tool for an occasional reader. | Whether queue-led master/detail should drive production. |
-| Narrative Status Brief | Lets a low-context reader understand state, changes, decisions, and proof in one reading order. | Low; static wireframe and copy hierarchy only. | Cross-project comparison may require more navigation. | Whether handoff readability should dominate repeated triage. |
-| Lane And Project Matrix | Makes observer, automation, execution, and product readiness comparable across projects. | Low to medium; needs realistic multi-project sample rows. | Equal-weight cells can recreate the card-grid problem. | Whether portfolio comparison is the primary job of the surface. |
-
-Research recommendation: A remains the strongest repeated-triage candidate,
-but the pack now includes real low-fidelity B and C alternatives. Collect one
-free-form user preference before selecting an architecture. Do not add
-production dashboard cards or copy before that choice.
+B / Narrative Status Brief may be revisited only when a demonstrated handoff
+reading problem needs a secondary summary. C / Lane And Project Overview may be
+revisited only when authentic multi-project evidence shows that the current
+secondary worksets are insufficient. Neither is an active production tab.
 
 ### Japanese-First Reading And Localization Boundary
 
@@ -48,8 +66,10 @@ Cost: low for copy and font-stack prototypes; medium if a true localization
 schema is later selected. Reversible: yes until generated artifact contracts
 change.
 
-Decision timing: after information architecture selection and before final
-spacing, typography, or responsive tuning.
+State: promoted. The accepted production surface is Japanese-first, preserves
+technical identifiers, and switches the same evidence to English. Reopen only
+for observed overflow, accessibility, or translation-fidelity defects; do not
+create a localization platform speculatively.
 
 ### Visual And Motion Language
 
@@ -64,9 +84,10 @@ Compare no more than two directions after layout selection:
   explicit lane colors, and short motion that explains selection and evidence
   linkage.
 
-Both directions should define contrast, status color semantics, font roles,
-focus states, reduced-motion behavior, and print fallback before component
-polish. Do not use decorative animation as a substitute for priority.
+State: parked. The accepted production surface does not need another visual
+direction cycle. Revisit only if real repeated use exposes a comprehension,
+focus, reduced-motion, or print defect. Do not use decorative animation as a
+substitute for priority.
 
 ### Adjacent Operator Content
 
@@ -93,11 +114,10 @@ Hypothesis: every review surface should expose `source_commit`, `observed_at`,
 and `freshness_state` close enough to the evidence route that historical
 artifacts cannot be mistaken for current repository state.
 
-The smallest useful implementation keeps generation commands and source paths
-available, distinguishes fresh, stale, and unknown observations, and treats a
-stale artifact as potentially valid history rather than current proof. This is
-a product evidence feature, not a claim that one document controls repository
-state.
+State: partially promoted. Evidence Freshness V1 and the accepted dashboard
+integration exist for local observer inputs. The remaining opportunity is the
+per-report live authority and revision-binding envelope described above; a
+tracked deterministic receipt must never be promoted to current authority.
 
 ## Maintenance Options
 
@@ -105,7 +125,8 @@ state.
 
 Value: canonicalize the accepted single C4 validation-pack probe without
 widening capability. Documentation and tests should preserve the exact command
-surface and its evidence contract.
+surface and its evidence contract. Keep this optional behind authentic report
+evidence.
 
 ### Validation Fixture Hygiene
 
@@ -120,8 +141,9 @@ warning.
 
 State: rejected. The previous sequence delivered a large card-derived surface,
 then iterated through Latest Brief, editorial brief, and report-first
-corrections before returning to layout research. Production work resumes only
-after low-fidelity direction selection.
+corrections before returning to layout research. Production work resumed only
+after low-fidelity direction selection; the selected A surface is now
+accepted, and this rewrite-first route remains rejected.
 
 ### Manually Maintained Wiki Status
 

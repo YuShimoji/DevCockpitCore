@@ -29,6 +29,17 @@ python -m dev_cockpit.adapters --validate adapters/*.json
 python -m dev_cockpit.validation_pack --default --pretty
 ```
 
+If `python` resolves to the WindowsApps placeholder instead of a real runtime,
+create the ignored repository-local environment with `uv` and use its Python
+directly:
+
+```powershell
+uv venv --python 3.11 .venv
+$env:PYTHONPATH = "src"
+.\.venv\Scripts\python.exe -m unittest discover
+.\.venv\Scripts\python.exe -m dev_cockpit.validation_pack --default --pretty
+```
+
 This repository is not an execution runner. The first slice,
 `common-foundation-status-producer-v1`, only inspects repository state, adapter
 configuration, known project documents, artifact roots, and validation hints.
@@ -687,9 +698,9 @@ supporting docs live at
 
 The accepted C4 command-key set is still exactly
 `validation_pack_default_pretty`. The C3 command set remains exactly two,
-current executable capability includes one accepted minimal C4 probe, C5/C6
-remain locked, and the recommended next route is
-`common-foundation-c4-probe-minimal-implementation-hardening-v1`.
+current executable capability includes one accepted minimal C4 probe, and
+C5/C6 remain locked. Minimal C4 hardening remains optional maintenance; it is
+not the current product continuation ahead of authentic live report evidence.
 
 ## Safety boundary
 
@@ -725,8 +736,10 @@ micro-artifact:
    cross-project smoke, dashboard evidence, and review actions.
 3. Execution Automation Readiness: the bounded C3 help-only and single C4
    validation-pack probes; broader execution remains locked.
-4. Project Review Surface: A / Priority Review Console is the selected
-   production direction; verify it with one free-form user visual/comprehension
-   review before any bounded density or ordering calibration.
+4. Project Review Surface: A / Priority Review Console is selected and user
+   accepted; do not reopen the same visual/comprehension gate.
+5. Live Supervision Proof: after the local portability closeout, bind one
+   explicitly supplied current AGENT_REPORT through the packet and accepted
+   console before proposing broader live or execution capability.
 
 See `docs/PROJECT_COCKPIT.md` for current lane state and next entrances.

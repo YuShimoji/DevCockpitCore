@@ -448,6 +448,38 @@ class SupervisionPacketTests(unittest.TestCase):
             with self.assertRaisesRegex(SupervisionPacketError, "report hash mismatch"):
                 build_supervision_packet(self.manifest, repo_root=root)
 
+    def test_crlf_checkout_preserves_canonical_manifest_binding(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            target = root / "samples" / "supervision_packets" / "reports"
+            target.parent.mkdir(parents=True)
+            shutil.copytree(MANIFEST_PATH.parent / "reports", target)
+            for report in target.glob("*.txt"):
+                lf_payload = report.read_bytes().replace(b"\r\n", b"\n")
+                report.write_bytes(lf_payload.replace(b"\n", b"\r\n"))
+
+            packet = build_supervision_packet(self.manifest, repo_root=root)
+
+        self.assertEqual(4, packet["coverage"]["report_count"])
+
+    def test_bare_carriage_return_is_rejected(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            target = root / "samples" / "supervision_packets" / "reports"
+            target.parent.mkdir(parents=True)
+            shutil.copytree(MANIFEST_PATH.parent / "reports", target)
+            changed = target / "alpha_required_validation_stop.txt"
+            payload = changed.read_bytes().replace(b"\r\n", b"\n").replace(b"\n", b"\r", 1)
+            changed.write_bytes(payload)
+            manifest["reports"][0]["content_sha256"] = sha256(payload).hexdigest()
+
+            with self.assertRaisesRegex(
+                SupervisionPacketError,
+                "unsupported bare carriage return",
+            ):
+                build_supervision_packet(manifest, repo_root=root)
+
     def test_duplicate_task_identity_is_rejected(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -493,8 +525,14 @@ class SupervisionPacketTests(unittest.TestCase):
             )
 
             self.assertEqual(0, result)
-            self.assertEqual(PACKET_PATH.read_bytes(), output_json.read_bytes())
-            self.assertEqual(MARKDOWN_PATH.read_bytes(), output_md.read_bytes())
+            self.assertEqual(
+                PACKET_PATH.read_text(encoding="utf-8"),
+                output_json.read_text(encoding="utf-8"),
+            )
+            self.assertEqual(
+                MARKDOWN_PATH.read_text(encoding="utf-8"),
+                output_md.read_text(encoding="utf-8"),
+            )
 
     def test_loaded_packet_rejects_source_binding_mutations(self) -> None:
         cases = {

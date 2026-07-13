@@ -29,6 +29,9 @@ capability_state: bounded_c3_c4
 evidence_freshness_policy_path: samples/evidence_freshness/evidence_freshness_policy_v1.json
 evidence_freshness_receipt_json_path: samples/evidence_freshness/evidence_freshness_receipt_v1.json
 evidence_freshness_receipt_markdown_path: samples/evidence_freshness/evidence_freshness_receipt_v1.md
+local_runtime_bootstrap: uv venv --python 3.11 .venv
+latest_local_required_validation_failures: 0
+latest_local_validation_authority: docs/handoffs/2026-07-14-supervision-packet-ingress-transport-handoff-v1.md
 
 ## Projection Scope
 
@@ -46,6 +49,25 @@ does not act as a development workflow controller.
 - A general runner, scheduler, external notification integration, auto-render
   workflow, web server, database, credential handling, target-repository
   writeback, C5, and C6 are absent.
+
+## Current Development Entrance
+
+H1 packet ingress and checkout transport are closed. The manifest root and
+report entries are exact four-key and six-key objects. Active and closed
+`task.next_state` values use one typed contract: `owner`, `user_work`, and
+`agent_work` are non-empty strings, while `recommended_slice` is `null` or a
+non-empty string. Invalid external packets are rejected as `DashboardError`
+before model or HTML projection. Report hashes bind canonical UTF-8 LF bytes;
+CRLF checkout transport is normalized before hashing, while invalid UTF-8,
+bare carriage returns, and substantive content drift fail closed.
+
+The accepted A / Priority Review Console and deterministic packet remain
+non-live observer evidence. H2 authentic/live round-trip is input-gated. Resume
+only after an exact current external `AGENT_REPORT` is explicitly supplied and
+manifest-bound; do not promote the deterministic fixture or infer a report from
+chat/history. The remote-sync boundary, preserved local worktree fingerprint,
+validation evidence, and first re-entry commands are in
+`docs/handoffs/2026-07-14-supervision-packet-ingress-transport-handoff-v1.md`.
 
 ## Artifact Access
 
@@ -76,15 +98,10 @@ exact through strict equality or deterministic reprojection. The v1 schema,
 canonical generated artifacts, production UI, and accepted visual state are
 unchanged.
 
-H1 packet ingress and checkout transport are closed. The manifest root and
-report entries are exact four-key and six-key objects. Active and closed
-`task.next_state` values use one typed contract: `owner`, `user_work`, and
-`agent_work` are non-empty strings, while `recommended_slice` is `null` or a
-non-empty string. Invalid external packets are rejected as `DashboardError`
-before model or HTML projection. The repository-root
-`* text=auto eol=lf` Git transport rule keeps raw manifest-bound report hashes
-and deterministic text artifacts LF-stable without newline normalization in
-application code or a hash/schema change.
+H1 packet ingress and checkout transport are closed. The repository-root
+`* text=auto eol=lf` rule keeps tracked text LF-stable on new checkouts, and
+the loader's canonical binding keeps an existing Windows CRLF checkout valid
+without weakening substantive content checks or schema identity.
 
 `QD-PACKET-NARRATIVE-REPROJECTION-01` remains non-blocking quality debt.
 Standalone packet validation proves schema, typed structure, identity,

@@ -14,6 +14,10 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
+current_development_axis: cross_project_live_supervision_readiness
+current_local_slice: remote_sync_and_restart_handoff_v1
+recommended_next_horizon: H2_authentic_live_report_round_trip_input_gate
+latest_supervisor_handoff_path: docs/handoffs/2026-07-14-supervision-packet-ingress-transport-handoff-v1.md
 
 ## About This Snapshot
 
@@ -57,6 +61,27 @@ is recorded as accepted.
 | C3 probes | bounded | exactly two fixed help-only keys |
 | C4 probe | bounded | exactly one fixed local validation-pack key |
 | General runner, scheduler, external service, or writeback | absent | outside the accepted capability surface |
+
+## Current Development Entrance
+
+H1 packet ingress and Windows checkout transport are closed on the remote
+mainline. Manifest and report objects use exact key surfaces, task continuation
+fields are typed before projection, and manifest-bound report hashes bind
+canonical UTF-8 LF bytes. Invalid UTF-8, bare carriage returns, path drift, and
+substantive content changes still fail closed. The root `.gitattributes`
+contract keeps tracked text at LF for new checkouts.
+
+The current slice is restartability and remote-state handoff. The accepted A /
+Priority Review Console remains closed and the deterministic packet remains
+non-live fixture evidence. H2 is input-gated: proceed only after a Supervisor
+or user supplies one exact current `AGENT_REPORT`, its `project_key`, authority
+basis, source context, and permission for observer-only local artifacts. Do not
+scan for latest files, infer a report from chat history, fabricate live
+coverage, write to a sibling repository, or expand execution capability.
+
+The machine-facing re-entry order, remote parity, preserved dirty-worktree
+boundary, validation evidence, residual register, and first H2 commands live in
+the [2026-07-14 supervision packet ingress and transport handoff](handoffs/2026-07-14-supervision-packet-ingress-transport-handoff-v1.md).
 
 ## Current Production Review Artifact
 
@@ -154,10 +179,11 @@ each report entry now reject missing or unexpected keys against their exact
 four-key and six-key surfaces. Every active or closed `task.next_state`
 requires non-empty string values for `owner`, `user_work`, and `agent_work`,
 with `recommended_slice` limited to `null` or a non-empty string. Invalid
-values become `DashboardError` before model or HTML projection. The
-repository-root `* text=auto eol=lf` Git transport contract preserves the
-existing raw-byte report hashes and canonical JSON/Markdown bytes on Windows
-checkouts without changing schema or hash semantics.
+values become `DashboardError` before model or HTML projection. Report hashes
+bind canonical UTF-8 LF bytes; CRLF checkout transport is normalized before
+hashing, while invalid UTF-8, bare carriage returns, and substantive edits fail
+closed. The repository-root `* text=auto eol=lf` rule keeps tracked text
+portable without weakening the content contract.
 
 `QD-PACKET-NARRATIVE-REPROJECTION-01` remains accepted quality debt. A
 standalone stored packet proves schema, typed structure, identity,

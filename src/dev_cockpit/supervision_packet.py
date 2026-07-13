@@ -183,16 +183,13 @@ def build_supervision_packet(
             payload = full_path.read_bytes()
         except FileNotFoundError as exc:
             raise SupervisionPacketError(f"manifest report not found: {report_path}") from exc
-        actual_hash = hashlib.sha256(payload).hexdigest()
+        text, canonical_payload = _canonical_report_payload(payload, report_path)
+        actual_hash = hashlib.sha256(canonical_payload).hexdigest()
         expected_hash = str(entry["content_sha256"])
         if actual_hash != expected_hash:
             raise SupervisionPacketError(
                 f"report hash mismatch for {report_path}: expected {expected_hash}, got {actual_hash}"
             )
-        try:
-            text = payload.decode("utf-8")
-        except UnicodeDecodeError as exc:
-            raise SupervisionPacketError(f"report must be UTF-8: {report_path}") from exc
 
         try:
             normalization = normalize_report(
@@ -665,6 +662,21 @@ def main(argv: list[str] | None = None) -> int:
     print(_display_path(root.resolve(), args.output_json))
     print(_display_path(root.resolve(), args.output_markdown))
     return 0
+
+
+def _canonical_report_payload(payload: bytes, report_path: str) -> tuple[str, bytes]:
+    """Return UTF-8 report text and LF-canonical bytes for portable binding."""
+
+    try:
+        text = payload.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise SupervisionPacketError(f"report must be UTF-8: {report_path}") from exc
+    canonical_text = text.replace("\r\n", "\n")
+    if "\r" in canonical_text:
+        raise SupervisionPacketError(
+            f"report contains unsupported bare carriage return: {report_path}"
+        )
+    return canonical_text, canonical_text.encode("utf-8")
 
 
 def _task_from_report(

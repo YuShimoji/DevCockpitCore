@@ -3,6 +3,37 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-14 - Portable Canonical Report Binding And Restart Handoff V1.2
+
+Purpose: keep fail-closed manifest binding usable on Windows checkouts and make
+the accepted H1 state restartable from another terminal.
+
+Decision: `content_sha256` binds canonical UTF-8 LF bytes. The packet loader
+must decode strict UTF-8, normalize CRLF to LF, reject any remaining bare
+carriage return, and compare the resulting bytes to the explicit manifest
+hash. Tracked supervision report fixtures declare `eol=lf` through
+`.gitattributes`. The remote mainline is the restart authority; a separate
+dirty local worktree is preserved as an explicitly unintegrated boundary.
+
+Effect: Windows CRLF transport no longer causes an unchanged manifest-bound
+report to fail validation. Substantive edits, invalid UTF-8, unsupported line
+endings, path drift, and manifest hash drift still fail closed. The handoff
+records remote parity, validation evidence, re-entry order, residual ownership,
+and the H2 input gate without promoting deterministic fixtures to live claims.
+
+Boundary: this does not add report discovery, weaken task or packet integrity,
+write to sibling repositories, promote fixtures to live evidence, or expand the
+C3/C4 execution surface.
+
+State: integrated and remotely synchronized after focused and full local
+validation. H2 authentic/live report round-trip remains input-gated.
+
+Owner: Supervisor supplies or authorizes the exact current AGENT_REPORT for H2;
+Agent performs observer-only binding, packet generation, reload, and readback.
+
+Next move: start at the handoff's re-entry commands, verify remote parity, and
+wait for one explicit current report before any live round-trip work.
+
 ## 2026-07-13 - Supervision Packet Integrity V1.1
 
 Purpose: make canonical report intake and loaded-packet validation fail closed

@@ -43,7 +43,7 @@ Its durable components are:
 | Status snapshot | Read repository, document, artifact, and validation-hint state without modifying the target. |
 | Report normalizer | Convert AGENT_REPORT-like text into structured readback. |
 | Gate classifier | Separate readiness, residue, validation, user-work, and execution gates. |
-| Supervision packet | Rank explicit manifest-bound report tasks for attention and reproject the same IDs into project worksets. |
+| Supervision packet | Rank explicit manifest-bound report tasks for attention and reproject the same IDs into project worksets. Text hashes bind canonical UTF-8 LF bytes so Windows CRLF transport does not alter identity. |
 | Validation pack | Run a fixed allowlist of DevCockpitCore-local checks. |
 | Cross-project smoke | Observe optional sibling repositories and return warnings when unavailable. |
 | Static dashboard | Render local checkpoint evidence for human review without a server. |
@@ -87,6 +87,9 @@ credentials, database, target-repository writeback, C5, or C6.
 - Review actions remain non-executable.
 - Cross-project rank means attention/review priority, never execution order.
 - Reports enter cross-project supervision only through explicit manifest and hash binding.
+- Hash-bound UTF-8 text treats LF and CRLF checkout transport as equivalent,
+  while invalid UTF-8, bare carriage returns, and substantive content drift
+  still fail closed.
 - The dashboard remains local, static, and usable without JavaScript for core
   content.
 - Raw validation, smoke, action, and source data should be secondary to the

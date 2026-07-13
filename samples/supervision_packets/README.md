@@ -28,11 +28,13 @@ python -m dev_cockpit.dashboard `
   --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json
 ```
 
-The manifest and every report are strict, content-bound inputs. Editing a
-report without updating the explicit manifest hash fails closed. The generator
-does not scan directories for a newest report, infer reports from conversation
-history, write to sibling repositories, schedule work, or make actions
-executable. Global rank is attention/review priority only.
+The manifest and every report are strict, content-bound inputs. Hashes bind
+canonical UTF-8 LF bytes; a Windows CRLF checkout is normalized to LF before
+hashing, while invalid UTF-8, bare carriage returns, and substantive edits fail
+closed. The generator does not scan directories for a newest report, infer
+reports from conversation history, write to sibling repositories, schedule
+work, or make actions executable. Global rank is attention/review priority
+only.
 
 Canonical v6.5 ROUTE identity round-trips through `thread`, `lane`, `slice`,
 and `artifact`; existing legacy fixtures continue through their historical
