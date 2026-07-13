@@ -1,0 +1,140 @@
+{
+  "schema_version": "status_snapshot.v1",
+  "generated_at": "2026-07-10T18:21:38Z",
+  "producer": "dev_cockpit.status_snapshot",
+  "adapter": {
+    "schema_version": "adapter_manifest.v1",
+    "project": "DevCockpitCore",
+    "project_key": "devcockpitcore",
+    "adapter_path": "adapters/devcockpitcore.json",
+    "default_branch": "main",
+    "read_only": true
+  },
+  "repo": {
+    "path": ".",
+    "exists": true,
+    "is_git_repo": true,
+    "branch": "main",
+    "head": "dc6b5bb",
+    "upstream": "origin/main",
+    "latest_commit": "dc6b5bb docs: add layout research resume handoff",
+    "remote_parity": {
+      "ahead": 0,
+      "behind": 0,
+      "raw": "0\t0",
+      "status": "in_sync"
+    },
+    "worktree": {
+      "state": "dirty",
+      "short_status": [
+        " M docs/decision-log.md",
+        " M docs/project-context.md",
+        " M docs/runtime-state.md",
+        "?? artifacts/",
+        "?? docs/ARTIFACT_INDEX.md",
+        "?? docs/DECISION_LOG.md",
+        "?? docs/PROJECT_BRIEF.md",
+        "?? docs/RESEARCH_NOTES.md",
+        "?? docs/RESEARCH_TODO.md",
+        "?? docs/ROADMAP.md",
+        "?? docs/RUNTIME_STATE.md",
+        "?? docs/UI_RUBRIC.md",
+        "?? docs/VALIDATION.md",
+        "?? docs/handoffs/2026-07-11-main-sync-supervisor-roadmap-report-v1.md",
+        "?? screenshots/"
+      ]
+    }
+  },
+  "project_state": {
+    "runtime_state_path": "docs/runtime-state.md",
+    "runtime_state_exists": true,
+    "project_context_path": "docs/project-context.md",
+    "project_context_exists": true,
+    "active_artifact": "dashboard-layout-research-and-prototype-v1",
+    "next_action": "Review docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md and samples/dashboard/layout_research/devcockpitcore_layout_prototype.html before any production dashboard rewrite",
+    "user_work": "review whether Priority Review Console should drive the production dashboard redesign",
+    "render_gate": "not_applicable"
+  },
+  "artifacts": {
+    "roots": [
+      {
+        "path": "docs/handoffs",
+        "exists": true,
+        "latest_candidate_count": 10
+      },
+      {
+        "path": "samples/status_snapshots",
+        "exists": true,
+        "latest_candidate_count": 3
+      }
+    ],
+    "latest_candidates": [
+      {
+        "path": "docs/handoffs/2026-07-11-main-sync-supervisor-roadmap-report-v1.md",
+        "modified_at": "2026-07-10T18:07:33Z",
+        "size_bytes": 19658
+      },
+      {
+        "path": "docs/handoffs/2026-07-07-dashboard-layout-research-prototype-v1.md",
+        "modified_at": "2026-07-09T15:28:43Z",
+        "size_bytes": 6418
+      },
+      {
+        "path": "docs/handoffs/2026-07-07-remote-sync-resume-handoff-v1.md",
+        "modified_at": "2026-07-07T01:22:06Z",
+        "size_bytes": 5863
+      },
+      {
+        "path": "docs/handoffs/2026-07-07-dashboard-report-first-frontpage-v1.md",
+        "modified_at": "2026-07-07T01:02:27Z",
+        "size_bytes": 5345
+      },
+      {
+        "path": "samples/status_snapshots/devcockpitcore_status.json",
+        "modified_at": "2026-07-06T16:18:24Z",
+        "size_bytes": 4596
+      },
+      {
+        "path": "docs/handoffs/2026-07-06-dashboard-editorial-brief-v1.md",
+        "modified_at": "2026-07-06T13:16:44Z",
+        "size_bytes": 5739
+      },
+      {
+        "path": "docs/handoffs/2026-06-30-c4-probe-minimal-implementation-handoff.md",
+        "modified_at": "2026-07-06T01:04:40Z",
+        "size_bytes": 4165
+      },
+      {
+        "path": "docs/handoffs/2026-07-01-c4-probe-minimal-implementation-review-handoff.md",
+        "modified_at": "2026-07-06T01:04:40Z",
+        "size_bytes": 4087
+      },
+      {
+        "path": "docs/handoffs/2026-06-30-c4-scoped-runner-design-review-handoff.md",
+        "modified_at": "2026-06-30T00:56:58Z",
+        "size_bytes": 3424
+      },
+      {
+        "path": "docs/handoffs/2026-06-29-c3-second-command-candidate-acceptance-v1.md",
+        "modified_at": "2026-06-29T13:43:29Z",
+        "size_bytes": 2579
+      }
+    ]
+  },
+  "validation": {
+    "default_commands": [
+      "python -m compileall src tests",
+      "PYTHONPATH=src python -m unittest discover",
+      "git diff --check",
+      "git diff --cached --check"
+    ],
+    "not_run_reason": "observer_only_slice"
+  },
+  "health": {
+    "status": "yellow",
+    "stop_class": "INTEGRATE_AND_CONTINUE",
+    "notes": [
+      "worktree is dirty"
+    ]
+  }
+}
