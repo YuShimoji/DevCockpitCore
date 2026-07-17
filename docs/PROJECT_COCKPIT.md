@@ -15,9 +15,9 @@ tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
 current_development_axis: cross_project_live_supervision_readiness
-current_local_slice: remote_publication_and_resume_handoff_v1
+current_local_slice: remote_sync_development_readiness_supervisor_report_v2
 recommended_next_horizon: H2_authentic_live_report_round_trip_input_gate
-latest_supervisor_handoff_path: docs/handoffs/2026-07-17-remote-publication-resume-handoff-v1.md
+latest_supervisor_handoff_path: docs/handoffs/2026-07-17-remote-sync-development-readiness-supervisor-report-v2.md
 
 ## About This Snapshot
 
@@ -81,9 +81,10 @@ basis, source context, and permission for observer-only local artifacts. Do not
 scan for latest files, infer a report from chat history, fabricate live
 coverage, write to a sibling repository, or expand execution capability.
 
-The published branch, Draft PR, exact context checkpoint, validation evidence,
-branch-history boundary, and re-entry commands live in the
-[2026-07-17 remote-publication resume handoff](handoffs/2026-07-17-remote-publication-resume-handoff-v1.md).
+The published branch, Draft PR, exact context checkpoint, refreshed local
+validation evidence, long-range conditional horizons, branch-history boundary,
+and re-entry commands live in the
+[2026-07-17 development-readiness supervisor report](handoffs/2026-07-17-remote-sync-development-readiness-supervisor-report-v2.md).
 
 ## Current Production Review Artifact
 
