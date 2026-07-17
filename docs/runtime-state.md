@@ -1,6 +1,6 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-14
+updated_at: 2026-07-15
 projection_kind: repository_restart_and_artifact_access
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -31,7 +31,7 @@ evidence_freshness_receipt_json_path: samples/evidence_freshness/evidence_freshn
 evidence_freshness_receipt_markdown_path: samples/evidence_freshness/evidence_freshness_receipt_v1.md
 local_runtime_bootstrap: uv venv --python 3.11 .venv
 latest_local_required_validation_failures: 0
-latest_local_validation_authority: docs/handoffs/2026-07-14-supervision-packet-ingress-transport-handoff-v1.md
+latest_local_validation_authority: docs/handoffs/2026-07-15-remote-sync-development-readiness-supervisor-report-v1.md
 
 ## Projection Scope
 

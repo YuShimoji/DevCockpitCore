@@ -1,6 +1,6 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-14
+updated_at: 2026-07-15
 snapshot_kind: persisted_navigation_snapshot
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -15,9 +15,9 @@ tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
 current_development_axis: cross_project_live_supervision_readiness
-current_local_slice: remote_sync_and_restart_handoff_v1
+current_local_slice: remote_sync_and_development_readiness_v1
 recommended_next_horizon: H2_authentic_live_report_round_trip_input_gate
-latest_supervisor_handoff_path: docs/handoffs/2026-07-14-supervision-packet-ingress-transport-handoff-v1.md
+latest_supervisor_handoff_path: docs/handoffs/2026-07-15-remote-sync-development-readiness-supervisor-report-v1.md
 
 ## About This Snapshot
 
@@ -71,17 +71,18 @@ canonical UTF-8 LF bytes. Invalid UTF-8, bare carriage returns, path drift, and
 substantive content changes still fail closed. The root `.gitattributes`
 contract keeps tracked text at LF for new checkouts.
 
-The current slice is restartability and remote-state handoff. The accepted A /
-Priority Review Console remains closed and the deterministic packet remains
-non-live fixture evidence. H2 is input-gated: proceed only after a Supervisor
+The latest remote integration and local development-readiness check are
+complete. The accepted A / Priority Review Console remains closed and the
+deterministic packet remains non-live fixture evidence. H2 is input-gated:
+proceed only after a Supervisor
 or user supplies one exact current `AGENT_REPORT`, its `project_key`, authority
 basis, source context, and permission for observer-only local artifacts. Do not
 scan for latest files, infer a report from chat history, fabricate live
 coverage, write to a sibling repository, or expand execution capability.
 
-The machine-facing re-entry order, remote parity, preserved dirty-worktree
-boundary, validation evidence, residual register, and first H2 commands live in
-the [2026-07-14 supervision packet ingress and transport handoff](handoffs/2026-07-14-supervision-packet-ingress-transport-handoff-v1.md).
+The current remote integration, local runtime bootstrap, validation evidence,
+branch-history boundary, residual register, and re-entry commands live in the
+[2026-07-15 remote-sync development-readiness report](handoffs/2026-07-15-remote-sync-development-readiness-supervisor-report-v1.md).
 
 ## Current Production Review Artifact
 
