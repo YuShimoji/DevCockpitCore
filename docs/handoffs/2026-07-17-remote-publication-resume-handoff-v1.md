@@ -5,7 +5,7 @@
 [ACTION: integrate_and_continue]
 [STATUS: published_ready_for_remote_resume]
 
-updated_at: 2026-07-17 18:35 JST
+updated_at: 2026-07-17 18:42 JST
 report_for: supervising_ai_and_next_terminal
 repository: YuShimoji/DevCockpitCore
 remote_resume_branch: codex/remote-sync-development-readiness-v1
@@ -57,6 +57,13 @@ tag fixture である。mojibake、raw local path、prompt residue、conflict ma
 forbidden implementation は検出されていない。この warning は maintenance debt で
 あり、remote resume を止めない。
 
+公開後に remote branch から depth-1 fresh clone を作り、tracked branch head
+`9c1fcb21886cde446c979afbcda983ff57f01ae3`、Python 3.11 `.venv` bootstrap、default
+validation pack を別ディレクトリで再現した。結果は同じ 16/16 done、15 pass、
+1 known warning、0 fail、blocker 0、`INTEGRATE_AND_CONTINUE` で、clone の worktree
+も remote tracking branch と clean parity だった。したがって、下記の別端末手順は
+remote 上の実体に対して検証済みである。
+
 ## 別端末での最短再開手順
 
 既存 clone がある場合は次を実行する。
@@ -89,8 +96,8 @@ receipt、supervision packet は deterministic point-in-time / non-live evidence
 | **Advance — H2 authentic round-trip** | fixture と実 report 間の live-ingress 不確実性 | 1 project の normalization、gate、packet、dashboard を実 authority で端から端まで検証できる | exact current `AGENT_REPORT`、`project_key`、authority、manifest binding |
 | **Integrate — Draft PR #3 review** | branch のまま残る再開コンテキストと `main` の分離 | 正本の再開導線を default branch から直接読める | PR diff と既知 warning 境界の review acceptance |
 | **Excise — superseded PR #2 cleanup** | 旧入口と新入口が並存する navigation ambiguity | GitHub 上の再開入口を #3 に一本化できる | #3 が完全な後継であることの確認後に close |
-| **Verify — fresh-terminal drill** | 手元では見えない clone / tracking / runtime bootstrap の差 | 本手順だけで 405 tests と同じ state へ到達できることを実証できる | 別端末または一時 clone |
+| **Verify — post-merge main drill** | PR merge 後の default branch と今回 branch の差 | `main` だけから同じ state と再開導線へ到達できることを実証できる | Draft PR #3 の merge 後 |
 
 次の product 優先は **Advance — H2 authentic round-trip** だが、入力が届く前に推測で
 進めない。運用上の最短前進は **Integrate — Draft PR #3 review**、再開性の不確実性を
-先に消す場合は **Verify — fresh-terminal drill** である。
+merge 後まで閉じる場合は **Verify — post-merge main drill** である。
