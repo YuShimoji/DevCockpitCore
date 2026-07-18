@@ -1,6 +1,6 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-17
+updated_at: 2026-07-19
 snapshot_kind: persisted_navigation_snapshot
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -14,10 +14,9 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
-current_development_axis: cross_project_live_supervision_readiness
-current_local_slice: remote_sync_development_readiness_supervisor_report_v2
-recommended_next_horizon: H2_authentic_live_report_round_trip_input_gate
-latest_supervisor_handoff_path: docs/handoffs/2026-07-17-remote-sync-development-readiness-supervisor-report-v2.md
+current_development_axis: authentic_cross_project_report_readiness
+current_local_slice: waiting_for_authorized_h2_input
+recommended_next_horizon: H2_authentic_single_report_round_trip
 
 ## About This Snapshot
 
@@ -71,20 +70,20 @@ canonical UTF-8 LF bytes. Invalid UTF-8, bare carriage returns, path drift, and
 substantive content changes still fail closed. The root `.gitattributes`
 contract keeps tracked text at LF for new checkouts.
 
-The latest remote integration, local development-readiness check, and remote
-publication are complete on `codex/remote-sync-development-readiness-v1` and
-Draft PR #3. The accepted A / Priority Review Console remains closed and the
-deterministic packet remains non-live fixture evidence. H2 is input-gated:
-proceed only after a Supervisor
-or user supplies one exact current `AGENT_REPORT`, its `project_key`, authority
-basis, source context, and permission for observer-only local artifacts. Do not
-scan for latest files, infer a report from chat history, fabricate live
-coverage, write to a sibling repository, or expand execution capability.
+The accepted A / Priority Review Console remains closed and the deterministic
+packet remains non-live fixture evidence. The next product gate is H2, an
+authentic single-report round-trip. It is input-gated: proceed only after a
+Supervisor or user supplies one exact current `AGENT_REPORT`, its `project_key`,
+authority basis, source revision and observation context, and permission for
+observer-only local artifacts. Do not scan for latest files, infer a report
+from chat history, fabricate live coverage, write to a sibling repository, or
+expand execution capability.
 
-The published branch, Draft PR, exact context checkpoint, refreshed local
-validation evidence, long-range conditional horizons, branch-history boundary,
-and re-entry commands live in the
-[2026-07-17 development-readiness supervisor report](handoffs/2026-07-17-remote-sync-development-readiness-supervisor-report-v2.md).
+Resume through this Cockpit for human navigation, `docs/runtime-state.md` for
+the machine-facing projection, and `docs/project-context.md` for durable
+boundaries. Verify branch, revision, parity, worktree, tests, and generated
+evidence directly. Dated handoffs are point-in-time history and are not part of
+the normal current-state route.
 
 ## Current Production Review Artifact
 
@@ -208,4 +207,5 @@ portable and deterministic timestamp overrides are explicitly non-current.
 
 This document is navigation and decision context, not live workflow authority.
 Verify Git state, the receipt authority boundary, generated readback, raster
-manifest, and local tests before treating any status as current.
+manifest, and local tests before treating any status as current. Dated handoffs
+may explain prior decisions but never override this route or live evidence.

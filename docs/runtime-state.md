@@ -1,6 +1,6 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-17
+updated_at: 2026-07-19
 projection_kind: repository_restart_and_artifact_access
 current_review_artifact: priority-review-console-production-observation-surface-v1
 current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -30,8 +30,6 @@ evidence_freshness_policy_path: samples/evidence_freshness/evidence_freshness_po
 evidence_freshness_receipt_json_path: samples/evidence_freshness/evidence_freshness_receipt_v1.json
 evidence_freshness_receipt_markdown_path: samples/evidence_freshness/evidence_freshness_receipt_v1.md
 local_runtime_bootstrap: uv venv --python 3.11 .venv
-latest_local_required_validation_failures: 0
-latest_local_validation_authority: docs/handoffs/2026-07-17-remote-sync-development-readiness-supervisor-report-v2.md
 
 ## Projection Scope
 
@@ -65,9 +63,11 @@ The accepted A / Priority Review Console and deterministic packet remain
 non-live observer evidence. H2 authentic/live round-trip is input-gated. Resume
 only after an exact current external `AGENT_REPORT` is explicitly supplied and
 manifest-bound; do not promote the deterministic fixture or infer a report from
-chat/history. The refreshed remote-sync state, local validation, residual
-ownership, conditional long-range horizons, and first re-entry commands are in
-`docs/handoffs/2026-07-17-remote-sync-development-readiness-supervisor-report-v2.md`.
+chat/history. Use `docs/PROJECT_COCKPIT.md` for human navigation,
+`docs/project-context.md` for durable boundaries, the Local Validation Entry
+below for repository checks, and direct Git and generated-evidence readback for
+current facts. Dated handoffs are point-in-time historical evidence, not a
+restart dependency or live control surface.
 
 ## Artifact Access
 
@@ -143,7 +143,8 @@ packet and Dashboard validation against that input.
 
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
-the receipt authority boundary directly.
+the receipt authority boundary directly. A dated handoff may explain why a
+decision was made but does not supersede this projection or live evidence.
 
 ## Local Validation Entry
 
