@@ -29,6 +29,8 @@ SHARED_PROJECTION_FIELDS = {
     "current_review_artifact",
     "current_review_artifact_path",
     "priority_readback_path",
+    "authority_envelope_path",
+    "authority_readback_path",
     "supervision_packet_path",
     "supervision_packet_manifest_path",
     "selected_information_architecture",
@@ -54,6 +56,8 @@ KNOWN_LIVE_STATE_FIELDS = {
     "observed_at",
     "pull_request",
     "priority_readback_path",
+    "authority_envelope_path",
+    "authority_readback_path",
     "supervision_packet_path",
     "supervision_packet_manifest_path",
     "resume_branch",
@@ -115,7 +119,10 @@ class ProjectStateContractTests(unittest.TestCase):
                 self.assertFalse((ROOT / relative_path).exists(), relative_path)
         review_root = ROOT / "artifacts" / "review"
         self.assertEqual(
-            {"h2-authentic-single-report-round-trip-v1"},
+            {
+                "h2-authentic-single-report-round-trip-v1",
+                "h3-report-authority-envelope-v1",
+            },
             {path.name for path in review_root.iterdir() if path.is_dir()},
         )
 
@@ -224,11 +231,15 @@ class ProjectStateContractTests(unittest.TestCase):
         for document in (cockpit, runtime):
             with self.subTest(document=document.splitlines()[0]):
                 self.assertIn(
-                    "current_review_artifact: h2-authentic-single-report-round-trip-review-package-v1",
+                    "current_review_artifact: h3-report-authority-envelope-v1",
                     document,
                 )
                 self.assertIn(
-                    "current_review_artifact_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html",
+                    "current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html",
+                    document,
+                )
+                self.assertIn(
+                    "authority_envelope_path: artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json",
                     document,
                 )
                 self.assertIn(

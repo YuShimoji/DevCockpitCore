@@ -2,9 +2,11 @@
 
 updated_at: 2026-07-19
 snapshot_kind: persisted_navigation_snapshot
-current_review_artifact: h2-authentic-single-report-round-trip-review-package-v1
-current_review_artifact_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html
-priority_readback_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_priority_readback.json
+current_review_artifact: h3-report-authority-envelope-v1
+current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
+priority_readback_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_priority_readback.json
+authority_envelope_path: artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json
+authority_readback_path: artifacts/review/h3-report-authority-envelope-v1/authority_envelope_machine_readback_v1.json
 supervision_packet_path: artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json
 supervision_packet_manifest_path: artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json
 selected_information_architecture: A_priority_review_console
@@ -14,9 +16,9 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
-current_development_axis: authentic_cross_project_report_readiness
-current_local_slice: h2_authentic_single_report_round_trip_verified_non_live_v1
-recommended_next_horizon: H3_authority_envelope_freshness_revision_binding_decision
+current_development_axis: report_authority_contract_readiness
+current_local_slice: h3_report_authority_envelope_contract_verified_without_live_promotion_v1
+recommended_next_horizon: H4_multi_project_pilot_not_started_requires_explicit_authorized_inputs
 
 ## About This Snapshot
 
@@ -55,6 +57,7 @@ is recorded as accepted.
 | Report normalization and gate classification | available | interpretation only; no prompt generation |
 | Validation pack and cross-project smoke | available | local evidence; missing optional siblings warn |
 | Cross-Project Supervision Packet V1 | available | explicit manifest-bound reports; paired manifest intake reprojects source and packet before use |
+| Report Authority Envelope V1 | available | exact-key sidecar; source, manifest, packet, and derived authority are reprojected before use |
 | Priority Review Console and review actions | available | local, static, bilingual, and non-executable |
 | Evidence Freshness V1 integration | available | consumes a validated point-in-time receipt; does not infer live authority |
 | C3 probes | bounded | exactly two fixed help-only keys |
@@ -79,12 +82,15 @@ gate classification, packet generation, source-bound full narrative
 reprojection, and package-local Priority Review Console projection are
 verified.
 
-This is owner-authorized authentic point-in-time evidence, not live/current
-coverage. `current_claim_eligibility` and `live_coverage` remain false, and H3
-has not started. The next candidate horizon is a separate decision about the
-authority envelope, freshness, revision binding, and current-claim eligibility.
-Do not scan for latest files, infer reports from chat history, write to a
-sibling repository, or expand execution capability.
+H3 is complete. `supervision_report_authority_envelope.v1` now binds the H2
+source, manifest, packet, identity, revision, report time, assessment time,
+permission, and observer-only scope as a separate exact-key sidecar. Its loader
+re-reads and reprojects every derived claim before Dashboard projection. The
+real H2 report remains authentic owner-attached point-in-time evidence, but its
+H2-only permission, absent authorized re-observation, and unobserved current
+revision keep `current_claim_eligibility: false`; `live_coverage` and
+`executable` also remain false. H4 has not started. A real current claim needs
+a new fresh report/observation that explicitly permits the H3/current use.
 
 Resume through this Cockpit for human navigation, `docs/runtime-state.md` for
 the machine-facing projection, and `docs/project-context.md` for durable
@@ -94,8 +100,15 @@ the normal current-state route.
 
 ## Current Production Review Artifact
 
-The current H2 evidence entrance is the package-local review surface and its
-deterministic readback:
+The current review entrance is the H3 package-local review surface and its
+deterministic authority readback:
+
+- [H3 package-local Priority Review Console](../artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html)
+- [H3 authority-envelope readback](../artifacts/review/h3-report-authority-envelope-v1/AUTHORITY_ENVELOPE_READBACK_V1.md)
+- [H3 strict Authority Envelope](../artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json)
+- [H3 binding inventory](../artifacts/review/h3-report-authority-envelope-v1/binding_inventory_v1.json)
+
+The H2 source-bound package remains the immutable input baseline:
 
 - [H2 package-local Priority Review Console](../artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html)
 - [H2 round-trip readback](../artifacts/review/h2-authentic-single-report-round-trip-v1/h2_authentic_round_trip_readback_v1.md)
@@ -185,6 +198,14 @@ bound to one authentic owner-authorized NLMYTGen report. That package projects
 `integrate_and_continue / INTEGRATE_AND_CONTINUE`, rank 1, and
 `executable: false`. It does not promote either evidence family to live or
 current authority.
+
+H3 adds a strict sidecar without changing Packet V1 or Manifest V1. For the
+real H2 input it independently exposes authenticity `true`, temporal state
+`fresh`, revision state `unknown`, permission state `insufficient_h2_only`,
+current eligibility `false`, live coverage `false`, and executable `false`.
+Only the isolated pure-predicate test reaches current eligibility `true`; that
+fixture is not tracked as project evidence. H4 multi-project work is not
+started.
 
 `QD-PACKET-UNKNOWN-KEY-01` is closed. The packet root, every active or closed
 task, and every `task.next_state` now reject missing or unexpected keys before

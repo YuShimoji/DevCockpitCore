@@ -230,6 +230,53 @@ queue/workset projections, counts, policy, and scope instead of trusting the
 serialized packet. ACTION is optional for a structurally complete current
 report.
 
+### Report authority envelope
+
+`supervision_report_authority_envelope.v1` is a separate exact-key sidecar for
+one manifest-bound report task. It binds source, manifest, packet, report
+identity, observation time, assessment time, revision, permission, provenance,
+current-claim eligibility, live coverage, deterministic reasons, and the
+observer-only non-executable boundary. It does not extend Packet V1 or
+Manifest V1.
+
+Generate the deterministic H3 package from the repository root:
+
+```powershell
+$env:PYTHONPATH = "src"
+python artifacts/review/h3-report-authority-envelope-v1/generate_package.py
+```
+
+The standalone Envelope CLI requires explicit source-bound inputs and a fixed
+assessment time:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.report_authority `
+  --manifest artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json `
+  --packet artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json `
+  --assessed-at 2026-07-19T22:10:54.5042581+09:00 `
+  --output artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json `
+  --pretty
+```
+
+Dashboard intake adds the Envelope only when packet, manifest, and the same
+trusted assessment input are supplied together:
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.dashboard `
+  --supervision-packet artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json `
+  --supervision-manifest artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json `
+  --supervision-authority-envelope artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json `
+  --supervision-authority-assessed-at 2026-07-19T22:10:54.5042581+09:00
+```
+
+The loader rederives every serialized authority claim before projection. The
+tracked H2 result remains authentic point-in-time evidence but is ineligible
+for H3/current use because its permission is H2-only and it has no authorized
+current source re-observation. It remains `live_coverage: false` and every
+action remains `executable: false`.
+
 ## Validation pack
 
 The validation pack runs a fixed allowlist of safe checks for this repository and

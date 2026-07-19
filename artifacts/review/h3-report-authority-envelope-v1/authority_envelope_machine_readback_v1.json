@@ -1,0 +1,127 @@
+{
+  "schema_version": "h3_report_authority_envelope_readback.v1",
+  "artifact_id": "h3-report-authority-envelope-v1",
+  "assessed_at": "2026-07-19T22:10:54.5042581+09:00",
+  "producer": "artifacts.review.h3-report-authority-envelope-v1.generate_package",
+  "state_transition": {
+    "from": "h2_authentic_single_report_round_trip_verified_non_live_v1",
+    "to": "h3_report_authority_envelope_contract_verified_without_live_promotion_v1"
+  },
+  "authority_envelope": {
+    "path": "artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json",
+    "content_sha256": "f394b02728a34ebd996e9feb238e26e457133ba7a9d083dc152e86018faca52e",
+    "strict_reload": true,
+    "full_source_reprojection": true,
+    "schema_version": "supervision_report_authority_envelope.v1",
+    "exact_key_contract": true
+  },
+  "binding_inventory": {
+    "path": "artifacts/review/h3-report-authority-envelope-v1/binding_inventory_v1.json",
+    "content_sha256": "d6f1aaddd06b1bba250e08dba534575b8680f350bd8428f6136d7aeceeda2ed2",
+    "source_manifest_packet_bound": true
+  },
+  "identity": {
+    "task_id": "task-31aac3069238ee38",
+    "project_key": "nlmytgen",
+    "thread_id": "nlmytgen-h2-authentic-source-export-v1",
+    "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+    "slice_id": "authentic-point-in-time-checkout-observation-v1",
+    "artifact_id": "h2-authentic-source-agent-report-v1"
+  },
+  "report": {
+    "source_revision": "d38075b97efabc99d1a23e8e0afafd5d44f1e2de",
+    "observed_at": "2026-07-19T12:11:51.1904148+09:00",
+    "evidence_class": "authentic_owner_authorized_point_in_time_report",
+    "authority_basis": "owner_authorized_current_checkout_observation",
+    "observer_permission_scope": "allowed_for_DevCockpitCore_H2_only"
+  },
+  "observation": {
+    "state": "not_reobserved",
+    "observed_revision": null,
+    "reobserved_at": null,
+    "actual": false,
+    "clean": false,
+    "stable": false,
+    "authorization_scope": null
+  },
+  "authority": {
+    "authentic_owner_attached_point_in_time_evidence": true,
+    "transport_source_binding_state": "valid",
+    "permission_state": "insufficient_h2_only",
+    "temporal_state": "fresh",
+    "revision_binding_state": "unknown",
+    "provenance_authenticity_state": "verified",
+    "current_claim_eligibility": false,
+    "live_coverage": false,
+    "reason_codes": [
+      "authorized_current_source_reobservation_absent",
+      "observation_stability_unconfirmed",
+      "observed_revision_missing",
+      "observer_only_non_executable",
+      "permission_insufficient_for_h3_current_claim",
+      "permission_scope_h2_only",
+      "point_in_time_report_does_not_establish_live_coverage",
+      "provenance_verified",
+      "report_packet_identity_match",
+      "source_manifest_packet_binding_valid",
+      "timestamp_within_threshold",
+      "worktree_not_clean_or_unknown"
+    ]
+  },
+  "dashboard": {
+    "path": "artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html",
+    "priority_readback_path": "artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_priority_readback.json",
+    "review_json_path": "artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_review_actions.json",
+    "review_markdown_path": "artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_review_actions.md",
+    "selected_task_id": "task-31aac3069238ee38",
+    "authenticity_state": "authentic",
+    "temporal_state": "fresh",
+    "revision_binding_state": "unknown",
+    "permission_state": "insufficient_h2_only",
+    "current_claim_eligibility": false,
+    "live_coverage": false,
+    "executable": false
+  },
+  "proof_boundary": {
+    "isolated_positive_predicate_only": true,
+    "tracked_real_evidence_promoted_to_current": false,
+    "tracked_real_evidence_promoted_to_live": false,
+    "any_action_executable": false,
+    "h4_started": false
+  },
+  "baseline_invariance": {
+    "h2_package": {
+      "path": "artifacts/review/h2-authentic-single-report-round-trip-v1",
+      "expected_tree_sha256": "bd63725b106d80cb573c27f3fadc55a07448c293b4e35a73d0a79d1dc0ac2da5",
+      "actual_tree_sha256": "bd63725b106d80cb573c27f3fadc55a07448c293b4e35a73d0a79d1dc0ac2da5",
+      "unchanged": true
+    },
+    "files": {
+      "samples/supervision_packets/cross_project_supervision_packet_v1.json": {
+        "expected_sha256": "07965839fdef3d591776804e23d94d26996b5a13a6bf380fbe4e263231f59aec",
+        "actual_sha256": "07965839fdef3d591776804e23d94d26996b5a13a6bf380fbe4e263231f59aec"
+      },
+      "samples/supervision_packets/cross_project_supervision_packet_v1.md": {
+        "expected_sha256": "d28dbfbde4d162e84843889141408972ea2946d09ba6b581e56c7c2378362fb7",
+        "actual_sha256": "d28dbfbde4d162e84843889141408972ea2946d09ba6b581e56c7c2378362fb7"
+      },
+      "samples/dashboard/devcockpitcore_dashboard.html": {
+        "expected_sha256": "376521d0367ddfb2e8fa2e6f3c1020baa88f1fa5a3587f7bad9fbeabca7215e1",
+        "actual_sha256": "376521d0367ddfb2e8fa2e6f3c1020baa88f1fa5a3587f7bad9fbeabca7215e1"
+      },
+      "samples/dashboard/devcockpitcore_priority_readback.json": {
+        "expected_sha256": "fb0d4ad091af5e4204c4fee15bd71231e7b3371d8399e920ca0ad0b81d85fe29",
+        "actual_sha256": "fb0d4ad091af5e4204c4fee15bd71231e7b3371d8399e920ca0ad0b81d85fe29"
+      }
+    }
+  },
+  "scope_boundary": {
+    "observer_only": true,
+    "non_executable": true,
+    "executable": false,
+    "sibling_repository_writeback": false,
+    "target_repository_writeback": false,
+    "execution_schedule": false,
+    "live_monitoring": false
+  }
+}

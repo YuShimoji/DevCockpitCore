@@ -2,9 +2,12 @@
 
 updated_at: 2026-07-19
 projection_kind: repository_restart_and_artifact_access
-current_review_artifact: h2-authentic-single-report-round-trip-review-package-v1
-current_review_artifact_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html
-priority_readback_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_priority_readback.json
+current_review_artifact: h3-report-authority-envelope-v1
+current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
+priority_readback_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_priority_readback.json
+authority_envelope_path: artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json
+authority_readback_path: artifacts/review/h3-report-authority-envelope-v1/authority_envelope_machine_readback_v1.json
+authority_binding_inventory_path: artifacts/review/h3-report-authority-envelope-v1/binding_inventory_v1.json
 supervision_packet_path: artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json
 supervision_packet_manifest_path: artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json
 selected_information_architecture: A_priority_review_console
@@ -34,7 +37,8 @@ h2_source_report_path: artifacts/review/h2-authentic-single-report-round-trip-v1
 h2_source_revision: d38075b97efabc99d1a23e8e0afafd5d44f1e2de
 h2_source_sha256: d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b
 h2_state: h2_authentic_single_report_round_trip_verified_non_live_v1
-h3_started: false
+h3_state: h3_report_authority_envelope_contract_verified_without_live_promotion_v1
+h4_started: false
 current_claim_eligibility: false
 live_coverage: false
 local_runtime_bootstrap: uv venv --python 3.11 .venv
@@ -75,17 +79,21 @@ Dashboard outputs are under
 bound to revision `d38075b97efabc99d1a23e8e0afafd5d44f1e2de` and the SHA-256
 declared above.
 
-H2 establishes authentic owner-authorized point-in-time evidence only.
-`current_claim_eligibility` and `live_coverage` remain false. H3 has not
-started; its candidate is a separate authority-envelope, freshness, revision,
-and eligibility decision. Use `docs/PROJECT_COCKPIT.md` for human navigation,
-`docs/project-context.md` for durable boundaries, the Local Validation Entry
-below for repository checks, and direct Git and generated-evidence readback for
-current facts.
+H2 establishes authentic owner-authorized point-in-time evidence only. H3 has
+verified the separate `supervision_report_authority_envelope.v1` contract and
+its source-rederived Dashboard intake without promoting that evidence.
+Authenticity is true, temporal state is fresh at the fixed H3 assessment,
+revision state is unknown, and permission state is `insufficient_h2_only`.
+`current_claim_eligibility`, `live_coverage`, and `executable` remain false.
+H4 has not started. A real current claim requires a new fresh
+report/observation with explicit H3/current authorization. Use
+`docs/PROJECT_COCKPIT.md` for human navigation, `docs/project-context.md` for
+durable boundaries, the Local Validation Entry below for repository checks,
+and direct Git and generated-evidence readback for current facts.
 
 ## Artifact Access
 
-The current review entrance is the H2 package-local A / Priority Review Console
+The current review entrance is the H3 package-local A / Priority Review Console
 declared above. It reuses the accepted production information architecture but
 does not overwrite or supersede the production artifact at
 `samples/dashboard/devcockpitcore_dashboard.html`. The A/B/C direction gate is
@@ -126,6 +134,14 @@ and fails before projection on drift. Standalone packet validation remains a
 self-consistency check only and must not be promoted to source-authentic,
 live/current, or current-claim authority.
 
+When `--supervision-authority-envelope` is present, Dashboard also requires
+packet, manifest, and an explicit timezone-aware
+`--supervision-authority-assessed-at`. It validates the source-bound packet,
+strictly loads the Envelope, and rebuilds every binding and authority field
+from the H2 sources plus the trusted assessment input before model projection.
+Envelope-only or partial combinations fail as `DashboardError`. Packet-only,
+packet-plus-manifest, and no-packet paths retain their prior behavior.
+
 Production direction A is selected for the production dashboard and
 `user_visual_acceptance` is `accepted`.
 
@@ -149,11 +165,13 @@ in the console. A live claim requires a newly generated receipt assessed
 against its recorded policy, observation time, and revision binding, followed
 by dashboard regeneration.
 
-The H2 source is authentic owner-authorized point-in-time evidence, but its own
-report health and validation freshness remain yellow and it explicitly denies
-live coverage and current-claim eligibility. The deterministic fixture remains
-unchanged. Any H3 work must first define the authority envelope and freshness /
-revision-binding rules rather than upgrading this H2 result by inference.
+The H2 source is authentic owner-authorized point-in-time evidence, but its
+permission is explicitly limited to H2. The H3 Envelope therefore records
+`permission_scope_h2_only`, absent authorized current re-observation, unknown
+current revision, `current_claim_eligibility: false`, and
+`live_coverage: false`. The deterministic fixture and production Dashboard
+remain unchanged. H4 is not started; no later state may be inferred without a
+new explicitly authorized input.
 
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
@@ -176,6 +194,6 @@ python -m dev_cockpit.supervision_packet `
   --pretty
 python -m dev_cockpit.dashboard `
   --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json
-python artifacts/review/h2-authentic-single-report-round-trip-v1/generate_package.py
+python artifacts/review/h3-report-authority-envelope-v1/generate_package.py
 Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```

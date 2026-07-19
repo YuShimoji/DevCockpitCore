@@ -30,6 +30,10 @@ from dev_cockpit.dashboard import (
     write_review_actions_json,
     write_review_actions_markdown,
 )
+from dev_cockpit.report_authority import (
+    build_authority_envelope,
+    dumps_authority_envelope,
+)
 from dev_cockpit.supervision_packet import (
     build_supervision_packet,
     dumps_packet,
@@ -44,9 +48,124 @@ H2_MANIFEST_PATH = (
     / "h2-authentic-single-report-round-trip-v1"
     / "task_report_manifest_v1.json"
 )
+H2_PACKAGE_PATH = H2_MANIFEST_PATH.parent
+AUTHORITY_ASSESSED_AT = "2026-07-19T22:10:54.5042581+09:00"
 
 
 class DashboardTests(unittest.TestCase):
+    def test_authority_envelope_requires_packet_manifest_and_assessed_at(self) -> None:
+        cases = {
+            "envelope_only": {
+                "supervision_authority_envelope_path": "authority.json",
+            },
+            "packet_without_manifest": {
+                "supervision_packet_path": "packet.json",
+                "supervision_authority_envelope_path": "authority.json",
+                "supervision_authority_assessed_at": AUTHORITY_ASSESSED_AT,
+            },
+            "missing_assessed_at": {
+                "supervision_packet_path": "packet.json",
+                "supervision_manifest_path": "manifest.json",
+                "supervision_authority_envelope_path": "authority.json",
+            },
+        }
+        for name, inputs in cases.items():
+            with self.subTest(name=name), self.assertRaisesRegex(
+                DashboardError,
+                "authority envelope requires a supervision packet, manifest, and assessed_at",
+            ):
+                build_dashboard_model(repo_root=ROOT, **inputs)
+
+        with self.assertRaisesRegex(
+            DashboardError,
+            "authority assessed_at requires a supervision authority envelope",
+        ):
+            build_dashboard_model(
+                repo_root=ROOT,
+                supervision_authority_assessed_at=AUTHORITY_ASSESSED_AT,
+            )
+
+    def test_authority_envelope_projects_distinct_states_after_rederivation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root, manifest, packet, envelope_path = self._prepare_authority_tree(
+                Path(temporary)
+            )
+            model = build_dashboard_model(
+                repo_root=root,
+                supervision_packet_path=packet,
+                supervision_manifest_path=manifest,
+                supervision_authority_envelope_path=envelope_path,
+                supervision_authority_assessed_at=AUTHORITY_ASSESSED_AT,
+                generated_at=AUTHORITY_ASSESSED_AT,
+            )
+
+        evidence = model["priority_items"][0]["evidence_refs"][0]
+        html = render_dashboard(model)
+        readback = priority_readback(model)
+        self.assertEqual("authentic", evidence["authenticity_state"])
+        self.assertEqual("verified", evidence["provenance_authenticity_state"])
+        self.assertEqual("fresh", evidence["temporal_state"])
+        self.assertEqual("unknown", evidence["revision_binding_state"])
+        self.assertEqual("insufficient_h2_only", evidence["permission_state"])
+        self.assertFalse(evidence["current_state_claim_eligible"])
+        self.assertFalse(evidence["live_coverage"])
+        self.assertFalse(model["priority_items"][0]["executable"])
+        for marker in (
+            'data-field="authenticity">authentic',
+            'data-field="provenance-state">verified',
+            'data-field="permission-state">insufficient_h2_only',
+            'data-field="live-coverage">false',
+        ):
+            self.assertIn(marker, html)
+        projected = readback["supervision_report_authority_envelope"]
+        self.assertTrue(projected["loaded"])
+        self.assertTrue(
+            projected["authority"][
+                "authentic_owner_attached_point_in_time_evidence"
+            ]
+        )
+        self.assertFalse(projected["authority"]["current_claim_eligibility"])
+        self.assertFalse(projected["authority"]["live_coverage"])
+        self.assertFalse(projected["scope_boundary"]["executable"])
+
+    def test_authority_tampering_stops_before_dashboard_projection(self) -> None:
+        mutations = {
+            "eligibility": lambda item: item["authority"].__setitem__(
+                "current_claim_eligibility", True
+            ),
+            "permission": lambda item: item["report"].__setitem__(
+                "observer_permission_scope",
+                "allowed_for_DevCockpitCore_H3_current_claim",
+            ),
+            "cross_binding": lambda item: item["identity"].__setitem__(
+                "task_id", "task-cross-bound"
+            ),
+        }
+        for name, mutate in mutations.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                root, manifest, packet, envelope_path = self._prepare_authority_tree(
+                    Path(temporary)
+                )
+                envelope = json.loads(envelope_path.read_text(encoding="utf-8"))
+                mutate(envelope)
+                envelope_path.write_text(
+                    dumps_authority_envelope(envelope, pretty=True), encoding="utf-8"
+                )
+                with patch("dev_cockpit.dashboard._packet_task_items") as projection:
+                    with self.assertRaisesRegex(
+                        DashboardError,
+                        r"invalid supervision report authority envelope.*mismatch at \$",
+                    ):
+                        build_dashboard_model(
+                            repo_root=root,
+                            supervision_packet_path=packet,
+                            supervision_manifest_path=manifest,
+                            supervision_authority_envelope_path=envelope_path,
+                            supervision_authority_assessed_at=AUTHORITY_ASSESSED_AT,
+                            generated_at=AUTHORITY_ASSESSED_AT,
+                        )
+                    projection.assert_not_called()
+
     def test_manifest_without_packet_fails_before_other_dashboard_inputs(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             with self.assertRaisesRegex(
@@ -57,6 +176,41 @@ class DashboardTests(unittest.TestCase):
                     repo_root=temporary,
                     supervision_manifest_path="manifest.json",
                 )
+
+    @staticmethod
+    def _prepare_authority_tree(
+        temporary: Path,
+    ) -> tuple[Path, Path, Path, Path]:
+        root = temporary / "repo"
+        _write_fixture_tree(root)
+        package = (
+            root
+            / "artifacts"
+            / "review"
+            / "h2-authentic-single-report-round-trip-v1"
+        )
+        package.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(H2_PACKAGE_PATH, package)
+        manifest = package / "task_report_manifest_v1.json"
+        packet = package / "cross_project_supervision_packet_v1.json"
+        envelope = build_authority_envelope(
+            manifest_path=manifest,
+            packet_path=packet,
+            repo_root=root,
+            assessed_at=AUTHORITY_ASSESSED_AT,
+        )
+        envelope_path = (
+            root
+            / "artifacts"
+            / "review"
+            / "h3-report-authority-envelope-v1"
+            / "supervision_report_authority_envelope_v1.json"
+        )
+        envelope_path.parent.mkdir(parents=True)
+        envelope_path.write_text(
+            dumps_authority_envelope(envelope, pretty=True), encoding="utf-8"
+        )
+        return root, manifest, packet, envelope_path
 
     def test_authentic_packet_and_manifest_use_source_bound_projection(self) -> None:
         manifest = load_manifest(H2_MANIFEST_PATH)

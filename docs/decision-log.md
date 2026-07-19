@@ -3,6 +3,42 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-19 - Report Authority Envelope V1
+
+Purpose: decide mechanically when an authentic AGENT_REPORT may support a
+point-in-time current-state claim without conflating transport authenticity,
+freshness, revision binding, permission, or live coverage.
+
+Decision: add `supervision_report_authority_envelope.v1` as an exact-key
+sidecar. Packet V1 and Manifest V1 remain unchanged. The loader must rebuild
+source/manifest/packet hashes and identity, report revision and observation
+time, explicit permission, temporal and revision states, authority booleans,
+reason codes, and scope from bound sources plus a trusted `assessed_at`, then
+require full JSON type-and-value equality. Temporal and revision semantics are
+shared with Evidence Freshness V1.
+
+Effect: Dashboard may project Authority Envelope fields only after both
+source-bound packet verification and complete Envelope reprojection. The real
+H2 report is authentic point-in-time evidence, but H2-only permission, absent
+authorized current re-observation, and unknown observed revision keep current
+eligibility false. Live coverage and executable remain false. A positive
+current-eligibility case exists only as an isolated pure-predicate test.
+
+Boundary: the sidecar adds no report discovery, target or sibling writeback,
+runner, scheduler, live monitor, notification, credential, database, server,
+or production/publication authority. It does not hard-code a later target
+revision or expand H2 permission. H4 multi-project work is not started.
+
+State: H3 authority-envelope contract verified with a deterministic package,
+source-bound Dashboard projection, negative tamper matrix, and preserved H2,
+canonical fixture, and production Dashboard baselines.
+
+Owner: a future real current claim requires owner-supplied or owner-authorized
+fresh report/observation input that explicitly permits H3/current use.
+
+Next move: retain H4 as not started until that explicit input or a separate
+supervisor-approved H4 pilot contract exists.
+
 ## 2026-07-14 - Portable Canonical Report Binding And Restart Handoff V1.2
 
 Purpose: keep fail-closed manifest binding usable on Windows checkouts and make

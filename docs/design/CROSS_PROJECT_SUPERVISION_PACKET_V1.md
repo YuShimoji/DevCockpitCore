@@ -233,8 +233,43 @@ Capture manifests keep source paths repository-relative or redacted. Capture
 timestamps distinguish `actual_browser_observation` from
 `deterministic_declared_override`; inspection timestamps use the separate
 `actual_worker_inspection` authority when not overridden. Declared overrides
-are never eligible as current observation evidence. A future live mode would require explicit
-authority, freshness, revision binding, and current-claim eligibility fields.
-Those fields are design prerequisites for the proposed H3 authority-envelope,
-freshness, revision, and current-claim decision. H3 has not started, and H2 does
-not hard-code live success.
+are never eligible as current observation evidence.
+
+## Report Authority Envelope V1
+
+H3 adds `supervision_report_authority_envelope.v1` as a sidecar. Packet V1 and
+Manifest V1 remain byte- and schema-compatible; authority fields are not added
+to either contract. The Envelope has exact root and nested key surfaces and
+rejects missing, unknown, duplicate, and wrongly typed values with object-path
+diagnostics.
+
+The production loader does not trust serialized hashes, identity, timestamps,
+revision, permission, booleans, scope, or reason codes. It simultaneously
+loads the Envelope, manifest, source report, and source-bound packet, then
+rebuilds the complete Envelope from those sources and an explicit trusted
+`assessed_at`. Full JSON type-and-value equality is required before Dashboard
+projection.
+
+Authority evaluation reuses `evaluate_temporal` and `evaluate_revision` from
+Evidence Freshness V1. It separates transport/provenance authenticity,
+point-in-time current-claim eligibility, and continuous live coverage. Current
+eligibility is an AND of source bindings, report identity, explicit H3/current
+permission, timezone-aware ordered freshness, full exact revision match,
+actual clean stable re-observation, observer-only non-executable scope, and
+verified provenance. A single point-in-time report can never set live coverage
+in this contract.
+
+For the real H2 package, authenticity and transport/source binding are valid,
+but the source permission is H2-only, authorized current re-observation is
+absent, and current revision is unobserved. The deterministic result is
+`current_claim_eligibility: false`, `live_coverage: false`, and
+`executable: false`, including reason code `permission_scope_h2_only`. The only
+positive eligibility proof is an isolated pure-predicate test; it is not
+tracked current or live evidence. H3 is verified and H4 is not started.
+
+Dashboard Authority Envelope intake requires packet, manifest, and an explicit
+assessment time. It performs source-bound packet verification and complete
+Envelope reprojection before exposing authenticity, freshness, revision,
+permission, current eligibility, or live coverage. Invalid partial inputs and
+binding drift fail before model, HTML, readback, or review-action projection.
+Legacy packet-only, packet-plus-manifest, and no-packet routes remain intact.

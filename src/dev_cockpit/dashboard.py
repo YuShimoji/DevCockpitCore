@@ -12,6 +12,7 @@ import sys
 from typing import Any
 
 from .evidence_freshness import EvidenceFreshnessError, load_receipt
+from .report_authority import AuthorityEnvelopeError, load_authority_envelope
 from .supervision_packet import (
     SupervisionPacketError,
     load_packet,
@@ -115,11 +116,29 @@ def build_dashboard_model(
     priority_readback_path: str | Path = DEFAULT_PRIORITY_READBACK_PATH,
     supervision_packet_path: str | Path | None = None,
     supervision_manifest_path: str | Path | None = None,
+    supervision_authority_envelope_path: str | Path | None = None,
+    supervision_authority_assessed_at: str | None = None,
     verify_freshness_hashes: bool = False,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
     if supervision_manifest_path is not None and supervision_packet_path is None:
         raise DashboardError("supervision manifest requires a supervision packet")
+    if supervision_authority_envelope_path is not None and (
+        supervision_packet_path is None
+        or supervision_manifest_path is None
+        or supervision_authority_assessed_at is None
+    ):
+        raise DashboardError(
+            "supervision authority envelope requires a supervision packet, "
+            "manifest, and assessed_at"
+        )
+    if (
+        supervision_authority_assessed_at is not None
+        and supervision_authority_envelope_path is None
+    ):
+        raise DashboardError(
+            "supervision authority assessed_at requires a supervision authority envelope"
+        )
     root = Path(repo_root)
 
     freshness_full_path = _resolve(root, freshness_receipt_path)
@@ -145,6 +164,8 @@ def build_dashboard_model(
     )
     supervision_packet: dict[str, Any] = {}
     supervision_packet_source: dict[str, Any] | None = None
+    supervision_authority_envelope: dict[str, Any] = {}
+    supervision_authority_source: dict[str, Any] | None = None
     if supervision_packet_path is not None:
         packet_full_path = _resolve(root, supervision_packet_path)
         try:
@@ -178,6 +199,41 @@ def build_dashboard_model(
                 else None
             ),
         }
+    if supervision_authority_envelope_path is not None:
+        try:
+            supervision_authority_envelope = load_authority_envelope(
+                _resolve(root, supervision_authority_envelope_path),
+                manifest_path=_resolve(root, supervision_manifest_path),
+                packet_path=_resolve(root, supervision_packet_path),
+                repo_root=root,
+                assessed_at=str(supervision_authority_assessed_at),
+            )
+        except (AuthorityEnvelopeError, OSError) as exc:
+            raise DashboardError(
+                "invalid supervision report authority envelope "
+                f"{supervision_authority_envelope_path}: {exc}"
+            ) from exc
+        supervision_authority_source = {
+            "label": "supervision_report_authority_envelope",
+            "repo_relative_path": _display_path(
+                root, supervision_authority_envelope_path
+            ),
+            "state": "loaded",
+            "schema_version": str(
+                supervision_authority_envelope.get("schema_version", "unknown")
+            ),
+            "generated_at": str(
+                _dict(supervision_authority_envelope.get("assessment")).get(
+                    "assessed_at", ""
+                )
+            ),
+            "artifact_id": str(
+                supervision_authority_envelope.get("artifact_id", "")
+            ),
+            "binding_mode": "source_manifest_packet_reprojection",
+            "manifest_path": _display_path(root, supervision_manifest_path),
+            "packet_path": _display_path(root, supervision_packet_path),
+        }
     freshness_receipt_source = {
         "label": "evidence_freshness_receipt",
         "repo_relative_path": _display_path(root, freshness_receipt_path),
@@ -199,6 +255,7 @@ def build_dashboard_model(
         project_context_source,
         freshness_receipt_source,
         *([supervision_packet_source] if supervision_packet_source else []),
+        *([supervision_authority_source] if supervision_authority_source else []),
     )
     health = _aggregate_health(validation, smoke, status, source_warnings)
     output_rel = _display_path(root, output_path)
@@ -216,6 +273,8 @@ def build_dashboard_model(
     ]
     if supervision_packet_source:
         sources.append(supervision_packet_source)
+    if supervision_authority_source:
+        sources.append(supervision_authority_source)
     warning_triage = _warning_triage(health, validation, smoke, status, sources)
     review_checkpoints = _review_checkpoints(health, validation, smoke)
     review_actions = _review_actions(
@@ -232,7 +291,7 @@ def build_dashboard_model(
     source_freshness = _freshness_summary(sources, generated)
     evidence_freshness = _receipt_freshness_projection(freshness_receipt)
     priority_items = (
-        _packet_priority_items(supervision_packet)
+        _packet_priority_items(supervision_packet, supervision_authority_envelope)
         if supervision_packet
         else _priority_items(
             health=health,
@@ -247,7 +306,9 @@ def build_dashboard_model(
         )
     )
     informational_items = (
-        _packet_informational_items(supervision_packet)
+        _packet_informational_items(
+            supervision_packet, supervision_authority_envelope
+        )
         if supervision_packet
         else []
     )
@@ -298,6 +359,7 @@ def build_dashboard_model(
         "evidence_freshness": evidence_freshness,
         "evidence_freshness_receipt": freshness_receipt,
         "supervision_packet": supervision_packet,
+        "supervision_report_authority_envelope": supervision_authority_envelope,
         "priority_policy": (
             [dict(item) for item in _list(supervision_packet.get("attention_policy"))]
             if supervision_packet
@@ -611,6 +673,18 @@ def _evidence_inspector(
         if evidence_population == "packet_report"
         else f'<p class="receipt-id" data-field="evidence-binding">receipt <code>{_e(receipt.get("capture_id", ""))}</code></p>'
     )
+    authority_rows = ""
+    if evidence.get("authority_envelope_schema_version"):
+        authority_rows = (
+            '<div><dt><span class="lang-ja">真正性</span><span class="lang-en">Authenticity</span></dt>'
+            f'<dd data-field="authenticity">{_e(evidence.get("authenticity_state", "unknown"))}</dd></div>'
+            '<div><dt><span class="lang-ja">由来検証</span><span class="lang-en">Provenance</span></dt>'
+            f'<dd data-field="provenance-state">{_e(evidence.get("provenance_authenticity_state", "unknown"))}</dd></div>'
+            '<div><dt><span class="lang-ja">利用許可</span><span class="lang-en">Permission</span></dt>'
+            f'<dd data-field="permission-state">{_e(evidence.get("permission_state", "unknown"))}</dd></div>'
+            '<div><dt><span class="lang-ja">継続監視</span><span class="lang-en">Live coverage</span></dt>'
+            f'<dd data-field="live-coverage">{str(evidence.get("live_coverage") is True).lower()}</dd></div>'
+        )
     return (
         f'      <aside id="evidence-inspector" class="console-panel evidence-inspector" data-landmark="evidence-inspector" {identity_attributes} data-evidence-id="{_e(evidence_id)}" aria-labelledby="evidence-inspector-title">'
         '<header class="console-panel-head"><p>03 / EVIDENCE INSPECTOR</p>'
@@ -629,6 +703,8 @@ def _evidence_inspector(
         f'<dd data-field="temporal"><span class="lang-ja">{_e(evidence_labels["temporal"].get("ja", ""))}</span><span class="lang-en">{_e(evidence_labels["temporal"].get("en", ""))}</span></dd></div>'
         '<div><dt><span class="lang-ja">改訂整合性</span><span class="lang-en">Revision binding</span></dt>'
         f'<dd data-field="revision"><span class="lang-ja">{_e(evidence_labels["revision"].get("ja", ""))}</span><span class="lang-en">{_e(evidence_labels["revision"].get("en", ""))}</span></dd></div>'
+        + authority_rows
+        +
         '<div><dt><span class="lang-ja">判定時点</span><span class="lang-en">Assessed at</span></dt>'
         f'<dd data-field="assessed">{_e(evidence.get("assessed_at", receipt.get("assessed_at", "")))}</dd></div>'
         '<div><dt><span class="lang-ja">有効期限</span><span class="lang-en">Fresh through</span></dt>'
@@ -896,6 +972,18 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--supervision-authority-envelope",
+        help=(
+            "Optional supervision_report_authority_envelope.v1 path. Requires "
+            "--supervision-packet, --supervision-manifest, and "
+            "--supervision-authority-assessed-at."
+        ),
+    )
+    parser.add_argument(
+        "--supervision-authority-assessed-at",
+        help="Trusted timezone-aware assessment input used to rederive the envelope.",
+    )
+    parser.add_argument(
         "--generated-at",
         help="Optional deterministic dashboard generation timestamp; defaults to receipt assessed_at.",
     )
@@ -922,6 +1010,8 @@ def main(argv: list[str] | None = None) -> int:
             priority_readback_path=args.priority_readback,
             supervision_packet_path=args.supervision_packet,
             supervision_manifest_path=args.supervision_manifest,
+            supervision_authority_envelope_path=args.supervision_authority_envelope,
+            supervision_authority_assessed_at=args.supervision_authority_assessed_at,
             verify_freshness_hashes=not args.skip_freshness_hash_verification,
             generated_at=args.generated_at,
         )
@@ -1922,19 +2012,34 @@ def _receipt_freshness_projection(receipt: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def _packet_priority_items(packet: dict[str, Any]) -> list[dict[str, Any]]:
+def _packet_priority_items(
+    packet: dict[str, Any],
+    authority_envelope: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     """Project manifest-bound report tasks into the accepted Priority Console shape."""
 
-    return _packet_task_items(packet, "global_attention_queue")
+    return _packet_task_items(
+        packet, "global_attention_queue", authority_envelope=authority_envelope
+    )
 
 
-def _packet_informational_items(packet: dict[str, Any]) -> list[dict[str, Any]]:
+def _packet_informational_items(
+    packet: dict[str, Any],
+    authority_envelope: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     """Project closed packet tasks for evidence browsing without making priorities."""
 
-    return _packet_task_items(packet, "closed_or_informational")
+    return _packet_task_items(
+        packet, "closed_or_informational", authority_envelope=authority_envelope
+    )
 
 
-def _packet_task_items(packet: dict[str, Any], collection: str) -> list[dict[str, Any]]:
+def _packet_task_items(
+    packet: dict[str, Any],
+    collection: str,
+    *,
+    authority_envelope: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
 
     first_by_project = {
         str(_dict(workset).get("project_key", "")): str(
@@ -1986,6 +2091,66 @@ def _packet_task_items(packet: dict[str, Any], collection: str) -> list[dict[str
             "evidence_population": "packet_report",
             "reason_codes": [attention_class, str(task.get("gate_stop_class", "UNKNOWN"))],
         }
+        envelope = _dict(authority_envelope)
+        envelope_identity = _dict(envelope.get("identity"))
+        if envelope and envelope_identity.get("task_id") == task_id:
+            authority = _dict(envelope.get("authority"))
+            assessment = _dict(envelope.get("assessment"))
+            observation = _dict(envelope.get("observation"))
+            report = _dict(envelope.get("report"))
+            temporal_state = str(authority.get("temporal_state", "unknown"))
+            authentic = (
+                authority.get("authentic_owner_attached_point_in_time_evidence")
+                is True
+            )
+            evidence.update(
+                {
+                    "freshness_state": temporal_state,
+                    "temporal_state": temporal_state,
+                    "revision_binding_state": str(
+                        authority.get("revision_binding_state", "unknown")
+                    ),
+                    "current_state_claim_eligible": (
+                        authority.get("current_claim_eligibility") is True
+                    ),
+                    "assessed_at": str(assessment.get("assessed_at", "")),
+                    "authority_classification": (
+                        "verified_authentic_owner_attached_point_in_time_evidence"
+                        if authentic
+                        else "unverified_point_in_time_evidence"
+                    ),
+                    "authority_envelope_schema_version": str(
+                        envelope.get("schema_version", "")
+                    ),
+                    "authenticity_state": "authentic" if authentic else "unverified",
+                    "transport_source_binding_state": str(
+                        authority.get("transport_source_binding_state", "unknown")
+                    ),
+                    "provenance_authenticity_state": str(
+                        authority.get("provenance_authenticity_state", "unknown")
+                    ),
+                    "permission_state": str(
+                        authority.get("permission_state", "unknown")
+                    ),
+                    "observer_permission_scope": str(
+                        report.get("observer_permission_scope", "unknown")
+                    ),
+                    "observation_state": str(observation.get("state", "unknown")),
+                    "source_revision": report.get("source_revision"),
+                    "observed_revision": observation.get("observed_revision"),
+                    "live_coverage": authority.get("live_coverage") is True,
+                    "reason_codes": sorted(
+                        {
+                            attention_class,
+                            str(task.get("gate_stop_class", "UNKNOWN")),
+                            *(
+                                str(reason)
+                                for reason in _list(authority.get("reason_codes"))
+                            ),
+                        }
+                    ),
+                }
+            )
         items.append(
             {
                 "condition_key": f"supervision_packet:{task_id}",
@@ -3180,9 +3345,12 @@ def priority_readback(model: dict[str, Any]) -> dict[str, Any]:
         if isinstance(item, dict)
     ]
     supervision_packet = _dict(model.get("supervision_packet"))
+    authority_envelope = _dict(
+        model.get("supervision_report_authority_envelope")
+    )
     packet_attention = _dict(model.get("packet_attention"))
     receipt_path = _source_path(_list(model.get("sources")), "evidence_freshness_receipt")
-    return {
+    readback = {
         "schema_version": "devcockpit_priority_readback.v1",
         "artifact_id": "priority-review-console-production-observation-surface-v1",
         "generated_at": str(model.get("generated_at", "")),
@@ -3238,6 +3406,19 @@ def priority_readback(model: dict[str, Any]) -> dict[str, Any]:
             "locked_lanes_excluded_from_priorities": True,
         },
     }
+    if authority_envelope:
+        readback["supervision_report_authority_envelope"] = {
+            "loaded": True,
+            "schema_version": authority_envelope.get("schema_version"),
+            "artifact_id": authority_envelope.get("artifact_id"),
+            "identity": _dict(authority_envelope.get("identity")),
+            "report": _dict(authority_envelope.get("report")),
+            "observation": _dict(authority_envelope.get("observation")),
+            "assessment": _dict(authority_envelope.get("assessment")),
+            "authority": _dict(authority_envelope.get("authority")),
+            "scope_boundary": _dict(authority_envelope.get("scope_boundary")),
+        }
+    return readback
 
 
 def write_priority_readback(

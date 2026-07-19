@@ -1,0 +1,45 @@
+{
+  "schema_version": "h3_authority_binding_inventory.v1",
+  "artifact_id": "h3-report-authority-envelope-v1",
+  "assessed_at": "2026-07-19T22:10:54.5042581+09:00",
+  "producer": "artifacts.review.h3-report-authority-envelope-v1.generate_package",
+  "identity": {
+    "task_id": "task-31aac3069238ee38",
+    "project_key": "nlmytgen",
+    "thread_id": "nlmytgen-h2-authentic-source-export-v1",
+    "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+    "slice_id": "authentic-point-in-time-checkout-observation-v1",
+    "artifact_id": "h2-authentic-source-agent-report-v1"
+  },
+  "bindings": {
+    "source_report": {
+      "path": "artifacts/review/h2-authentic-single-report-round-trip-v1/source/AGENT_REPORT_H2_SOURCE_V1.md",
+      "content_sha256": "d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b",
+      "hash_basis": "canonical_utf8_lf_sha256_v1"
+    },
+    "manifest": {
+      "path": "artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json",
+      "content_sha256": "4bbbfc91e8ba12a1dedf251e2c372a7720cda8063c09dc73dc488987ce0805c0",
+      "hash_basis": "raw_bytes_sha256_v1"
+    },
+    "packet": {
+      "path": "artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json",
+      "content_sha256": "c61d1179c89ac343be853015002064cf8476e1c3bab37b1266b20dc80d382ed7",
+      "hash_basis": "raw_bytes_sha256_v1"
+    }
+  },
+  "authority_envelope": {
+    "path": "artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json",
+    "content_sha256": "f394b02728a34ebd996e9feb238e26e457133ba7a9d083dc152e86018faca52e",
+    "hash_basis": "raw_bytes_sha256_v1"
+  },
+  "scope_boundary": {
+    "observer_only": true,
+    "non_executable": true,
+    "executable": false,
+    "sibling_repository_writeback": false,
+    "target_repository_writeback": false,
+    "execution_schedule": false,
+    "live_monitoring": false
+  }
+}

@@ -6,11 +6,21 @@ import json
 from pathlib import Path
 import struct
 import subprocess
+import sys
 import tempfile
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
+from dev_cockpit.dashboard import (  # noqa: E402
+    build_dashboard_model,
+    priority_readback,
+    render_dashboard,
+)
+
+
 PACK = ROOT / "samples" / "dashboard" / "production_capture"
 SCRIPT_PATH = PACK / "capture_priority_review_console.mjs"
 MANIFEST_PATH = PACK / "production_capture_manifest.json"
@@ -691,14 +701,27 @@ class ProductionCaptureTrackedPackageTests(unittest.TestCase):
             binding["priority_readback"]["freshness_capture_id"],
             binding["freshness_receipt"]["capture_id"],
         )
-        current_generator_blob = subprocess.run(
-            ["git", "hash-object", binding["production_generator"]["path"]],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
-        self.assertEqual(current_generator_blob, binding["production_generator"]["blob"])
+        current_model = build_dashboard_model(
+            repo_root=ROOT,
+            supervision_packet_path=(
+                "samples/supervision_packets/cross_project_supervision_packet_v1.json"
+            ),
+        )
+        current_html = render_dashboard(current_model).encode("utf-8")
+        current_priority = (
+            json.dumps(
+                priority_readback(current_model),
+                ensure_ascii=False,
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n"
+        ).encode("utf-8")
+        self.assertEqual(sha256(current_html).hexdigest(), binding["html"]["sha256"])
+        self.assertEqual(
+            sha256(current_priority).hexdigest(),
+            binding["priority_readback"]["sha256"],
+        )
 
     def test_three_final_captures_have_expected_inventory_hashes_and_decoders(self) -> None:
         screenshots = self.manifest["screenshots"]
