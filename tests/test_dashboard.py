@@ -37,7 +37,102 @@ from dev_cockpit.supervision_packet import (
 )
 
 
+H2_MANIFEST_PATH = (
+    ROOT
+    / "artifacts"
+    / "review"
+    / "h2-authentic-single-report-round-trip-v1"
+    / "task_report_manifest_v1.json"
+)
+
+
 class DashboardTests(unittest.TestCase):
+    def test_manifest_without_packet_fails_before_other_dashboard_inputs(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            with self.assertRaisesRegex(
+                DashboardError,
+                "supervision manifest requires a supervision packet",
+            ):
+                build_dashboard_model(
+                    repo_root=temporary,
+                    supervision_manifest_path="manifest.json",
+                )
+
+    def test_authentic_packet_and_manifest_use_source_bound_projection(self) -> None:
+        manifest = load_manifest(H2_MANIFEST_PATH)
+        packet = build_supervision_packet(
+            manifest,
+            repo_root=ROOT,
+            manifest_path=H2_MANIFEST_PATH,
+        )
+        with tempfile.TemporaryDirectory() as temporary:
+            packet_path = Path(temporary) / "packet.json"
+            packet_path.write_text(dumps_packet(packet, pretty=True), encoding="utf-8")
+            model = build_dashboard_model(
+                repo_root=ROOT,
+                supervision_packet_path=packet_path,
+                supervision_manifest_path=H2_MANIFEST_PATH,
+                generated_at="2026-07-19T15:12:24.4917578+09:00",
+            )
+
+        html = render_dashboard(model)
+        priority = model["priority_items"][0]
+        evidence = priority["evidence_refs"][0]
+        self.assertEqual("task-31aac3069238ee38", model["selected_priority_id"])
+        self.assertEqual("manifest_bound_authentic_point_in_time_report", evidence["authority_classification"])
+        self.assertEqual(
+            {
+                "loaded": True,
+                "status": "active",
+                "stop": 0,
+                "decision": 0,
+                "active": 1,
+                "closed": 0,
+                "all_closed": False,
+                "executable": False,
+            },
+            model["packet_attention"],
+        )
+        self.assertFalse(priority["executable"])
+        self.assertIn("manifest_bound_authentic_point_in_time_report", html)
+        self.assertIn("nlmytgen-h2-authentic-source-export-v1", html)
+        self.assertIn("SUPERVISION_EVIDENCE_EXPORT", html)
+
+    def test_source_bound_failure_stops_before_dashboard_projection_or_writes(self) -> None:
+        manifest = load_manifest(H2_MANIFEST_PATH)
+        packet = build_supervision_packet(
+            manifest,
+            repo_root=ROOT,
+            manifest_path=H2_MANIFEST_PATH,
+        )
+        packet["global_attention_queue"][0]["outcome_summary"] = "Tampered narrative"
+        with tempfile.TemporaryDirectory() as temporary:
+            temp = Path(temporary)
+            packet_path = temp / "packet.json"
+            packet_path.write_text(dumps_packet(packet, pretty=True), encoding="utf-8")
+            outputs = [
+                temp / "dashboard.html",
+                temp / "review.json",
+                temp / "review.md",
+                temp / "priority.json",
+            ]
+            with patch("dev_cockpit.dashboard._packet_task_items") as projection:
+                result = main(
+                    [
+                        "--repo-root", str(ROOT),
+                        "--supervision-packet", str(packet_path),
+                        "--supervision-manifest", str(H2_MANIFEST_PATH),
+                        "--output", str(outputs[0]),
+                        "--review-actions-json", str(outputs[1]),
+                        "--review-actions-md", str(outputs[2]),
+                        "--priority-readback", str(outputs[3]),
+                    ]
+                )
+                projection.assert_not_called()
+
+            self.assertEqual(2, result)
+            self.assertTrue(all(not output.exists() for output in outputs))
+
     def test_unknown_packet_attention_is_review_decision_not_safe_active_work(self) -> None:
         summary = _packet_attention_summary(
             {

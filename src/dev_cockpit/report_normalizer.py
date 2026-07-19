@@ -268,6 +268,9 @@ def _parse_route(header: str | None) -> dict[str, Any]:
         "thread": None,
         "lane": None,
         "slice": None,
+        "epoch": None,
+        "base": None,
+        "base_revision": None,
         "artifact": None,
         "turn": None,
         "target": None,
@@ -299,6 +302,16 @@ def _parse_route(header: str | None) -> dict[str, Any]:
                     f"conflicting ROUTE value for {key}: {existing!r} != {value!r}"
                 )
             result[key] = value
+    if (
+        result["base"] is not None
+        and result["base_revision"] is not None
+        and not _same_identity(result["base"], result["base_revision"])
+    ):
+        raise ReportNormalizationError(
+            "conflicting ROUTE value for base revision: "
+            f"{result['base']!r} != {result['base_revision']!r}"
+        )
+    result["base_revision"] = result["base_revision"] or result["base"]
     return result
 
 
@@ -355,7 +368,17 @@ def _resolve_report_identity(
     routing["lane_id"] = routing.get("lane") or progress.get("lane")
     routing["slice_id"] = routing.get("slice")
     routing["artifact_id"] = routing.get("artifact") or legacy_artifact
-    routing["dialect"] = "canonical_v6_5" if canonical_complete else "legacy_compatible"
+    canonical_v7 = canonical_complete and all(
+        isinstance(routing.get(field), str) and str(routing[field]).strip()
+        for field in ("epoch", "base_revision")
+    )
+    routing["dialect"] = (
+        "canonical_v7"
+        if canonical_v7
+        else "canonical_v6_5"
+        if canonical_complete
+        else "legacy_compatible"
+    )
 
 
 def _reject_identity_conflict(field: str, canonical: Any, legacy: Any) -> None:
@@ -415,6 +438,12 @@ def _parse_action(header: str | None) -> dict[str, Any]:
 
 def _parse_status(header: str | None) -> dict[str, Any]:
     result = {
+        "reported": None,
+        "blocked": None,
+        "acceptance": None,
+        "stop": None,
+        "branch": None,
+        "worktree": None,
         "health": None,
         "gates_done": None,
         "gates_total": None,
@@ -427,12 +456,27 @@ def _parse_status(header: str | None) -> dict[str, Any]:
 
     for segment in _pipe_segments(header):
         key, value = _split_key_value(segment)
-        if key == "gates":
+        if key in {"reported", "blocked"}:
+            result[key] = _status_flag(value)
+            if value is None:
+                result["blocked" if key == "reported" else "reported"] = False
+        elif key == "gates":
             counts = _parse_count_pair(value)
             result["gates_done"], result["gates_total"] = counts
         elif key in result:
             result[key] = value
     return result
+
+
+def _status_flag(value: str | None) -> bool | str:
+    if value is None:
+        return True
+    normalized = value.strip().casefold()
+    if normalized in {"true", "yes", "1"}:
+        return True
+    if normalized in {"false", "no", "0"}:
+        return False
+    return value
 
 
 def _extract_sections(text: str) -> dict[str, str]:
@@ -686,14 +730,26 @@ def _section_items(body: str | None) -> list[str]:
 def _extract_commits(text: str) -> list[dict[str, str]]:
     commits: list[dict[str, str]] = []
     seen: set[str] = set()
-    for match in _SHA_RE.finditer(text):
-        sha = match.group("sha")
-        message = _clean_commit_message(match.group("message"))
-        if sha in seen or _looks_like_path_fragment(message):
+    for line in text.splitlines():
+        if line.lstrip().startswith("["):
             continue
-        seen.add(sha)
-        commits.append({"sha": sha, "message": message})
+        for match in _SHA_RE.finditer(line):
+            if not _is_commit_evidence_context(line[: match.start("sha")]):
+                continue
+            sha = match.group("sha")
+            message = _clean_commit_message(match.group("message"))
+            if sha in seen or _looks_like_path_fragment(message):
+                continue
+            seen.add(sha)
+            commits.append({"sha": sha, "message": message})
     return commits
+
+
+def _is_commit_evidence_context(prefix: str) -> bool:
+    candidate = prefix.strip().lstrip("-*>").strip().strip("`").strip()
+    if not candidate:
+        return True
+    return bool(re.search(r"\bcommit(?:ted)?\s*[:#]?\s*$", candidate, re.IGNORECASE))
 
 
 def _looks_like_path_fragment(value: str) -> bool:

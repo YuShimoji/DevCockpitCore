@@ -2,11 +2,11 @@
 
 updated_at: 2026-07-19
 snapshot_kind: persisted_navigation_snapshot
-current_review_artifact: priority-review-console-production-observation-surface-v1
-current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
-priority_readback_path: samples/dashboard/devcockpitcore_priority_readback.json
-supervision_packet_path: samples/supervision_packets/cross_project_supervision_packet_v1.json
-supervision_packet_manifest_path: samples/supervision_packets/task_report_manifest_v1.json
+current_review_artifact: h2-authentic-single-report-round-trip-review-package-v1
+current_review_artifact_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html
+priority_readback_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_priority_readback.json
+supervision_packet_path: artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json
+supervision_packet_manifest_path: artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json
 selected_information_architecture: A_priority_review_console
 selection_state: closed
 user_visual_acceptance: accepted
@@ -15,8 +15,8 @@ tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
 current_development_axis: authentic_cross_project_report_readiness
-current_local_slice: waiting_for_authorized_h2_input
-recommended_next_horizon: H2_authentic_single_report_round_trip
+current_local_slice: h2_authentic_single_report_round_trip_verified_non_live_v1
+recommended_next_horizon: H3_authority_envelope_freshness_revision_binding_decision
 
 ## About This Snapshot
 
@@ -54,7 +54,7 @@ is recorded as accepted.
 | Repository observation and adapter validation | available | read-only against target repositories |
 | Report normalization and gate classification | available | interpretation only; no prompt generation |
 | Validation pack and cross-project smoke | available | local evidence; missing optional siblings warn |
-| Cross-Project Supervision Packet V1 | available | explicit manifest-bound reports; global rank is attention, not execution |
+| Cross-Project Supervision Packet V1 | available | explicit manifest-bound reports; paired manifest intake reprojects source and packet before use |
 | Priority Review Console and review actions | available | local, static, bilingual, and non-executable |
 | Evidence Freshness V1 integration | available | consumes a validated point-in-time receipt; does not infer live authority |
 | C3 probes | bounded | exactly two fixed help-only keys |
@@ -70,14 +70,21 @@ canonical UTF-8 LF bytes. Invalid UTF-8, bare carriage returns, path drift, and
 substantive content changes still fail closed. The root `.gitattributes`
 contract keeps tracked text at LF for new checkouts.
 
-The accepted A / Priority Review Console remains closed and the deterministic
-packet remains non-live fixture evidence. The next product gate is H2, an
-authentic single-report round-trip. It is input-gated: proceed only after a
-Supervisor or user supplies one exact current `AGENT_REPORT`, its `project_key`,
-authority basis, source revision and observation context, and permission for
-observer-only local artifacts. Do not scan for latest files, infer a report
-from chat history, fabricate live coverage, write to a sibling repository, or
-expand execution capability.
+The authorized H2 input has been received and the authentic single-report
+round-trip is complete. The exact NLMYTGen report at revision
+`d38075b97efabc99d1a23e8e0afafd5d44f1e2de` and SHA-256
+`d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b`
+is copied byte-for-byte into the H2 review package. Canonical v7 normalization,
+gate classification, packet generation, source-bound full narrative
+reprojection, and package-local Priority Review Console projection are
+verified.
+
+This is owner-authorized authentic point-in-time evidence, not live/current
+coverage. `current_claim_eligibility` and `live_coverage` remain false, and H3
+has not started. The next candidate horizon is a separate decision about the
+authority envelope, freshness, revision binding, and current-claim eligibility.
+Do not scan for latest files, infer reports from chat history, write to a
+sibling repository, or expand execution capability.
 
 Resume through this Cockpit for human navigation, `docs/runtime-state.md` for
 the machine-facing projection, and `docs/project-context.md` for durable
@@ -86,6 +93,16 @@ evidence directly. Dated handoffs are point-in-time history and are not part of
 the normal current-state route.
 
 ## Current Production Review Artifact
+
+The current H2 evidence entrance is the package-local review surface and its
+deterministic readback:
+
+- [H2 package-local Priority Review Console](../artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html)
+- [H2 round-trip readback](../artifacts/review/h2-authentic-single-report-round-trip-v1/h2_authentic_round_trip_readback_v1.md)
+- [H2 source-bound packet](../artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json)
+- [H2 manifest](../artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json)
+
+The accepted production surface remains unchanged:
 
 - [Production Priority Review Console](../samples/dashboard/devcockpitcore_dashboard.html)
 - [Deterministic priority readback](../samples/dashboard/devcockpitcore_priority_readback.json)
@@ -161,12 +178,13 @@ structure. `user_visual_acceptance` is therefore `accepted`; this surface does
 not request the same visual review again. Global attention rank remains review
 priority rather than a sequential execution schedule.
 
-The tracked packet is deterministic non-live fixture evidence covering two
-fictional projects and four reports. It proves task identity, global ranking,
-closed-item separation, and project-workset reprojection, but does not claim
-live coverage. H2 authentic/live AGENT_REPORT round-trip remains input-gated;
-absent live coverage does not block this contract or dashboard integration and
-the deterministic fixture must not be promoted to live evidence.
+The canonical tracked packet remains deterministic non-live fixture evidence
+covering two fictional projects and four reports. H2 adds a separate package
+bound to one authentic owner-authorized NLMYTGen report. That package projects
+`task-31aac3069238ee38` as `active_safe_continuation`, with
+`integrate_and_continue / INTEGRATE_AND_CONTINUE`, rank 1, and
+`executable: false`. It does not promote either evidence family to live or
+current authority.
 
 `QD-PACKET-UNKNOWN-KEY-01` is closed. The packet root, every active or closed
 task, and every `task.next_state` now reject missing or unexpected keys before
@@ -187,15 +205,15 @@ hashing, while invalid UTF-8, bare carriage returns, and substantive edits fail
 closed. The repository-root `* text=auto eol=lf` rule keeps tracked text
 portable without weakening the content contract.
 
-`QD-PACKET-NARRATIVE-REPROJECTION-01` remains accepted quality debt. A
-standalone stored packet proves schema, typed structure, identity,
-classification, queue/workset, binding-reference, coverage, policy, and scope
-self-consistency, but cannot independently re-prove that its narrative text
-came from the referenced source report. `source_report_sha256` is a source
-reference, not a signature; narrative reprojection belongs to generation or
-intake with the manifest and report verified together. Revisit this debt during
-the H2 authentic round-trip, or before live/current claim eligibility is first
-enabled. A standalone packet is not live/current authority.
+`QD-PACKET-NARRATIVE-REPROJECTION-01` is closed for paired manifest-plus-source
+intake. `load_packet_with_manifest` strictly reloads the manifest, revalidates
+the source bytes and SHA-256, normalizes and classifies the report, rebuilds the
+packet at the manifest timestamp, strictly loads the stored packet, and
+requires full JSON-type equality. Validly typed changes to outcome, current, or
+next-state narrative therefore fail closed before Dashboard projection. The
+standalone stored-packet authority boundary remains: `load_packet` proves
+self-consistency but cannot independently establish source authenticity,
+live/current authority, freshness, or current-claim eligibility.
 
 The integrity-ready intake preserves canonical v6.5 ROUTE identity exactly,
 keeps the legacy report dialect compatible, and rejects conflicting aliases.

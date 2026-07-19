@@ -16,6 +16,7 @@ from dev_cockpit.supervision_packet import (
     dumps_packet,
     load_manifest,
     load_packet,
+    load_packet_with_manifest,
     main,
     render_packet_markdown,
 )
@@ -25,11 +26,122 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "samples" / "supervision_packets" / "task_report_manifest_v1.json"
 PACKET_PATH = ROOT / "samples" / "supervision_packets" / "cross_project_supervision_packet_v1.json"
 MARKDOWN_PATH = ROOT / "samples" / "supervision_packets" / "cross_project_supervision_packet_v1.md"
+H2_MANIFEST_PATH = (
+    ROOT
+    / "artifacts"
+    / "review"
+    / "h2-authentic-single-report-round-trip-v1"
+    / "task_report_manifest_v1.json"
+)
 
 
 class SupervisionPacketTests(unittest.TestCase):
     def setUp(self) -> None:
         self.manifest = load_manifest(MANIFEST_PATH)
+
+    def test_authentic_report_coverage_identity_and_source_bound_reload(self) -> None:
+        manifest = load_manifest(H2_MANIFEST_PATH)
+        packet = build_supervision_packet(
+            manifest,
+            repo_root=ROOT,
+            manifest_path=H2_MANIFEST_PATH,
+        )
+        task = packet["global_attention_queue"][0]
+
+        self.assertEqual(
+            "Owner-authorized authentic point-in-time report coverage from explicit "
+            "manifest binding; not live/current coverage.",
+            packet["coverage"]["coverage_statement"],
+        )
+        self.assertNotIn("fixture", packet["coverage"]["coverage_statement"].lower())
+        self.assertFalse(packet["coverage"]["live_coverage"])
+        self.assertEqual("task-31aac3069238ee38", task["task_id"])
+        self.assertEqual("active_safe_continuation", task["attention_class"])
+        self.assertEqual("integrate_and_continue", task["gate_decision"])
+        self.assertEqual("INTEGRATE_AND_CONTINUE", task["gate_stop_class"])
+        self.assertFalse(task["executable"])
+
+        with tempfile.TemporaryDirectory() as temporary:
+            packet_path = Path(temporary) / "packet.json"
+            packet_path.write_text(dumps_packet(packet, pretty=True), encoding="utf-8")
+            self.assertEqual(
+                packet,
+                load_packet_with_manifest(
+                    packet_path,
+                    H2_MANIFEST_PATH,
+                    repo_root=ROOT,
+                ),
+            )
+
+    def test_source_bound_reload_rejects_valid_narrative_tampering(self) -> None:
+        manifest = load_manifest(H2_MANIFEST_PATH)
+        packet = build_supervision_packet(
+            manifest,
+            repo_root=ROOT,
+            manifest_path=H2_MANIFEST_PATH,
+        )
+        cases = {
+            "outcome_summary": lambda task: task.__setitem__("outcome_summary", "Changed summary"),
+            "current_state": lambda task: task.__setitem__("current_state", "Changed current state"),
+            "next_owner": lambda task: task["next_state"].__setitem__("owner", "Changed owner"),
+            "next_slice": lambda task: task["next_state"].__setitem__("recommended_slice", "changed-slice"),
+            "user_work": lambda task: task["next_state"].__setitem__("user_work", "changed user work"),
+            "agent_work": lambda task: task["next_state"].__setitem__("agent_work", "changed agent work"),
+        }
+        for name, mutate in cases.items():
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as temporary:
+                changed = copy.deepcopy(packet)
+                mutate(changed["global_attention_queue"][0])
+                packet_path = Path(temporary) / "packet.json"
+                packet_path.write_text(dumps_packet(changed, pretty=True), encoding="utf-8")
+
+                self.assertEqual(changed, load_packet(packet_path))
+                with self.assertRaisesRegex(
+                    SupervisionPacketError,
+                    r"source-bound packet mismatch at \$",
+                ):
+                    load_packet_with_manifest(
+                        packet_path,
+                        H2_MANIFEST_PATH,
+                        repo_root=ROOT,
+                    )
+
+    def test_source_bound_reload_rejects_source_byte_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            relative_manifest = Path(
+                "artifacts/review/h2-authentic-single-report-round-trip-v1/"
+                "task_report_manifest_v1.json"
+            )
+            relative_source = Path(
+                "artifacts/review/h2-authentic-single-report-round-trip-v1/"
+                "source/AGENT_REPORT_H2_SOURCE_V1.md"
+            )
+            manifest_path = root / relative_manifest
+            source_path = root / relative_source
+            manifest_path.parent.mkdir(parents=True)
+            source_path.parent.mkdir(parents=True)
+            shutil.copyfile(H2_MANIFEST_PATH, manifest_path)
+            shutil.copyfile(
+                H2_MANIFEST_PATH.parent / "source" / "AGENT_REPORT_H2_SOURCE_V1.md",
+                source_path,
+            )
+            manifest = load_manifest(manifest_path)
+            packet = build_supervision_packet(
+                manifest,
+                repo_root=root,
+                manifest_path=relative_manifest,
+            )
+            packet_path = root / "packet.json"
+            packet_path.write_text(dumps_packet(packet, pretty=True), encoding="utf-8")
+            source_path.write_bytes(source_path.read_bytes() + b"\n")
+
+            with self.assertRaisesRegex(SupervisionPacketError, "report hash mismatch"):
+                load_packet_with_manifest(
+                    packet_path,
+                    manifest_path,
+                    repo_root=root,
+                )
 
     def test_fixture_packet_has_two_projects_four_reports_and_policy_order(self) -> None:
         packet = build_supervision_packet(

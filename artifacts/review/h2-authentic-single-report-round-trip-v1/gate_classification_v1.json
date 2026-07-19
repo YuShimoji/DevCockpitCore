@@ -1,0 +1,163 @@
+{
+  "schema_version": "gate_classification.v1",
+  "producer": "dev_cockpit.gate_classifier",
+  "generated_at": "2026-07-19T15:12:24.4917578+09:00",
+  "source": {
+    "report_normalization_path": "artifacts/review/h2-authentic-single-report-round-trip-v1/report_normalization_v1.json",
+    "status_snapshot_path": null,
+    "adapter_path": null,
+    "input_kind": "report_normalization_json",
+    "warnings": [
+      "optional status snapshot not provided",
+      "optional adapter manifest not provided"
+    ]
+  },
+  "routing": {
+    "route": "NLMYTGen",
+    "thread": "nlmytgen-h2-authentic-source-export-v1",
+    "lane": "SUPERVISION_EVIDENCE_EXPORT",
+    "slice": "authentic-point-in-time-checkout-observation-v1",
+    "artifact": "h2-authentic-source-agent-report-v1",
+    "thread_id": "nlmytgen-h2-authentic-source-export-v1",
+    "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+    "slice_id": "authentic-point-in-time-checkout-observation-v1",
+    "artifact_id": "h2-authentic-source-agent-report-v1",
+    "dialect": "canonical_v7",
+    "artifact_current": null,
+    "artifact_next": null,
+    "confidence": null,
+    "direction": "WORKER->SUPERVISOR"
+  },
+  "input_summary": {
+    "agent_decision": "completed",
+    "report_health": "green",
+    "normalized_outcome_decision": "completed",
+    "pushed": null,
+    "worktree": null,
+    "remote_parity": null,
+    "tests_summary": {
+      "reported": false,
+      "counts": [],
+      "total": null
+    },
+    "handoff_gate": null,
+    "user_work": "attach exact report file to Web Supervisor",
+    "blocker": "none",
+    "stop_class": "NONE"
+  },
+  "classification": {
+    "decision": "integrate_and_continue",
+    "health": "yellow",
+    "stop_class": "INTEGRATE_AND_CONTINUE",
+    "next_owner": "User",
+    "user_work_required": false,
+    "supervisor_should_generate_prompt": false,
+    "handoff_required": false,
+    "continue_allowed": true,
+    "commit_push_accepted": false,
+    "review_required": true,
+    "execution_automation_scope_violation": false
+  },
+  "gates": {
+    "push_gate": {
+      "status": "yellow",
+      "passed": false,
+      "summary": "commit and push evidence is incomplete",
+      "notes": []
+    },
+    "handoff_gate": {
+      "status": "yellow",
+      "passed": false,
+      "summary": "handoff gate is unknown",
+      "notes": []
+    },
+    "user_work_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no user action required by classification terms",
+      "notes": []
+    },
+    "residue_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no blocking residue",
+      "notes": []
+    },
+    "validation_gate": {
+      "status": "yellow",
+      "passed": false,
+      "summary": "validation evidence is missing or partial",
+      "notes": []
+    },
+    "readiness_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "readiness lanes remain separated",
+      "notes": []
+    },
+    "execution_automation_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no execution automation instruction",
+      "notes": []
+    },
+    "production_public_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no production/public readiness claim",
+      "notes": []
+    },
+    "destructive_action_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "no destructive action required",
+      "notes": []
+    },
+    "form_burden_gate": {
+      "status": "green",
+      "passed": true,
+      "summary": "freeform user input remains acceptable",
+      "notes": []
+    }
+  },
+  "residue_findings": {
+    "contains_paste_ready_prompt": false,
+    "contains_pseudo_git_tags": false,
+    "contains_absolute_user_paths": false,
+    "contains_runner_or_scheduler_instruction": false,
+    "readiness_overclaim": false,
+    "severity": "green",
+    "recommended_handling": "no residue handling required"
+  },
+  "readiness": {
+    "foundation_observer_readiness": "not_evaluated",
+    "foundation_automation_readiness": "gate_classifier_available",
+    "execution_automation_readiness": "out_of_scope",
+    "project_product_readiness": "not_evaluated",
+    "notes": [
+      "status producer, adapter manifest, report normalizer, and gate classifier are foundation tooling",
+      "execution automation readiness is not advanced by this classification",
+      "readiness lanes remain separated"
+    ]
+  },
+  "next": {
+    "recommended_next_slice": "devcockpitcore-h2-authentic-round-trip-v1",
+    "minimal_next_task": "The source-report export is complete.",
+    "next_owner": "User",
+    "supervisor_should_generate_prompt": false,
+    "user_side_work": "none",
+    "agent_side_work": "review classification"
+  },
+  "health": {
+    "classification_status": "yellow",
+    "warnings": [
+      "commit and push evidence is incomplete",
+      "handoff gate is unknown",
+      "validation evidence is missing or partial",
+      "optional status snapshot not provided",
+      "optional adapter manifest not provided"
+    ],
+    "blockers": [],
+    "stop_class": "INTEGRATE_AND_CONTINUE"
+  }
+}

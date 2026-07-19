@@ -550,14 +550,44 @@ def _scan_text(report: dict[str, Any]) -> str:
 
 
 def _contains_unnegated(text: str, terms: tuple[str, ...]) -> bool:
-    lowered = text.lower()
-    for term in terms:
-        for match in re.finditer(re.escape(term), lowered):
-            window = lowered[max(0, match.start() - 80) : match.start()]
-            if any(hint in window for hint in _NEGATION_HINTS):
-                continue
-            return True
+    for line in text.lower().splitlines():
+        for term in terms:
+            for match in re.finditer(re.escape(term), line):
+                if _term_is_locally_negated(line, match.start(), match.end()):
+                    continue
+                return True
     return False
+
+
+def _term_is_locally_negated(line: str, start: int, end: int) -> bool:
+    prefix = line[max(0, start - 80) : start]
+    prefix_clause = re.split(r"[.;:,]|\b(?:but|however)\b", prefix)[-1]
+    if re.search(
+        r"\b(?:no|without|never)\b[^.;:]{0,48}$"
+        r"|\b(?:do|does|did|must|should|will|is|are|was|were)?\s*not\b[^.;:]{0,40}$",
+        prefix_clause,
+    ):
+        return True
+
+    postfix = line[end : min(len(line), end + 96)]
+    negated_action = (
+        r"`?(?:not|never)\s+"
+        r"(?:performed|used|run|executed|done|applied|requested|required|attempted|"
+        r"allowed|authorized|needed)\b"
+    )
+    if re.match(
+        rf"\s+(?:(?:was|were|is|are|has been|have been)\s+)?{negated_action}",
+        postfix,
+    ):
+        return True
+    if re.match(rf"[a-z0-9_-]{{0,64}}\s*[:=]\s*{negated_action}", postfix):
+        return True
+    return bool(
+        re.match(
+            r"\s+(?:(?:is|are|remains?|stays?)\s+)?out of scope\b",
+            postfix,
+        )
+    )
 
 
 def _execution_readiness_overclaim(text: str) -> bool:

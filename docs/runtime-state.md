@@ -2,11 +2,11 @@
 
 updated_at: 2026-07-19
 projection_kind: repository_restart_and_artifact_access
-current_review_artifact: priority-review-console-production-observation-surface-v1
-current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html
-priority_readback_path: samples/dashboard/devcockpitcore_priority_readback.json
-supervision_packet_path: samples/supervision_packets/cross_project_supervision_packet_v1.json
-supervision_packet_manifest_path: samples/supervision_packets/task_report_manifest_v1.json
+current_review_artifact: h2-authentic-single-report-round-trip-review-package-v1
+current_review_artifact_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html
+priority_readback_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_priority_readback.json
+supervision_packet_path: artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json
+supervision_packet_manifest_path: artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json
 selected_information_architecture: A_priority_review_console
 selection_state: closed
 user_visual_acceptance: accepted
@@ -29,6 +29,14 @@ capability_state: bounded_c3_c4
 evidence_freshness_policy_path: samples/evidence_freshness/evidence_freshness_policy_v1.json
 evidence_freshness_receipt_json_path: samples/evidence_freshness/evidence_freshness_receipt_v1.json
 evidence_freshness_receipt_markdown_path: samples/evidence_freshness/evidence_freshness_receipt_v1.md
+h2_round_trip_readback_path: artifacts/review/h2-authentic-single-report-round-trip-v1/h2_authentic_round_trip_readback_v1.json
+h2_source_report_path: artifacts/review/h2-authentic-single-report-round-trip-v1/source/AGENT_REPORT_H2_SOURCE_V1.md
+h2_source_revision: d38075b97efabc99d1a23e8e0afafd5d44f1e2de
+h2_source_sha256: d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b
+h2_state: h2_authentic_single_report_round_trip_verified_non_live_v1
+h3_started: false
+current_claim_eligibility: false
+live_coverage: false
 local_runtime_bootstrap: uv venv --python 3.11 .venv
 
 ## Projection Scope
@@ -59,23 +67,29 @@ before model or HTML projection. Report hashes bind canonical UTF-8 LF bytes;
 CRLF checkout transport is normalized before hashing, while invalid UTF-8,
 bare carriage returns, and substantive content drift fail closed.
 
-The accepted A / Priority Review Console and deterministic packet remain
-non-live observer evidence. H2 authentic/live round-trip is input-gated. Resume
-only after an exact current external `AGENT_REPORT` is explicitly supplied and
-manifest-bound; do not promote the deterministic fixture or infer a report from
-chat/history. Use `docs/PROJECT_COCKPIT.md` for human navigation,
+The authorized H2 report has been received and the authentic single-report
+round-trip is verified. Its byte-exact source copy, manifest, normalization,
+gate classification, source-bound packet, H2 readback, and package-local
+Dashboard outputs are under
+`artifacts/review/h2-authentic-single-report-round-trip-v1/`. The report is
+bound to revision `d38075b97efabc99d1a23e8e0afafd5d44f1e2de` and the SHA-256
+declared above.
+
+H2 establishes authentic owner-authorized point-in-time evidence only.
+`current_claim_eligibility` and `live_coverage` remain false. H3 has not
+started; its candidate is a separate authority-envelope, freshness, revision,
+and eligibility decision. Use `docs/PROJECT_COCKPIT.md` for human navigation,
 `docs/project-context.md` for durable boundaries, the Local Validation Entry
 below for repository checks, and direct Git and generated-evidence readback for
-current facts. Dated handoffs are point-in-time historical evidence, not a
-restart dependency or live control surface.
+current facts.
 
 ## Artifact Access
 
-The current review artifact is the production A / Priority Review Console at
+The current review entrance is the H2 package-local A / Priority Review Console
+declared above. It reuses the accepted production information architecture but
+does not overwrite or supersede the production artifact at
 `samples/dashboard/devcockpitcore_dashboard.html`. The A/B/C direction gate is
-closed and A is the production direction. Its deterministic priority readback,
-non-executable review actions, capture manifest, capture readback, and contact
-sheet are at the paths declared above.
+closed and A remains the accepted production direction.
 
 The console can consume the explicit Cross-Project Supervision Packet V1 path
 declared above. Its global queue ranks attention/review across projects while
@@ -103,14 +117,14 @@ H1 packet ingress and checkout transport are closed. The repository-root
 the loader's canonical binding keeps an existing Windows CRLF checkout valid
 without weakening substantive content checks or schema identity.
 
-`QD-PACKET-NARRATIVE-REPROJECTION-01` remains non-blocking quality debt.
-Standalone packet validation proves schema, typed structure, identity,
-classification, queue/workset, binding-reference, coverage, policy, and scope
-self-consistency; `source_report_sha256` is a source reference rather than a
-signature. Narrative source reprojection requires generation or intake with
-the manifest and source report verified together. Revisit during the H2
-authentic round-trip, or before live/current claim eligibility is enabled. Do
-not promote a standalone stored packet to live/current authority.
+`QD-PACKET-NARRATIVE-REPROJECTION-01` is closed for paired manifest-plus-source
+intake. `load_packet_with_manifest` revalidates source bytes and hash, rebuilds
+normalization, classification, task narratives, queues, worksets, coverage,
+policy, and scope, then requires full typed JSON equality with the stored
+packet. Dashboard uses that path whenever packet and manifest are both given,
+and fails before projection on drift. Standalone packet validation remains a
+self-consistency check only and must not be promoted to source-authentic,
+live/current, or current-claim authority.
 
 Production direction A is selected for the production dashboard and
 `user_visual_acceptance` is `accepted`.
@@ -135,11 +149,11 @@ in the console. A live claim requires a newly generated receipt assessed
 against its recorded policy, observation time, and revision binding, followed
 by dashboard regeneration.
 
-H2 authentic/live round-trip remains input-gated: another project's current
-AGENT_REPORT must be supplied through an explicit manifest binding. The
-deterministic fixture is not promoted to live coverage. Resume H2 only after an
-exact current external AGENT_REPORT is explicitly manifest-bound, then rerun
-packet and Dashboard validation against that input.
+The H2 source is authentic owner-authorized point-in-time evidence, but its own
+report health and validation freshness remain yellow and it explicitly denies
+live coverage and current-claim eligibility. The deterministic fixture remains
+unchanged. Any H3 work must first define the authority envelope and freshness /
+revision-binding rules rather than upgrading this H2 result by inference.
 
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
@@ -162,5 +176,6 @@ python -m dev_cockpit.supervision_packet `
   --pretty
 python -m dev_cockpit.dashboard `
   --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json
+python artifacts/review/h2-authentic-single-report-round-trip-v1/generate_package.py
 Start-Process .\samples\dashboard\devcockpitcore_dashboard.html
 ```

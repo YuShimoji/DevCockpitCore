@@ -64,8 +64,70 @@ H1 requires authentic manifest-bound reports.
 pass; no blocked handoff required.
 """
 
+H2_REPORT_PATH = (
+    ROOT
+    / "artifacts"
+    / "review"
+    / "h2-authentic-single-report-round-trip-v1"
+    / "source"
+    / "AGENT_REPORT_H2_SOURCE_V1.md"
+)
+
 
 class ReportNormalizerTests(unittest.TestCase):
+    def test_authentic_canonical_v7_identity_status_and_commit_boundary(self) -> None:
+        result = normalize_report(
+            H2_REPORT_PATH.read_text(encoding="utf-8"),
+            input_path=H2_REPORT_PATH.relative_to(ROOT).as_posix(),
+            generated_at="2026-07-19T15:12:24.4917578+09:00",
+        )
+
+        self.assertEqual("canonical_v7", result["routing"]["dialect"])
+        self.assertEqual(
+            "NLMYTGEN-H2-SOURCE-2026-07-19-01",
+            result["routing"]["epoch"],
+        )
+        self.assertEqual(
+            "d38075b97efabc99d1a23e8e0afafd5d44f1e2de",
+            result["routing"]["base"],
+        )
+        self.assertEqual(result["routing"]["base"], result["routing"]["base_revision"])
+        self.assertEqual(
+            "nlmytgen-h2-authentic-source-export-v1",
+            result["routing"]["thread_id"],
+        )
+        self.assertEqual("SUPERVISION_EVIDENCE_EXPORT", result["routing"]["lane_id"])
+        self.assertTrue(result["status"]["reported"])
+        self.assertFalse(result["status"]["blocked"])
+        self.assertEqual("passed", result["status"]["acceptance"])
+        self.assertEqual("none", result["status"]["stop"])
+        self.assertEqual(
+            "codex/new-banknote-successor-selective-integration-v1",
+            result["status"]["branch"],
+        )
+        self.assertEqual("repository-root", result["status"]["worktree"])
+        self.assertEqual([], result["normalized_outcome"]["commits"])
+        self.assertEqual("green", result["health"]["normalization_status"])
+
+    def test_base_and_source_revision_sha_are_not_commit_evidence(self) -> None:
+        report = CANONICAL_V65_REPORT.replace(
+            " | reply:Web Supervisor",
+            " | epoch:DCC-TEST-01 | base:d38075b97efabc99d1a23e8e0afafd5d44f1e2de"
+            " | reply:Web Supervisor",
+        ).replace(
+            "## 到達した状態",
+            "## Source Binding\n\n- source_revision: "
+            "d38075b97efabc99d1a23e8e0afafd5d44f1e2de observed checkout\n\n"
+            "## 到達した状態",
+        )
+
+        result = normalize_report(report, generated_at="2026-07-19T00:00:00Z")
+
+        self.assertEqual(
+            ["2a8673f"],
+            [commit["sha"] for commit in result["normalized_outcome"]["commits"]],
+        )
+
     def test_canonical_v65_identity_round_trips_without_action(self) -> None:
         result = normalize_report(
             CANONICAL_V65_REPORT,

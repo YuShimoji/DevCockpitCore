@@ -21,7 +21,7 @@ contains:
 | `project_key` | Stable project identity supplied by the manifest owner. |
 | `report_path` | Explicit repository-relative UTF-8 AGENT_REPORT path. |
 | `required` | Whether the report participates as required evidence. |
-| `evidence_class` | Evidence authority class, such as deterministic fixture. |
+| `evidence_class` | Evidence authority class, such as deterministic fixture or owner-authorized authentic point-in-time report. |
 | `authority_basis` | Why this exact report is allowed into the packet. |
 | `content_sha256` | Required SHA-256 binding over canonical UTF-8 LF bytes. CRLF checkout transport is normalized to LF before hashing. |
 
@@ -62,6 +62,14 @@ claim. Legacy reports remain compatible through `target`, the PROGRESS lane,
 `artifact_current`, ACTION `deliverable`, and finally `artifact_next` aliases.
 When a canonical identity and an explicit legacy identity alias are both
 present, equal values normalize and material conflicts fail closed.
+
+Canonical v7 reports additionally preserve ROUTE `epoch`, `base`, and the
+machine-facing `base_revision` alias while retaining the same five-field packet
+task identity. STATUS keeps bare `reported` / `blocked` state and the
+`acceptance`, `stop`, `branch`, and `worktree` fields alongside existing
+health, gates, and stop class. ROUTE base revisions and source-binding revision
+metadata are excluded from commit evidence; explicit commit prose and log-like
+commit lines remain supported. Canonical v6.5 and legacy dialects are unchanged.
 
 The resolved five-field identity produces a SHA-256-derived `task_id`. The
 report hash remains a separate evidence binding so wording changes fail closed
@@ -131,6 +139,13 @@ attention policy, and the complete observer-only scope boundary. Any missing,
 unexpected, duplicate, cross-project, reordered, or type-changed projection
 fails closed with `SupervisionPacketError`.
 
+Coverage wording is rederived from task `evidence_class` during validation.
+The canonical fixture retains its exact deterministic fixture statement and
+bytes. An all-authentic H2 packet instead states that it is owner-authorized
+authentic point-in-time coverage from explicit manifest binding and explicitly
+denies live/current coverage. Every packet keeps `live_coverage: false`, every
+task keeps `executable: false`, and global rank remains attention/review order.
+
 ## Priority Review Console integration
 
 The dashboard accepts an optional explicit input:
@@ -138,8 +153,18 @@ The dashboard accepts an optional explicit input:
 ```powershell
 $env:PYTHONPATH = "src"
 python -m dev_cockpit.dashboard `
-  --supervision-packet samples/supervision_packets/cross_project_supervision_packet_v1.json
+  --supervision-packet artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json `
+  --supervision-manifest artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json
 ```
+
+With packet and manifest together, Dashboard must use
+`load_packet_with_manifest`: the manifest is strictly loaded, every report is
+re-read and hash-checked, normalization and classification are rerun at the
+manifest timestamp, and the rebuilt packet must equal the strictly loaded
+stored packet in JSON type and value at every path. Packet-only input retains
+the existing standalone self-consistency path; no packet retains the existing
+default Dashboard path; manifest-only input is an error. Any paired-source
+drift fails before model, HTML, priority readback, or review-action projection.
 
 When supplied, packet tasks occupy the existing Priority Lane. Rows expose
 project/thread/lane identity; Active Decision exposes project/thread and
@@ -166,6 +191,17 @@ ranking, closed-item separation, and projection identity. It is not live
 coverage of user projects and does not complete the H2 authentic report-routing
 round-trip horizon.
 
+The separate H2 package at
+`artifacts/review/h2-authentic-single-report-round-trip-v1/` binds one exact
+NLMYTGen report at revision
+`d38075b97efabc99d1a23e8e0afafd5d44f1e2de` and SHA-256
+`d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b`.
+It verifies canonical v7 normalization, local destructive-action negation,
+`integrate_and_continue / INTEGRATE_AND_CONTINUE`, task
+`task-31aac3069238ee38`, full source-bound narrative reprojection, and
+package-local Dashboard projection. It is authentic owner-authorized
+point-in-time evidence, not live/current coverage.
+
 `content_sha256` binds canonical UTF-8 LF bytes. The loader decodes strict
 UTF-8, normalizes CRLF to LF, rejects any remaining bare carriage return, and
 then compares the canonical bytes to the explicit manifest hash. The
@@ -184,12 +220,14 @@ during generation or intake, when the manifest and source report are available
 and verified together. A standalone stored packet must therefore not be
 promoted by itself to live or current authority.
 
-`QD-PACKET-NARRATIVE-REPROJECTION-01` records the remaining quality debt:
-standalone stored packet evidence cannot independently re-prove that narrative
-text came from its source report. Revisit this boundary during the H2 authentic
-round-trip, or before `live_coverage` or `current_claim_eligible` is first
-allowed to become true. This debt does not block typed ingress or LF checkout
-transport closure.
+`QD-PACKET-NARRATIVE-REPROJECTION-01` is closed for intake that pairs the
+manifest, source reports, and stored packet through `load_packet_with_manifest`.
+That path rejects source byte/hash drift and validly typed changes to
+`outcome_summary`, `current_state`, or any `next_state` narrative field by full
+reprojection equality. The standalone stored-packet authority boundary remains:
+`load_packet` cannot independently re-prove narrative provenance or establish
+source authenticity, live/current authority, freshness, revision eligibility,
+or current-claim eligibility.
 
 Capture manifests keep source paths repository-relative or redacted. Capture
 timestamps distinguish `actual_browser_observation` from
@@ -197,5 +235,6 @@ timestamps distinguish `actual_browser_observation` from
 `actual_worker_inspection` authority when not overridden. Declared overrides
 are never eligible as current observation evidence. A future live mode would require explicit
 authority, freshness, revision binding, and current-claim eligibility fields.
-Those fields are design prerequisites, not hard-coded live success in this
-fixture slice.
+Those fields are design prerequisites for the proposed H3 authority-envelope,
+freshness, revision, and current-claim decision. H3 has not started, and H2 does
+not hard-code live success.

@@ -114,7 +114,10 @@ class ProjectStateContractTests(unittest.TestCase):
             with self.subTest(relative_path=relative_path):
                 self.assertFalse((ROOT / relative_path).exists(), relative_path)
         review_root = ROOT / "artifacts" / "review"
-        self.assertFalse(review_root.exists(), str(review_root))
+        self.assertEqual(
+            {"h2-authentic-single-report-round-trip-v1"},
+            {path.name for path in review_root.iterdir() if path.is_dir()},
+        )
 
         cockpit = _read("docs/PROJECT_COCKPIT.md")
         runtime = _read("docs/runtime-state.md")
@@ -221,11 +224,15 @@ class ProjectStateContractTests(unittest.TestCase):
         for document in (cockpit, runtime):
             with self.subTest(document=document.splitlines()[0]):
                 self.assertIn(
-                    "current_review_artifact: priority-review-console-production-observation-surface-v1",
+                    "current_review_artifact: h2-authentic-single-report-round-trip-review-package-v1",
                     document,
                 )
                 self.assertIn(
-                    "current_review_artifact_path: samples/dashboard/devcockpitcore_dashboard.html",
+                    "current_review_artifact_path: artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html",
+                    document,
+                )
+                self.assertIn(
+                    "samples/dashboard/devcockpitcore_dashboard.html",
                     document,
                 )
                 self.assertIn("Priority Review Console", document)

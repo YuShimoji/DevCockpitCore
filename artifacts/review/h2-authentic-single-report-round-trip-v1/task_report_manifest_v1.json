@@ -1,0 +1,15 @@
+{
+  "schema_version": "task_report_manifest.v1",
+  "artifact_id": "h2-authentic-single-report-round-trip-v1",
+  "generated_at": "2026-07-19T15:12:24.4917578+09:00",
+  "reports": [
+    {
+      "project_key": "nlmytgen",
+      "report_path": "artifacts/review/h2-authentic-single-report-round-trip-v1/source/AGENT_REPORT_H2_SOURCE_V1.md",
+      "required": true,
+      "evidence_class": "authentic_owner_authorized_point_in_time_report",
+      "authority_basis": "owner_authorized_current_checkout_observation",
+      "content_sha256": "d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b"
+    }
+  ]
+}

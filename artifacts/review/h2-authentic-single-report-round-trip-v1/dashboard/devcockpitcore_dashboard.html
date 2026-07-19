@@ -1,0 +1,1182 @@
+<!doctype html>
+<html lang="ja" data-language="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Priority Review Console · DevCockpitCore</title>
+  <meta name="color-scheme" content="dark">
+  <style>
+:root {
+  color-scheme: dark;
+  --ink: #f4f1e8;
+  --muted: #b8bdaa;
+  --line: #3a4038;
+  --panel: #1b1f1b;
+  --paper: #111411;
+  --soft: #232920;
+  --green: #57b985;
+  --yellow: #d9a84e;
+  --red: #ee6878;
+  --navy: #4d705f;
+  --teal: #66c6a6;
+  --amber-soft: #3a301c;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --priority: #e4ba58;
+  --decision: #75c8d5;
+  --evidence: #72c996;
+  --console-bg: #0d100e;
+  --console-panel: #171c18;
+  --console-deep: #121613;
+  --console-line: #3a463d;
+}
+* { box-sizing: border-box; }
+html[data-language="ja"] .lang-en,
+html[data-language="en"] .lang-ja { display: none !important; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Segoe UI", Arial, sans-serif;
+  line-height: 1.45;
+}
+.production-header {
+  padding: 20px 24px 14px;
+  background: var(--console-bg);
+  border-bottom: 1px solid var(--console-line);
+}
+.production-title-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: start;
+  max-width: 1480px;
+  margin: 0 auto;
+}
+.production-title-copy { min-width: 0; }
+.production-title-copy h1 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+.production-deck {
+  max-width: 58rem;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.header-controls {
+  display: grid;
+  justify-items: end;
+  gap: 10px;
+}
+.language-switch {
+  display: inline-flex;
+  border: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.language-switch button {
+  min-height: 38px;
+  padding: 7px 14px;
+  border: 0;
+  border-right: 1px solid var(--console-line);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 800;
+}
+.language-switch button:last-child { border-right: 0; }
+.language-switch button[aria-pressed="true"] { background: var(--decision); color: #081012; }
+.acceptance-state {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: var(--muted);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.acceptance-state strong { color: var(--priority); }
+.current-state-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  max-width: 1480px;
+  margin: 16px auto 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.current-state-strip > div {
+  min-width: 0;
+  padding: 8px 12px;
+  border-right: 1px solid var(--console-line);
+}
+.current-state-strip > div:last-child { border-right: 0; }
+.current-state-strip dt { color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.current-state-strip dd { margin: 2px 0 0; color: var(--ink); font-weight: 850; overflow-wrap: anywhere; }
+.receipt-line {
+  max-width: 1480px;
+  margin: 8px auto 0;
+  color: var(--muted);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.production-page {
+  min-width: 0;
+  padding: 16px 24px 42px;
+  background: var(--console-bg);
+}
+.priority-workspace {
+  display: grid;
+  grid-template-columns: minmax(280px, 29fr) minmax(400px, 42fr) minmax(280px, 29fr);
+  gap: 12px;
+  max-width: 1480px;
+  margin: 0 auto;
+  align-items: stretch;
+}
+@media (min-width: 1121px) {
+  .priority-workspace { height: min(876px, calc(100vh - 324px)); min-height: 760px; }
+}
+.console-panel {
+  min-width: 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-panel);
+  overflow: hidden;
+}
+.priority-lane { border-top: 3px solid var(--priority); }
+.active-decision { border-top: 3px solid var(--decision); }
+.evidence-inspector { border-top: 3px solid var(--evidence); }
+.console-panel-head {
+  position: relative;
+  min-height: 84px;
+  padding: 13px 16px 12px;
+  border-bottom: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.console-panel-head p {
+  margin: 0 0 5px;
+  color: var(--muted);
+  font: 700 10px/1.2 Consolas, "Courier New", monospace;
+  letter-spacing: .08em;
+}
+.console-panel-head h2 { margin: 0; font-size: 20px; line-height: 1.2; }
+.panel-hint {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: var(--muted);
+  font: 700 11px/1.2 Consolas, "Courier New", monospace;
+}
+.priority-list {
+  display: grid;
+  max-height: 680px;
+  overflow-y: auto;
+  scrollbar-color: var(--priority) var(--console-deep);
+}
+.priority-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  min-height: 94px;
+  padding: 13px 14px;
+  border: 0;
+  border-bottom: 1px solid var(--console-line);
+  border-left: 3px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.priority-row:hover { background: #1c231e; }
+.priority-row[aria-selected="true"] { border-left-color: var(--priority); background: #252116; }
+.priority-empty-state { min-height: 180px; padding: 28px 20px; display: grid; align-content: center; gap: 10px; color: var(--muted); }
+.priority-empty-state strong { color: var(--teal); font-size: 15px; }
+.priority-empty-state p { margin: 0; line-height: 1.55; }
+.priority-rank { color: var(--priority); font: 800 14px/1.4 Consolas, "Courier New", monospace; }
+.priority-copy { display: grid; min-width: 0; gap: 5px; }
+.priority-identity { color: var(--teal); font: 700 10px/1.3 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+.priority-copy strong { font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
+.priority-copy small { color: var(--muted); font-size: 11.5px; line-height: 1.4; overflow-wrap: anywhere; }
+.priority-meta { display: flex; flex-wrap: wrap; gap: 5px 10px; color: var(--priority); font-size: 11px; font-weight: 800; }
+.queue-note { margin: 0; padding: 11px 14px; color: var(--muted); font-size: 10.5px; line-height: 1.45; }
+.decision-body, .evidence-body { padding: 18px; }
+.decision-kicker {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 3px 8px;
+  border: 1px solid var(--decision);
+  color: var(--decision);
+  font-size: 11px;
+  font-weight: 800;
+}
+.decision-body h3 { margin: 0 0 10px; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.2; overflow-wrap: anywhere; }
+.decision-reason { margin: 0 0 18px; color: var(--muted); overflow-wrap: anywhere; }
+.decision-grid, .evidence-grid, .provenance-grid { display: grid; gap: 0; margin: 0; }
+.decision-grid > div, .evidence-grid > div, .provenance-grid > div {
+  padding: 11px 0;
+  border-top: 1px solid var(--console-line);
+}
+.decision-grid dt, .evidence-grid dt, .provenance-grid dt {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.decision-grid dd, .evidence-grid dd, .provenance-grid dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.evidence-grid dd small { display: block; margin-top: 3px; color: var(--muted); font: 11px/1.35 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+.evidence-status {
+  display: inline-flex;
+  margin-bottom: 12px;
+  padding: 5px 9px;
+  border: 1px solid var(--evidence);
+  color: var(--evidence);
+  font: 800 12px/1.2 Consolas, "Courier New", monospace;
+  text-transform: uppercase;
+}
+.provenance-details { margin-top: 12px; border-top: 1px solid var(--console-line); }
+.provenance-details summary { padding: 12px 0; color: var(--evidence); cursor: pointer; font-weight: 800; }
+.provenance-grid { font-family: Consolas, "Courier New", monospace; font-size: 11px; }
+.full-path, .hash-value { overflow-wrap: anywhere; word-break: normal; }
+.receipt-id { margin: 14px 0 0; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
+.project-worksets {
+  max-width: 1480px;
+  margin: 16px auto 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-panel);
+}
+.project-worksets > summary {
+  display: grid;
+  grid-template-columns: minmax(160px, auto) minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  font-weight: 800;
+}
+.project-worksets > summary small { color: var(--muted); font-weight: 400; }
+.workset-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; padding: 0 16px 16px; }
+.workset-card { min-width: 0; padding: 14px; border: 1px solid var(--console-line); background: var(--console-deep); }
+.workset-card h3 { margin: 0 0 10px; color: var(--teal); }
+.workset-card dl { display: grid; gap: 8px; margin: 0; }
+.workset-card dt { color: var(--muted); font-size: 10px; font-weight: 800; text-transform: uppercase; }
+.workset-card dd { margin: 2px 0 0; font: 11px/1.4 Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+.evidence-appendix {
+  max-width: 1480px;
+  margin: 16px auto 0;
+  border: 1px solid var(--console-line);
+  background: var(--console-deep);
+}
+.evidence-appendix > summary {
+  display: grid;
+  grid-template-columns: minmax(160px, auto) minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 800;
+}
+.evidence-appendix > summary small { color: var(--muted); font-weight: 400; }
+.appendix-content { display: grid; gap: 24px; padding: 0 16px 18px; }
+.appendix-content section { min-width: 0; }
+.noscript-notice {
+  max-width: 1480px;
+  margin: 0 auto 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--priority);
+  background: #252116;
+}
+a { color: var(--teal); }
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  z-index: 10;
+  padding: 8px 12px;
+  background: #f4f1e8;
+  color: #111411;
+  border: 2px solid var(--yellow);
+  border-radius: 6px;
+  font-weight: 700;
+}
+.skip-link:focus {
+  top: 12px;
+}
+.top-strip {
+  padding: 28px 32px 24px;
+  background: #151914;
+  border-bottom: 1px solid var(--line);
+}
+.frontpage-report {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.report-front-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  gap: 24px;
+  align-items: start;
+}
+.report-main { min-width: 0; }
+.report-headline {
+  max-width: 48rem;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+.report-interpretation {
+  max-width: 55rem;
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 15px;
+}
+.report-next {
+  display: grid;
+  gap: 8px;
+  padding-top: 26px;
+}
+.report-next span {
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.report-primary-action,
+.report-secondary-link {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 11px;
+  border: 1px solid rgba(244, 241, 232, 0.24);
+  border-radius: 6px;
+  color: var(--ink);
+  font-weight: 800;
+  text-decoration: none;
+}
+.report-primary-action {
+  background: rgba(217, 168, 78, 0.18);
+  border-color: rgba(217, 168, 78, 0.55);
+}
+.report-secondary-link {
+  background: rgba(102, 198, 166, 0.12);
+}
+.report-status-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin: 18px 0 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.report-status-strip div {
+  min-width: 0;
+  padding: 0 14px;
+  border-right: 1px solid rgba(244, 241, 232, 0.12);
+  background: transparent;
+}
+.report-status-strip div:first-child { padding-left: 0; }
+.report-status-strip div:last-child { border-right: 0; padding-right: 0; }
+.report-status-strip dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.report-status-strip dd {
+  margin: 3px 0 0;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.report-meta {
+  max-width: 68rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.dashboard-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 9px 32px;
+  background: #171b17;
+  border-bottom: 1px solid var(--line);
+}
+.dashboard-nav a {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+.dashboard-nav a:hover {
+  background: var(--soft);
+}
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 8px; font-size: 30px; letter-spacing: 0; }
+h2 { margin-bottom: 14px; font-size: 20px; letter-spacing: 0; }
+h3 { margin-bottom: 10px; font-size: 16px; letter-spacing: 0; }
+h4 { margin: 0 0 8px; font-size: 14px; letter-spacing: 0; }
+.eyebrow {
+  margin-bottom: 6px;
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.subtle { color: var(--muted); font-size: 13px; }
+.overview-board {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(3, minmax(112px, 0.72fr));
+  gap: 10px;
+}
+.overview-card {
+  min-height: 112px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #1e241f;
+  box-shadow: 0 12px 30px var(--shadow);
+}
+.overview-card span {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.overview-card strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+.overview-card p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.overview-primary {
+  background: #243321;
+  border-color: #53633b;
+}
+.review-map-list {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: #151914;
+}
+.review-map-item {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 3px;
+  min-height: 56px;
+  padding: 8px 10px 8px 12px;
+  border: 0;
+  border-right: 1px solid rgba(244, 241, 232, 0.12);
+  border-left: 3px solid transparent;
+  color: var(--ink);
+  text-decoration: none;
+}
+.review-map-item:last-child { border-right: 0; }
+.review-map-item:hover {
+  background: #1b211c;
+}
+.review-map-item.tone-green { border-left-color: var(--green); }
+.review-map-item.tone-yellow { border-left-color: var(--yellow); }
+.review-map-item.tone-red { border-left-color: var(--red); }
+.review-map-item.tone-neutral { border-left-color: var(--teal); }
+.review-map-item span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.review-map-item strong {
+  font-size: 14px;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+.review-map-item small {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+.meter-note { font-size: 12px; }
+.why-line { color: var(--ink); }
+.meter-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.meter-links a,
+.stack-card a,
+.back-link {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  padding: 5px 10px;
+  border: 1px solid rgba(244, 241, 232, 0.24);
+  border-radius: 6px;
+  color: var(--ink);
+  font-weight: 700;
+  text-decoration: none;
+}
+.meter-links a:first-child,
+.stack-card a {
+  background: rgba(102, 198, 166, 0.14);
+}
+.top-kpis {
+  display: grid;
+  grid-template-columns: 1.2fr repeat(4, minmax(88px, 1fr));
+  gap: 8px;
+}
+.kpi-large, .kpi-small {
+  min-height: 78px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--soft);
+  overflow-wrap: anywhere;
+}
+.kpi-large span, .kpi-small span {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.kpi-large strong { display: block; font-size: 24px; }
+.kpi-small strong { display: block; font-size: 14px; }
+.page { padding: 18px 32px 40px; }
+.review-stack-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+.stack-card {
+  min-height: 152px;
+  padding: 14px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.stack-card span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.stack-card strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+.stack-card p { color: var(--muted); font-size: 13px; }
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.metric-card { padding: 14px; min-height: 126px; }
+.metric-card span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.metric-card strong {
+  display: block;
+  margin: 8px 0 6px;
+  font-size: 24px;
+  overflow-wrap: anywhere;
+}
+.metric-card p { margin-bottom: 10px; color: var(--muted); font-size: 13px; }
+.section { margin-top: 18px; }
+.section-grid { display: grid; gap: 12px; }
+.grid-three { grid-template-columns: repeat(3, minmax(220px, 1fr)); }
+.panel { padding: 16px; }
+.disclosure {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #171b17;
+}
+.disclosure > summary {
+  display: grid;
+  grid-template-columns: auto minmax(160px, auto) minmax(220px, 1fr);
+  gap: 14px;
+  align-items: center;
+  min-height: 56px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.disclosure > summary::-webkit-details-marker { display: none; }
+.disclosure > summary::before {
+  content: "+";
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--yellow);
+}
+.disclosure[open] > summary::before { content: "-"; }
+.disclosure > summary h2,
+.disclosure > summary h3 {
+  display: inline;
+  margin: 0;
+}
+.disclosure > summary span {
+  color: var(--muted);
+  font-size: 13px;
+}
+.disclosure > .section-grid {
+  padding: 0 14px 14px;
+}
+.detail-panel { background: #1a1e1a; }
+.linked-detail-grid {
+  display: grid;
+  gap: 14px;
+}
+.detail-anchor-panel {
+  padding: 16px;
+  border-top: 1px solid var(--line);
+  background: #151914;
+}
+.detail-anchor-panel:target {
+  outline: 3px solid rgba(217, 168, 78, 0.75);
+  outline-offset: 3px;
+}
+.detail-anchor-head {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 8px 14px;
+  align-items: start;
+}
+.detail-anchor-head span {
+  color: var(--yellow);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.detail-anchor-head h3,
+.detail-anchor-head p {
+  grid-column: 1;
+  margin: 0;
+}
+.detail-anchor-head p { color: var(--muted); }
+.detail-anchor-head .back-link {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: start;
+}
+.detail-body {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+.related-actions {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.checkpoint-grid, .triage-grid, .project-card-grid, .action-grid, .action-review-grid, .locked-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+}
+.checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card {
+  padding: 14px;
+}
+.checkpoint-card span, .action-card span, .locked-card span, .triage-heading span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.checkpoint-card strong, .action-card strong, .locked-card strong {
+  display: block;
+  margin: 6px 0;
+  font-size: 17px;
+}
+.triage-heading, .project-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.project-card h3 { margin-bottom: 8px; }
+.filter-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 2fr;
+  gap: 10px 14px;
+  align-items: end;
+}
+.filter-panel h3, .filter-panel .subtle { grid-column: 1 / -1; }
+.filter-panel label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.filter-panel input {
+  width: 100%;
+  min-height: 36px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #121612;
+  color: var(--ink);
+  font: inherit;
+}
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.filter-buttons button {
+  min-height: 34px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #161a16;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+}
+.filter-buttons button[aria-pressed="true"] {
+  background: var(--teal);
+  color: #111411;
+}
+.locked-card {
+  border-color: rgba(238, 104, 120, 0.65);
+  background: #2d1b20;
+}
+.locked-card span { color: var(--red); }
+.review-action-card {
+  border-left: 4px solid var(--teal);
+}
+.action-summary {
+  border-left: 4px solid var(--navy);
+}
+.status-badge, .pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+.status-badge { min-width: 96px; justify-content: center; }
+.is-green { color: #0d140f; background: var(--green); }
+.is-yellow { color: #171106; background: var(--yellow); }
+.is-red { color: #1a070b; background: var(--red); }
+.is-neutral { color: #0d140f; background: var(--teal); }
+.meter {
+  width: 100%;
+  height: 10px;
+  margin: 7px 0 4px;
+  overflow: hidden;
+  background: #101410;
+  border-radius: 4px;
+}
+.meter span { display: block; height: 100%; border-radius: 4px; }
+.meter-code { color: var(--muted); font-size: 12px; }
+.table-wrap { overflow-x: auto; background: #171b17; }
+table { width: 100%; border-collapse: collapse; min-width: 760px; }
+caption {
+  padding: 10px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: left;
+}
+th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+th { color: var(--muted); font-size: 12px; text-transform: uppercase; }
+td { font-size: 14px; }
+code {
+  padding: 1px 4px;
+  background: #101410;
+  color: #eadfbd;
+  border-radius: 4px;
+  font-family: Consolas, "Courier New", monospace;
+  overflow-wrap: anywhere;
+}
+.list { margin: 0; padding-left: 19px; }
+.list li { margin: 6px 0; }
+.compact-list li { margin: 3px 0; }
+.safe li::marker { color: var(--green); }
+.locked li::marker, .blocker-list li::marker { color: var(--red); }
+.review li::marker, .warning-list li::marker { color: var(--yellow); }
+.notes li::marker, .readiness li::marker { color: var(--teal); }
+.access-panel { margin-top: 12px; }
+.noscript-notice { border-left: 4px solid var(--yellow); }
+.dashboard-footer {
+  padding: 18px 32px 28px;
+  color: var(--muted);
+  background: #151914;
+  border-top: 1px solid var(--line);
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+@media (max-width: 1120px) {
+  .priority-workspace { grid-template-columns: 1fr; }
+  .priority-lane, .active-decision, .evidence-inspector { min-height: auto; }
+}
+@media (max-width: 980px) {
+  .report-front-grid { grid-template-columns: 1fr; }
+  .report-next { padding-top: 0; }
+  .overview-board, .top-kpis, .review-map-list, .review-stack-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .summary-grid, .grid-three { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .filter-panel { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .production-header { padding: 16px 14px 12px; }
+  .production-title-row { grid-template-columns: 1fr; gap: 14px; }
+  .header-controls { justify-items: start; }
+  .current-state-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .current-state-strip > div:nth-child(2) { border-right: 0; }
+  .current-state-strip > div:nth-child(-n+2) { border-bottom: 1px solid var(--console-line); }
+  .production-page { padding: 12px 14px 30px; }
+  .dashboard-nav { padding: 8px 14px; }
+  .console-panel-head { min-height: 74px; padding: 11px 13px; }
+  .priority-row { min-height: 82px; padding: 11px; }
+  .decision-body, .evidence-body { padding: 14px; }
+  .project-worksets > summary { grid-template-columns: 1fr; }
+  .evidence-appendix > summary { grid-template-columns: 1fr; }
+  .top-strip { padding: 22px 18px; }
+  .page { padding: 18px; }
+  .summary-grid, .grid-three, .overview-board, .top-kpis, .review-map-list, .review-stack-grid { grid-template-columns: 1fr; }
+  .report-status-strip { grid-template-columns: 1fr; }
+  .report-status-strip div {
+    padding: 8px 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(244, 241, 232, 0.12);
+  }
+  .report-status-strip div:last-child { border-bottom: 0; }
+  .disclosure > summary { grid-template-columns: auto 1fr; }
+  .disclosure > summary span { grid-column: 2; }
+  .detail-anchor-head { grid-template-columns: 1fr; }
+  .detail-anchor-head .back-link { grid-column: 1; grid-row: auto; }
+  h1 { font-size: 24px; }
+  .report-headline { font-size: 22px; }
+}
+@media print {
+  body {
+    background: #ffffff;
+    color: #000000;
+    font-size: 11pt;
+  }
+  :root {
+    color-scheme: light;
+    --ink: #000000;
+    --muted: #333333;
+    --line: #999999;
+    --panel: #ffffff;
+    --paper: #ffffff;
+    --soft: #eeeeee;
+  }
+  .skip-link, .dashboard-nav, .filter-panel, .language-switch, script {
+    display: none !important;
+  }
+  .top-strip, .dashboard-footer, .metric-card, .panel, .table-wrap, .checkpoint-card, .triage-card, .project-card, .action-card, .review-action-card, .locked-card, .review-map-item, .stack-card, .detail-anchor-panel {
+    border-color: #999999;
+    box-shadow: none;
+    background: #ffffff;
+    color: #000000;
+  }
+  .disclosure {
+    background: #ffffff;
+    border-color: #999999;
+  }
+  .disclosure:not([open]) > :not(summary) {
+    display: block;
+  }
+  .overview-card {
+    background: #ffffff;
+    color: #000000;
+    box-shadow: none;
+  }
+  .page {
+    padding: 0;
+  }
+  .production-header, .production-page, .console-panel, .project-worksets, .evidence-appendix {
+    background: #ffffff;
+    color: #000000;
+    border-color: #777777;
+  }
+  .production-page { padding: 0; }
+  .priority-workspace { grid-template-columns: 1fr; }
+  .priority-row, .console-panel-head { background: #ffffff; color: #000000; }
+  .project-worksets:not([open]) > :not(summary) { display: block; }
+  .evidence-appendix:not([open]) > :not(summary) { display: block; }
+  .section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+  }
+}
+  </style>
+</head>
+<body data-dashboard-variant="priority-review-console-production" data-dashboard-theme="dark">
+  <a class="skip-link" href="#main-content"><span class="lang-ja">主要画面へ移動</span><span class="lang-en">Skip to main console</span></a>
+  <header class="production-header" data-landmark="current-state">
+    <div class="production-title-row">
+      <div class="production-title-copy">
+        <p class="eyebrow">DEVCOCKPITCORE / OBSERVER CONSOLE</p>
+        <h1><span class="lang-ja">優先レビュー・コンソール</span><span class="lang-en">Priority Review Console</span></h1>
+        <p class="production-deck"><span class="lang-ja">優先事項を選ぶと、判断と根拠が同じ対象へ同期します。読み取り専用・オフライン・非実行です。</span><span class="lang-en">Selecting a priority synchronizes its decision and evidence. Read-only, offline, and non-executable.</span></p>
+      </div>
+      <div class="header-controls">
+        <div class="language-switch" role="group" aria-label="表示言語" data-language-controls data-aria-ja="表示言語" data-aria-en="Display language">
+          <button type="button" data-language="ja" aria-pressed="true" data-aria-ja="日本語を表示" data-aria-en="Show Japanese">日本語</button>
+          <button type="button" data-language="en" aria-pressed="false" data-aria-ja="英語を表示" data-aria-en="Show English">English</button>
+        </div>
+        <div class="acceptance-state"><span class="lang-ja">視覚受入</span><span class="lang-en">Visual acceptance</span><strong><span class="lang-ja">受入済み</span><span class="lang-en">Accepted</span></strong></div>
+      </div>
+    </div>
+    <dl class="current-state-strip">
+      <div data-landmark="local-observer-health"><dt><span class="lang-ja">ローカル観測基盤</span><span class="lang-en">Local observer health</span></dt><dd><span class="lang-ja">継続可能</span><span class="lang-en">Continue</span></dd></div>
+      <div data-landmark="packet-attention"><dt><span class="lang-ja">監修パケット</span><span class="lang-en">Packet attention</span></dt><dd><span class="lang-ja">停止 0 / 判断 0 / 対応中 1 / 完了 0</span><span class="lang-en">0 stop / 0 decision / 1 active / 0 closed</span></dd></div>
+      <div data-landmark="freshness-summary"><dt><span class="lang-ja">ローカルreceipt根拠</span><span class="lang-en">Local receipt evidence</span></dt><dd><span class="lang-ja">0/8 使用可</span><span class="lang-en">0/8 eligible</span></dd></div>
+      <div><dt><span class="lang-ja">優先事項</span><span class="lang-en">Priorities</span></dt><dd>1</dd></div>
+      <div><dt><span class="lang-ja">実行権限</span><span class="lang-en">Execution</span></dt><dd><span class="lang-ja">ロック中</span><span class="lang-en">Locked</span></dd></div>
+    </dl>
+    <p class="receipt-line"><span class="lang-ja">ローカルreceipt判定時点</span><span class="lang-en">Local receipt assessed at</span> <time datetime="2026-07-12T00:00:00Z">2026-07-12T00:00:00Z</time> · <span class="lang-ja">追跡済みの決定論的サンプル。継続的な現状根拠ではありません。</span><span class="lang-en">Tracked deterministic example; never authoritative for live state.</span></p>
+  </header>
+  <nav class="dashboard-nav" aria-label="ダッシュボード区分" data-aria-ja="ダッシュボード区分" data-aria-en="Dashboard sections">
+    <a href="#priority-lane"><span class="lang-ja">優先一覧</span><span class="lang-en">Priorities</span></a>
+    <a href="#active-decision"><span class="lang-ja">判断</span><span class="lang-en">Decision</span></a>
+    <a href="#evidence-inspector"><span class="lang-ja">根拠</span><span class="lang-en">Evidence</span></a>
+    <a href="#project-worksets"><span class="lang-ja">プロジェクト別</span><span class="lang-en">Project worksets</span></a>
+    <a href="#evidence-appendix"><span class="lang-ja">証拠付録</span><span class="lang-en">Evidence appendix</span></a>
+  </nav>
+  <main id="main-content" class="production-page" tabindex="-1">
+    <noscript><div class="noscript-notice"><strong><span class="lang-ja">JavaScriptは無効です。</span><span class="lang-en">JavaScript is disabled.</span></strong> <span class="lang-ja">完全な代替表示として、順位1、その判断、根拠を以下に表示します。</span><span class="lang-en">Rank 1, its active decision, and its evidence are rendered below as the complete fallback.</span></div></noscript>
+    <div class="priority-workspace" data-priority-workspace>
+      <section id="priority-lane" class="console-panel priority-lane" data-landmark="priority-lane" aria-labelledby="priority-lane-title"><header class="console-panel-head"><p>01 / PRIORITY LANE</p><h2 id="priority-lane-title"><span class="lang-ja">優先事項</span><span class="lang-en">Priorities</span></h2><span class="panel-hint"><span class="lang-ja">確認優先度</span><span class="lang-en">Review attention</span></span></header><div class="priority-list" role="listbox" aria-label="優先レビュー一覧" data-aria-ja="優先レビュー一覧" data-aria-en="Priority review queue"><button type="button" class="priority-row state-continue" data-priority-id="task-31aac3069238ee38" data-evidence-id="task-31aac3069238ee38.source_report" data-project-key="nlmytgen" data-thread-id="nlmytgen-h2-authentic-source-export-v1" data-lane-id="SUPERVISION_EVIDENCE_EXPORT" role="option" aria-selected="true" aria-controls="active-decision evidence-inspector" tabindex="0" data-landmark="priority-first"><span class="priority-rank">#1</span><span class="priority-copy"><span class="priority-identity">nlmytgen · nlmytgen-h2-authentic-source-export-v1 · SUPERVISION_EVIDENCE_EXPORT</span><strong><span class="lang-ja">nlmytgen: This file is an authentic owner-authorized point-in-time observation of the current NLMYTGen checkout.</span><span class="lang-en">This file is an authentic owner-authorized point-in-time observation of the current NLMYTGen checkout.</span></strong><small><span class="lang-ja">現在: point-in-time-source-report-exported</span><span class="lang-en">Current state: point-in-time-source-report-exported</span></small><span class="priority-meta"><span><span class="lang-ja">安全に継続</span><span class="lang-en">Safe continuation</span></span><span><span class="lang-ja">User</span><span class="lang-en">User</span></span><span>AGENT_REPORT_H2_SOURCE_V1.md</span><span><span class="lang-ja">対象外・現状根拠使用不可</span><span class="lang-en">Not applicable · claim-ineligible</span></span></span></span></button></div><p class="queue-note"><span class="lang-ja">global rank は確認・判断の優先度であり、実行順ではありません。異なるprojectの安全な継続は並行できます。</span><span class="lang-en">Global rank is attention and review priority, not execution order. Safe continuations in different projects may proceed in parallel.</span></p></section>
+      <section id="active-decision" class="console-panel active-decision" data-landmark="active-decision" data-item-mode="active" data-priority-id="task-31aac3069238ee38" data-selected-priority-id="task-31aac3069238ee38" aria-labelledby="active-decision-title"><header class="console-panel-head"><p>02 / ACTIVE DECISION</p><h2 id="active-decision-title"><span class="lang-ja">現在の判断</span><span class="lang-en">Active Decision</span></h2><span class="panel-hint" data-field="rank">#1</span></header><div class="decision-body"><p class="decision-kicker" data-field="state"><span class="lang-ja">安全に継続</span><span class="lang-en">Safe continuation</span></p><h3 data-field="action"><span class="lang-ja">nlmytgen: This file is an authentic owner-authorized point-in-time observation of the current NLMYTGen checkout.</span><span class="lang-en">This file is an authentic owner-authorized point-in-time observation of the current NLMYTGen checkout.</span></h3><p class="decision-reason" data-field="reason"><span class="lang-ja">現在: point-in-time-source-report-exported</span><span class="lang-en">Current state: point-in-time-source-report-exported</span></p><dl class="decision-grid"><div><dt><span class="lang-ja">project / thread</span><span class="lang-en">Project / thread</span></dt><dd data-field="project-identity">nlmytgen / nlmytgen-h2-authentic-source-export-v1</dd></div><div><dt><span class="lang-ja">lane / slice</span><span class="lang-en">Lane / slice</span></dt><dd data-field="lane-identity">SUPERVISION_EVIDENCE_EXPORT / authentic-point-in-time-checkout-observation-v1</dd></div><div><dt><span class="lang-ja">判断すること</span><span class="lang-en">Decision</span></dt><dd data-field="decision"><span class="lang-ja">確認分類: active_safe_continuation</span><span class="lang-en">Attention class: active_safe_continuation</span></dd></div><div><dt><span class="lang-ja">望ましい結果</span><span class="lang-en">Desired outcome</span></dt><dd data-field="outcome"><span class="lang-ja">devcockpitcore-h2-authentic-round-trip-v1</span><span class="lang-en">devcockpitcore-h2-authentic-round-trip-v1</span></dd></div><div><dt><span class="lang-ja">所有者</span><span class="lang-en">Owner</span></dt><dd data-field="owner"><span class="lang-ja">User</span><span class="lang-en">User</span></dd></div><div><dt><span class="lang-ja">次の操作</span><span class="lang-en">Next operation</span></dt><dd><span class="lang-ja">根拠を確認して判断を記録する（自動実行なし）</span><span class="lang-en">Review evidence and record a decision (no execution)</span></dd></div></dl></div></section>
+      <aside id="evidence-inspector" class="console-panel evidence-inspector" data-landmark="evidence-inspector" data-item-mode="active" data-priority-id="task-31aac3069238ee38" data-selected-priority-id="task-31aac3069238ee38" data-evidence-id="task-31aac3069238ee38.source_report" aria-labelledby="evidence-inspector-title"><header class="console-panel-head"><p>03 / EVIDENCE INSPECTOR</p><h2 id="evidence-inspector-title"><span class="lang-ja">根拠</span><span class="lang-en">Evidence</span></h2><span class="panel-hint"><span class="lang-ja">manifest拘束report</span><span class="lang-en">Manifest-bound packet report</span></span></header><div class="evidence-body"><div class="evidence-status" data-field="freshness" data-landmark="freshness-status"><span class="lang-ja">対象外・現状根拠使用不可</span><span class="lang-en">Not applicable · claim-ineligible</span></div><dl class="evidence-grid"><div><dt><span class="lang-ja">根拠母集団</span><span class="lang-en">Evidence population</span></dt><dd data-field="evidence-population">packet_report</dd></div><div><dt><span class="lang-ja">ソース</span><span class="lang-en">Source</span></dt><dd data-field="source-label"><span class="lang-ja">証拠ソース</span><span class="lang-en">Evidence source</span><small data-field="source-route">AGENT_REPORT_H2_SOURCE_V1.md</small></dd></div><div><dt><span class="lang-ja">現状根拠として使用可</span><span class="lang-en">Current-claim eligible</span></dt><dd data-field="eligible"><span class="lang-ja">使用不可</span><span class="lang-en">Ineligible</span></dd></div><div><dt><span class="lang-ja">時間状態</span><span class="lang-en">Temporal state</span></dt><dd data-field="temporal"><span class="lang-ja">対象外</span><span class="lang-en">Not applicable</span></dd></div><div><dt><span class="lang-ja">改訂整合性</span><span class="lang-en">Revision binding</span></dt><dd data-field="revision"><span class="lang-ja">一致</span><span class="lang-en">Match</span></dd></div><div><dt><span class="lang-ja">判定時点</span><span class="lang-en">Assessed at</span></dt><dd data-field="assessed">2026-07-19T15:12:24.4917578+09:00</dd></div><div><dt><span class="lang-ja">有効期限</span><span class="lang-en">Fresh through</span></dt><dd data-field="fresh-through">n/a</dd></div></dl><details class="provenance-details" data-landmark="provenance"><summary><span class="lang-ja">由来の詳細</span><span class="lang-en">Provenance details</span></summary><dl class="provenance-grid"><div><dt>source_id</dt><dd data-field="source-id">task-31aac3069238ee38.source_report</dd></div><div><dt>attention_class</dt><dd data-field="attention-class">active_safe_continuation</dd></div><div><dt>full_path</dt><dd class="full-path" data-field="source-path">artifacts/review/h2-authentic-single-report-round-trip-v1/source/AGENT_REPORT_H2_SOURCE_V1.md</dd></div><div><dt>authority</dt><dd data-field="authority">manifest_bound_authentic_point_in_time_report</dd></div><div><dt>reason_codes</dt><dd data-field="reason-codes">active_safe_continuation, INTEGRATE_AND_CONTINUE</dd></div><div><dt>review_actions</dt><dd data-field="review-actions">none</dd></div><div><dt>content_sha256</dt><dd class="hash-value" data-field="content-sha">d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b</dd></div></dl></details><p class="receipt-id" data-field="evidence-binding">manifest-bound packet evidence</p></div></aside>
+    </div>
+    <details id="project-worksets" class="project-worksets"><summary><span><span class="lang-ja">project別 workset</span><span class="lang-en">Project worksets</span></span><small><span class="lang-ja">同じtask IDをproject単位で再投影します。</span><span class="lang-en">The same task IDs are reprojected by project; ranks are not recalculated.</span></small></summary><div class="workset-grid"><article class="workset-card"><h3>nlmytgen</h3><dl><div><dt><span class="lang-ja">project内の先頭task</span><span class="lang-en">Project-local first task</span></dt><dd><code>task-31aac3069238ee38</code></dd></div><div><dt><span class="lang-ja">global rank参照</span><span class="lang-en">Global rank references</span></dt><dd>#1 task-31aac3069238ee38</dd></div><div><dt><span class="lang-ja">active task</span><span class="lang-en">Active tasks</span></dt><dd>task-31aac3069238ee38</dd></div><div><dt><span class="lang-ja">user / supervisor gate</span><span class="lang-en">User / supervisor gate</span></dt><dd>none</dd></div><div><dt><span class="lang-ja">安全な継続</span><span class="lang-en">Safe continuation</span></dt><dd>task-31aac3069238ee38</dd></div><div><dt><span class="lang-ja">closed / informational</span><span class="lang-en">Closed / informational</span></dt><dd>none</dd></div></dl></article></div></details>
+    <details id="evidence-appendix" class="evidence-appendix"><summary><span><span class="lang-ja">証拠付録を開く</span><span class="lang-en">Open evidence appendix</span></span><small><span class="lang-ja">密な表・確認項目・ロック中の領域は主画面の下位です。</span><span class="lang-en">Dense tables, review actions, and locked lanes remain subordinate.</span></small></summary><div class="appendix-content"><section aria-labelledby="receipt-ledger-title"><h2 id="receipt-ledger-title"><span class="lang-ja">鮮度receipt台帳</span><span class="lang-en">Freshness receipt ledger</span></h2><div class="table-wrap" data-overflow-allowed><table><caption><span class="lang-ja">鮮度receiptの証拠ソース</span><span class="lang-en">Evidence freshness receipt sources</span></caption><thead><tr><th><span class="lang-ja">プロジェクト</span><span class="lang-en">Project</span></th><th><span class="lang-ja">ソース</span><span class="lang-en">Source</span></th><th><span class="lang-ja">必須</span><span class="lang-en">Required</span></th><th><span class="lang-ja">鮮度</span><span class="lang-en">Freshness</span></th><th><span class="lang-ja">改訂整合性</span><span class="lang-en">Revision</span></th><th><span class="lang-ja">使用可</span><span class="lang-en">Eligible</span></th><th><span class="lang-ja">経路</span><span class="lang-en">Path</span></th></tr></thead><tbody><tr><td>clippipegen</td><td>clippipegen.live_status_observation</td><td>False</td><td>fresh</td><td>match</td><td>False</td><td>git-observation:../ClipPipeGen</td></tr><tr><td>devcockpitcore</td><td>cross-project-smoke-sample</td><td>True</td><td>stale</td><td>mismatch</td><td>False</td><td>devcockpitcore_cross_project_smoke_result.json</td></tr><tr><td>devcockpitcore</td><td>devcockpitcore.live_status_observation</td><td>True</td><td>fresh</td><td>match</td><td>False</td><td>git-observation:.</td></tr><tr><td>devcockpitcore</td><td>intent-comparison-manifest-v2</td><td>True</td><td>stale</td><td>mismatch</td><td>False</td><td>intent_comparison_manifest.json</td></tr><tr><td>devcockpitcore</td><td>status-snapshot-sample</td><td>True</td><td>stale</td><td>mismatch</td><td>False</td><td>devcockpitcore_status.json</td></tr><tr><td>devcockpitcore</td><td>validation-pack-sample</td><td>True</td><td>stale</td><td>mismatch</td><td>False</td><td>devcockpitcore_validation_pack_result.json</td></tr><tr><td>nlmytgen</td><td>nlmytgen.live_status_observation</td><td>False</td><td>fresh</td><td>match</td><td>False</td><td>git-observation:../NLMYTGen</td></tr><tr><td>writingpage</td><td>writingpage.live_status_observation</td><td>False</td><td>unknown</td><td>unknown</td><td>False</td><td>git-observation:../WritingPage</td></tr></tbody></table></div></section><section aria-labelledby="review-actions-title"><h2 id="review-actions-title"><span class="lang-ja">非実行の確認項目</span><span class="lang-en">Non-executable review actions</span></h2><div class="panel action-summary"><h3><span class="lang-ja">確認専用action package</span><span class="lang-en">Review-only Action Package</span></h3><p><strong><span class="lang-ja">非実行:</span><span class="lang-en">Non-executable:</span></strong> <span class="lang-ja">全項目を</span><span class="lang-en">every generated action is marked</span> <code>executable: false</code>.</p><p><strong><span class="lang-ja">合計:</span><span class="lang-en">Total:</span></strong> 18 <strong><span class="lang-ja">停止:</span><span class="lang-en">Blockers:</span></strong> 0 <strong><span class="lang-ja">警告:</span><span class="lang-en">Warnings:</span></strong> 14 <strong><span class="lang-ja">参考:</span><span class="lang-en">Info:</span></strong> 4</p><p><strong>JSON:</strong> <code>artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_review_actions.json</code></p><p><strong>Markdown:</strong> <code>artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_review_actions.md</code></p></div><div class="action-review-grid"><article id="validation-001" class="review-action-card" data-review-action data-severity="warning" data-search="validation-001 validation_pack devcockpitcore review validation warning pseudo_git_tag_scan: findings present samples/validation_packs/devcockpitcore_validation_pack_result.json"><div class="project-card-head"><h3>Review validation warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>validation-001</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> validation_pack / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> pseudo_git_tag_scan: findings present</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Classify whether this is expected fixture or hygiene residue, then record whether cleanup is needed.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/validation_packs/devcockpitcore_validation_pack_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = local_review</p></article><article id="validation-002" class="review-action-card" data-review-action data-severity="warning" data-search="validation-002 validation_pack devcockpitcore review validation warning validation summary result is warn samples/validation_packs/devcockpitcore_validation_pack_result.json"><div class="project-card-head"><h3>Review validation warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>validation-002</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> validation_pack / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> validation summary result is warn</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Classify whether this is expected fixture or hygiene residue, then record whether cleanup is needed.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/validation_packs/devcockpitcore_validation_pack_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = local_review</p></article><article id="smoke-003" class="review-action-card" data-review-action data-severity="warning" data-search="smoke-003 cross_project_smoke none review cross-project smoke warning devcockpitcore: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-003</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> devcockpitcore: warn</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="smoke-004" class="review-action-card" data-review-action data-severity="warning" data-search="smoke-004 cross_project_smoke none review cross-project smoke warning nlmytgen: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-004</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> nlmytgen: warn</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="smoke-005" class="review-action-card" data-review-action data-severity="warning" data-search="smoke-005 cross_project_smoke none review cross-project smoke warning writingpage: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-005</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> writingpage: warn</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="smoke-006" class="review-action-card" data-review-action data-severity="warning" data-search="smoke-006 cross_project_smoke none review cross-project smoke warning clippipegen: warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-006</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> clippipegen: warn</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="smoke-007" class="review-action-card" data-review-action data-severity="warning" data-search="smoke-007 cross_project_smoke none review cross-project smoke warning report hygiene warnings present samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-007</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> report hygiene warnings present</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="smoke-008" class="review-action-card" data-review-action data-severity="warning" data-search="smoke-008 cross_project_smoke none review cross-project smoke warning cross-project smoke summary result is warn samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review cross-project smoke warning</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>smoke-008</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> cross-project smoke summary result is warn</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Review the smoke row and decide whether the observer warning is expected; do not edit sibling repositories from this package.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="project-devcockpitcore-009" class="review-action-card" data-review-action data-severity="warning" data-search="project-devcockpitcore-009 cross_project_smoke devcockpitcore review devcockpitcore smoke row worktree is dirty samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review devcockpitcore smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-devcockpitcore-009</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> worktree is dirty</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="project-nlmytgen-010" class="review-action-card" data-review-action data-severity="warning" data-search="project-nlmytgen-010 cross_project_smoke nlmytgen review nlmytgen smoke row current branch &#x27;codex/episode-002-thumbnail-visual-proof-v1&#x27; differs from adapter default &#x27;master&#x27; samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review nlmytgen smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-nlmytgen-010</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke / nlmytgen</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> current branch &#x27;codex/episode-002-thumbnail-visual-proof-v1&#x27; differs from adapter default &#x27;master&#x27;</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="project-writingpage-011" class="review-action-card" data-review-action data-severity="warning" data-search="project-writingpage-011 cross_project_smoke writingpage review writingpage smoke row runtime state document is absent samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review writingpage smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-writingpage-011</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke / writingpage</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> runtime state document is absent</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="project-clippipegen-012" class="review-action-card" data-review-action data-severity="warning" data-search="project-clippipegen-012 cross_project_smoke clippipegen review clippipegen smoke row runtime state document is absent samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review clippipegen smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-clippipegen-012</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke / clippipegen</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> runtime state document is absent</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="project-clippipegen-013" class="review-action-card" data-review-action data-severity="warning" data-search="project-clippipegen-013 cross_project_smoke clippipegen review clippipegen smoke row project context document is absent samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json"><div class="project-card-head"><h3>Review clippipegen smoke row</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>project-clippipegen-013</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> cross_project_smoke / clippipegen</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> project context document is absent</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Inspect this project row as observer evidence only; route any real project work through that project&#x27;s own lane.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = dashboard_only</p></article><article id="status-014" class="review-action-card" data-review-action data-severity="warning" data-search="status-014 status_snapshot devcockpitcore review current repository status note worktree is dirty samples/status_snapshots/devcockpitcore_status.json"><div class="project-card-head"><h3>Review current repository status note</h3><span class="pill is-yellow">warning</span></div><p><strong>ID:</strong> <code>status-014</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> status_snapshot / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> worktree is dirty</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Confirm the current worktree state is expected before treating the dashboard as ready for integration.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>samples/status_snapshots/devcockpitcore_status.json</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> operator</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = local_review</p></article><article id="checkpoint-015" class="review-action-card" data-review-action data-severity="info" data-search="checkpoint-015 dashboard_review devcockpitcore 1. priority comprehension 0 blocker(s), 9 warning signal(s) priority lane / active decision"><div class="project-card-head"><h3>1. Priority Comprehension</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>checkpoint-015</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> dashboard_review / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> 0 blocker(s), 9 warning signal(s)</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Confirm rank 1 exposes action, reason, state, owner, and next operation.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>Priority Lane / Active Decision</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> supervisor</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = manual_freeform</p></article><article id="checkpoint-016" class="review-action-card" data-review-action data-severity="info" data-search="checkpoint-016 dashboard_review devcockpitcore 2. selection synchronization priority, decision, and evidence share one selected id priority review console"><div class="project-card-head"><h3>2. Selection Synchronization</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>checkpoint-016</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> dashboard_review / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> priority, decision, and evidence share one selected ID</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Confirm click and keyboard selection keep the decision and evidence inspector synchronized.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>Priority Review Console</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> supervisor</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = manual_freeform</p></article><article id="checkpoint-017" class="review-action-card" data-review-action data-severity="info" data-search="checkpoint-017 dashboard_review devcockpitcore 3. evidence eligibility validation warn / smoke warn evidence inspector / receipt ledger"><div class="project-card-head"><h3>3. Evidence Eligibility</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>checkpoint-017</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> dashboard_review / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> validation warn / smoke warn</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Verify the receipt&#x27;s freshness, revision binding, authority, and current-claim eligibility.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>Evidence Inspector / receipt ledger</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> supervisor</p><p><strong><span class="lang-ja">確認専用:</span><span class="lang-en">Review-only:</span></strong> executable = false; surface = manual_freeform</p></article><article id="locked-gate-018" class="review-action-card" data-review-action data-severity="info" data-search="locked-gate-018 locked_gate devcockpitcore keep locked lanes gated locked lanes are reminders, not generated work items. artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html"><div class="project-card-head"><h3>Keep locked lanes gated</h3><span class="pill is-neutral">info</span></div><p><strong>ID:</strong> <code>locked-gate-018</code></p><p><strong><span class="lang-ja">ソース:</span><span class="lang-en">Source:</span></strong> locked_gate / devcockpitcore</p><p><strong><span class="lang-ja">理由:</span><span class="lang-en">Reason:</span></strong> Locked lanes are reminders, not generated work items.</p><p><strong><span class="lang-ja">推奨確認:</span><span class="lang-en">Suggested review:</span></strong> Use locked lane cards only to confirm the dashboard did not expand execution authority.</p><p><strong><span class="lang-ja">根拠:</span><span class="lang-en">Evidence:</span></strong> <code>artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html</code></p><p><strong><span class="lang-ja">所有者:</span><span class="lang-en">Owner hint:</span></strong> supervisor</p><p><strong><span class="lang-ja">gateでロック:</span><span class="lang-en">Locked by gate:</span></strong> executable = false; surface = dashboard_only</p></article></div></section><section aria-labelledby="validation-title"><h2 id="validation-title"><span class="lang-ja">検証pack</span><span class="lang-en">Validation Pack</span></h2><div class="panel"><h3><span class="lang-ja">概要</span><span class="lang-en">Summary</span></h3><p><span class="pill is-yellow">warn</span> 16/16 complete, 15 pass, 1 warn, 0 fail</p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="16" aria-valuenow="16" aria-label="16/16 done, meter ############~###"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">############~###</code></div><div class="table-wrap" data-overflow-allowed><table><caption><span class="lang-ja">検証packの項目、結果、重要度、証拠進捗、詳細。</span><span class="lang-en">Validation pack checks, result severity, evidence bar, and detail.</span></caption><thead><tr><th><span class="lang-ja">検証</span><span class="lang-en">Check</span></th><th><span class="lang-ja">結果</span><span class="lang-en">Result</span></th><th><span class="lang-ja">重要度</span><span class="lang-en">Severity</span></th><th><span class="lang-ja">進捗</span><span class="lang-en">Bar</span></th><th><span class="lang-ja">詳細</span><span class="lang-en">Detail</span></th></tr></thead><tbody><tr><td><code>python_compile</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="2" aria-valuenow="2" aria-label="2/2 done, meter ##"><span class="is-green" style="width:100%"></span></div><code class="meter-code">##</code></td><td>0 findings</td></tr><tr><td><code>unittest_discover</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=14.727 stdout=&#x27;&#x27; stderr=&#x27;...........................................................................................</td></tr><tr><td><code>adapter_manifest_validation</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ####"><span class="is-green" style="width:100%"></span></div><code class="meter-code">####</code></td><td>0 findings</td></tr><tr><td><code>status_snapshot_help</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.09 stdout=&#x27;usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\n [--pretty] [--no-wr...</td></tr><tr><td><code>report_normalizer_help</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.066 stdout=&#x27;usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\n [--pretty]\n\nNormal...</td></tr><tr><td><code>gate_classifier_help</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.066 stdout=&#x27;usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\n [--status-snapshot STA...</td></tr><tr><td><code>json_parse</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="41" aria-valuenow="41" aria-label="41/41 done, meter #########################################"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#########################################</code></td><td>0 findings</td></tr><tr><td><code>git_diff_check</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.036 stdout=&#x27;&#x27; stderr=&#x27;&#x27;</td></tr><tr><td><code>git_diff_cached_check</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.026 stdout=&#x27;&#x27; stderr=&#x27;&#x27;</td></tr><tr><td><code>git_status</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>exit=0 duration_seconds=0.079 stdout=&#x27;## main...origin/main\n M README.md\n M docs/PROJECT_COCKPIT.md\n M docs/PROJECT_PIPELINE.mmd\n M d...</td></tr><tr><td><code>conflict_marker_scan</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr><tr><td><code>prompt_residue_scan</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr><tr><td><code>pseudo_git_tag_scan</code></td><td><span class="pill is-yellow">warn</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter ~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">~</code></td><td>1 findings</td></tr><tr><td><code>raw_local_path_scan</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>redacted local path references observed: 1</td></tr><tr><td><code>mojibake_scan</code></td><td><span class="pill is-green">pass</span></td><td>warning</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr><tr><td><code>forbidden_implementation_scan</code></td><td><span class="pill is-green">pass</span></td><td>required</td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="1" aria-valuenow="1" aria-label="1/1 done, meter #"><span class="is-green" style="width:100%"></span></div><code class="meter-code">#</code></td><td>0 findings</td></tr></tbody></table></div></section><section aria-labelledby="smoke-title"><h2 id="smoke-title"><span class="lang-ja">横断project観測</span><span class="lang-en">Cross-Project Smoke</span></h2><div class="panel"><h3><span class="lang-ja">概要</span><span class="lang-en">Summary</span></h3><p><span class="pill is-yellow">warn</span> 5/5 complete, 0 pass, 5 warn, 0 fail</p><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="5" aria-valuenow="5" aria-label="5/5 done, meter ~~~~~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">~~~~~</code></div><div class="table-wrap" data-overflow-allowed><table><caption><span class="lang-ja">横断project観測の結果、repository、branch、警告概要。</span><span class="lang-en">Cross-project smoke rows with result, repository hint, branch, and warning summary.</span></caption><thead><tr><th><span class="lang-ja">プロジェクト</span><span class="lang-en">Project</span></th><th><span class="lang-ja">結果</span><span class="lang-en">Result</span></th><th><span class="lang-ja">repository</span><span class="lang-en">Repo</span></th><th><span class="lang-ja">branch / HEAD</span><span class="lang-en">Branch / HEAD</span></th><th><span class="lang-ja">進捗</span><span class="lang-en">Bar</span></th><th><span class="lang-ja">警告</span><span class="lang-en">Warnings</span></th></tr></thead><tbody><tr><td><strong>DevCockpitCore</strong><br><code>adapters/devcockpitcore.json</code></td><td><span class="pill is-yellow">warn</span></td><td>.</td><td>main<br><span class="subtle">2e5e924</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>worktree is dirty</td></tr><tr><td><strong>NLMYTGen</strong><br><code>adapters/nlmytgen.json</code></td><td><span class="pill is-yellow">warn</span></td><td>../NLMYTGen</td><td>codex/episode-002-thumbnail-visual-proof-v1<br><span class="subtle">6846359</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>current branch &#x27;codex/episode-002-thumbnail-visual-proof-v1&#x27; differs from adapter default &#x27;master&#x27;</td></tr><tr><td><strong>WritingPage</strong><br><code>adapters/writingpage.json</code></td><td><span class="pill is-yellow">warn</span></td><td>../WritingPage</td><td>main<br><span class="subtle">fbc1949</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>runtime state document is absent</td></tr><tr><td><strong>ClipPipeGen</strong><br><code>adapters/clippipegen.json</code></td><td><span class="pill is-yellow">warn</span></td><td>../ClipPipeGen</td><td>main<br><span class="subtle">cef2012</span></td><td><div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="4" aria-label="4/4 done, meter ###~"><span class="is-yellow" style="width:100%"></span></div><code class="meter-code">###~</code></td><td>runtime state document is absent; project context document is absent</td></tr></tbody></table></div></section><section aria-labelledby="locked-title"><h2 id="locked-title"><span class="lang-ja">ロック中lane</span><span class="lang-en">Locked lanes</span></h2><div class="locked-grid"><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">任意command runner</span><span class="lang-en">Arbitrary command runner</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">汎用実行loop</span><span class="lang-en">General execution loop</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">schedulerまたはbackground daemon</span><span class="lang-en">Scheduler or background daemon</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">web serverまたはremote dashboard</span><span class="lang-en">Web server or remote dashboard</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">databaseまたはcredential処理</span><span class="lang-en">Database or credential handling</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">外部service通知</span><span class="lang-en">External service notifications</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">対象repositoryへのwriteback</span><span class="lang-en">Target repository writeback</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">C5/C6 capability拡張</span><span class="lang-en">C5/C6 capability expansion</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article><article class="locked-card"><span>LOCKED</span><strong><span class="lang-ja">公開publicationまたはproduction-ready claim</span><span class="lang-en">Public publication or production-ready claims</span></strong><p><span class="lang-ja">この静的dashboard sliceには含みません。</span><span class="lang-en">Not part of this static dashboard slice.</span></p></article></div></section><section aria-labelledby="sources-title"><h2 id="sources-title"><span class="lang-ja">ソースとアクセス</span><span class="lang-en">Sources and access</span></h2><div class="table-wrap" data-overflow-allowed><table><caption><span class="lang-ja">ローカルdashboardが使用した証拠ソース。</span><span class="lang-en">Source evidence files used by the local dashboard.</span></caption><thead><tr><th><span class="lang-ja">ソース</span><span class="lang-en">Source</span></th><th><span class="lang-ja">repository相対経路</span><span class="lang-en">Repo-relative path</span></th><th><span class="lang-ja">状態</span><span class="lang-en">State</span></th><th><span class="lang-ja">schema</span><span class="lang-en">Schema</span></th><th><span class="lang-ja">生成時点</span><span class="lang-en">Generated at</span></th></tr></thead><tbody><tr><td>validation_pack_result</td><td><code>samples/validation_packs/devcockpitcore_validation_pack_result.json</code></td><td><span class="pill is-green">loaded</span></td><td>validation_pack_result.v1</td><td>2026-07-06T07:55:56Z</td></tr><tr><td>cross_project_smoke_result</td><td><code>samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json</code></td><td><span class="pill is-green">loaded</span></td><td>cross_project_smoke_result.v1</td><td>2026-07-06T07:56:16Z</td></tr><tr><td>status_snapshot</td><td><code>samples/status_snapshots/devcockpitcore_status.json</code></td><td><span class="pill is-green">loaded</span></td><td>status_snapshot.v1</td><td>2026-07-06T07:55:33Z</td></tr><tr><td>adapter_manifest</td><td><code>adapters/devcockpitcore.json</code></td><td><span class="pill is-green">loaded</span></td><td>adapter_manifest.v1</td><td>n/a</td></tr><tr><td>runtime_state</td><td><code>docs/runtime-state.md</code></td><td><span class="pill is-green">loaded</span></td><td>text</td><td>n/a</td></tr><tr><td>project_context</td><td><code>docs/project-context.md</code></td><td><span class="pill is-green">loaded</span></td><td>text</td><td>n/a</td></tr><tr><td>evidence_freshness_receipt</td><td><code>samples/evidence_freshness/evidence_freshness_receipt_v1.json</code></td><td><span class="pill is-green">loaded</span></td><td>evidence_freshness_receipt.v1</td><td>2026-07-12T00:00:00Z</td></tr><tr><td>cross_project_supervision_packet</td><td><code>artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json</code></td><td><span class="pill is-green">loaded</span></td><td>cross_project_supervision_packet.v1</td><td>2026-07-19T15:12:24.4917578+09:00</td></tr></tbody></table></div><div class="panel access-panel"><h3><span class="lang-ja">開く / access</span><span class="lang-en">Open / Access</span></h3><p><strong><span class="lang-ja">repository相対成果物:</span><span class="lang-en">Repo-relative artifact:</span></strong> <code>artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_dashboard.html</code></p><p><strong><span class="lang-ja">access mode:</span><span class="lang-en">Access mode:</span></strong> local_static_file</p><p><strong><span class="lang-ja">access state:</span><span class="lang-en">Access state:</span></strong> worker_generated_not_user_opened</p><p><strong><span class="lang-ja">証拠level:</span><span class="lang-en">Evidence level:</span></strong> file_generated_by_dashboard_command</p><p><strong>PowerShell:</strong> <code>Start-Process .\artifacts\review\h2-authentic-single-report-round-trip-v1\dashboard\devcockpitcore_dashboard.html</code></p></div><div class="panel access-panel"><h3><span class="lang-ja">確認action package</span><span class="lang-en">Review Action Package</span></h3><p><strong>Schema:</strong> devcockpit_review_actions.v1</p><p><strong>JSON:</strong> <code>artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_review_actions.json</code></p><p><strong>Markdown:</strong> <code>artifacts/review/h2-authentic-single-report-round-trip-v1/dashboard/devcockpitcore_review_actions.md</code></p><p><strong><span class="lang-ja">access state:</span><span class="lang-en">Access state:</span></strong> worker_generated_not_user_opened</p><p><strong><span class="lang-ja">証拠level:</span><span class="lang-en">Evidence level:</span></strong> file_generated_by_dashboard_command</p></div></section></div></details>
+  </main>
+<footer class="dashboard-footer"><p><span class="lang-ja">Workerが生成したローカル確認成果物です。生成時点</span><span class="lang-en">Worker-generated local review artifact. Generated at</span> 2026-07-19T15:12:24.4917578+09:00. <span class="lang-ja">server、telemetry、task runner、repository writebackは含みません。</span><span class="lang-en">No server, telemetry, task runner, or repository writeback is included.</span></p></footer>
+  <script type="application/json" id="priority-model">[{"action":{"en":"This file is an authentic owner-authorized point-in-time observation of the current NLMYTGen checkout.","ja":"nlmytgen: This file is an authentic owner-authorized point-in-time observation of the current NLMYTGen checkout."},"artifact_id":"h2-authentic-source-agent-report-v1","attention_class":"active_safe_continuation","blocked_by_gate":false,"claim_class":"derived","condition_key":"supervision_packet:task-31aac3069238ee38","decision":{"en":"Attention class: active_safe_continuation","ja":"確認分類: active_safe_continuation"},"desired_outcome":{"en":"devcockpitcore-h2-authentic-round-trip-v1","ja":"devcockpitcore-h2-authentic-round-trip-v1"},"display_copy_claim_class":"editorial","evidence_claim_class":"observed_report","evidence_refs":[{"assessed_at":"2026-07-19T15:12:24.4917578+09:00","authority_classification":"manifest_bound_authentic_point_in_time_report","content_sha256":"d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b","current_state_claim_eligible":false,"evidence_population":"packet_report","fresh_through":null,"freshness_state":"not_applicable","reason_codes":["active_safe_continuation","INTEGRATE_AND_CONTINUE"],"revision_binding_state":"match","source_id":"task-31aac3069238ee38.source_report","source_path":"artifacts/review/h2-authentic-single-report-round-trip-v1/source/AGENT_REPORT_H2_SOURCE_V1.md","temporal_state":"not_applicable"}],"executable":false,"global_rank_meaning":"attention_and_review_priority_only","informational_only":false,"lane_id":"SUPERVISION_EVIDENCE_EXPORT","owner":{"en":"User","id":"user","ja":"User"},"precedence":4,"primary_evidence_id":"task-31aac3069238ee38.source_report","primary_evidence_path":"artifacts/review/h2-authentic-single-report-round-trip-v1/source/AGENT_REPORT_H2_SOURCE_V1.md","priority_id":"task-31aac3069238ee38","project_key":"nlmytgen","project_local_first":true,"rank":1,"ranking_policy_claim_class":"policy","raw_condition":"integrate_and_continue","reason":{"en":"Current state: point-in-time-source-report-exported","ja":"現在: point-in-time-source-report-exported"},"required":true,"review_action_refs":[],"safe_next_surface":"local_review","slice_id":"authentic-point-in-time-checkout-observation-v1","source_report_sha256":"d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b","state":{"en":"Safe continuation","ja":"安全に継続","key":"continue"},"thread_id":"nlmytgen-h2-authentic-source-export-v1"}]</script>
+  <script>
+(function () {
+  "use strict";
+  var modelNode = document.getElementById("priority-model");
+  var priorities = modelNode ? JSON.parse(modelNode.textContent || "[]") : [];
+  var byId = new Map(priorities.map(function (item) { return [item.priority_id, item]; }));
+  var priorityButtons = Array.prototype.slice.call(document.querySelectorAll("button[data-priority-id]"));
+  var languageButtons = Array.prototype.slice.call(document.querySelectorAll("button[data-language]"));
+  var decision = document.querySelector('[data-landmark="active-decision"]');
+  var inspector = document.querySelector('[data-landmark="evidence-inspector"]');
+  var selectedId = priorityButtons.length ? priorityButtons[0].dataset.priorityId : null;
+
+  function compactPath(value) {
+    var normalized = String(value || "").replaceAll("\\", "/").replace(/[/]$/u, "");
+    if (normalized.startsWith("git-observation:")) return normalized;
+    return normalized.split("/").pop() || "n/a";
+  }
+
+  function humanSourceLabel(sourceId) {
+    var known = {
+      "validation-pack-sample": { ja: "検証pack結果", en: "Validation pack result" },
+      "cross-project-smoke-sample": { ja: "横断観測結果", en: "Cross-project observation" },
+      "status-snapshot-sample": { ja: "状態snapshot", en: "Status snapshot" },
+      "intent-comparison-manifest-v2": { ja: "比較履歴", en: "Comparison history" }
+    };
+    if (known[sourceId]) return known[sourceId];
+    if (String(sourceId || "").endsWith(".live_status_observation")) {
+      var project = sourceId.split(".", 1)[0];
+      return { ja: project + " 読み取り専用観測", en: project + " read-only observation" };
+    }
+    return { ja: "証拠ソース", en: "Evidence source" };
+  }
+
+  function localizedEvidenceLabels(evidence) {
+    var freshness = {
+      fresh: { ja: "鮮度内", en: "Fresh" },
+      stale: { ja: "期限超過", en: "Stale" },
+      unknown: { ja: "鮮度不明", en: "Freshness unknown" },
+      not_applicable: { ja: "対象外", en: "Not applicable" }
+    }[evidence.freshness_state] || { ja: "鮮度不明", en: String(evidence.freshness_state || "Unknown") };
+    var temporal = {
+      fresh: { ja: "鮮度内", en: "Fresh" },
+      stale: { ja: "期限超過", en: "Stale" },
+      unknown: { ja: "不明", en: "Unknown" },
+      not_applicable: { ja: "対象外", en: "Not applicable" }
+    }[evidence.temporal_state] || { ja: "不明", en: String(evidence.temporal_state || "Unknown") };
+    var revision = {
+      match: { ja: "一致", en: "Match" },
+      mismatch: { ja: "不一致", en: "Mismatch" },
+      unknown: { ja: "不明", en: "Unknown" },
+      not_applicable: { ja: "対象外", en: "Not applicable" }
+    }[evidence.revision_binding_state] || { ja: "不明", en: String(evidence.revision_binding_state || "Unknown") };
+    var eligibility = evidence.current_state_claim_eligible === true
+      ? { ja: "使用可", en: "Eligible" }
+      : { ja: "使用不可", en: "Ineligible" };
+    return {
+      classification: {
+        ja: freshness.ja + "・現状根拠" + eligibility.ja,
+        en: freshness.en + " · claim-" + eligibility.en.toLowerCase()
+      },
+      eligibility: eligibility,
+      temporal: temporal,
+      revision: revision
+    };
+  }
+
+  function bilingual(container, value) {
+    if (!container) return;
+    var pair = value || {};
+    var ja = container.querySelector(".lang-ja");
+    var en = container.querySelector(".lang-en");
+    if (ja) ja.textContent = pair.ja || "";
+    if (en) en.textContent = pair.en || "";
+  }
+
+  function text(target, value) {
+    var node = document.querySelector(target);
+    if (node) node.textContent = value == null ? "n/a" : String(value);
+  }
+
+  function selectPriority(priorityId, focus) {
+    var item = byId.get(priorityId);
+    if (!item || !decision || !inspector) return;
+    selectedId = priorityId;
+    priorityButtons.forEach(function (button) {
+      var isSelected = button.dataset.priorityId === priorityId;
+      button.setAttribute("aria-selected", isSelected ? "true" : "false");
+      button.tabIndex = isSelected ? 0 : -1;
+      if (isSelected && focus) button.focus();
+    });
+    decision.dataset.priorityId = priorityId;
+    decision.dataset.selectedPriorityId = priorityId;
+    inspector.dataset.priorityId = priorityId;
+    inspector.dataset.selectedPriorityId = priorityId;
+    decision.querySelector('[data-field="rank"]').textContent = "#" + item.rank;
+    bilingual(decision.querySelector('[data-field="state"]'), item.state);
+    bilingual(decision.querySelector('[data-field="action"]'), item.action);
+    bilingual(decision.querySelector('[data-field="reason"]'), item.reason);
+    bilingual(decision.querySelector('[data-field="decision"]'), item.decision);
+    bilingual(decision.querySelector('[data-field="outcome"]'), item.desired_outcome);
+    bilingual(decision.querySelector('[data-field="owner"]'), item.owner);
+    text('#active-decision [data-field="project-identity"]', (item.project_key || "unknown") + " / " + (item.thread_id || "local-observation"));
+    text('#active-decision [data-field="lane-identity"]', (item.lane_id || "observer") + " / " + (item.slice_id || "local-review"));
+    var evidence = (item.evidence_refs || [])[0] || {};
+    var evidenceLabels = localizedEvidenceLabels(evidence);
+    inspector.dataset.evidenceId = evidence.source_id || "";
+    bilingual(inspector.querySelector('[data-field="freshness"]'), evidenceLabels.classification);
+    bilingual(inspector.querySelector('[data-field="source-label"]'), humanSourceLabel(evidence.source_id));
+    text('#evidence-inspector [data-field="source-route"]', compactPath(evidence.source_path));
+    bilingual(inspector.querySelector('[data-field="eligible"]'), evidenceLabels.eligibility);
+    bilingual(inspector.querySelector('[data-field="temporal"]'), evidenceLabels.temporal);
+    bilingual(inspector.querySelector('[data-field="revision"]'), evidenceLabels.revision);
+    text('#evidence-inspector [data-field="assessed"]', evidence.assessed_at || "n/a");
+    text('#evidence-inspector [data-field="fresh-through"]', evidence.fresh_through || "n/a");
+    text('#evidence-inspector [data-field="source-id"]', evidence.source_id || "n/a");
+    text('#evidence-inspector [data-field="attention-class"]', item.attention_class || "local_evidence_priority");
+    text('#evidence-inspector [data-field="evidence-population"]', evidence.evidence_population || "local_observer_receipt");
+    text('#evidence-inspector [data-field="source-path"]', evidence.source_path || "n/a");
+    text('#evidence-inspector [data-field="authority"]', evidence.authority_classification || "unknown");
+    text('#evidence-inspector [data-field="reason-codes"]', (evidence.reason_codes || []).join(", ") || "none");
+    text(
+      '#evidence-inspector [data-field="review-actions"]',
+      (item.review_action_refs || []).map(function (ref) { return ref.action_id; }).join(", ") || "none"
+    );
+    text('#evidence-inspector [data-field="content-sha"]', evidence.content_sha256 || "n/a");
+  }
+
+  function setLanguage(language, focus) {
+    if (language !== "ja" && language !== "en") return;
+    document.documentElement.lang = language;
+    document.documentElement.dataset.language = language;
+    Array.prototype.slice.call(document.querySelectorAll("[data-aria-ja][data-aria-en]")).forEach(function (node) {
+      node.setAttribute("aria-label", node.dataset[language === "ja" ? "ariaJa" : "ariaEn"] || "");
+    });
+    languageButtons.forEach(function (button) {
+      var isSelected = button.dataset.language === language;
+      button.setAttribute("aria-pressed", isSelected ? "true" : "false");
+      button.tabIndex = isSelected ? 0 : -1;
+      button.setAttribute("aria-label", button.dataset[language === "ja" ? "ariaJa" : "ariaEn"] || button.textContent);
+      if (isSelected && focus) button.focus();
+    });
+  }
+
+  priorityButtons.forEach(function (button, index) {
+    button.addEventListener("click", function () { selectPriority(button.dataset.priorityId, false); });
+    button.addEventListener("keydown", function (event) {
+      var target = index;
+      if (event.key === "ArrowDown" || event.key === "ArrowRight") target = (index + 1) % priorityButtons.length;
+      else if (event.key === "ArrowUp" || event.key === "ArrowLeft") target = (index - 1 + priorityButtons.length) % priorityButtons.length;
+      else if (event.key === "Home") target = 0;
+      else if (event.key === "End") target = priorityButtons.length - 1;
+      else return;
+      event.preventDefault();
+      selectPriority(priorityButtons[target].dataset.priorityId, true);
+    });
+  });
+
+  languageButtons.forEach(function (button, index) {
+    button.addEventListener("click", function () { setLanguage(button.dataset.language, false); });
+    button.addEventListener("keydown", function (event) {
+      var target = index;
+      if (event.key === "ArrowRight" || event.key === "ArrowDown") target = (index + 1) % languageButtons.length;
+      else if (event.key === "ArrowLeft" || event.key === "ArrowUp") target = (index - 1 + languageButtons.length) % languageButtons.length;
+      else if (event.key === "Home") target = 0;
+      else if (event.key === "End") target = languageButtons.length - 1;
+      else return;
+      event.preventDefault();
+      setLanguage(languageButtons[target].dataset.language, true);
+    });
+  });
+
+  var requestedLanguage = new URLSearchParams(window.location.search).get("language");
+  setLanguage(requestedLanguage === "en" ? "en" : "ja", false);
+  if (selectedId) selectPriority(selectedId, false);
+}());
+  </script>
+</body>
+</html>

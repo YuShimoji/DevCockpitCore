@@ -10,9 +10,74 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from dev_cockpit.gate_classifier import classify_gate
+from dev_cockpit.report_normalizer import normalize_report
+
+
+H2_REPORT_PATH = (
+    ROOT
+    / "artifacts"
+    / "review"
+    / "h2-authentic-single-report-round-trip-v1"
+    / "source"
+    / "AGENT_REPORT_H2_SOURCE_V1.md"
+)
 
 
 class GateClassifierTests(unittest.TestCase):
+    def test_authentic_report_postfix_negation_does_not_create_true_stop(self) -> None:
+        normalization = normalize_report(
+            H2_REPORT_PATH.read_text(encoding="utf-8"),
+            input_path=H2_REPORT_PATH.relative_to(ROOT).as_posix(),
+            generated_at="2026-07-19T15:12:24.4917578+09:00",
+        )
+
+        result = classify_gate(
+            normalization,
+            generated_at="2026-07-19T15:12:24.4917578+09:00",
+        )
+
+        self.assertEqual("green", result["gates"]["destructive_action_gate"]["status"])
+        self.assertEqual("yellow", result["health"]["classification_status"])
+        self.assertEqual("integrate_and_continue", result["classification"]["decision"])
+        self.assertEqual("INTEGRATE_AND_CONTINUE", result["classification"]["stop_class"])
+        self.assertEqual([], result["health"]["blockers"])
+        self.assertEqual("yellow", normalization["status"]["health"])
+        self.assertEqual("green", normalization["health"]["normalization_status"])
+
+    def test_local_destructive_negations_remain_safe(self) -> None:
+        for wording in (
+            "rebase_stash_reset_clean: not performed",
+            "reset was not performed",
+            "no force push was used",
+        ):
+            with self.subTest(wording=wording):
+                report = _base_report()
+                report["sections"]["extra"] = {"git_state": wording}
+                result = classify_gate(report, generated_at="2026-07-19T00:00:00Z")
+                self.assertEqual(
+                    "green",
+                    result["gates"]["destructive_action_gate"]["status"],
+                )
+
+    def test_actual_destructive_directives_remain_red(self) -> None:
+        for wording in (
+            "run git reset --hard",
+            "rebase the branch",
+            "stash user changes",
+            "force push required",
+            "reset was not performed, but force push required",
+            "no force push was used; run git reset --hard",
+        ):
+            with self.subTest(wording=wording):
+                report = _base_report()
+                report["sections"]["extra"] = {"next_command": wording}
+                result = classify_gate(report, generated_at="2026-07-19T00:00:00Z")
+                self.assertEqual(
+                    "red",
+                    result["gates"]["destructive_action_gate"]["status"],
+                )
+                self.assertEqual("TRUE_STOP", result["classification"]["stop_class"])
+
     def test_green_completed_pushed_clean_parity_report(self) -> None:
         result = classify_gate(_base_report(), generated_at="2026-01-01T00:00:00Z")
         self.assertEqual(result["schema_version"], "gate_classification.v1")

@@ -12,7 +12,11 @@ import sys
 from typing import Any
 
 from .evidence_freshness import EvidenceFreshnessError, load_receipt
-from .supervision_packet import SupervisionPacketError, load_packet
+from .supervision_packet import (
+    SupervisionPacketError,
+    load_packet,
+    load_packet_with_manifest,
+)
 
 
 PRODUCER = "dev_cockpit.dashboard"
@@ -110,9 +114,12 @@ def build_dashboard_model(
     review_actions_md_path: str | Path = DEFAULT_REVIEW_ACTIONS_MD_PATH,
     priority_readback_path: str | Path = DEFAULT_PRIORITY_READBACK_PATH,
     supervision_packet_path: str | Path | None = None,
+    supervision_manifest_path: str | Path | None = None,
     verify_freshness_hashes: bool = False,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
+    if supervision_manifest_path is not None and supervision_packet_path is None:
+        raise DashboardError("supervision manifest requires a supervision packet")
     root = Path(repo_root)
 
     freshness_full_path = _resolve(root, freshness_receipt_path)
@@ -141,7 +148,14 @@ def build_dashboard_model(
     if supervision_packet_path is not None:
         packet_full_path = _resolve(root, supervision_packet_path)
         try:
-            supervision_packet = load_packet(packet_full_path)
+            if supervision_manifest_path is not None:
+                supervision_packet = load_packet_with_manifest(
+                    packet_full_path,
+                    _resolve(root, supervision_manifest_path),
+                    repo_root=root,
+                )
+            else:
+                supervision_packet = load_packet(packet_full_path)
         except (SupervisionPacketError, OSError) as exc:
             raise DashboardError(
                 f"invalid cross-project supervision packet {supervision_packet_path}: {exc}"
@@ -153,6 +167,16 @@ def build_dashboard_model(
             "schema_version": str(supervision_packet.get("schema_version", "unknown")),
             "generated_at": str(supervision_packet.get("generated_at", "")),
             "artifact_id": str(supervision_packet.get("artifact_id", "")),
+            "binding_mode": (
+                "source_bound_manifest_reprojection"
+                if supervision_manifest_path is not None
+                else "standalone_packet_contract"
+            ),
+            "manifest_path": (
+                _display_path(root, supervision_manifest_path)
+                if supervision_manifest_path is not None
+                else None
+            ),
         }
     freshness_receipt_source = {
         "label": "evidence_freshness_receipt",
@@ -865,6 +889,13 @@ def main(argv: list[str] | None = None) -> int:
         ),
     )
     parser.add_argument(
+        "--supervision-manifest",
+        help=(
+            "Optional task_report_manifest.v1 path. When paired with --supervision-packet, "
+            "the packet is rebuilt from its bound report sources before projection."
+        ),
+    )
+    parser.add_argument(
         "--generated-at",
         help="Optional deterministic dashboard generation timestamp; defaults to receipt assessed_at.",
     )
@@ -890,6 +921,7 @@ def main(argv: list[str] | None = None) -> int:
             review_actions_md_path=args.review_actions_md,
             priority_readback_path=args.priority_readback,
             supervision_packet_path=args.supervision_packet,
+            supervision_manifest_path=args.supervision_manifest,
             verify_freshness_hashes=not args.skip_freshness_hash_verification,
             generated_at=args.generated_at,
         )
@@ -1935,6 +1967,7 @@ def _packet_task_items(packet: dict[str, Any], collection: str) -> list[dict[str
         )
         source_path = str(task.get("source_report_path", ""))
         source_hash = str(task.get("source_report_sha256", ""))
+        evidence_class = str(task.get("evidence_class", ""))
         evidence = {
             "source_id": f"{task_id}.source_report",
             "source_path": source_path,
@@ -1945,7 +1978,11 @@ def _packet_task_items(packet: dict[str, Any], collection: str) -> list[dict[str
             "assessed_at": str(packet.get("generated_at", "")),
             "fresh_through": None,
             "content_sha256": source_hash,
-            "authority_classification": "explicit_manifest_bound_report",
+            "authority_classification": (
+                "manifest_bound_authentic_point_in_time_report"
+                if evidence_class == "authentic_owner_authorized_point_in_time_report"
+                else "explicit_manifest_bound_report"
+            ),
             "evidence_population": "packet_report",
             "reason_codes": [attention_class, str(task.get("gate_stop_class", "UNKNOWN"))],
         }

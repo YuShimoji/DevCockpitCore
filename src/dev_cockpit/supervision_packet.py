@@ -87,6 +87,15 @@ NEXT_STATE_KEYS = frozenset(
 FIXTURE_COVERAGE_STATEMENT = (
     "Deterministic non-live fixture coverage from explicit manifest-bound reports."
 )
+AUTHENTIC_EVIDENCE_CLASS = "authentic_owner_authorized_point_in_time_report"
+AUTHENTIC_COVERAGE_STATEMENT = (
+    "Owner-authorized authentic point-in-time report coverage from explicit manifest "
+    "binding; not live/current coverage."
+)
+MIXED_COVERAGE_STATEMENT = (
+    "Explicit manifest-bound non-live report coverage including owner-authorized authentic "
+    "point-in-time evidence; not live/current coverage."
+)
 
 ATTENTION_POLICY = (
     (1, "true_stop_or_required_failure", "True stop or required acceptance failure"),
@@ -258,7 +267,7 @@ def build_supervision_packet(
             "manifest_path": manifest_display,
             "manifest_artifact_id": manifest["artifact_id"],
             "live_coverage": False,
-            "coverage_statement": FIXTURE_COVERAGE_STATEMENT,
+            "coverage_statement": _coverage_statement(tasks),
         },
         "attention_policy": [
             {"precedence": precedence, "key": key, "label": label}
@@ -288,6 +297,31 @@ def load_packet(path: str | Path) -> dict[str, Any]:
 
     data = _read_strict_json(Path(path), label="supervision packet")
     return validate_packet(data)
+
+
+def load_packet_with_manifest(
+    packet_path: str | Path,
+    manifest_path: str | Path,
+    *,
+    repo_root: str | Path = ".",
+) -> dict[str, Any]:
+    """Reload a stored packet only after reprojection from its manifest-bound sources."""
+
+    root = Path(repo_root).resolve()
+    manifest_full_path = _resolve_cli_path(root, manifest_path)
+    packet_full_path = _resolve_cli_path(root, packet_path)
+    manifest = load_manifest(manifest_full_path)
+    rebuilt = build_supervision_packet(
+        manifest,
+        repo_root=root,
+        manifest_path=manifest_full_path,
+        generated_at=str(manifest["generated_at"]),
+    )
+    stored = load_packet(packet_full_path)
+    difference = _first_json_difference(rebuilt, stored)
+    if difference is not None:
+        raise SupervisionPacketError(f"source-bound packet mismatch at {difference}")
+    return stored
 
 
 def validate_packet(value: Any) -> dict[str, Any]:
@@ -419,7 +453,7 @@ def validate_packet(value: Any) -> dict[str, Any]:
     _require_nonempty_string(coverage, "manifest_artifact_id", "packet.coverage")
     if coverage.get("live_coverage") is not False:
         raise SupervisionPacketError("packet coverage live_coverage must be false")
-    if coverage.get("coverage_statement") != FIXTURE_COVERAGE_STATEMENT:
+    if coverage.get("coverage_statement") != _coverage_statement(all_tasks):
         raise SupervisionPacketError("packet coverage statement is invalid")
 
     expected_policy = [
@@ -557,12 +591,24 @@ def dumps_packet(packet: dict[str, Any], *, pretty: bool = False) -> str:
 
 def render_packet_markdown(packet: dict[str, Any]) -> str:
     coverage = packet["coverage"]
+    authentic = coverage["coverage_statement"] == AUTHENTIC_COVERAGE_STATEMENT
+    mixed = coverage["coverage_statement"] == MIXED_COVERAGE_STATEMENT
+    coverage_label = (
+        "authentic_coverage" if authentic else "manifest_coverage" if mixed else "fixture_coverage"
+    )
+    authority = (
+        "owner_authorized_authentic_point_in_time_manifest_binding"
+        if authentic
+        else "mixed_non_live_manifest_bound_evidence"
+        if mixed
+        else "deterministic_non_live_manifest_bound_fixture"
+    )
     lines = [
         "# Cross-Project Supervision Packet V1",
         "",
         f"generated_at: {packet['generated_at']}",
-        f"fixture_coverage: {coverage['project_count']} projects / {coverage['report_count']} reports",
-        "authority: deterministic_non_live_manifest_bound_fixture",
+        f"{coverage_label}: {coverage['project_count']} projects / {coverage['report_count']} reports",
+        f"authority: {authority}",
         "global_rank: attention_and_review_priority_only",
         "executable: false",
         "",
@@ -614,7 +660,13 @@ def render_packet_markdown(packet: dict[str, Any]) -> str:
             "",
             "Only reports explicitly named in the manifest were read. Every source is SHA-256 bound and the packet fails closed on missing, changed, duplicate-key, duplicate-identity, or projection-drift input.",
             "",
-            "This tracked packet is deterministic non-live fixture evidence. It does not discover latest files, infer reports from conversation history, write to sibling repositories, schedule execution, or make any action executable.",
+            (
+                "This packet contains owner-authorized authentic point-in-time report evidence; it is not live/current coverage. It does not discover latest files, infer reports from conversation history, write to sibling repositories, schedule execution, or make any action executable."
+                if authentic
+                else "This packet includes authentic point-in-time and deterministic non-live evidence; it is not live/current coverage. It does not discover latest files, infer reports from conversation history, write to sibling repositories, schedule execution, or make any action executable."
+                if mixed
+                else "This tracked packet is deterministic non-live fixture evidence. It does not discover latest files, infer reports from conversation history, write to sibling repositories, schedule execution, or make any action executable."
+            ),
             "",
         ]
     )
@@ -759,6 +811,15 @@ def _task_from_report(
         "source_report_sha256": content_sha256,
         "executable": False,
     }
+
+
+def _coverage_statement(tasks: list[dict[str, Any]]) -> str:
+    evidence_classes = {str(task.get("evidence_class", "")) for task in tasks}
+    if evidence_classes == {AUTHENTIC_EVIDENCE_CLASS}:
+        return AUTHENTIC_COVERAGE_STATEMENT
+    if AUTHENTIC_EVIDENCE_CLASS in evidence_classes:
+        return MIXED_COVERAGE_STATEMENT
+    return FIXTURE_COVERAGE_STATEMENT
 
 
 def _attention_class(normalization: dict[str, Any], gate: dict[str, Any]) -> str:
@@ -998,6 +1059,32 @@ def _strict_json_equal(left: Any, right: Any) -> bool:
         sort_keys=True,
         separators=(",", ":"),
     )
+
+
+def _first_json_difference(expected: Any, actual: Any, path: str = "$") -> str | None:
+    if type(expected) is not type(actual):
+        return f"{path} (expected {type(expected).__name__}, got {type(actual).__name__})"
+    if isinstance(expected, dict):
+        expected_keys = set(expected)
+        actual_keys = set(actual)
+        if expected_keys != actual_keys:
+            return f"{path} (object keys differ)"
+        for key in sorted(expected_keys):
+            child = _first_json_difference(expected[key], actual[key], f"{path}.{key}")
+            if child is not None:
+                return child
+        return None
+    if isinstance(expected, list):
+        if len(expected) != len(actual):
+            return f"{path} (expected {len(expected)} items, got {len(actual)})"
+        for index, (expected_item, actual_item) in enumerate(zip(expected, actual)):
+            child = _first_json_difference(expected_item, actual_item, f"{path}[{index}]")
+            if child is not None:
+                return child
+        return None
+    if expected != actual:
+        return f"{path} (expected {expected!r}, got {actual!r})"
+    return None
 
 
 if __name__ == "__main__":
