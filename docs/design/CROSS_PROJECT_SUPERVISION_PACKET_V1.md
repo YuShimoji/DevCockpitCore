@@ -273,3 +273,65 @@ Envelope reprojection before exposing authenticity, freshness, revision,
 permission, current eligibility, or live coverage. Invalid partial inputs and
 binding drift fail before model, HTML, readback, or review-action projection.
 Legacy packet-only, packet-plus-manifest, and no-packet routes remain intact.
+
+## Current Observation Ingress And Authority Envelope V2
+
+H3.1 adds `supervision_current_observation.v1` and
+`supervision_report_authority_envelope.v2` without modifying Packet V1,
+Manifest V1, the H2 package, or the H3 V1 package. The observation receipt is
+an exact-key sidecar with explicit project, repository, artifact, and
+authorization identity. Its repository identity is a credential-free
+canonical remote identity; no local absolute target path is serialized.
+
+The producer accepts one explicit Git top-level directory and an output path
+outside that directory. Its Git command surface is fixed to repository-root
+verification, remote identity readback, full HEAD readback, and porcelain
+worktree readback. It does not fetch, checkout, stage, commit, push, execute
+caller-supplied commands, or write to the observed repository. Before and
+after snapshots contain the full HEAD plus the hash and entry count of the
+complete `git status --porcelain=v1 -z --untracked-files=all` payload. The
+loader validates exact keys and types and rederives `actual`, `clean`, and
+`stable` from those snapshots.
+
+Envelope V2 binds source report, manifest, packet, and observation receipt.
+The envelope artifact ID and expected observation artifact ID are explicit
+loader inputs; neither is inferred from the H3 V1 deterministic package.
+Authority separates:
+
+- report permission state;
+- observation authorization state;
+- their exact-scope conjunction;
+- report and re-observation temporal state;
+- report/re-observation/assessment chronology;
+- revision binding;
+- package binding provenance;
+- observation receipt provenance;
+- repository/project/revision cross-binding provenance; and
+- overall current-claim provenance.
+
+Both authorization values must equal
+`allowed_for_DevCockpitCore_H3_current_claim`. Missing values, the H2-only
+scope, insufficient values, and mismatches have distinct states and reason
+codes. Chronology requires
+`report_observed_at <= reobserved_at <= assessed_at`; malformed,
+timezone-missing, future, stale, pre-report, and post-assessment cases remain
+distinguishable. Point-in-time eligibility is possible only when every
+predicate is satisfied. V2 always retains `live_coverage: false` and the
+observer-only non-executable scope.
+
+Dashboard selects V2 only when packet, manifest, envelope, assessment time,
+current observation, expected envelope artifact ID, and expected observation
+artifact ID are all present. It strictly reloads the receipt and fully
+reprojects the envelope before model, HTML, priority readback, or review-action
+projection. Every partial V2 combination fails closed. The pre-existing V1,
+packet-plus-manifest, packet-only, and no-packet paths retain their behavior and
+deterministic bytes.
+
+The operational proof is intentionally synthetic. A unit test creates an
+ephemeral clean Git repository, invokes the observation, packet, envelope, and
+Dashboard public CLIs, and requires current eligibility true together with
+live coverage false and executable false. No synthetic report, receipt,
+envelope, or Dashboard is retained as real project evidence. The tracked H3.1
+readback records only the reproducible proof contract and preservation hashes.
+H4 remains unstarted; a real current claim requires a separately authorized
+report and observation.

@@ -1,6 +1,6 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-19
+updated_at: 2026-07-20
 projection_kind: repository_restart_and_artifact_access
 current_review_artifact: h3-report-authority-envelope-v1
 current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
@@ -38,6 +38,9 @@ h2_source_revision: d38075b97efabc99d1a23e8e0afafd5d44f1e2de
 h2_source_sha256: d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b
 h2_state: h2_authentic_single_report_round_trip_verified_non_live_v1
 h3_state: h3_report_authority_envelope_contract_verified_without_live_promotion_v1
+h3_1_state: h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1
+h3_1_readback_path: artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json
+real_current_observation_attempted: false
 h4_started: false
 current_claim_eligibility: false
 live_coverage: false
@@ -86,7 +89,26 @@ Authenticity is true, temporal state is fresh at the fixed H3 assessment,
 revision state is unknown, and permission state is `insufficient_h2_only`.
 `current_claim_eligibility`, `live_coverage`, and `executable` remain false.
 H4 has not started. A real current claim requires a new fresh
-report/observation with explicit H3/current authorization. Use
+report/observation with explicit H3/current authorization.
+
+H3.1 has closed the public current-observation ingress gap. The new
+`supervision_current_observation.v1` producer observes one explicit Git root
+twice with fixed read-only Git arguments, keeps output outside the target,
+sanitizes repository identity, and rederives actual/clean/stable state from
+the before/after HEAD and complete porcelain hashes. Authority Envelope V2
+requires the exact H3/current scope independently on both report and
+observation, strict report/re-observation/assessment chronology, explicit
+artifact IDs, and separate package, receipt, and repository/project/revision
+provenance. Dashboard accepts V2 only as a complete seven-input set and fully
+reprojects it before use.
+
+Operational proof uses an ephemeral temporary Git repository and the public
+CLIs only. That synthetic proof reaches point-in-time current eligibility while
+retaining live and execution false. No real project observation was attempted,
+no real current state was promoted, and no synthetic receipt or envelope is a
+tracked current-project claim. H4 remains unstarted. The next real gate needs a
+separately authorized fresh report and observation with the exact
+`allowed_for_DevCockpitCore_H3_current_claim` scope. Use
 `docs/PROJECT_COCKPIT.md` for human navigation, `docs/project-context.md` for
 durable boundaries, the Local Validation Entry below for repository checks,
 and direct Git and generated-evidence readback for current facts.
@@ -134,13 +156,19 @@ and fails before projection on drift. Standalone packet validation remains a
 self-consistency check only and must not be promoted to source-authentic,
 live/current, or current-claim authority.
 
-When `--supervision-authority-envelope` is present, Dashboard also requires
+When a V1 `--supervision-authority-envelope` is present, Dashboard also requires
 packet, manifest, and an explicit timezone-aware
 `--supervision-authority-assessed-at`. It validates the source-bound packet,
 strictly loads the Envelope, and rebuilds every binding and authority field
 from the H2 sources plus the trusted assessment input before model projection.
 Envelope-only or partial combinations fail as `DashboardError`. Packet-only,
 packet-plus-manifest, and no-packet paths retain their prior behavior.
+
+For V2, Dashboard additionally requires `--supervision-current-observation`,
+`--supervision-authority-artifact-id`, and
+`--supervision-current-observation-artifact-id`. Supplying any V2-specific
+value without the complete packet/manifest/envelope/assessment/receipt/artifact
+set fails before projection. V1 inputs do not accept or infer V2 identity.
 
 Production direction A is selected for the production dashboard and
 `user_visual_acceptance` is `accepted`.
@@ -170,8 +198,10 @@ permission is explicitly limited to H2. The H3 Envelope therefore records
 `permission_scope_h2_only`, absent authorized current re-observation, unknown
 current revision, `current_claim_eligibility: false`, and
 `live_coverage: false`. The deterministic fixture and production Dashboard
-remain unchanged. H4 is not started; no later state may be inferred without a
-new explicitly authorized input.
+remain unchanged. H3.1 proves only that authorized current-observation ingress
+is operational against a controlled temporary repository. H4 is not started;
+no real later state may be inferred without a new explicitly authorized report
+and observation.
 
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and

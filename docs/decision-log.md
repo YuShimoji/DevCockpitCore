@@ -3,6 +3,51 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-20 - Current Observation Ingress V1 And Authority Envelope V2
+
+Purpose: close the operational gap between the H3 authority predicate and an
+actual read-only current-observation input without using a real project as the
+first execution target.
+
+Decision: add `supervision_current_observation.v1` as an exact-key sidecar and
+producer, and add `supervision_report_authority_envelope.v2` as a separate
+four-source contract. Keep Envelope V1, Packet V1, Manifest V1, the H2 package,
+and the H3 V1 package compatible and unchanged. Observation is allowed only
+for one explicit Git top-level directory, fixed shell-disabled read commands,
+and an output outside the target. Actual, clean, and stable state must be
+rederived from two full HEAD/worktree snapshots.
+
+Effect: V2 current eligibility now requires exact H3/current permission from
+both the report and observation, ordered and fresh report/re-observation times,
+explicit artifact IDs, full revision equality, clean stable observation, and
+separately verified package, receipt, and repository/project/revision
+cross-binding provenance. Dashboard accepts V2 only with the complete input
+set and performs full source reprojection before any model or output
+projection. Missing, H2-only, insufficient, mismatched, malformed, stale,
+future, pre-report, post-assessment, dirty, unstable, mutated, and cross-bound
+inputs fail closed with distinct evidence.
+
+Boundary: the controlled proof uses only an ephemeral temporary Git repository
+and public CLIs. It does not observe or write a real project, fetch, checkout,
+stage, commit, push, execute arbitrary commands, start monitoring, add a
+runner/scheduler/server/database/credential/notification path, establish live
+coverage, or authorize H4. Synthetic current eligibility is not real-project
+current authority.
+
+State: H2 remains complete, H3 V1 remains preserved, and H3.1 current
+observation ingress is operationally verified without real-project promotion.
+The accepted production Dashboard and capture remain unchanged. Real current
+eligibility, live coverage, execution, and H4 remain false or unstarted.
+
+Owner: the Supervisor or owner must separately authorize one fresh report and
+one read-only observation using the exact
+`allowed_for_DevCockpitCore_H3_current_claim` scope before a real current claim
+can be assessed.
+
+Next move: perform no real observation automatically. Wait for that explicit
+dual-source authorization; keep any H4 pilot behind its own separately approved
+contract.
+
 ## 2026-07-19 - Report Authority Envelope V1
 
 Purpose: decide mechanically when an authentic AGENT_REPORT may support a

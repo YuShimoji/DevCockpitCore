@@ -1,0 +1,56 @@
+{
+  "schema_version": "h3_current_observation_ingress_machine_readback.v1",
+  "artifact_id": "h3-current-observation-ingress-v1",
+  "state_transition": {
+    "from": "h3_report_authority_envelope_contract_verified_without_live_promotion_v1",
+    "to": "h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1"
+  },
+  "starting_gap_reproduction": {
+    "D1_public_ingress_absent": true,
+    "D2_observation_authorization_not_required": true,
+    "D3_reobservation_before_report_eligible": true,
+    "D4_explicit_artifact_and_split_provenance_absent": true
+  },
+  "contracts": {
+    "current_observation_schema": "supervision_current_observation.v1",
+    "authority_envelope_schema": "supervision_report_authority_envelope.v2",
+    "dual_authorization_scope": "allowed_for_DevCockpitCore_H3_current_claim",
+    "chronology": "report_observed_at_lte_reobserved_at_lte_assessed_at",
+    "observation_producer": "read_only_fixed_git_argv",
+    "dashboard_partial_input_policy": "reject_before_projection"
+  },
+  "controlled_proof": {
+    "test_id": "tests.test_current_observation_ingress_cli.CurrentObservationIngressCliTests.test_controlled_temporary_git_public_cli_end_to_end",
+    "target": "ephemeral_temporary_git_repository_only",
+    "public_cli_sequence": [
+      "dev_cockpit.current_observation",
+      "dev_cockpit.supervision_packet",
+      "dev_cockpit.report_authority_v2_mode",
+      "dev_cockpit.dashboard_v2_ingress"
+    ],
+    "expected_current_claim_eligibility": true,
+    "expected_live_coverage": false,
+    "expected_executable": false,
+    "deterministic_regeneration": "test_recreates_all_inputs_in_a_temporary_directory"
+  },
+  "preserved_baselines": {
+    "h2_package_tree_sha256": "bd63725b106d80cb573c27f3fadc55a07448c293b4e35a73d0a79d1dc0ac2da5",
+    "h3_v1_package_tree_sha256": "d9a86453163b7db4aa1beaddb3d1483a7e8e35ad7f12ade179e3a359b5acc278",
+    "canonical_packet_json_sha256": "07965839fdef3d591776804e23d94d26996b5a13a6bf380fbe4e263231f59aec",
+    "canonical_packet_markdown_sha256": "d28dbfbde4d162e84843889141408972ea2946d09ba6b581e56c7c2378362fb7",
+    "production_dashboard_sha256": "376521d0367ddfb2e8fa2e6f3c1020baa88f1fa5a3587f7bad9fbeabca7215e1",
+    "production_priority_readback_sha256": "fb0d4ad091af5e4204c4fee15bd71231e7b3371d8399e920ca0ad0b81d85fe29",
+    "production_capture_manifest_sha256": "2d9fcd3af5865391e5da3200f00086c2133b352e01674375084dcb9a61c57181"
+  },
+  "canonical_state": {
+    "h2_complete": true,
+    "h3_v1_preserved": true,
+    "h3_1_ingress_operational": true,
+    "real_current_observation_attempted": false,
+    "real_current_claim_eligibility": false,
+    "live_coverage": false,
+    "executable": false,
+    "h4_started": false
+  },
+  "binding_inventory_sha256": "884b49c8f5e0bae3ebc9f486b1dd992db041896f75b0c531cce459d2f61ba880"
+}

@@ -567,24 +567,79 @@ def main(argv: list[str] | None = None) -> int:
         description="Build a source-bound supervision report authority envelope."
     )
     parser.add_argument("--repo-root", default=".")
+    parser.add_argument(
+        "--envelope-version", choices=("v1", "v2"), default="v1"
+    )
+    parser.add_argument(
+        "--mode",
+        choices=("source-bound", "current-observation-bound"),
+        default="source-bound",
+    )
     parser.add_argument("--manifest", required=True)
     parser.add_argument("--packet", required=True)
+    parser.add_argument("--current-observation")
+    parser.add_argument("--current-observation-artifact-id")
+    parser.add_argument("--artifact-id", default=DEFAULT_ARTIFACT_ID)
     parser.add_argument("--assessed-at", required=True)
     parser.add_argument("--threshold-seconds", type=int, default=DEFAULT_THRESHOLD_SECONDS)
     parser.add_argument("--output", required=True)
     parser.add_argument("--pretty", action="store_true")
     args = parser.parse_args(argv)
     try:
-        envelope = build_authority_envelope(
-            manifest_path=args.manifest,
-            packet_path=args.packet,
-            repo_root=args.repo_root,
-            assessed_at=args.assessed_at,
-            threshold_seconds=args.threshold_seconds,
-        )
         output = _resolve_cli_output(Path(args.repo_root), args.output)
-        write_authority_envelope(envelope, output, pretty=args.pretty)
-    except (OSError, AuthorityEnvelopeError) as exc:
+        if args.envelope_version == "v1":
+            if args.mode != "source-bound":
+                raise AuthorityEnvelopeError(
+                    "authority envelope v1 requires --mode source-bound"
+                )
+            if args.current_observation is not None or args.current_observation_artifact_id is not None:
+                raise AuthorityEnvelopeError(
+                    "authority envelope v1 does not accept a current observation"
+                )
+            if args.artifact_id != DEFAULT_ARTIFACT_ID:
+                raise AuthorityEnvelopeError(
+                    f"authority envelope v1 artifact_id must be {DEFAULT_ARTIFACT_ID!r}"
+                )
+            envelope = build_authority_envelope(
+                manifest_path=args.manifest,
+                packet_path=args.packet,
+                repo_root=args.repo_root,
+                assessed_at=args.assessed_at,
+                threshold_seconds=args.threshold_seconds,
+            )
+            write_authority_envelope(envelope, output, pretty=args.pretty)
+        else:
+            if args.mode != "current-observation-bound":
+                raise AuthorityEnvelopeError(
+                    "authority envelope v2 requires --mode current-observation-bound"
+                )
+            if args.current_observation is None or args.current_observation_artifact_id is None:
+                raise AuthorityEnvelopeError(
+                    "authority envelope v2 requires --current-observation and "
+                    "--current-observation-artifact-id"
+                )
+            from .report_authority_v2 import (
+                build_authority_envelope_v2,
+                dumps_authority_envelope_v2,
+            )
+
+            envelope = build_authority_envelope_v2(
+                manifest_path=args.manifest,
+                packet_path=args.packet,
+                current_observation_path=args.current_observation,
+                repo_root=args.repo_root,
+                assessed_at=args.assessed_at,
+                threshold_seconds=args.threshold_seconds,
+                artifact_id=args.artifact_id,
+                expected_observation_artifact_id=args.current_observation_artifact_id,
+            )
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(
+                dumps_authority_envelope_v2(envelope, pretty=args.pretty),
+                encoding="utf-8",
+                newline="\n",
+            )
+    except (OSError, ValueError) as exc:
         print(f"authority envelope error: {exc}", file=sys.stderr)
         return 2
     print(_display_path(Path(args.repo_root).resolve(), output))

@@ -13,6 +13,7 @@ from typing import Any
 
 from .evidence_freshness import EvidenceFreshnessError, load_receipt
 from .report_authority import AuthorityEnvelopeError, load_authority_envelope
+from .report_authority_v2 import load_authority_envelope_v2
 from .supervision_packet import (
     SupervisionPacketError,
     load_packet,
@@ -118,6 +119,9 @@ def build_dashboard_model(
     supervision_manifest_path: str | Path | None = None,
     supervision_authority_envelope_path: str | Path | None = None,
     supervision_authority_assessed_at: str | None = None,
+    supervision_current_observation_path: str | Path | None = None,
+    supervision_authority_artifact_id: str | None = None,
+    supervision_current_observation_artifact_id: str | None = None,
     verify_freshness_hashes: bool = False,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
@@ -138,6 +142,22 @@ def build_dashboard_model(
     ):
         raise DashboardError(
             "supervision authority assessed_at requires a supervision authority envelope"
+        )
+    v2_inputs = (
+        supervision_current_observation_path,
+        supervision_authority_artifact_id,
+        supervision_current_observation_artifact_id,
+    )
+    if any(value is not None for value in v2_inputs) and (
+        supervision_packet_path is None
+        or supervision_manifest_path is None
+        or supervision_authority_envelope_path is None
+        or supervision_authority_assessed_at is None
+        or any(value is None for value in v2_inputs)
+    ):
+        raise DashboardError(
+            "supervision current observation requires a supervision packet, manifest, "
+            "authority envelope, assessed_at, authority artifact_id, and observation artifact_id"
         )
     root = Path(repo_root)
 
@@ -166,6 +186,7 @@ def build_dashboard_model(
     supervision_packet_source: dict[str, Any] | None = None
     supervision_authority_envelope: dict[str, Any] = {}
     supervision_authority_source: dict[str, Any] | None = None
+    supervision_current_observation_source: dict[str, Any] | None = None
     if supervision_packet_path is not None:
         packet_full_path = _resolve(root, supervision_packet_path)
         try:
@@ -201,13 +222,43 @@ def build_dashboard_model(
         }
     if supervision_authority_envelope_path is not None:
         try:
-            supervision_authority_envelope = load_authority_envelope(
-                _resolve(root, supervision_authority_envelope_path),
-                manifest_path=_resolve(root, supervision_manifest_path),
-                packet_path=_resolve(root, supervision_packet_path),
-                repo_root=root,
-                assessed_at=str(supervision_authority_assessed_at),
-            )
+            if supervision_current_observation_path is None:
+                supervision_authority_envelope = load_authority_envelope(
+                    _resolve(root, supervision_authority_envelope_path),
+                    manifest_path=_resolve(root, supervision_manifest_path),
+                    packet_path=_resolve(root, supervision_packet_path),
+                    repo_root=root,
+                    assessed_at=str(supervision_authority_assessed_at),
+                )
+            else:
+                supervision_authority_envelope = load_authority_envelope_v2(
+                    _resolve(root, supervision_authority_envelope_path),
+                    manifest_path=_resolve(root, supervision_manifest_path),
+                    packet_path=_resolve(root, supervision_packet_path),
+                    current_observation_path=_resolve(
+                        root, supervision_current_observation_path
+                    ),
+                    repo_root=root,
+                    assessed_at=str(supervision_authority_assessed_at),
+                    expected_artifact_id=str(supervision_authority_artifact_id),
+                    expected_observation_artifact_id=str(
+                        supervision_current_observation_artifact_id
+                    ),
+                )
+                projected_observation = _dict(
+                    supervision_authority_envelope.get("observation")
+                )
+                supervision_current_observation_source = {
+                    "label": "supervision_current_observation",
+                    "repo_relative_path": _display_path(
+                        root, supervision_current_observation_path
+                    ),
+                    "state": "loaded",
+                    "schema_version": "supervision_current_observation.v1",
+                    "generated_at": str(projected_observation.get("reobserved_at", "")),
+                    "artifact_id": str(projected_observation.get("artifact_id", "")),
+                    "binding_mode": "strict_read_only_observation_receipt",
+                }
         except (AuthorityEnvelopeError, OSError) as exc:
             raise DashboardError(
                 "invalid supervision report authority envelope "
@@ -230,7 +281,11 @@ def build_dashboard_model(
             "artifact_id": str(
                 supervision_authority_envelope.get("artifact_id", "")
             ),
-            "binding_mode": "source_manifest_packet_reprojection",
+            "binding_mode": (
+                "source_manifest_packet_observation_reprojection"
+                if supervision_current_observation_path is not None
+                else "source_manifest_packet_reprojection"
+            ),
             "manifest_path": _display_path(root, supervision_manifest_path),
             "packet_path": _display_path(root, supervision_packet_path),
         }
@@ -256,6 +311,11 @@ def build_dashboard_model(
         freshness_receipt_source,
         *([supervision_packet_source] if supervision_packet_source else []),
         *([supervision_authority_source] if supervision_authority_source else []),
+        *(
+            [supervision_current_observation_source]
+            if supervision_current_observation_source
+            else []
+        ),
     )
     health = _aggregate_health(validation, smoke, status, source_warnings)
     output_rel = _display_path(root, output_path)
@@ -275,6 +335,8 @@ def build_dashboard_model(
         sources.append(supervision_packet_source)
     if supervision_authority_source:
         sources.append(supervision_authority_source)
+    if supervision_current_observation_source:
+        sources.append(supervision_current_observation_source)
     warning_triage = _warning_triage(health, validation, smoke, status, sources)
     review_checkpoints = _review_checkpoints(health, validation, smoke)
     review_actions = _review_actions(
@@ -984,6 +1046,21 @@ def main(argv: list[str] | None = None) -> int:
         help="Trusted timezone-aware assessment input used to rederive the envelope.",
     )
     parser.add_argument(
+        "--supervision-current-observation",
+        help=(
+            "Optional supervision_current_observation.v1 path. Activates strict "
+            "authority envelope V2 reprojection."
+        ),
+    )
+    parser.add_argument(
+        "--supervision-authority-artifact-id",
+        help="Explicit expected artifact ID for an authority envelope V2.",
+    )
+    parser.add_argument(
+        "--supervision-current-observation-artifact-id",
+        help="Explicit expected artifact ID for the bound current observation.",
+    )
+    parser.add_argument(
         "--generated-at",
         help="Optional deterministic dashboard generation timestamp; defaults to receipt assessed_at.",
     )
@@ -1012,6 +1089,11 @@ def main(argv: list[str] | None = None) -> int:
             supervision_manifest_path=args.supervision_manifest,
             supervision_authority_envelope_path=args.supervision_authority_envelope,
             supervision_authority_assessed_at=args.supervision_authority_assessed_at,
+            supervision_current_observation_path=args.supervision_current_observation,
+            supervision_authority_artifact_id=args.supervision_authority_artifact_id,
+            supervision_current_observation_artifact_id=(
+                args.supervision_current_observation_artifact_id
+            ),
             verify_freshness_hashes=not args.skip_freshness_hash_verification,
             generated_at=args.generated_at,
         )
@@ -2098,7 +2180,16 @@ def _packet_task_items(
             assessment = _dict(envelope.get("assessment"))
             observation = _dict(envelope.get("observation"))
             report = _dict(envelope.get("report"))
-            temporal_state = str(authority.get("temporal_state", "unknown"))
+            is_v2 = (
+                envelope.get("schema_version")
+                == "supervision_report_authority_envelope.v2"
+            )
+            temporal_state = str(
+                authority.get(
+                    "report_temporal_state" if is_v2 else "temporal_state",
+                    "unknown",
+                )
+            )
             authentic = (
                 authority.get("authentic_owner_attached_point_in_time_evidence")
                 is True
@@ -2127,17 +2218,34 @@ def _packet_task_items(
                         authority.get("transport_source_binding_state", "unknown")
                     ),
                     "provenance_authenticity_state": str(
-                        authority.get("provenance_authenticity_state", "unknown")
+                        _dict(envelope.get("provenance")).get(
+                            "overall_current_claim_provenance_state", "unknown"
+                        )
+                        if is_v2
+                        else authority.get("provenance_authenticity_state", "unknown")
                     ),
                     "permission_state": str(
-                        authority.get("permission_state", "unknown")
+                        authority.get(
+                            "permission_conjunction_state" if is_v2 else "permission_state",
+                            "unknown",
+                        )
                     ),
                     "observer_permission_scope": str(
                         report.get("observer_permission_scope", "unknown")
                     ),
-                    "observation_state": str(observation.get("state", "unknown")),
+                    "observation_state": (
+                        "actual_stable"
+                        if is_v2
+                        and observation.get("actual") is True
+                        and observation.get("stable") is True
+                        else "actual_unstable"
+                        if is_v2 and observation.get("actual") is True
+                        else str(observation.get("state", "unknown"))
+                    ),
                     "source_revision": report.get("source_revision"),
-                    "observed_revision": observation.get("observed_revision"),
+                    "observed_revision": observation.get(
+                        "after_head_revision" if is_v2 else "observed_revision"
+                    ),
                     "live_coverage": authority.get("live_coverage") is True,
                     "reason_codes": sorted(
                         {
@@ -3407,7 +3515,7 @@ def priority_readback(model: dict[str, Any]) -> dict[str, Any]:
         },
     }
     if authority_envelope:
-        readback["supervision_report_authority_envelope"] = {
+        authority_readback = {
             "loaded": True,
             "schema_version": authority_envelope.get("schema_version"),
             "artifact_id": authority_envelope.get("artifact_id"),
@@ -3418,6 +3526,14 @@ def priority_readback(model: dict[str, Any]) -> dict[str, Any]:
             "authority": _dict(authority_envelope.get("authority")),
             "scope_boundary": _dict(authority_envelope.get("scope_boundary")),
         }
+        if (
+            authority_envelope.get("schema_version")
+            == "supervision_report_authority_envelope.v2"
+        ):
+            authority_readback["provenance"] = _dict(
+                authority_envelope.get("provenance")
+            )
+        readback["supervision_report_authority_envelope"] = authority_readback
     return readback
 
 

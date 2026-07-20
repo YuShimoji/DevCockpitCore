@@ -1,6 +1,6 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-19
+updated_at: 2026-07-20
 snapshot_kind: persisted_navigation_snapshot
 current_review_artifact: h3-report-authority-envelope-v1
 current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
@@ -16,9 +16,9 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
-current_development_axis: report_authority_contract_readiness
-current_local_slice: h3_report_authority_envelope_contract_verified_without_live_promotion_v1
-recommended_next_horizon: H4_multi_project_pilot_not_started_requires_explicit_authorized_inputs
+current_development_axis: current_observation_ingress_readiness
+current_local_slice: h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1
+recommended_next_horizon: separately_authorized_real_report_and_observation_gate_before_any_H4_work
 
 ## About This Snapshot
 
@@ -58,6 +58,7 @@ is recorded as accepted.
 | Validation pack and cross-project smoke | available | local evidence; missing optional siblings warn |
 | Cross-Project Supervision Packet V1 | available | explicit manifest-bound reports; paired manifest intake reprojects source and packet before use |
 | Report Authority Envelope V1 | available | exact-key sidecar; source, manifest, packet, and derived authority are reprojected before use |
+| Current Observation V1 and Authority Envelope V2 | available | explicit target, read-only fixed Git observation; dual authorization and full four-source reprojection |
 | Priority Review Console and review actions | available | local, static, bilingual, and non-executable |
 | Evidence Freshness V1 integration | available | consumes a validated point-in-time receipt; does not infer live authority |
 | C3 probes | bounded | exactly two fixed help-only keys |
@@ -92,6 +93,24 @@ revision keep `current_claim_eligibility: false`; `live_coverage` and
 `executable` also remain false. H4 has not started. A real current claim needs
 a new fresh report/observation that explicitly permits the H3/current use.
 
+H3.1 is also complete as an ingress-readiness slice.
+`supervision_current_observation.v1` provides an exact-key public producer for
+one explicit repository, derives actual/clean/stable state from two read-only
+Git snapshots, and refuses output inside the target. Authority Envelope V2
+requires exact report and observation authorization, explicit artifact IDs,
+strict `report <= reobservation <= assessment` chronology, and separate
+package, receipt, and repository/project/revision provenance. Dashboard V2
+ingress rejects every partial source set and reprojects all four sources before
+use. A temporary-Git public-CLI proof reaches synthetic current eligibility
+while live coverage and executable remain false.
+
+No real project repository was observed for H3.1 and no real current claim was
+promoted. The H2 and H3 V1 packages, canonical packet, accepted production
+Dashboard, priority readback, and capture remain the preserved baselines. H4
+has not started. The next gate is a separately authorized fresh report plus
+observation using the exact H3/current scope; H4 remains unavailable until an
+independent contract authorizes it.
+
 Resume through this Cockpit for human navigation, `docs/runtime-state.md` for
 the machine-facing projection, and `docs/project-context.md` for durable
 boundaries. Verify branch, revision, parity, worktree, tests, and generated
@@ -102,6 +121,9 @@ the normal current-state route.
 
 The current review entrance is the H3 package-local review surface and its
 deterministic authority readback:
+
+- [H3.1 current-observation ingress machine readback](../artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json)
+- [H3.1 proof and regeneration boundary](../artifacts/review/h3-current-observation-ingress-v1/README.md)
 
 - [H3 package-local Priority Review Console](../artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html)
 - [H3 authority-envelope readback](../artifacts/review/h3-report-authority-envelope-v1/AUTHORITY_ENVELOPE_READBACK_V1.md)
@@ -203,8 +225,10 @@ H3 adds a strict sidecar without changing Packet V1 or Manifest V1. For the
 real H2 input it independently exposes authenticity `true`, temporal state
 `fresh`, revision state `unknown`, permission state `insufficient_h2_only`,
 current eligibility `false`, live coverage `false`, and executable `false`.
-Only the isolated pure-predicate test reaches current eligibility `true`; that
-fixture is not tracked as project evidence. H4 multi-project work is not
+H3.1 adds a second, explicitly versioned path without changing that H3 V1
+result. The public CLI proof reaches current eligibility `true` only for an
+ephemeral controlled Git repository and retains live/executable false. No
+synthetic source is tracked as project evidence. H4 multi-project work is not
 started.
 
 `QD-PACKET-UNKNOWN-KEY-01` is closed. The packet root, every active or closed

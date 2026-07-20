@@ -277,6 +277,64 @@ for H3/current use because its permission is H2-only and it has no authorized
 current source re-observation. It remains `live_coverage: false` and every
 action remains `executable: false`.
 
+### Current observation ingress
+
+`supervision_current_observation.v1` closes the operational ingress gap without
+changing Authority Envelope V1. The producer observes one explicit Git
+top-level directory twice with fixed, shell-disabled Git arguments. It records
+full before/after HEAD revisions, hashes of the complete porcelain worktree
+state, entry counts, timezone-aware observation times, sanitized remote
+identity, project/artifact identity, and the explicit authorization scope.
+`actual`, `clean`, and `stable` are rederived from the captured snapshots;
+serialized booleans are never trusted. The output must be outside the observed
+repository, and fetch, checkout, stage, commit, push, arbitrary commands, and
+target writeback remain forbidden.
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.current_observation `
+  --repository <explicit-target-git-root> `
+  --project-key <project-key> `
+  --artifact-id <observation-artifact-id> `
+  --authorization-scope allowed_for_DevCockpitCore_H3_current_claim `
+  --output <controller-root>/current-observation.json `
+  --pretty
+```
+
+`supervision_report_authority_envelope.v2` adds an explicit observation
+binding and artifact ID while retaining the V1 loader and package. Current
+eligibility requires both the report permission and observation authorization
+to equal `allowed_for_DevCockpitCore_H3_current_claim`, strict chronology
+`report_observed_at <= reobserved_at <= assessed_at`, exact revision matching,
+clean stable observation, and verified package, receipt, and
+repository/project/revision cross-binding provenance.
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m dev_cockpit.report_authority `
+  --envelope-version v2 `
+  --mode current-observation-bound `
+  --manifest <manifest.json> `
+  --packet <packet.json> `
+  --current-observation <current-observation.json> `
+  --current-observation-artifact-id <observation-artifact-id> `
+  --artifact-id <authority-envelope-artifact-id> `
+  --assessed-at <timezone-aware-assessment-time> `
+  --output <authority-envelope-v2.json> `
+  --pretty
+```
+
+Dashboard V2 intake additionally requires
+`--supervision-current-observation`,
+`--supervision-authority-artifact-id`, and
+`--supervision-current-observation-artifact-id`. Any partial V2 input set is
+rejected before projection. The controlled proof in
+`tests/test_current_observation_ingress_cli.py` uses only a temporary Git
+repository and public CLIs. It proves a synthetic point-in-time current claim
+while keeping live coverage and execution false. No real project observation
+has been attempted or tracked; such a claim requires a separate authorized
+report and observation.
+
 ## Validation pack
 
 The validation pack runs a fixed allowlist of safe checks for this repository and

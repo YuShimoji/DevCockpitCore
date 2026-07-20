@@ -122,6 +122,7 @@ class ProjectStateContractTests(unittest.TestCase):
             {
                 "h2-authentic-single-report-round-trip-v1",
                 "h3-report-authority-envelope-v1",
+                "h3-current-observation-ingress-v1",
             },
             {path.name for path in review_root.iterdir() if path.is_dir()},
         )

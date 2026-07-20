@@ -1,0 +1,14 @@
+{
+  "schema_version": "h3_current_observation_ingress_binding_inventory.v1",
+  "artifact_id": "h3-current-observation-ingress-v1",
+  "hash_basis": "raw_bytes_sha256_v1",
+  "bindings": {
+    "src/dev_cockpit/current_observation.py": "08f1791dbca97928ee55d4a916dd4e8d28dd2c4e8e760de2aaa052dde74e5e8b",
+    "src/dev_cockpit/report_authority.py": "d9e079b2ac4122d4f8ebfc3a2f19cb4e6da0da6306dbd3ae3990499814816836",
+    "src/dev_cockpit/report_authority_v2.py": "e78e35517e850617e3364bee4a17bd178f969393554041db0e5770452bf7a18d",
+    "src/dev_cockpit/dashboard.py": "4fab28d4cda14acdc0c3dccfdf0eef88f02fc9ec7bd87ae88d4be8011248a1ea",
+    "tests/test_current_observation.py": "a0f29ecc0032442ee4e6b48c7ada9fd6a60cedb2f4f809cb0d5fd72897528c7b",
+    "tests/test_current_observation_ingress_cli.py": "5daa3add19c20f00e9c6cf41b7fce600f7a999d36459a05be12f185d810d47e0",
+    "tests/test_report_authority_v2.py": "a9692cc6a7c1e4cd5443185d85871b91fb3652fcd5aea060cf1160703032e803"
+  }
+}
