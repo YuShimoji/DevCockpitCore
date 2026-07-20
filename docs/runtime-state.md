@@ -1,6 +1,6 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-20
+updated_at: 2026-07-21
 projection_kind: repository_restart_and_artifact_access
 current_review_artifact: h3-report-authority-envelope-v1
 current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
@@ -16,7 +16,7 @@ user_visual_acceptance: accepted
 tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
-blocking_issue_count: 0
+blocking_issue_count: 1
 durable_context_path: docs/project-context.md
 layout_research_path: docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md
 production_dashboard_path: samples/dashboard/devcockpitcore_dashboard.html
@@ -40,7 +40,13 @@ h2_state: h2_authentic_single_report_round_trip_verified_non_live_v1
 h3_state: h3_report_authority_envelope_contract_verified_without_live_promotion_v1
 h3_1_state: h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1
 h3_1_readback_path: artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json
-real_current_observation_attempted: false
+real_current_observation_attempted: true
+real_current_observation_receipt_created: false
+h3_real_current_evaluation_state: blocked_source_worktree_dirty_no_package_v1
+h3_real_current_candidate_revision: 649ada5050be5b9b2153c50c938d855797d5c19f
+h3_real_current_worktree_entry_count: 52
+h3_real_current_worktree_sha256: fbfb42256576b212df3a69c2a7dba645eb25dfbd928e8a79335bb5be8546ee78
+h3_real_current_assessed_at: not_created
 h4_started: false
 current_claim_eligibility: false
 live_coverage: false
@@ -102,13 +108,28 @@ artifact IDs, and separate package, receipt, and repository/project/revision
 provenance. Dashboard accepts V2 only as a complete seven-input set and fully
 reprojects it before use.
 
+The producer now applies `core.fsmonitor=false` and optional-lock suppression
+to every Git command while preserving the V1 output schema. It rejects output
+under the observed worktree, per-worktree Git directory, common Git directory,
+or any registered linked worktree. Before and after observation it compares
+the resolved top-level, Git directories, sanitized single-origin identity, and
+linked-worktree registry in addition to the two HEAD/worktree snapshots.
+Context mutation therefore fails before receipt creation.
+
 Operational proof uses an ephemeral temporary Git repository and the public
 CLIs only. That synthetic proof reaches point-in-time current eligibility while
-retaining live and execution false. No real project observation was attempted,
-no real current state was promoted, and no synthetic receipt or envelope is a
-tracked current-project claim. H4 remains unstarted. The next real gate needs a
-separately authorized fresh report and observation with the exact
-`allowed_for_DevCockpitCore_H3_current_claim` scope. Use
+retaining live and execution false. A real-project preflight was attempted
+against NLMYTGen revision `649ada5050be5b9b2153c50c938d855797d5c19f`.
+Its repository context and paired snapshots stayed internally stable, but the
+complete porcelain snapshot was dirty with 52 entries and SHA-256
+`fbfb42256576b212df3a69c2a7dba645eb25dfbd928e8a79335bb5be8546ee78`.
+The attempt stopped before report intake, receipt or assessment creation,
+manifest/packet/envelope generation, or Dashboard reload. No real review
+package or current claim was created, and no NLMYTGen writeback or cleanup was
+performed. The checkout owner controls preservation or resolution of that
+parallel work. A later attempt requires a clean, stable source and renewed
+authorization for the exact `allowed_for_DevCockpitCore_H3_current_claim`
+scope. H4 remains unstarted. Use
 `docs/PROJECT_COCKPIT.md` for human navigation, `docs/project-context.md` for
 durable boundaries, the Local Validation Entry below for repository checks,
 and direct Git and generated-evidence readback for current facts.

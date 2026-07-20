@@ -3,6 +3,50 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-21 - Current Observation Safety Hardening And Dirty-Source Stop
+
+Purpose: make the first authorized real-project current-observation attempt
+safe against fsmonitor hooks, Git metadata containment mistakes, linked
+worktree topology, repository-identity drift, and concurrent context mutation.
+
+Decision: preserve `supervision_current_observation.v1` and its exact serialized
+key surface. Apply optional-lock suppression and `core.fsmonitor=false` to
+every Git call. Reject output under the target worktree, per-worktree Git
+directory, common Git directory, or any registered linked worktree. Capture
+and compare the resolved top-level, Git directories, sanitized single-origin
+identity, and linked-worktree registry before and after the paired snapshots.
+Treat a dirty or unstable real source as an immediate stop before any report,
+receipt, assessment, package, envelope, or Dashboard output is created.
+
+Effect: focused safety and compatibility validation passes without changing
+the V1 receipt schema. The authorized NLMYTGen preflight resolved revision
+`649ada5050be5b9b2153c50c938d855797d5c19f`; its context and paired snapshots
+were internally stable, but its complete porcelain state was dirty with 52
+entries and SHA-256
+`fbfb42256576b212df3a69c2a7dba645eb25dfbd928e8a79335bb5be8546ee78`.
+The real-package phase therefore stopped at the required boundary. No
+`assessed_at`, current-observation receipt, authority result, or
+`h3-real-current-nlmytgen-v1` package exists.
+
+Boundary: no NLMYTGen file was changed, cleaned, staged, tested, rendered,
+fetched, pulled, or otherwise executed. The dirty paths were not enumerated or
+claimed by DevCockpitCore. Existing H2, H3 V1, H3.1, canonical packet,
+production Dashboard, readback, and capture artifacts remain the baselines.
+Current eligibility, live coverage, execution authority, and H4 remain false
+or unstarted.
+
+State: Phase A safety hardening is complete. Phase B is blocked by a dirty
+source checkout and produced no real current-claim package.
+
+Owner: the NLMYTGen checkout owner controls the existing parallel work and any
+decision to preserve, commit, relocate, or clean it. The Supervisor controls
+renewed report/observation authorization and any future H4 contract.
+
+Next move: do not retry automatically. After the owner supplies this checkout
+or another authorized source as clean and stable, start a new bounded attempt
+from preflight. Require the exact H3/current dual-source permission again and
+keep H4 out of scope.
+
 ## 2026-07-20 - Current Observation Ingress V1 And Authority Envelope V2
 
 Purpose: close the operational gap between the H3 authority predicate and an

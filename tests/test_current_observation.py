@@ -4,6 +4,7 @@ import copy
 from datetime import datetime, timedelta, timezone
 from hashlib import sha256
 import json
+import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -159,6 +160,127 @@ class CurrentObservationTests(unittest.TestCase):
                     output_path=repository / "receipt.json",
                 )
 
+    def test_fsmonitor_hook_is_disabled_for_every_observation_git_command(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = self._git_repo(root)
+            hook = root / "sentinel-fsmonitor.sh"
+            marker = root / "sentinel-fsmonitor-ran.txt"
+            marker_shell = marker.as_posix().replace("'", "'\"'\"'")
+            hook.write_text(
+                f"#!/bin/sh\nprintf 'executed' > '{marker_shell}'\nprintf '\\n'\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            os.chmod(hook, 0o755)
+            subprocess.run(
+                ("git", "config", "core.fsmonitor", str(hook)),
+                cwd=repository,
+                check=True,
+            )
+            before_target = self._tree_state(repository)
+
+            receipt = observe_repository(
+                repository=repository,
+                project_key="controlled-project",
+                artifact_id="controlled-observation-v1",
+                authorization_scope=AUTHORIZATION_SCOPE,
+                output_path=root / "observation.json",
+            )
+
+            self.assertTrue(receipt["observation"]["derived"]["stable"])
+            self.assertFalse(marker.exists())
+            self.assertEqual(before_target, self._tree_state(repository))
+
+    def test_output_inside_git_topology_or_linked_worktree_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            primary = self._git_repo(root, name="primary")
+            linked = root / "linked"
+            subprocess.run(
+                ("git", "worktree", "add", "-q", "-b", "linked-test", str(linked)),
+                cwd=primary,
+                check=True,
+            )
+            context = current_observation_module._capture_repository_context(linked)
+            cases = {
+                "per_worktree_git_dir": Path(context["git_dir"]) / "receipt.json",
+                "common_git_dir": Path(context["common_dir"]) / "receipt.json",
+                "other_linked_worktree": primary / "receipt.json",
+            }
+            for name, output in cases.items():
+                with self.subTest(name=name), mock.patch(
+                    "dev_cockpit.current_observation._capture_snapshot"
+                ) as snapshot:
+                    with self.assertRaisesRegex(
+                        CurrentObservationError, "registered linked worktree"
+                    ):
+                        observe_repository(
+                            repository=linked,
+                            project_key="controlled-project",
+                            artifact_id="controlled-observation-v1",
+                            authorization_scope=AUTHORIZATION_SCOPE,
+                            output_path=output,
+                        )
+                    snapshot.assert_not_called()
+                    self.assertFalse(output.exists())
+
+    def test_repository_identity_change_during_observation_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = self._git_repo(root)
+            original = current_observation_module._capture_snapshot
+            calls = 0
+
+            def capture(target: Path) -> dict[str, object]:
+                nonlocal calls
+                snapshot = original(target)
+                calls += 1
+                if calls == 1:
+                    subprocess.run(
+                        (
+                            "git",
+                            "remote",
+                            "set-url",
+                            "origin",
+                            "https://example.invalid/changed-project.git",
+                        ),
+                        cwd=target,
+                        check=True,
+                    )
+                return snapshot
+
+            with mock.patch(
+                "dev_cockpit.current_observation._capture_snapshot",
+                side_effect=capture,
+            ), self.assertRaisesRegex(CurrentObservationError, "repository_identity"):
+                observe_repository(
+                    repository=repository,
+                    project_key="controlled-project",
+                    artifact_id="controlled-observation-v1",
+                    authorization_scope=AUTHORIZATION_SCOPE,
+                    output_path=root / "observation.json",
+                )
+
+    def test_git_topology_change_during_observation_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            repository = self._git_repo(root)
+            context = current_observation_module._capture_repository_context(repository)
+            changed = dict(context)
+            changed["common_dir"] = root / "changed-common-dir"
+            with mock.patch(
+                "dev_cockpit.current_observation._capture_repository_context",
+                side_effect=(context, changed),
+            ), self.assertRaisesRegex(CurrentObservationError, "common_dir"):
+                observe_repository(
+                    repository=repository,
+                    project_key="controlled-project",
+                    artifact_id="controlled-observation-v1",
+                    authorization_scope=AUTHORIZATION_SCOPE,
+                    output_path=root / "observation.json",
+                )
+
     def test_remote_identity_rejects_local_paths_credentials_and_query(self) -> None:
         self.assertEqual(
             "ssh://github.com/owner/repo.git",
@@ -243,8 +365,8 @@ class CurrentObservationTests(unittest.TestCase):
         )
 
     @staticmethod
-    def _git_repo(root: Path) -> Path:
-        repository = root / "target"
+    def _git_repo(root: Path, *, name: str = "target") -> Path:
+        repository = root / name
         repository.mkdir()
         commands = (
             ("git", "init", "-q"),

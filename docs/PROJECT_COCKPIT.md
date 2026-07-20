@@ -1,6 +1,6 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-20
+updated_at: 2026-07-21
 snapshot_kind: persisted_navigation_snapshot
 current_review_artifact: h3-report-authority-envelope-v1
 current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
@@ -15,10 +15,10 @@ user_visual_acceptance: accepted
 tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
-blocking_issue_count: 0
-current_development_axis: current_observation_ingress_readiness
-current_local_slice: h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1
-recommended_next_horizon: separately_authorized_real_report_and_observation_gate_before_any_H4_work
+blocking_issue_count: 1
+current_development_axis: current_observation_safety_hardened_real_evaluation_blocked
+current_local_slice: h3_real_nlmytgen_point_in_time_current_claim_blocked_dirty_source_v1
+recommended_next_horizon: owner_resolves_or_selects_clean_stable_source_before_reauthorization
 
 ## About This Snapshot
 
@@ -104,12 +104,33 @@ ingress rejects every partial source set and reprojects all four sources before
 use. A temporary-Git public-CLI proof reaches synthetic current eligibility
 while live coverage and executable remain false.
 
-No real project repository was observed for H3.1 and no real current claim was
-promoted. The H2 and H3 V1 packages, canonical packet, accepted production
-Dashboard, priority readback, and capture remain the preserved baselines. H4
-has not started. The next gate is a separately authorized fresh report plus
-observation using the exact H3/current scope; H4 remains unavailable until an
-independent contract authorizes it.
+The current-observation producer is now hardened without changing its V1
+serialized schema. Every Git call disables optional locks and repository
+fsmonitor hooks. Before writing, it rejects output under the observed worktree,
+its per-worktree Git directory, its common Git directory, or any registered
+linked worktree. It also captures and compares the top-level path, Git and
+common directories, sanitized single-origin repository identity, and linked
+worktree registry around the two snapshots. Any context drift fails before a
+receipt can be emitted.
+
+The first authorized real-project preflight targeted NLMYTGen revision
+`649ada5050be5b9b2153c50c938d855797d5c19f`. Repository context and the two
+read-only snapshots were internally stable, but the complete porcelain
+snapshot contained 52 entries and SHA-256
+`fbfb42256576b212df3a69c2a7dba645eb25dfbd928e8a79335bb5be8546ee78`.
+The source was therefore dirty, and execution stopped before source-report
+intake, current-observation receipt creation, assessment time selection,
+manifest/packet/V2-envelope generation, or Dashboard projection. No
+`h3-real-current-nlmytgen-v1` review package exists, and no NLMYTGen path was
+written or cleaned.
+
+No real current claim was promoted. The H2 and H3 V1 packages, canonical
+packet, accepted production Dashboard, priority readback, and capture remain
+the preserved baselines. H4 has not started. The NLMYTGen checkout owner must
+first preserve or resolve the parallel work and provide a clean, stable source
+or select a different clean source. A later attempt still requires renewed
+authorization for the exact H3/current report and observation scope; H4
+remains unavailable until an independent contract authorizes it.
 
 Resume through this Cockpit for human navigation, `docs/runtime-state.md` for
 the machine-facing projection, and `docs/project-context.md` for durable

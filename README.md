@@ -287,8 +287,19 @@ state, entry counts, timezone-aware observation times, sanitized remote
 identity, project/artifact identity, and the explicit authorization scope.
 `actual`, `clean`, and `stable` are rederived from the captured snapshots;
 serialized booleans are never trusted. The output must be outside the observed
-repository, and fetch, checkout, stage, commit, push, arbitrary commands, and
-target writeback remain forbidden.
+repository, its per-worktree Git directory and common Git directory, and every
+registered linked worktree. Every Git invocation disables repository-configured
+`core.fsmonitor` and optional locks. Repository remote identity, exact
+top-level, Git directory/common-directory identity, and the linked-worktree
+registry are compared before and after observation; a change stops without a
+receipt. Fetch, checkout, stage, commit, push, arbitrary commands, and target
+writeback remain forbidden.
+
+The receipt proves exact-key/internal consistency and source binding inside an
+owner-authorized local producer boundary. It is point-in-time local evidence,
+not a cryptographic signature, independent attestation, proof of remote
+freshness, or continuous monitor. Current eligibility projected from it is
+bounded to the recorded checkout and assessment time.
 
 ```powershell
 $env:PYTHONPATH = "src"

@@ -20,6 +20,7 @@ PRODUCER = "dev_cockpit.current_observation"
 AUTHORIZATION_SCOPE = "allowed_for_DevCockpitCore_H3_current_claim"
 REPOSITORY_IDENTITY_BASIS = "sanitized_remote_origin_v1"
 WORKTREE_HASH_BASIS = "git_status_porcelain_v1_z_sha256_v1"
+GIT_CONFIG_OVERRIDES = ("-c", "core.fsmonitor=false")
 
 ROOT_KEYS = frozenset(
     {
@@ -114,23 +115,26 @@ def observe_repository(
     if _is_within(output, target):
         raise CurrentObservationError("output_path must be outside the observed repository")
 
-    top_level = Path(
-        _run_git_text(target, ("rev-parse", "--show-toplevel"), "repository root")
-    ).resolve()
-    if top_level != target:
+    before_context = _capture_repository_context(target)
+    if before_context["top_level"] != target:
         raise CurrentObservationError(
             "repository must identify the exact Git top-level directory"
         )
-    remote = _run_git_text(
-        target, ("config", "--get", "remote.origin.url"), "remote.origin.url"
-    )
-    repository_identity = normalize_repository_identity(remote)
+    _reject_unsafe_output(output, before_context)
+    repository_identity = str(before_context["repository_identity"])
     now = clock or (lambda: datetime.now(timezone.utc))
 
     before = _capture_snapshot(target)
     first_observed_at = _format_timestamp(now())
     after = _capture_snapshot(target)
     reobserved_at = _format_timestamp(now())
+    after_context = _capture_repository_context(target)
+    context_difference = _first_context_difference(before_context, after_context)
+    if context_difference is not None:
+        raise CurrentObservationError(
+            f"repository identity or Git topology changed during observation: "
+            f"{context_difference}"
+        )
     derived = _derive_observation(before, after)
     receipt = {
         "schema_version": SCHEMA_VERSION,
@@ -369,6 +373,96 @@ def _capture_snapshot(repository: Path) -> dict[str, Any]:
     }
 
 
+def _capture_repository_context(repository: Path) -> dict[str, Any]:
+    top_level = Path(
+        _run_git_text(repository, ("rev-parse", "--show-toplevel"), "repository root")
+    ).resolve()
+    git_dir = Path(
+        _run_git_text(repository, ("rev-parse", "--absolute-git-dir"), "Git directory")
+    ).resolve()
+    common_dir = Path(
+        _run_git_text(
+            repository,
+            ("rev-parse", "--path-format=absolute", "--git-common-dir"),
+            "Git common directory",
+        )
+    ).resolve()
+    remote_values = _run_git_lines(
+        repository,
+        ("config", "--get-all", "remote.origin.url"),
+        "remote.origin.url",
+    )
+    if len(remote_values) != 1:
+        raise CurrentObservationError(
+            "Git remote.origin.url must resolve to exactly one value"
+        )
+    repository_identity = normalize_repository_identity(remote_values[0])
+    linked_worktrees = _linked_worktree_paths(repository)
+    if top_level not in linked_worktrees:
+        raise CurrentObservationError(
+            "Git worktree registry does not contain the observed top-level"
+        )
+    return {
+        "top_level": top_level,
+        "git_dir": git_dir,
+        "common_dir": common_dir,
+        "repository_identity": repository_identity,
+        "linked_worktrees": linked_worktrees,
+    }
+
+
+def _linked_worktree_paths(repository: Path) -> tuple[Path, ...]:
+    payload = _run_git_bytes(
+        repository,
+        ("worktree", "list", "--porcelain", "-z"),
+        "linked worktree registry",
+    )
+    try:
+        fields = payload.decode("utf-8").split("\0")
+    except UnicodeDecodeError as exc:
+        raise CurrentObservationError("Git linked worktree registry is not UTF-8") from exc
+    paths: set[Path] = set()
+    for field in fields:
+        if field.startswith("worktree "):
+            value = field.removeprefix("worktree ").strip()
+            if not value:
+                raise CurrentObservationError("Git linked worktree path is empty")
+            paths.add(Path(value).resolve())
+    if not paths:
+        raise CurrentObservationError("Git linked worktree registry is empty")
+    return tuple(sorted(paths, key=lambda item: str(item).casefold()))
+
+
+def _reject_unsafe_output(output: Path, context: dict[str, Any]) -> None:
+    forbidden_roots = {
+        Path(context["top_level"]),
+        Path(context["git_dir"]),
+        Path(context["common_dir"]),
+        *(Path(item) for item in context["linked_worktrees"]),
+    }
+    for root in sorted(forbidden_roots, key=lambda item: str(item).casefold()):
+        if _is_within(output, root.resolve()):
+            raise CurrentObservationError(
+                "output_path must be outside the observed worktree, Git directories, "
+                "and every registered linked worktree"
+            )
+
+
+def _first_context_difference(
+    before: dict[str, Any], after: dict[str, Any]
+) -> str | None:
+    for key in (
+        "top_level",
+        "git_dir",
+        "common_dir",
+        "repository_identity",
+        "linked_worktrees",
+    ):
+        if before.get(key) != after.get(key):
+            return key
+    return None
+
+
 def _derive_observation(
     before: dict[str, Any], after: dict[str, Any]
 ) -> dict[str, bool]:
@@ -415,12 +509,23 @@ def _run_git_text(repository: Path, args: tuple[str, ...], label: str) -> str:
     return value
 
 
+def _run_git_lines(
+    repository: Path, args: tuple[str, ...], label: str
+) -> list[str]:
+    payload = _run_git_bytes(repository, args, label)
+    try:
+        values = [line.strip() for line in payload.decode("utf-8").splitlines()]
+    except UnicodeDecodeError as exc:
+        raise CurrentObservationError(f"Git {label} is not UTF-8") from exc
+    return [value for value in values if value]
+
+
 def _run_git_bytes(repository: Path, args: tuple[str, ...], label: str) -> bytes:
     try:
         environment = dict(os.environ)
         environment["GIT_OPTIONAL_LOCKS"] = "0"
         result = subprocess.run(
-            ("git", "-C", str(repository), *args),
+            ("git", *GIT_CONFIG_OVERRIDES, "-C", str(repository), *args),
             check=False,
             capture_output=True,
             env=environment,
