@@ -289,17 +289,28 @@ identity, project/artifact identity, and the explicit authorization scope.
 serialized booleans are never trusted. The output must be outside the observed
 repository, its per-worktree Git directory and common Git directory, and every
 registered linked worktree. Every Git invocation disables repository-configured
-`core.fsmonitor` and optional locks. Repository remote identity, exact
-top-level, Git directory/common-directory identity, and the linked-worktree
-registry are compared before and after observation; a change stops without a
-receipt. Fetch, checkout, stage, commit, push, arbitrary commands, and target
-writeback remain forbidden.
+`core.fsmonitor` and optional locks. Its subprocess environment removes every
+inherited `GIT_*` name case-insensitively, disables terminal and credential
+manager prompts, ignores system configuration, maps global configuration to
+the platform null device, and reads `remote.origin.url` only from local config
+without includes. Repository remote identity, exact top-level, Git
+directory/common-directory identity, and the linked-worktree registry are
+compared before and after observation; a change stops without a receipt.
+Fetch, checkout, stage, commit, push, arbitrary commands, and target writeback
+remain forbidden.
 
 The receipt proves exact-key/internal consistency and source binding inside an
 owner-authorized local producer boundary. It is point-in-time local evidence,
 not a cryptographic signature, independent attestation, proof of remote
 freshness, or continuous monitor. Current eligibility projected from it is
 bounded to the recorded checkout and assessment time.
+
+A stable dirty repository is a successful negative observation, not a producer
+safety failure. Its receipt has `actual: true`, `clean: false`, and
+`stable: true`; Authority Envelope V2 retains authentic point-in-time evidence
+but derives `current_claim_eligibility: false`, `live_coverage: false`, and
+`executable: false`. Dirty state alone does not suppress the receipt. An
+unstable snapshot or repository identity/topology drift still fails closed.
 
 ```powershell
 $env:PYTHONPATH = "src"
@@ -342,8 +353,9 @@ Dashboard V2 intake additionally requires
 rejected before projection. The controlled proof in
 `tests/test_current_observation_ingress_cli.py` uses only a temporary Git
 repository and public CLIs. It proves a synthetic point-in-time current claim
-while keeping live coverage and execution false. No real project observation
-has been attempted or tracked; such a claim requires a separate authorized
+while keeping live coverage and execution false. A separate dirty/stable public
+CLI proof verifies the negative-observation path. No real project receipt or
+current-claim package is tracked; such a claim requires a separate authorized
 report and observation.
 
 ## Validation pack

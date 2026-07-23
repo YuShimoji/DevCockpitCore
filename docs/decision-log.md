@@ -3,6 +3,52 @@
 This file records durable decisions needed for restart and handoff. It is not a
 full history; design artifacts remain the source of detailed evidence.
 
+## 2026-07-23 - Current Observation Environment Isolation And Dirty Negative Contract
+
+Purpose: close the remaining safety boundary where inherited Git environment,
+global/system configuration, trace settings, or redirect variables could alter
+which repository was observed, write trace/index files, or invoke a configured
+hook; also distinguish stable dirty evidence from an unsafe observation
+failure.
+
+Decision: preserve `supervision_current_observation.v1` and every exact-key
+surface. Rebuild each Git subprocess environment after removing inherited
+`GIT_*` names case-insensitively; re-add only optional-lock suppression,
+prompt suppression, system-config disablement, and a platform-null global
+config target. Keep `core.fsmonitor=false` on every call and read
+`remote.origin.url` with explicit local/no-include scope. Treat stable dirty
+snapshots as `actual: true`, `clean: false`, `stable: true` negative
+observation. Dirty alone does not stop receipt creation.
+
+Effect: injected `GIT_DIR`, `GIT_WORK_TREE`, `GIT_INDEX_FILE`, trace/trace2,
+config-count, fsmonitor, global/system config, and prompt controls are inert.
+Clean/stable public-CLI current eligibility remains available. Dirty/stable
+public-CLI round-trip produces verified source binding and provenance but
+remains current-ineligible, non-live, and non-executable with
+`worktree_not_clean` evidence.
+
+Boundary: unstable snapshots, output containment violations, repository
+identity/topology drift, malformed receipts, and broken bindings still fail
+closed. The historical NLMYTGen dirty-source stop remains historical evidence;
+this decision creates no real NLMYTGen receipt or package and performs no
+target writeback. H2, H3 V1, H3.1, canonical packet, production Dashboard,
+priority readback, and capture bytes remain unchanged. Main integration, live
+coverage, execution, and H4 are not authorized.
+
+State: the versioned Outcome Artifact is
+`artifacts/review/h3-current-observation-safety-boundary-v1/`. It binds the
+final source and focused evidence while verifying historical and production
+baseline invariance.
+
+Owner: DevCockpitCore owns the observer safety contract. A later real-project
+mission still requires exact owner/Supervisor authorization for its report and
+observation inputs.
+
+Next move: review and integrate this isolated feature commit if accepted.
+After integration, run a separately authorized real observation mission; a
+dirty result may be recorded as negative evidence, while a positive current
+claim still requires clean/stable revision-matched input. Do not start H4.
+
 ## 2026-07-21 - Current Observation Safety Hardening And Dirty-Source Stop
 
 Purpose: make the first authorized real-project current-observation attempt

@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Mapping
 from urllib.parse import urlsplit, urlunsplit
 
 
@@ -21,6 +21,13 @@ AUTHORIZATION_SCOPE = "allowed_for_DevCockpitCore_H3_current_claim"
 REPOSITORY_IDENTITY_BASIS = "sanitized_remote_origin_v1"
 WORKTREE_HASH_BASIS = "git_status_porcelain_v1_z_sha256_v1"
 GIT_CONFIG_OVERRIDES = ("-c", "core.fsmonitor=false")
+GIT_ENVIRONMENT_OVERRIDES = {
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0",
+    "GCM_INTERACTIVE": "Never",
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_CONFIG_GLOBAL": os.devnull,
+}
 
 ROOT_KEYS = frozenset(
     {
@@ -389,7 +396,7 @@ def _capture_repository_context(repository: Path) -> dict[str, Any]:
     ).resolve()
     remote_values = _run_git_lines(
         repository,
-        ("config", "--get-all", "remote.origin.url"),
+        ("config", "--local", "--no-includes", "--get-all", "remote.origin.url"),
         "remote.origin.url",
     )
     if len(remote_values) != 1:
@@ -522,13 +529,12 @@ def _run_git_lines(
 
 def _run_git_bytes(repository: Path, args: tuple[str, ...], label: str) -> bytes:
     try:
-        environment = dict(os.environ)
-        environment["GIT_OPTIONAL_LOCKS"] = "0"
         result = subprocess.run(
             ("git", *GIT_CONFIG_OVERRIDES, "-C", str(repository), *args),
             check=False,
             capture_output=True,
-            env=environment,
+            env=_build_git_environment(),
+            stdin=subprocess.DEVNULL,
         )
     except OSError as exc:
         raise CurrentObservationError(f"cannot execute Git for {label}: {exc}") from exc
@@ -536,6 +542,21 @@ def _run_git_bytes(repository: Path, args: tuple[str, ...], label: str) -> bytes
         error = result.stderr.decode("utf-8", errors="replace").strip()
         raise CurrentObservationError(f"Git {label} failed: {error or result.returncode}")
     return result.stdout
+
+
+def _build_git_environment(
+    inherited: Mapping[str, str] | None = None,
+) -> dict[str, str]:
+    """Build a prompt-free Git environment without inherited Git controls."""
+
+    source = os.environ if inherited is None else inherited
+    environment = {
+        str(key): str(value)
+        for key, value in source.items()
+        if not str(key).casefold().startswith("git_")
+    }
+    environment.update(GIT_ENVIRONMENT_OVERRIDES)
+    return environment
 
 
 def _normalize_remote_path(value: str) -> str:
