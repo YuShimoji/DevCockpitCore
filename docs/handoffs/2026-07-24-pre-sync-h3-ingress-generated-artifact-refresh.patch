@@ -1,0 +1,29 @@
+diff --git a/artifacts/review/h3-current-observation-ingress-v1/binding_inventory_v1.json b/artifacts/review/h3-current-observation-ingress-v1/binding_inventory_v1.json
+index aab1aba..ddb3524 100644
+--- a/artifacts/review/h3-current-observation-ingress-v1/binding_inventory_v1.json
++++ b/artifacts/review/h3-current-observation-ingress-v1/binding_inventory_v1.json
+@@ -3,11 +3,11 @@
+   "artifact_id": "h3-current-observation-ingress-v1",
+   "hash_basis": "raw_bytes_sha256_v1",
+   "bindings": {
+-    "src/dev_cockpit/current_observation.py": "08f1791dbca97928ee55d4a916dd4e8d28dd2c4e8e760de2aaa052dde74e5e8b",
++    "src/dev_cockpit/current_observation.py": "c309217da54b953d20b9ab0b7d94174dbf1d92e07df66eadf7109c38c878a20a",
+     "src/dev_cockpit/report_authority.py": "d9e079b2ac4122d4f8ebfc3a2f19cb4e6da0da6306dbd3ae3990499814816836",
+     "src/dev_cockpit/report_authority_v2.py": "e78e35517e850617e3364bee4a17bd178f969393554041db0e5770452bf7a18d",
+     "src/dev_cockpit/dashboard.py": "4fab28d4cda14acdc0c3dccfdf0eef88f02fc9ec7bd87ae88d4be8011248a1ea",
+-    "tests/test_current_observation.py": "a0f29ecc0032442ee4e6b48c7ada9fd6a60cedb2f4f809cb0d5fd72897528c7b",
++    "tests/test_current_observation.py": "7c389ea0a9e557a1b252057eb43e89acc583b98584311dbea9962b4dd7d2b154",
+     "tests/test_current_observation_ingress_cli.py": "5daa3add19c20f00e9c6cf41b7fce600f7a999d36459a05be12f185d810d47e0",
+     "tests/test_report_authority_v2.py": "a9692cc6a7c1e4cd5443185d85871b91fb3652fcd5aea060cf1160703032e803"
+   }
+diff --git a/artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json b/artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json
+index 98a8ce2..b2f52f1 100644
+--- a/artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json
++++ b/artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json
+@@ -52,5 +52,5 @@
+     "executable": false,
+     "h4_started": false
+   },
+-  "binding_inventory_sha256": "884b49c8f5e0bae3ebc9f486b1dd992db041896f75b0c531cce459d2f61ba880"
++  "binding_inventory_sha256": "78434816c4fcab36dd96148f4ea437644397749c93bbec7532e6d20d08e2568d"
+ }
