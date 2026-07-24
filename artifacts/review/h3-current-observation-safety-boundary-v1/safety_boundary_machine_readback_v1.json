@@ -1,0 +1,100 @@
+{
+  "schema_version": "h3_current_observation_safety_boundary_machine_readback.v1",
+  "artifact_id": "h3-current-observation-safety-boundary-v1",
+  "mission_id": "dcc-h3-g01-current-observation-boundary",
+  "state_transition": {
+    "from": "h3_current_observation_safety_hardened_dirty_source_stop_v1",
+    "to": "h3_current_observation_environment_isolated_dirty_negative_contract_v1"
+  },
+  "contracts": {
+    "current_observation_schema": "supervision_current_observation.v1",
+    "schema_changed": false,
+    "git_environment": {
+      "inherited_git_variables_removed_case_insensitively": true,
+      "optional_locks_disabled": true,
+      "terminal_prompt_disabled": true,
+      "credential_manager_interaction_disabled": true,
+      "system_config_disabled": true,
+      "global_config_target": "platform_null_device",
+      "remote_identity_scope": "local_no_includes",
+      "core_fsmonitor_disabled_for_every_git_call": true
+    },
+    "dirty_stable_observation": {
+      "actual": true,
+      "clean": false,
+      "stable": true,
+      "authentic_point_in_time_negative_observation": true,
+      "current_claim_eligibility": false,
+      "live_coverage": false,
+      "executable": false,
+      "producer_stop_caused_only_by_dirty": false
+    }
+  },
+  "focused_evidence": {
+    "environment_matrix": [
+      "tests.test_current_observation.CurrentObservationTests.test_git_environment_removes_inherited_git_controls_case_insensitively",
+      "tests.test_current_observation.CurrentObservationTests.test_inherited_redirect_trace_and_config_controls_are_inert",
+      "tests.test_current_observation.CurrentObservationTests.test_fsmonitor_hook_is_disabled_for_every_observation_git_command",
+      "tests.test_current_observation.CurrentObservationTests.test_output_inside_git_topology_or_linked_worktree_is_rejected"
+    ],
+    "dirty_public_cli_round_trip": "tests.test_current_observation_ingress_cli.CurrentObservationIngressCliTests.test_dirty_stable_public_cli_round_trip_is_negative_observation",
+    "clean_public_cli_round_trip": "tests.test_current_observation_ingress_cli.CurrentObservationIngressCliTests.test_controlled_temporary_git_public_cli_end_to_end",
+    "artifact_regeneration": "tests.test_current_observation_safety_boundary_artifact.CurrentObservationSafetyBoundaryArtifactTests.test_artifact_is_strict_bound_deterministic_and_preserves_history"
+  },
+  "historical_regeneration_handling": {
+    "affected_identity": "h3-current-observation-ingress-v1",
+    "observed_side_effect": "tracked_binding_json_refresh",
+    "classification": "mission_introduced_change_not_retained_under_historical_identity",
+    "final_source_binding": "h3-current-observation-safety-boundary-v1",
+    "historical_bytes_preserved": true
+  },
+  "preserved_baselines": {
+    "historical_trees": {
+      "artifacts/review/h2-authentic-single-report-round-trip-v1": {
+        "expected_sha256": "bd63725b106d80cb573c27f3fadc55a07448c293b4e35a73d0a79d1dc0ac2da5",
+        "actual_sha256": "bd63725b106d80cb573c27f3fadc55a07448c293b4e35a73d0a79d1dc0ac2da5"
+      },
+      "artifacts/review/h3-report-authority-envelope-v1": {
+        "expected_sha256": "d9a86453163b7db4aa1beaddb3d1483a7e8e35ad7f12ade179e3a359b5acc278",
+        "actual_sha256": "d9a86453163b7db4aa1beaddb3d1483a7e8e35ad7f12ade179e3a359b5acc278"
+      },
+      "artifacts/review/h3-current-observation-ingress-v1": {
+        "expected_sha256": "9fda3e100cc57a39d92cd37898617f528b80f276372aef75fd43d75ffa8c331b",
+        "actual_sha256": "9fda3e100cc57a39d92cd37898617f528b80f276372aef75fd43d75ffa8c331b"
+      }
+    },
+    "protected_files": {
+      "samples/supervision_packets/cross_project_supervision_packet_v1.json": {
+        "expected_sha256": "07965839fdef3d591776804e23d94d26996b5a13a6bf380fbe4e263231f59aec",
+        "actual_sha256": "07965839fdef3d591776804e23d94d26996b5a13a6bf380fbe4e263231f59aec"
+      },
+      "samples/supervision_packets/cross_project_supervision_packet_v1.md": {
+        "expected_sha256": "d28dbfbde4d162e84843889141408972ea2946d09ba6b581e56c7c2378362fb7",
+        "actual_sha256": "d28dbfbde4d162e84843889141408972ea2946d09ba6b581e56c7c2378362fb7"
+      },
+      "samples/dashboard/devcockpitcore_dashboard.html": {
+        "expected_sha256": "376521d0367ddfb2e8fa2e6f3c1020baa88f1fa5a3587f7bad9fbeabca7215e1",
+        "actual_sha256": "376521d0367ddfb2e8fa2e6f3c1020baa88f1fa5a3587f7bad9fbeabca7215e1"
+      },
+      "samples/dashboard/devcockpitcore_priority_readback.json": {
+        "expected_sha256": "fb0d4ad091af5e4204c4fee15bd71231e7b3371d8399e920ca0ad0b81d85fe29",
+        "actual_sha256": "fb0d4ad091af5e4204c4fee15bd71231e7b3371d8399e920ca0ad0b81d85fe29"
+      },
+      "samples/dashboard/production_capture/production_capture_manifest.json": {
+        "expected_sha256": "2d9fcd3af5865391e5da3200f00086c2133b352e01674375084dcb9a61c57181",
+        "actual_sha256": "2d9fcd3af5865391e5da3200f00086c2133b352e01674375084dcb9a61c57181"
+      }
+    },
+    "all_unchanged": true
+  },
+  "canonical_state": {
+    "real_nlmytgen_observation_performed_by_this_mission": false,
+    "real_current_claim_eligibility": false,
+    "live_coverage": false,
+    "executable": false,
+    "main_integration_performed": false,
+    "h4_started": false
+  },
+  "source_tree_sha256": "eadc9023fce9544d89908a6a8ceaf05ccd50e25cf15a8e54f1e607d41c61be22",
+  "binding_inventory_sha256": "c7ce63de53eb6c10c512e4872f11c3f106e2b3de528338809bf0e34620dd9afe"
+}

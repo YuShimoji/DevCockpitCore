@@ -1,6 +1,6 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-20
+updated_at: 2026-07-23
 snapshot_kind: persisted_navigation_snapshot
 current_review_artifact: h3-report-authority-envelope-v1
 current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
@@ -16,9 +16,9 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
-current_development_axis: current_observation_ingress_readiness
-current_local_slice: h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1
-recommended_next_horizon: separately_authorized_real_report_and_observation_gate_before_any_H4_work
+current_development_axis: current_observation_environment_isolation_and_negative_observation_contract
+current_local_slice: h3_current_observation_safety_boundary_v1
+recommended_next_horizon: separately_authorized_real_observation_mission_without_H4
 
 ## About This Snapshot
 
@@ -104,12 +104,43 @@ ingress rejects every partial source set and reprojects all four sources before
 use. A temporary-Git public-CLI proof reaches synthetic current eligibility
 while live coverage and executable remain false.
 
-No real project repository was observed for H3.1 and no real current claim was
-promoted. The H2 and H3 V1 packages, canonical packet, accepted production
-Dashboard, priority readback, and capture remain the preserved baselines. H4
-has not started. The next gate is a separately authorized fresh report plus
-observation using the exact H3/current scope; H4 remains unavailable until an
-independent contract authorizes it.
+The current-observation producer is now hardened without changing its V1
+serialized schema. Every Git call disables optional locks and repository
+fsmonitor hooks. The subprocess environment removes inherited `GIT_*` controls
+case-insensitively, disables prompts, ignores system and global configuration,
+and reads repository identity only from local config without includes. Before
+writing, the producer rejects output under the observed worktree, its
+per-worktree Git directory, its common Git directory, or any registered linked
+worktree. It also captures and compares the top-level path, Git and common
+directories, sanitized single-origin repository identity, and linked worktree
+registry around the two snapshots. Any context drift fails before a receipt can
+be emitted.
+
+The historical first authorized real-project preflight targeted NLMYTGen revision
+`649ada5050be5b9b2153c50c938d855797d5c19f`. Repository context and the two
+read-only snapshots were internally stable, but the complete porcelain
+snapshot contained 52 entries and SHA-256
+`fbfb42256576b212df3a69c2a7dba645eb25dfbd928e8a79335bb5be8546ee78`.
+That attempt stopped under its then-active dirty-source contract before source-report
+intake, current-observation receipt creation, assessment time selection,
+manifest/packet/V2-envelope generation, or Dashboard projection. No
+`h3-real-current-nlmytgen-v1` review package exists, and no NLMYTGen path was
+written or cleaned.
+
+The current contract now treats a stable dirty source as authentic negative
+observation rather than a safety stop. Its public-CLI receipt is `actual: true`,
+`clean: false`, and `stable: true`; the fully bound Authority Envelope V2 and
+Dashboard remain current-ineligible, non-live, and non-executable with
+`worktree_not_clean` evidence. Clean/stable input remains mandatory for a
+positive current claim. This change does not retroactively create an NLMYTGen
+receipt or package, and this slice performed no NLMYTGen observation.
+
+No real current claim was promoted. The H2, H3 V1, and historical H3.1
+packages, canonical packet, accepted production Dashboard, priority readback,
+and capture remain byte-identical baselines. H4 has not started. A later real
+attempt still requires renewed authorization for the exact H3/current report
+and observation scope; H4 remains unavailable until an independent contract
+authorizes it.
 
 Resume through this Cockpit for human navigation, `docs/runtime-state.md` for
 the machine-facing projection, and `docs/project-context.md` for durable
@@ -124,6 +155,9 @@ deterministic authority readback:
 
 - [H3.1 current-observation ingress machine readback](../artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json)
 - [H3.1 proof and regeneration boundary](../artifacts/review/h3-current-observation-ingress-v1/README.md)
+- [H3 current-observation safety boundary readback](../artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json)
+- [H3 current-observation safety boundary binding inventory](../artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json)
+- [H3 current-observation safety boundary](../artifacts/review/h3-current-observation-safety-boundary-v1/README.md)
 
 - [H3 package-local Priority Review Console](../artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html)
 - [H3 authority-envelope readback](../artifacts/review/h3-report-authority-envelope-v1/AUTHORITY_ENVELOPE_READBACK_V1.md)

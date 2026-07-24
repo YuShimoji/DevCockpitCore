@@ -293,6 +293,22 @@ complete `git status --porcelain=v1 -z --untracked-files=all` payload. The
 loader validates exact keys and types and rederives `actual`, `clean`, and
 `stable` from those snapshots.
 
+All observation Git commands override `core.fsmonitor=false` and set
+`GIT_OPTIONAL_LOCKS=0`, so a repository-configured external fsmonitor hook is
+not an observation side effect. Before the first status read, output is rejected
+if it resolves inside the observed worktree, its per-worktree Git directory,
+its Git common directory, or any registered linked worktree. The producer
+compares sanitized remote identity, exact top-level, Git directory/common
+directory identity, and linked-worktree registry before and after the two
+snapshots. Any identity or topology change stops without producing a receipt.
+These protections retain the V1 schema and serialized exact-key surface.
+
+A validated receipt is owner-authorized local point-in-time producer evidence.
+Its exact-key/internal consistency and bound bytes are verifiable, but it is
+not cryptographically signed, independently attested, proof of remote
+freshness, or continuous monitoring. Downstream authority must preserve that
+boundary even when a point-in-time current claim is eligible.
+
 Envelope V2 binds source report, manifest, packet, and observation receipt.
 The envelope artifact ID and expected observation artifact ID are explicit
 loader inputs; neither is inferred from the H3 V1 deterministic package.

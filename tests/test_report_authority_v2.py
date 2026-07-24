@@ -58,23 +58,44 @@ OBSERVATION_ARTIFACT_ID = "controlled-current-observation-v1"
 
 class ReportAuthorityV2Tests(unittest.TestCase):
     def test_tracked_h3_1_package_is_deterministic_and_denies_real_promotion(self) -> None:
-        package = ROOT / "artifacts" / "review" / "h3-current-observation-ingress-v1"
-        generate = runpy.run_path(str(package / "generate_package.py"))["generate"]
-        generate()
-        first = {
-            path.name: sha256(path.read_bytes()).hexdigest()
-            for path in package.glob("*.json")
-        }
-        generate()
-        second = {
-            path.name: sha256(path.read_bytes()).hexdigest()
-            for path in package.glob("*.json")
-        }
-        readback = json.loads(
-            (package / "current_observation_ingress_machine_readback_v1.json").read_text(
-                encoding="utf-8"
-            )
+        tracked_package = (
+            ROOT / "artifacts" / "review" / "h3-current-observation-ingress-v1"
         )
+        namespace = runpy.run_path(str(tracked_package / "generate_package.py"))
+        generate = namespace["generate"]
+        with tempfile.TemporaryDirectory() as temporary:
+            isolated_root = Path(temporary) / "repository"
+            isolated_package = (
+                isolated_root
+                / "artifacts"
+                / "review"
+                / "h3-current-observation-ingress-v1"
+            )
+            isolated_package.mkdir(parents=True)
+            for relative in namespace["BOUND_PATHS"]:
+                source = ROOT / relative
+                destination = isolated_root / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                destination.write_bytes(source.read_bytes())
+            generate.__globals__["ROOT"] = isolated_root
+            generate.__globals__["PACKAGE"] = isolated_package
+
+            generate()
+            first = {
+                path.name: sha256(path.read_bytes()).hexdigest()
+                for path in isolated_package.glob("*.json")
+            }
+            generate()
+            second = {
+                path.name: sha256(path.read_bytes()).hexdigest()
+                for path in isolated_package.glob("*.json")
+            }
+            readback = json.loads(
+                (
+                    isolated_package
+                    / "current_observation_ingress_machine_readback_v1.json"
+                ).read_text(encoding="utf-8")
+            )
         self.assertEqual(first, second)
         self.assertTrue(readback["canonical_state"]["h3_1_ingress_operational"])
         self.assertFalse(
@@ -478,6 +499,7 @@ class ReportAuthorityV2Tests(unittest.TestCase):
             ("git", "init", "-q"),
             ("git", "config", "user.name", "Controlled Test"),
             ("git", "config", "user.email", "controlled@example.invalid"),
+            ("git", "config", "core.autocrlf", "false"),
             (
                 "git",
                 "remote",
@@ -487,7 +509,9 @@ class ReportAuthorityV2Tests(unittest.TestCase):
             ),
         ):
             subprocess.run(command, cwd=target, check=True, capture_output=True)
-        (target / "tracked.txt").write_text("controlled\n", encoding="utf-8")
+        (target / "tracked.txt").write_text(
+            "controlled\n", encoding="utf-8", newline="\n"
+        )
         subprocess.run(("git", "add", "tracked.txt"), cwd=target, check=True)
         subprocess.run(
             ("git", "commit", "-q", "-m", "controlled fixture"),

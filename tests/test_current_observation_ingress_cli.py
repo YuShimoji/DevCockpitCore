@@ -28,8 +28,60 @@ OBSERVATION_ARTIFACT_ID = "controlled-current-observation-v1"
 
 class CurrentObservationIngressCliTests(unittest.TestCase):
     def test_controlled_temporary_git_public_cli_end_to_end(self) -> None:
+        evidence = self._controlled_round_trip(dirty=False)
+        receipt = evidence["receipt"]
+        result = evidence["readback"]
+        projected = result["supervision_report_authority_envelope"]
+
+        self.assertEqual(
+            {"actual": True, "clean": True, "stable": True},
+            receipt["observation"]["derived"],
+        )
+        self.assertTrue(projected["authority"]["current_claim_eligibility"])
+        self.assertFalse(projected["authority"]["live_coverage"])
+        self.assertFalse(projected["scope_boundary"]["executable"])
+        self.assertFalse(result["surface"]["executable"])
+        self.assertEqual(
+            "verified",
+            projected["provenance"]["overall_current_claim_provenance_state"],
+        )
+        self.assertTrue(evidence["dashboard_exists"])
+
+    def test_dirty_stable_public_cli_round_trip_is_negative_observation(self) -> None:
+        evidence = self._controlled_round_trip(dirty=True)
+        receipt = evidence["receipt"]
+        result = evidence["readback"]
+        projected = result["supervision_report_authority_envelope"]
+
+        self.assertEqual(
+            {"actual": True, "clean": False, "stable": True},
+            receipt["observation"]["derived"],
+        )
+        self.assertTrue(
+            projected["authority"][
+                "authentic_owner_attached_point_in_time_evidence"
+            ]
+        )
+        self.assertFalse(projected["authority"]["current_claim_eligibility"])
+        self.assertIn("worktree_not_clean", projected["authority"]["reason_codes"])
+        self.assertFalse(projected["authority"]["live_coverage"])
+        self.assertFalse(projected["scope_boundary"]["executable"])
+        self.assertFalse(result["surface"]["executable"])
+        self.assertEqual(
+            "verified",
+            projected["provenance"]["overall_current_claim_provenance_state"],
+        )
+        self.assertTrue(evidence["dashboard_exists"])
+
+    def _controlled_round_trip(self, *, dirty: bool) -> dict[str, object]:
         with tempfile.TemporaryDirectory() as temporary:
             root, target, manifest, report_time = self._inputs(Path(temporary))
+            if dirty:
+                (target / "untracked-negative-observation.txt").write_text(
+                    "stable dirty fixture\n",
+                    encoding="utf-8",
+                    newline="\n",
+                )
             observation = root / "controlled" / "current-observation.json"
             packet = root / "controlled" / "packet.json"
             packet_markdown = root / "controlled" / "packet.md"
@@ -144,16 +196,11 @@ class CurrentObservationIngressCliTests(unittest.TestCase):
             )
 
             result = json.loads(readback.read_text(encoding="utf-8"))
-            projected = result["supervision_report_authority_envelope"]
-            self.assertTrue(projected["authority"]["current_claim_eligibility"])
-            self.assertFalse(projected["authority"]["live_coverage"])
-            self.assertFalse(projected["scope_boundary"]["executable"])
-            self.assertFalse(result["surface"]["executable"])
-            self.assertEqual(
-                "verified",
-                projected["provenance"]["overall_current_claim_provenance_state"],
-            )
-            self.assertTrue(dashboard.exists())
+            return {
+                "receipt": receipt,
+                "readback": result,
+                "dashboard_exists": dashboard.exists(),
+            }
 
     def test_v2_cli_rejects_missing_observation_inputs(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
@@ -214,6 +261,7 @@ class CurrentObservationIngressCliTests(unittest.TestCase):
             ("git", "init", "-q"),
             ("git", "config", "user.name", "Controlled Test"),
             ("git", "config", "user.email", "controlled@example.invalid"),
+            ("git", "config", "core.autocrlf", "false"),
             (
                 "git",
                 "remote",
@@ -223,7 +271,9 @@ class CurrentObservationIngressCliTests(unittest.TestCase):
             ),
         ):
             subprocess.run(command, cwd=target, check=True, capture_output=True)
-        (target / "tracked.txt").write_text("controlled\n", encoding="utf-8")
+        (target / "tracked.txt").write_text(
+            "controlled\n", encoding="utf-8", newline="\n"
+        )
         subprocess.run(("git", "add", "tracked.txt"), cwd=target, check=True)
         subprocess.run(
             ("git", "commit", "-q", "-m", "controlled fixture"),
