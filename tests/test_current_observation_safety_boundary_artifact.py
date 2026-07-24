@@ -4,6 +4,7 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import runpy
+import tempfile
 import unittest
 
 from dev_cockpit.current_observation import SCHEMA_VERSION
@@ -26,8 +27,12 @@ class CurrentObservationSafetyBoundaryArtifactTests(unittest.TestCase):
     ) -> None:
         namespace = runpy.run_path(str(PACKAGE / "generate_package.py"))
         generate = namespace["generate"]
+        verify_committed_package = namespace["verify_committed_package"]
         historical_paths = tuple(namespace["HISTORICAL_TREE_HASHES"])
         protected_paths = tuple(namespace["PROTECTED_FILE_HASHES"])
+        before_artifacts = {
+            path.name: path.read_bytes() for path in (INVENTORY, READBACK)
+        }
         before_trees = {
             path: namespace["_tree_sha256"](ROOT / path)
             for path in historical_paths
@@ -37,18 +42,35 @@ class CurrentObservationSafetyBoundaryArtifactTests(unittest.TestCase):
             for path in protected_paths
         }
 
-        generate()
-        first = {
-            path.name: sha256(path.read_bytes()).hexdigest()
-            for path in (INVENTORY, READBACK)
-        }
-        generate()
-        second = {
-            path.name: sha256(path.read_bytes()).hexdigest()
-            for path in (INVENTORY, READBACK)
-        }
-
+        first = generate()
+        second = generate()
         self.assertEqual(first, second)
+        self.assertEqual(
+            before_artifacts,
+            {path.name: path.read_bytes() for path in (INVENTORY, READBACK)},
+        )
+        verify_committed_package(first)
+        with tempfile.TemporaryDirectory() as temporary:
+            staging = Path(temporary) / "safety-boundary"
+            generate(output_dir=staging)
+            self.assertEqual(
+                before_artifacts,
+                {
+                    name: (staging / name).read_bytes()
+                    for name in before_artifacts
+                },
+            )
+
+        drifted = json.loads(json.dumps(first))
+        drifted["binding_inventory_v1.json"]["bindings"]["README.md"] = "0" * 64
+        with self.assertRaisesRegex(RuntimeError, "refusing to overwrite"):
+            verify_committed_package(drifted)
+        with self.assertRaisesRegex(ValueError, "staging output"):
+            generate(output_dir=PACKAGE)
+        self.assertEqual(
+            before_artifacts,
+            {path.name: path.read_bytes() for path in (INVENTORY, READBACK)},
+        )
         inventory = self._load_strict(INVENTORY)
         readback = self._load_strict(READBACK)
         self.assertEqual(
@@ -75,6 +97,9 @@ class CurrentObservationSafetyBoundaryArtifactTests(unittest.TestCase):
                 "canonical_state",
                 "source_tree_sha256",
                 "binding_inventory_sha256",
+                "source_tree_scope",
+                "focused_evidence_semantics",
+                "canonical_state_semantics",
             },
             set(readback),
         )
@@ -94,6 +119,18 @@ class CurrentObservationSafetyBoundaryArtifactTests(unittest.TestCase):
         )
         self.assertEqual(
             inventory["source_tree_sha256"], readback["source_tree_sha256"]
+        )
+        self.assertEqual(
+            "BOUND_PATHS only; not a repository-wide tree hash",
+            readback["source_tree_scope"],
+        )
+        self.assertEqual(
+            "test names are evidence locators, not execution receipts",
+            readback["focused_evidence_semantics"],
+        )
+        self.assertEqual(
+            "declared package state, not an observed execution result",
+            readback["canonical_state_semantics"],
         )
         self.assertEqual(
             sha256(INVENTORY.read_bytes()).hexdigest(),

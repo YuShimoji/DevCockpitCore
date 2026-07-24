@@ -1,0 +1,15 @@
+{
+  "schema_version": "task_report_manifest.v1",
+  "artifact_id": "h3-g02-real-nlmytgen-report-manifest-v1",
+  "generated_at": "2026-07-25T03:05:47.2597223+09:00",
+  "reports": [
+    {
+      "project_key": "nlmytgen",
+      "report_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+      "required": true,
+      "evidence_class": "authentic_owner_authorized_point_in_time_report",
+      "authority_basis": "owner_authorized_current_checkout_observation",
+      "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba"
+    }
+  ]
+}

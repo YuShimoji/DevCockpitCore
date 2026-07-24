@@ -2,22 +2,22 @@
   "schema_version": "h3_current_observation_safety_boundary_binding_inventory.v1",
   "artifact_id": "h3-current-observation-safety-boundary-v1",
   "hash_basis": "repository_relative_path_and_raw_bytes_sha256_v1",
-  "base_revision": "7b3024ab6648022396e9e915c73b54db74b75f47",
-  "source_tree_sha256": "eadc9023fce9544d89908a6a8ceaf05ccd50e25cf15a8e54f1e607d41c61be22",
+  "base_revision": "e7bbe331ecaa2cc21fbffede5013337bd0934c77",
+  "source_tree_sha256": "f7564533bb6904283559b317fb8107b86dc8dd2bb1b66eecf1a3392d892dbd74",
   "bindings": {
     "src/dev_cockpit/current_observation.py": "51053e76c2629deb68e78de1f5a7400f4402df558c318e10f16612ac63b7410e",
     "src/dev_cockpit/report_authority_v2.py": "e78e35517e850617e3364bee4a17bd178f969393554041db0e5770452bf7a18d",
     "src/dev_cockpit/dashboard.py": "4fab28d4cda14acdc0c3dccfdf0eef88f02fc9ec7bd87ae88d4be8011248a1ea",
     "tests/test_current_observation.py": "5adbfcdb2ddf673c5bedbefb37eafac5ea0b36e7fe5622d5c2ea691729b4e2df",
     "tests/test_current_observation_ingress_cli.py": "d7b52d5fe472dc61b5c711822fb087659e171761afdc69e2002db29d837f180c",
-    "tests/test_current_observation_safety_boundary_artifact.py": "991713e1a7b69ba4efca987ed47393e92066548bfb6a1de1a37a2a979ceaed15",
+    "tests/test_current_observation_safety_boundary_artifact.py": "04c0e1399ff0efac24129b011ddeb0d17aa27a09f2d52e7ad536a214af802bc8",
     "tests/test_report_authority_v2.py": "4731687a013211c3d62c6888c49591a3d714891d19beabb70c7c0bf603689384",
-    "tests/test_project_state_contract.py": "246f7b2b62a014c5ccb912d0dbbc15a94c2719932319689d306d0c6afb7a85e2",
+    "tests/test_project_state_contract.py": "95afc0042954a639d20444cfedc2946820f484a77c6769e80270ed1e10a845e8",
     "README.md": "b9f2d4842e3daf73ee6e2e001748888aea2b18eb9e4dd843b395c9fba729cf35",
     "docs/PROJECT_COCKPIT.md": "6bfea0f8c77622c91c17b7fd83db606fe303e51ba31e263f4f315a87eeac2b8a",
     "docs/runtime-state.md": "380d2108c4b1646d5a716012f92662b2c61f378516e6b1fa10be82f8fbcf2ab3",
     "docs/decision-log.md": "8cc356fc3a4cbe3cb9a8cb66eff6632d71dede35fb9ccdbbb716946d3a42e299",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/README.md": "b1cbacdf846a7fa46f18e587393096dcfd1896ed721337d1436b6417aa1a6900",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "7e3b42d5729c779331c78129e501990b95d6f903b975a7128e496356eaa71859"
+    "artifacts/review/h3-current-observation-safety-boundary-v1/README.md": "f56a208bf4f5844f584bade64630d7c693fe6b407b1299984c1b47ff57b7f22a",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "d495d854f797eb8cee57f4c142124554f85a1f30b4570bec721b27046adcf713"
   }
 }

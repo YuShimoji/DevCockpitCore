@@ -124,6 +124,7 @@ class ProjectStateContractTests(unittest.TestCase):
                 "h3-report-authority-envelope-v1",
                 "h3-current-observation-ingress-v1",
                 "h3-current-observation-safety-boundary-v1",
+                "h3-real-current-nlmytgen-point-in-time-v1",
             },
             {path.name for path in review_root.iterdir() if path.is_dir()},
         )

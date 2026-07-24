@@ -1,0 +1,132 @@
+{
+  "schema_version": "cross_project_supervision_packet.v1",
+  "artifact_id": "cross-project-supervision-packet-v1",
+  "generated_at": "2026-07-25T03:05:47.2597223+09:00",
+  "producer": "dev_cockpit.supervision_packet",
+  "source_bindings": [
+    {
+      "project_key": "nlmytgen",
+      "report_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+      "required": true,
+      "evidence_class": "authentic_owner_authorized_point_in_time_report",
+      "authority_basis": "owner_authorized_current_checkout_observation",
+      "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+      "binding_status": "matched"
+    }
+  ],
+  "coverage": {
+    "project_count": 1,
+    "report_count": 1,
+    "active_task_count": 1,
+    "closed_or_informational_count": 0,
+    "required_report_count": 1,
+    "manifest_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json",
+    "manifest_artifact_id": "h3-g02-real-nlmytgen-report-manifest-v1",
+    "live_coverage": false,
+    "coverage_statement": "Owner-authorized authentic point-in-time report coverage from explicit manifest binding; not live/current coverage."
+  },
+  "attention_policy": [
+    {
+      "precedence": 1,
+      "key": "true_stop_or_required_failure",
+      "label": "True stop or required acceptance failure"
+    },
+    {
+      "precedence": 2,
+      "key": "user_authorization_or_material_decision",
+      "label": "User action, authorization, or material decision gate"
+    },
+    {
+      "precedence": 3,
+      "key": "awaiting_supervisor_acceptance",
+      "label": "Completed work awaiting supervisor acceptance or integration"
+    },
+    {
+      "precedence": 4,
+      "key": "active_safe_continuation",
+      "label": "Active safe continuation"
+    },
+    {
+      "precedence": 5,
+      "key": "unknown_requiring_review",
+      "label": "Unknown state requiring review"
+    },
+    {
+      "precedence": 6,
+      "key": "closed_or_informational",
+      "label": "Closed or informational"
+    }
+  ],
+  "global_attention_queue": [
+    {
+      "task_id": "task-d2ec75bacb888e49",
+      "project_key": "nlmytgen",
+      "thread_id": "nlmytgen-h3-g02-real-current-observation-v1",
+      "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+      "slice_id": "real-current-point-in-time-observation-v1",
+      "artifact_id": "h3-g02-nlmytgen-source-report-v1",
+      "attention_class": "true_stop_or_required_failure",
+      "attention_precedence": 1,
+      "global_rank": 1,
+      "required": true,
+      "outcome_summary": "This file is a fresh owner-authorized point-in-time source report for the exact NLMYTGen checkout identified below.",
+      "current_state": "point-in-time-source-report-exported",
+      "next_state": {
+        "owner": "DevCockpitCore",
+        "recommended_slice": "devcockpitcore-h3-g02-real-current-observation-v1",
+        "user_work": "none",
+        "agent_work": "review classification"
+      },
+      "gate_decision": "blocked_safety_boundary",
+      "gate_stop_class": "SAFETY_BOUNDARY",
+      "evidence_class": "authentic_owner_authorized_point_in_time_report",
+      "authority_basis": "owner_authorized_current_checkout_observation",
+      "evidence_references": [
+        {
+          "kind": "source_report",
+          "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+          "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba"
+        },
+        {
+          "kind": "derived_contracts",
+          "report_normalization_schema": "report_normalization.v1",
+          "gate_classification_schema": "gate_classification.v1",
+          "gate_decision": "blocked_safety_boundary"
+        }
+      ],
+      "source_report_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+      "source_report_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+      "executable": false
+    }
+  ],
+  "project_worksets": [
+    {
+      "project_key": "nlmytgen",
+      "project_local_first_task_id": "task-d2ec75bacb888e49",
+      "active_task_ids": [
+        "task-d2ec75bacb888e49"
+      ],
+      "user_or_supervisor_gate": "task-d2ec75bacb888e49",
+      "safe_continuation": "none",
+      "closed_or_informational_task_ids": [],
+      "global_rank_references": [
+        {
+          "task_id": "task-d2ec75bacb888e49",
+          "global_rank": 1
+        }
+      ]
+    }
+  ],
+  "closed_or_informational": [],
+  "scope_boundary": {
+    "observer_first": true,
+    "explicit_manifest_only": true,
+    "directory_latest_report_discovery": false,
+    "conversation_or_clipboard_inference": false,
+    "sibling_repository_writeback": false,
+    "target_repository_writeback": false,
+    "execution_schedule": false,
+    "executable": false,
+    "global_rank_meaning": "attention_and_review_priority_only"
+  }
+}

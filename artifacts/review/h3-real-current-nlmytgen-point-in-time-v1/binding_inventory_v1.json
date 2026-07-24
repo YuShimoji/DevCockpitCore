@@ -1,0 +1,24 @@
+{
+  "schema_version": "h3_real_current_nlmytgen_point_in_time_binding_inventory.v1",
+  "artifact_id": "h3-real-current-nlmytgen-point-in-time-v1",
+  "hash_basis": "repository_relative_path_and_raw_bytes_sha256_v1",
+  "base_revision": "e7bbe331ecaa2cc21fbffede5013337bd0934c77",
+  "source_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+  "source_tree_scope": "BOUND_PATHS only; not a repository-wide tree hash",
+  "source_tree_sha256": "d6d4b363d9600a8f9e6b819bbdeefaa5d68b2c457f5da3dc3d352824bc2f80c8",
+  "bindings": {
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json": "9725b060c2b89caa17d19bbc49ff6cb0b184043f60de11f90ac1cf47f8963555",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json": "769f6b9ff944af2ca7e2700b2626da38ef42dacea4c1927c54e87f51610c3836",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json": "ac388e512c5c2f208271bb734c12f0a9b5ab59d0b6d39b38247dd649a9e829ea",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.md": "023d119e5ce5a1ee69010f5b1a854bf8afe5835e0114936c8b069051d791988c",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/normalization/report_normalization_v1.json": "195705849f5f8341c8bbd5099dc8d93ce7551811f2be95f4757cc2809ea297f9",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/authority/supervision_report_authority_envelope_v2.json": "5fb9dfae74250a851bb62d826d64023b30188ccca7c53471713ef4ccdd532ab5",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/devcockpitcore_dashboard.html": "e4b8c3c67fb9a473b1bf9638f3675fbcfea12b1c3e8afb461f61d24fea22dedb",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.json": "8fc4e453d7eeb1c5a3c7e32e138d059be85ecd81954834dfaa18fccfcb82bb0a",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.md": "bd9279a11abe592ce85da58de61201981a894ec2039c9cb189e368f41893eaff",
+    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/priority_readback.json": "ea22f02509e0e3cb5c8c1e3adfd2f5481e88692d73d53a5cb0451ebef5fd629e",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95"
+  }
+}

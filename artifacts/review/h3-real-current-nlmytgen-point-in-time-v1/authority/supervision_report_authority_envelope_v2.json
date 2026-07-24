@@ -1,0 +1,107 @@
+{
+  "schema_version": "supervision_report_authority_envelope.v2",
+  "artifact_id": "h3-g02-real-nlmytgen-authority-envelope-v2",
+  "producer": "dev_cockpit.report_authority",
+  "identity": {
+    "task_id": "task-d2ec75bacb888e49",
+    "project_key": "nlmytgen",
+    "thread_id": "nlmytgen-h3-g02-real-current-observation-v1",
+    "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+    "slice_id": "real-current-point-in-time-observation-v1",
+    "artifact_id": "h3-g02-nlmytgen-source-report-v1"
+  },
+  "bindings": {
+    "source_report": {
+      "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+      "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+      "hash_basis": "canonical_utf8_lf_sha256_v1"
+    },
+    "manifest": {
+      "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json",
+      "content_sha256": "769f6b9ff944af2ca7e2700b2626da38ef42dacea4c1927c54e87f51610c3836",
+      "hash_basis": "raw_bytes_sha256_v1"
+    },
+    "packet": {
+      "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json",
+      "content_sha256": "ac388e512c5c2f208271bb734c12f0a9b5ab59d0b6d39b38247dd649a9e829ea",
+      "hash_basis": "raw_bytes_sha256_v1"
+    },
+    "current_observation": {
+      "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json",
+      "content_sha256": "9725b060c2b89caa17d19bbc49ff6cb0b184043f60de11f90ac1cf47f8963555",
+      "hash_basis": "raw_bytes_sha256_v1",
+      "artifact_id": "h3-g02-real-nlmytgen-observation-v1"
+    }
+  },
+  "report": {
+    "source_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "observed_at": "2026-07-25T03:04:11.2232688+09:00",
+    "evidence_class": "authentic_owner_authorized_point_in_time_report",
+    "authority_basis": "owner_authorized_current_checkout_observation",
+    "observer_permission_scope": "allowed_for_DevCockpitCore_H3_current_claim",
+    "repository_identity": "https://github.com/YuShimoji/NLMYTGen.git"
+  },
+  "observation": {
+    "artifact_id": "h3-g02-real-nlmytgen-observation-v1",
+    "project_key": "nlmytgen",
+    "repository_identity": "https://github.com/YuShimoji/NLMYTGen.git",
+    "authorization_scope": "allowed_for_DevCockpitCore_H3_current_claim",
+    "first_observed_at": "2026-07-24T18:05:26.457472+00:00",
+    "reobserved_at": "2026-07-24T18:05:26.800637+00:00",
+    "before_head_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "after_head_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "before_worktree_sha256": "3dc2722b895738bb273610c2da62665eff437fb0803ac9858c012e5138393212",
+    "after_worktree_sha256": "3dc2722b895738bb273610c2da62665eff437fb0803ac9858c012e5138393212",
+    "actual": true,
+    "clean": false,
+    "stable": true
+  },
+  "assessment": {
+    "assessed_at": "2026-07-25T03:05:47.2597223+09:00",
+    "threshold_seconds": 86400,
+    "temporal_boundary": "age_seconds <= threshold_seconds"
+  },
+  "authority": {
+    "authentic_owner_attached_point_in_time_evidence": true,
+    "transport_source_binding_state": "valid",
+    "report_permission_state": "sufficient_for_h3_current_claim",
+    "observation_authorization_state": "sufficient_for_h3_current_claim",
+    "permission_conjunction_state": "satisfied",
+    "report_temporal_state": "fresh",
+    "reobservation_temporal_state": "fresh",
+    "chronology_state": "valid",
+    "revision_binding_state": "match",
+    "current_claim_eligibility": false,
+    "live_coverage": false,
+    "reason_codes": [
+      "current_observation_receipt_valid",
+      "dual_authorization_conjunction_satisfied",
+      "observation_authorization_explicitly_allows_h3_current_claim",
+      "observer_only_non_executable",
+      "point_in_time_observation_does_not_establish_live_coverage",
+      "reobservation_timestamp_within_threshold",
+      "report_permission_explicitly_allows_h3_current_claim",
+      "report_reobservation_assessment_chronology_valid",
+      "report_timestamp_within_threshold",
+      "repository_project_revision_cross_binding_valid",
+      "revision_match",
+      "source_manifest_packet_binding_valid",
+      "worktree_not_clean"
+    ]
+  },
+  "provenance": {
+    "package_binding_state": "verified",
+    "current_observation_receipt_state": "verified",
+    "repository_project_revision_cross_binding_state": "verified",
+    "overall_current_claim_provenance_state": "verified"
+  },
+  "scope_boundary": {
+    "observer_only": true,
+    "non_executable": true,
+    "executable": false,
+    "sibling_repository_writeback": false,
+    "target_repository_writeback": false,
+    "execution_schedule": false,
+    "live_monitoring": false
+  }
+}

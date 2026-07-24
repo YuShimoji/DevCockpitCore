@@ -1,0 +1,130 @@
+{
+  "schema_version": "report_normalization.v1",
+  "generated_at": "2026-07-24T18:09:00Z",
+  "producer": "dev_cockpit.report_normalizer",
+  "source": {
+    "input_path": "artifacts\\review\\h3-real-current-nlmytgen-point-in-time-v1\\source\\AGENT_REPORT_G02_NLMYTGEN_V1.md",
+    "input_kind": "agent_report_text",
+    "bytes": 7118,
+    "lines": 128
+  },
+  "routing": {
+    "route": "NLMYTGen",
+    "direction": "WORKER->SUPERVISOR",
+    "thread": "nlmytgen-h3-g02-real-current-observation-v1",
+    "lane": "SUPERVISION_EVIDENCE_EXPORT",
+    "slice": "real-current-point-in-time-observation-v1",
+    "epoch": "NLMYTGEN-H3-G02-2026-07-25-01",
+    "base": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "base_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "artifact": "h3-g02-nlmytgen-source-report-v1",
+    "turn": null,
+    "target": null,
+    "artifact_current": null,
+    "artifact_next": null,
+    "reply": null,
+    "confidence": null,
+    "thread_id": "nlmytgen-h3-g02-real-current-observation-v1",
+    "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+    "slice_id": "real-current-point-in-time-observation-v1",
+    "artifact_id": "h3-g02-nlmytgen-source-report-v1",
+    "dialect": "canonical_v7"
+  },
+  "progress": {
+    "lane": "source-report-export",
+    "meter": "#####",
+    "done": 9,
+    "total": 9,
+    "current": "point-in-time-source-report-exported",
+    "next": "devcockpitcore-h3-g02-real-current-observation-v1",
+    "blocker": "none",
+    "user_work": "preserve_existing_dirty_checkout"
+  },
+  "action": {
+    "decision": "completed",
+    "now_owner": "DevCockpitCore",
+    "deliverable": "h3-g02-nlmytgen-source-report-v1",
+    "trigger": "explicit_report_grant_and_separate_observation_grant"
+  },
+  "status": {
+    "reported": true,
+    "blocked": false,
+    "acceptance": "passed",
+    "stop": "none",
+    "branch": "codex/nlmytgen-electron-43-compatibility-v1",
+    "worktree": "repository-root",
+    "health": "yellow",
+    "gates_done": 9,
+    "gates_total": 9,
+    "stop_class": "NONE",
+    "estimate_agent": null,
+    "estimate_user": null
+  },
+  "sections": {
+    "outcome": "This file is a fresh owner-authorized point-in-time source report for the\nexact NLMYTGen checkout identified below. The report records source identity,\nrevision, authority, and observer-only boundaries without modifying NLMYTGen.\nThe checkout was already dirty before this report grant; that state is\npreserved as source evidence and is not treated as a reason to invent a clean\nclaim. This report does not by itself establish current-claim eligibility,\nlive coverage, execution authority, production readiness, or publication.\n\n## Intended State Transition\n\n- from: an existing dirty NLMYTGen compatibility worktree with owner changes\n  already present\n- to: one exact, attachable report bound to the observed checkout revision\n- downstream transition: DevCockpitCore performs one separate environment-\n  isolated read-only observation and binds its receipt to this report\n\n## Source Binding\n\n- project_key: `nlmytgen`\n- report_path: `artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md`\n- repository_remote: `https://github.com/YuShimoji/NLMYTGen.git`\n- sanitized_repository_identity: `https://github.com/YuShimoji/NLMYTGen.git`\n- source_revision: `21194b60f6824eaedaddacf05bb920e1a324936a`\n- observed_at: `2026-07-25T03:04:11.2232688+09:00`\n- source_branch: `codex/nlmytgen-electron-43-compatibility-v1`\n- upstream: `not established; no fetch performed`\n- remote_freshness: `not established`\n- authority_basis: `owner_authorized_current_checkout_observation`\n- evidence_class: `authentic_owner_authorized_point_in_time_report`\n- required: `true`\n- observer_only_permission: `allowed_for_DevCockpitCore_H3_current_claim`\n- tests_executed: `false`\n- current_claim_eligibility: `false`\n- live_coverage: `false`\n- executable: `false`\n\n## Current Project State\n\nThe bound source revision is the current HEAD of the named NLMYTGen checkout,\nwith commit subject `fix(gui): validate Electron 43 compatibility` and commit\ntimestamp `2026-07-25T02:59:54+09:00`. The worktree was already dirty before\nthis report and includes owner-side compatibility work plus untracked local\nevidence. Dirty path names are intentionally not copied into this report;\nthe observation receipt binds only the aggregate porcelain entry count and\nSHA-256. No NLMYTGen tests, package installation, browser, render, YMM4, fetch,\npull, checkout, stage, commit, stash, reset, clean, or other project command\nwas executed by this report slice.\n\n## Deliverable And Access\n\nThe deliverable is this repository-relative source report. It is an input for\nDevCockpitCore's explicit manifest, packet, current-observation receipt,\nAuthority Envelope V2, and package-local Dashboard. It is not a generated\ncurrent-observation receipt and not a product acceptance or release artifact.\n\n## Checks And Evidence\n\n- The exact Git top-level was read and matched the owner-supplied exact\n  checkout; its local absolute path is intentionally not retained in package",
+    "what_changed": null,
+    "artifacts": [
+      "The sanitized `remote.origin.url` was read from local Git configuration and",
+      "The full source revision and branch were read directly from Git before this",
+      "The existing dirty checkout was not enumerated into report text or copied",
+      "Tests were not executed. Remote freshness was not established because no",
+      "source_HEAD: `21194b60f6824eaedaddacf05bb920e1a324936a`",
+      "branch: `codex/nlmytgen-electron-43-compatibility-v1`",
+      "repository_identity: `https://github.com/YuShimoji/NLMYTGen.git`",
+      "preexisting_worktree_state: `dirty`",
+      "target_repository_writeback: `false`",
+      "target_report_or_receipt_writeback: `false`",
+      "commit_push_PR_merge_rebase_stash_reset_clean: `not performed`",
+      "Purpose: bind this exact report into H3-G02. Effect: preserves the source",
+      "Purpose: decide whether a real current claim is eligible. Effect: produces a",
+      "Purpose: advance NLMYTGen product readiness. Effect: would require its own"
+    ],
+    "commands_and_results": [],
+    "validation": [],
+    "completion_matrix": null,
+    "continuation_state": null,
+    "user_side_work": null,
+    "agent_side_work": null,
+    "handoff_gate": "The source-report export gate is passed for exact identity and owner-authorized\nobserver input. The downstream real observation and package gate remain open.\nNo main integration, H4, scheduler, runner, live monitor, writeback,\nproduction, publication, or release gate is changed by this report.",
+    "extra": {}
+  },
+  "normalized_outcome": {
+    "decision": "completed",
+    "summary": "This file is a fresh owner-authorized point-in-time source report for the exact NLMYTGen checkout identified below.",
+    "commits": [],
+    "pushed": null,
+    "worktree": null,
+    "remote_parity": null,
+    "tests": []
+  },
+  "handoff": {
+    "handoff_gate": null,
+    "handoff_reason": null,
+    "supervisor_should_generate_prompt": false
+  },
+  "next": {
+    "artifact_next": "devcockpitcore-h3-g02-real-current-observation-v1",
+    "recommended_next_slice": "devcockpitcore-h3-g02-real-current-observation-v1",
+    "next_owner": "DevCockpitCore",
+    "minimal_next_task": null
+  },
+  "residue_audit": {
+    "contains_paste_ready_prompt": false,
+    "contains_pseudo_git_tags": false,
+    "pseudo_git_tags": [],
+    "contains_absolute_user_paths": false,
+    "absolute_user_paths_redacted": false,
+    "absolute_user_path_count": 0,
+    "contains_runner_or_scheduler_instruction": false,
+    "risky_automation_residues": [],
+    "contains_execution_automation_overclaim": false,
+    "contains_production_readiness_overclaim": false,
+    "notes": []
+  },
+  "health": {
+    "normalization_status": "green",
+    "warnings": [],
+    "stop_class": "NONE",
+    "unknown_fields": []
+  }
+}

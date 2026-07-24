@@ -1,0 +1,127 @@
+{
+  "schema_version": "h3_real_current_nlmytgen_point_in_time_machine_readback.v1",
+  "artifact_id": "h3-real-current-nlmytgen-point-in-time-v1",
+  "mission_id": "dcc-h3-g02-real-nlmytgen-observation",
+  "devcockpitcore_base_revision": "e7bbe331ecaa2cc21fbffede5013337bd0934c77",
+  "transition": {
+    "from": "owner_existing_dirty_nlmytgen_checkout_without_real_h3_package",
+    "to": "stable_dirty_authentic_point_in_time_negative_package"
+  },
+  "source": {
+    "project_key": "nlmytgen",
+    "repository_identity": "https://github.com/YuShimoji/NLMYTGen.git",
+    "source_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "report_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+    "report_observed_at": "2026-07-25T03:04:11.2232688+09:00",
+    "source_branch": "codex/nlmytgen-electron-43-compatibility-v1",
+    "evidence_class": "authentic_owner_authorized_point_in_time_report",
+    "authority_basis": "owner_authorized_current_checkout_observation",
+    "report_permission": "allowed_for_DevCockpitCore_H3_current_claim",
+    "tests_executed": false,
+    "remote_freshness_established": false
+  },
+  "observation": {
+    "artifact_id": "h3-g02-real-nlmytgen-observation-v1",
+    "first_observed_at": "2026-07-24T18:05:26.457472+00:00",
+    "reobserved_at": "2026-07-24T18:05:26.800637+00:00",
+    "before_head_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "after_head_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+    "before_worktree_sha256": "3dc2722b895738bb273610c2da62665eff437fb0803ac9858c012e5138393212",
+    "after_worktree_sha256": "3dc2722b895738bb273610c2da62665eff437fb0803ac9858c012e5138393212",
+    "before_worktree_entry_count": 16,
+    "after_worktree_entry_count": 16,
+    "actual": true,
+    "clean": false,
+    "stable": true,
+    "observation_authorization": "allowed_for_DevCockpitCore_H3_current_claim"
+  },
+  "authority": {
+    "report_permission": "allowed_for_DevCockpitCore_H3_current_claim",
+    "observation_authorization": "allowed_for_DevCockpitCore_H3_current_claim",
+    "authentic_owner_attached_point_in_time_evidence": true,
+    "current_claim_eligibility": false,
+    "reason_codes": [
+      "current_observation_receipt_valid",
+      "dual_authorization_conjunction_satisfied",
+      "observation_authorization_explicitly_allows_h3_current_claim",
+      "observer_only_non_executable",
+      "point_in_time_observation_does_not_establish_live_coverage",
+      "reobservation_timestamp_within_threshold",
+      "report_permission_explicitly_allows_h3_current_claim",
+      "report_reobservation_assessment_chronology_valid",
+      "report_timestamp_within_threshold",
+      "repository_project_revision_cross_binding_valid",
+      "revision_match",
+      "source_manifest_packet_binding_valid",
+      "worktree_not_clean"
+    ],
+    "live_coverage": false,
+    "executable": false,
+    "provenance": {
+      "package_binding_state": "verified",
+      "current_observation_receipt_state": "verified",
+      "repository_project_revision_cross_binding_state": "verified",
+      "overall_current_claim_provenance_state": "verified"
+    },
+    "evidence_validity": "valid",
+    "observed_result": "pass",
+    "decision_effect": "none"
+  },
+  "chronology": {
+    "report_observed_at": "2026-07-25T03:04:11.2232688+09:00",
+    "first_observed_at": "2026-07-24T18:05:26.457472+00:00",
+    "reobserved_at": "2026-07-24T18:05:26.800637+00:00",
+    "assessed_at": "2026-07-25T03:05:47.2597223+09:00",
+    "state": "valid"
+  },
+  "cross_binding": {
+    "source_manifest_packet": "verified",
+    "current_observation_receipt": "verified",
+    "repository_project_revision": "verified",
+    "authority_envelope_reprojection": "verified",
+    "dashboard_readback_projection": "verified"
+  },
+  "derived_outputs": {
+    "fixed_input_reprojection": true,
+    "target_repository_reobserved_for_regeneration": false,
+    "byte_identical_regeneration_evidence": "tests.test_h3_g02_real_package.H3G02RealPackageTests.test_fixed_inputs_rebuild_derived_outputs_byte_identically",
+    "paths": [
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.md",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/normalization/report_normalization_v1.json",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/authority/supervision_report_authority_envelope_v2.json",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/devcockpitcore_dashboard.html",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.json",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.md",
+      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/priority_readback.json",
+      "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
+      "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json"
+    ]
+  },
+  "historical_invariance": {
+    "safety_boundary_inventory_sha256": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
+    "safety_boundary_readback_sha256": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95",
+    "accepted_historical_and_production_baselines": "verified by safety-boundary generator"
+  },
+  "canonical_state": {
+    "real_observation_performed": true,
+    "real_current_claim_eligibility": false,
+    "live_coverage": false,
+    "executable": false,
+    "main_integration_performed": false,
+    "h4_started": false
+  },
+  "scope_boundary": {
+    "observer_only": true,
+    "target_repository_writeback": false,
+    "fetch_performed": false,
+    "tests_executed_in_target": false,
+    "dirty_path_names_retained": false,
+    "local_absolute_paths_retained": false,
+    "credentials_or_secrets_retained": false
+  },
+  "binding_inventory_sha256": "b4c97634689299c52a176e02314f142921cfe60f8ca9f07633c19c04a1f1d93a"
+}

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from hashlib import sha256
 import json
 from pathlib import Path
@@ -9,7 +10,7 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[3]
 PACKAGE = Path(__file__).resolve().parent
 ARTIFACT_ID = "h3-current-observation-safety-boundary-v1"
-BASE_REVISION = "7b3024ab6648022396e9e915c73b54db74b75f47"
+BASE_REVISION = "e7bbe331ecaa2cc21fbffede5013337bd0934c77"
 
 BOUND_PATHS = (
     "src/dev_cockpit/current_observation.py",
@@ -51,7 +52,16 @@ PROTECTED_FILE_HASHES = {
 }
 
 
-def generate() -> None:
+def generate(*, output_dir: str | Path | None = None) -> dict[str, dict[str, Any]]:
+    """Build the package in memory, optionally writing only to staging output."""
+
+    package = _build_package()
+    if output_dir is not None:
+        _write_staging(Path(output_dir), package)
+    return package
+
+
+def _build_package() -> dict[str, dict[str, Any]]:
     preserved = _verify_preserved_baselines()
     bindings = {
         path: sha256((ROOT / path).read_bytes()).hexdigest() for path in BOUND_PATHS
@@ -134,9 +144,18 @@ def generate() -> None:
         "binding_inventory_sha256": sha256(
             inventory_payload.encode("utf-8")
         ).hexdigest(),
+        "source_tree_scope": "BOUND_PATHS only; not a repository-wide tree hash",
+        "focused_evidence_semantics": (
+            "test names are evidence locators, not execution receipts"
+        ),
+        "canonical_state_semantics": (
+            "declared package state, not an observed execution result"
+        ),
     }
-    _write("binding_inventory_v1.json", inventory)
-    _write("safety_boundary_machine_readback_v1.json", readback)
+    return {
+        "binding_inventory_v1.json": inventory,
+        "safety_boundary_machine_readback_v1.json": readback,
+    }
 
 
 def _verify_preserved_baselines() -> dict[str, Any]:
@@ -187,13 +206,61 @@ def _binding_tree_sha256(bindings: dict[str, str]) -> str:
     return digest.hexdigest()
 
 
-def _write(name: str, value: dict[str, Any]) -> None:
-    (PACKAGE / name).write_text(
-        json.dumps(value, ensure_ascii=True, indent=2) + "\n",
-        encoding="utf-8",
-        newline="\n",
-    )
+def verify_committed_package(
+    package: dict[str, dict[str, Any]] | None = None,
+) -> dict[str, str]:
+    """Verify committed bytes without changing the tracked historical artifact."""
+
+    expected_package = package if package is not None else _build_package()
+    hashes: dict[str, str] = {}
+    for name, value in expected_package.items():
+        path = PACKAGE / name
+        expected = _serialize(value)
+        actual = path.read_bytes()
+        if actual != expected:
+            raise RuntimeError(
+                f"committed {name} does not match current bound source; "
+                "refusing to overwrite tracked package"
+            )
+        hashes[name] = sha256(actual).hexdigest()
+    return hashes
+
+
+def _write_staging(
+    output_dir: Path, package: dict[str, dict[str, Any]]
+) -> None:
+    destination = output_dir.resolve()
+    if destination == PACKAGE.resolve():
+        raise ValueError(
+            "staging output must not be the tracked safety-boundary package"
+        )
+    destination.mkdir(parents=True, exist_ok=True)
+    for name, value in package.items():
+        (destination / name).write_bytes(_serialize(value))
+
+
+def _serialize(value: dict[str, Any]) -> bytes:
+    return (
+        json.dumps(value, ensure_ascii=True, indent=2) + "\n"
+    ).encode("utf-8")
 
 
 if __name__ == "__main__":
-    generate()
+    parser = argparse.ArgumentParser(
+        description="Build or verify the H3 safety-boundary package without tracked writes."
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Optional temporary/staging directory; the tracked package is rejected.",
+    )
+    args = parser.parse_args()
+    if args.output_dir is not None:
+        package = generate(output_dir=args.output_dir)
+        print(f"staged {len(package)} safety-boundary files in {args.output_dir.resolve()}")
+    else:
+        package = generate()
+        hashes = verify_committed_package(package)
+        print("verified committed safety-boundary bytes:")
+        for name, digest in hashes.items():
+            print(f"{name}: {digest}")
