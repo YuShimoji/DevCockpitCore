@@ -1,9 +1,7 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-22
+updated_at: 2026-07-24
 projection_kind: repository_restart_and_artifact_access
-latest_readiness_report_path: docs/handoffs/2026-07-22-remote-sync-development-readiness-supervisor-report-v3.md
-last_local_readiness_observed_at: 2026-07-22T22:03:14.7046675+09:00
 last_local_validation_state: yellow_non_blocking_15_pass_1_known_warning_0_fail
 current_review_artifact: h3-report-authority-envelope-v1
 current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
@@ -210,6 +208,9 @@ This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
 the receipt authority boundary directly. A dated handoff may explain why a
 decision was made but does not supersede this projection or live evidence.
+
+The latest cross-terminal handoff is
+[`docs/handoffs/2026-07-24-remote-sync-development-readiness-supervisor-report-v4.md`](handoffs/2026-07-24-remote-sync-development-readiness-supervisor-report-v4.md).
 
 ## Local Validation Entry
 
