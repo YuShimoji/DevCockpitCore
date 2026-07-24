@@ -6,7 +6,9 @@ validated_base_revision: af76d83e2e66264d37fce16d3148bbbbd4ac26cc
 handoff_branch: codex/remote-sync-readiness-2026-07-22
 remote_target: origin
 remote_branch: origin/codex/remote-sync-readiness-2026-07-22
-remote_publication_state: pending_push_of_this_handoff_commit
+remote_publication_state: published
+published_revision: e387c94b329a3ce54bc61641859b3998689d24d0
+remote_parity_at_publication: 0_0
 normal_human_entry: docs/PROJECT_COCKPIT.md
 machine_restart_projection: docs/runtime-state.md
 durable_boundary: docs/project-context.md
@@ -25,9 +27,9 @@ The local cross-terminal handoff is prepared on
 `codex/remote-sync-readiness-2026-07-22`. The branch is based on the unchanged
 `origin/main` revision `24abbbd8a90fd8422165afeb05ad306732dba572` and contains
 the previous local handoff commit `af76d83e2e66264d37fce16d3148bbbbd4ac26cc`.
-The current task's handoff commit is the commit that contains this file; after
-push, fetch this named branch from another terminal. `origin/main` is not
-modified by this handoff.
+The current task's handoff commit is `e387c94b329a3ce54bc61641859b3998689d24d0`,
+and it is published at the named remote branch with parity `0 0`.
+`origin/main` is not modified by this handoff.
 
 The restart-doc contract was repaired while preparing the handoff:
 `latest_readiness_report_path` and `last_local_readiness_observed_at` remain
@@ -84,9 +86,9 @@ The current slice remains observer-first:
   workflow, server, database, credentials, or target-repository writeback was
   added.
 
-## Remote Publication Plan
+## Remote Publication Result
 
-The intended remote write is limited to the current branch:
+The remote write was limited to the current branch:
 
 ```powershell
 git push -u origin HEAD
@@ -94,10 +96,9 @@ git rev-list --left-right --count 'HEAD...@{upstream}'
 git status --short --branch
 ```
 
-This pushes `codex/remote-sync-readiness-2026-07-22` and sets its upstream to
-`origin/codex/remote-sync-readiness-2026-07-22`. It does not merge or push to
-`main`. The publication state in this file is changed to `published` only after
-the push and post-push parity check succeed.
+`git push -u origin HEAD` succeeded. The branch now tracks
+`origin/codex/remote-sync-readiness-2026-07-22`, and the post-push parity check
+returned `0 0`. No merge, force-push, or write to `main` occurred.
 
 ## Re-Entry Packet For Another Terminal
 
