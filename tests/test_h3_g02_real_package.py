@@ -2,13 +2,19 @@ from __future__ import annotations
 
 import json
 from hashlib import sha256
+import os
 from pathlib import Path
 import runpy
+import subprocess
+import sys
 import tempfile
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+from dev_cockpit.supervision_packet import SupervisionPacketError
+
 PACKAGE = ROOT / "artifacts" / "review" / "h3-real-current-nlmytgen-point-in-time-v1"
 SAFETY = ROOT / "artifacts" / "review" / "h3-current-observation-safety-boundary-v1"
 
@@ -18,6 +24,108 @@ def _json(path: Path) -> dict:
 
 
 class H3G02RealPackageTests(unittest.TestCase):
+    def test_clean_interpreter_module_closure_is_exact_and_lazy(self) -> None:
+        code = """
+import json
+import runpy
+import sys
+import tempfile
+from pathlib import Path
+
+root = Path.cwd().resolve()
+sys.path.insert(0, str(root / "src"))
+module = runpy.run_path(
+    str(root / "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/generate_package.py"),
+    run_name="h3_g02_clean_closure_test",
+)
+with tempfile.TemporaryDirectory(prefix="h3-g02-clean-closure-") as output_dir:
+    module["generate"](output_dir=output_dir)
+    actual = sorted(
+        {
+            Path(path).resolve().relative_to(root).as_posix()
+            for loaded in sys.modules.values()
+            if (path := getattr(loaded, "__file__", None))
+            and Path(path).suffix == ".py"
+            and Path(path).resolve().is_relative_to(root)
+        }
+    )
+print(
+    json.dumps(
+        {
+            "actual": actual,
+            "declared": sorted(module["REPOSITORY_LOCAL_PRODUCER_MODULES"]),
+        }
+    )
+)
+"""
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = str(ROOT / "src")
+        completed = subprocess.run(
+            [sys.executable, "-c", code],
+            cwd=ROOT,
+            env=environment,
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+        self.assertEqual(0, completed.returncode, completed.stderr)
+        result = json.loads(completed.stdout)
+        self.assertEqual(result["declared"], result["actual"])
+        excluded = {
+            "src/dev_cockpit/adapters.py",
+            "src/dev_cockpit/cross_project_smoke.py",
+            "src/dev_cockpit/git_status.py",
+            "src/dev_cockpit/status_snapshot.py",
+            "src/dev_cockpit/validation_pack.py",
+        }
+        self.assertTrue(excluded.isdisjoint(result["actual"]))
+
+    def test_undeclared_module_closure_is_rejected(self) -> None:
+        package_module = runpy.run_path(
+            str(PACKAGE / "generate_package.py"),
+            run_name="h3_g02_undeclared_closure_test_module",
+        )
+        actual = set(package_module["REPOSITORY_LOCAL_PRODUCER_MODULES"])
+        actual.add("src/dev_cockpit/undeclared_test_module.py")
+        with self.assertRaisesRegex(
+            package_module["DependencyClosureError"],
+            r"repository module dependency closure mismatch: .*undeclared_test_module\.py",
+        ):
+            package_module["_assert_repository_module_closure"](actual)
+
+    def test_declared_module_drift_rejects_without_tracked_writeback(self) -> None:
+        package_module = runpy.run_path(
+            str(PACKAGE / "generate_package.py"),
+            run_name="h3_g02_declared_module_drift_test_module",
+        )
+        tracked_before = {
+            path.relative_to(PACKAGE).as_posix(): path.read_bytes()
+            for path in PACKAGE.rglob("*")
+            if path.is_file()
+        }
+        with tempfile.TemporaryDirectory(prefix="h3-g02-module-drift-") as temp_dir:
+            reconstruction_root = Path(temp_dir) / "reconstruction-root"
+            package_module["_prepare_reconstruction_root"](reconstruction_root)
+            module_path = (
+                reconstruction_root / "src/dev_cockpit/report_normalizer.py"
+            )
+            module_path.write_bytes(module_path.read_bytes() + b"\nDRIFT\n")
+            outputs = package_module["_reconstruct"](reconstruction_root)
+            with self.assertRaisesRegex(
+                RuntimeError,
+                r"committed binding_inventory_v2\.json does not match reconstructed bytes",
+            ):
+                package_module["_verify_committed_outputs"](outputs)
+        self.assertEqual(
+            tracked_before,
+            {
+                path.relative_to(PACKAGE).as_posix(): path.read_bytes()
+                for path in PACKAGE.rglob("*")
+                if path.is_file()
+            },
+        )
+
     def test_two_independent_staging_builds_match(self) -> None:
         package_module = runpy.run_path(
             str(PACKAGE / "generate_package.py"),
@@ -98,7 +206,7 @@ class H3G02RealPackageTests(unittest.TestCase):
                 / package_module["FIXED_CAPTURED_INPUTS"][0]
             )
             source_path.write_bytes(source_path.read_bytes() + b"\nDRIFT\n")
-            with self.assertRaises(Exception):
+            with self.assertRaises(SupervisionPacketError):
                 package_module["_reconstruct"](reconstruction_root)
         self.assertEqual(
             tracked_before,
@@ -136,6 +244,26 @@ class H3G02RealPackageTests(unittest.TestCase):
         self.assertFalse(readback["scope_boundary"]["target_repository_writeback"])
         self.assertFalse(readback["scope_boundary"]["local_absolute_paths_retained"])
         self.assertTrue(readback["inputs"]["producer_inputs_exclude_committed_derived_files"])
+        self.assertEqual(
+            readback["inputs"]["measured_repository_module_closure"],
+            readback["inputs"]["declared_repository_module_closure"],
+        )
+        module_hashes = readback["inputs"]["immutable_dependencies"][
+            "repository_local_producer_modules"
+        ]
+        self.assertEqual(
+            set(module_hashes),
+            set(readback["inputs"]["declared_repository_module_closure"]),
+        )
+        inventory = _json(PACKAGE / "binding_inventory_v2.json")
+        self.assertEqual(
+            set(
+                inventory["immutable_producer_dependencies"][
+                    "repository_local_producer_modules"
+                ]["raw_bytes_sha256"]
+            ),
+            set(readback["inputs"]["declared_repository_module_closure"]),
+        )
         self.assertEqual(
             readback["derived_outputs"]["paths"],
             list(package_module["REGENERATED_DERIVED_OUTPUTS"]),

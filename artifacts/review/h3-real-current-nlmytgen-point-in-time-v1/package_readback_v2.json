@@ -13,29 +13,36 @@
       "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json",
       "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json"
     ],
-    "immutable_producer_dependencies": [
-      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/README.md",
-      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/generate_package.py",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/README.md",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json",
-      "src/dev_cockpit/current_observation.py",
-      "src/dev_cockpit/dashboard.py",
-      "src/dev_cockpit/evidence_freshness.py",
-      "src/dev_cockpit/gate_classifier.py",
-      "src/dev_cockpit/report_authority.py",
-      "src/dev_cockpit/report_authority_v2.py",
-      "src/dev_cockpit/report_normalizer.py",
-      "src/dev_cockpit/supervision_packet.py",
-      "samples/validation_packs/devcockpitcore_validation_pack_result.json",
-      "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
-      "samples/status_snapshots/devcockpitcore_status.json",
-      "adapters/devcockpitcore.json",
-      "docs/runtime-state.md",
-      "docs/project-context.md",
-      "samples/evidence_freshness/evidence_freshness_receipt_v1.json"
-    ],
+    "immutable_producer_dependencies": {
+      "repository_local_producer_modules": [
+        "src/dev_cockpit/__init__.py",
+        "src/dev_cockpit/current_observation.py",
+        "src/dev_cockpit/dashboard.py",
+        "src/dev_cockpit/evidence_freshness.py",
+        "src/dev_cockpit/gate_classifier.py",
+        "src/dev_cockpit/report_authority.py",
+        "src/dev_cockpit/report_authority_v2.py",
+        "src/dev_cockpit/report_normalizer.py",
+        "src/dev_cockpit/supervision_packet.py"
+      ],
+      "non_module_producer_data_and_documents": [
+        "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/README.md",
+        "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/generate_package.py",
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        "samples/status_snapshots/devcockpitcore_status.json",
+        "adapters/devcockpitcore.json",
+        "docs/runtime-state.md",
+        "docs/project-context.md",
+        "samples/evidence_freshness/evidence_freshness_receipt_v1.json"
+      ],
+      "accepted_external_safety_dependencies": [
+        "artifacts/review/h3-current-observation-safety-boundary-v1/README.md",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json"
+      ]
+    },
     "regenerated_derived_outputs": [
       "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/normalization/report_normalization_v1.json",
       "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json",
@@ -56,28 +63,58 @@
       "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json": "769f6b9ff944af2ca7e2700b2626da38ef42dacea4c1927c54e87f51610c3836"
     },
     "immutable_dependencies": {
-      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/README.md": "c94d888c73fa5ddeee266da3ee7f2c41c411f5237bff7232fff062b9f995921b",
-      "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/generate_package.py": "41851488854b00ba95fecbd37493dece37bcda92052251429cab33e327527cbd",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/README.md": "f56a208bf4f5844f584bade64630d7c693fe6b407b1299984c1b47ff57b7f22a",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "d495d854f797eb8cee57f4c142124554f85a1f30b4570bec721b27046adcf713",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95",
-      "src/dev_cockpit/current_observation.py": "51053e76c2629deb68e78de1f5a7400f4402df558c318e10f16612ac63b7410e",
-      "src/dev_cockpit/dashboard.py": "4fab28d4cda14acdc0c3dccfdf0eef88f02fc9ec7bd87ae88d4be8011248a1ea",
-      "src/dev_cockpit/evidence_freshness.py": "d1ae914553acd094047a00477b3eebba7dc59e9e8275cae5b98c09a317ca017f",
-      "src/dev_cockpit/gate_classifier.py": "6e1fa14c38084e414e48d58dbd76ac5bbdf5b29e17385ce03e0cf44374cd591c",
-      "src/dev_cockpit/report_authority.py": "d9e079b2ac4122d4f8ebfc3a2f19cb4e6da0da6306dbd3ae3990499814816836",
-      "src/dev_cockpit/report_authority_v2.py": "e78e35517e850617e3364bee4a17bd178f969393554041db0e5770452bf7a18d",
-      "src/dev_cockpit/report_normalizer.py": "6ae4a5ea2e7165a38f93b1d6005325f43878a4cdb8ed4b6932422d86a4af6c3a",
-      "src/dev_cockpit/supervision_packet.py": "5250f6dd0bbace28831735fdc012c9bb7f7f8af566545aec211f361bafa63d68",
-      "samples/validation_packs/devcockpitcore_validation_pack_result.json": "4e317acc0dd87f9f967491ef8a6835a6641cfa20698f94c8217982973a42483e",
-      "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json": "04ff02e2b3f902bdde71b518b03fd0af35da0acb363b6cd45b785508d1a1feff",
-      "samples/status_snapshots/devcockpitcore_status.json": "47639af41850c6820e760c9a50f21451134a8a37074692f48e4cc95cb4ffe1b6",
-      "adapters/devcockpitcore.json": "ea8b911495aa0635f8f94cd2069fcc182604bb2d934698c9f16f92e7ddaea87c",
-      "docs/runtime-state.md": "380d2108c4b1646d5a716012f92662b2c61f378516e6b1fa10be82f8fbcf2ab3",
-      "docs/project-context.md": "e7aca57218bf705e46fd1dc7799f39baef51927303e259f86547f5f706ec48a8",
-      "samples/evidence_freshness/evidence_freshness_receipt_v1.json": "6cce105ebdaa26a1f43d44f487b18abb6a660d11d167e7aae8583c98fbf77aa2"
+      "repository_local_producer_modules": {
+        "src/dev_cockpit/__init__.py": "341cd9ded0849bb1553fa017b8349cf39dc1a225982dc04d41131ac0c31d6b54",
+        "src/dev_cockpit/current_observation.py": "51053e76c2629deb68e78de1f5a7400f4402df558c318e10f16612ac63b7410e",
+        "src/dev_cockpit/dashboard.py": "4fab28d4cda14acdc0c3dccfdf0eef88f02fc9ec7bd87ae88d4be8011248a1ea",
+        "src/dev_cockpit/evidence_freshness.py": "f9350524d746c4eb1e74b930a563b9e8dee49d3a67ce98c7a1847f60a9b11f2c",
+        "src/dev_cockpit/gate_classifier.py": "6e1fa14c38084e414e48d58dbd76ac5bbdf5b29e17385ce03e0cf44374cd591c",
+        "src/dev_cockpit/report_authority.py": "d9e079b2ac4122d4f8ebfc3a2f19cb4e6da0da6306dbd3ae3990499814816836",
+        "src/dev_cockpit/report_authority_v2.py": "e78e35517e850617e3364bee4a17bd178f969393554041db0e5770452bf7a18d",
+        "src/dev_cockpit/report_normalizer.py": "6ae4a5ea2e7165a38f93b1d6005325f43878a4cdb8ed4b6932422d86a4af6c3a",
+        "src/dev_cockpit/supervision_packet.py": "5250f6dd0bbace28831735fdc012c9bb7f7f8af566545aec211f361bafa63d68"
+      },
+      "non_module_producer_data_and_documents": {
+        "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/README.md": "a2f9df5d10e35480ac2799c1737bb894ebf1fa0c95b89f1df40eef6da59f36b3",
+        "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/generate_package.py": "e2c63daa19ff58cc700f6cb881d902a3252fa3153cdc18f63213455b19c16d05",
+        "samples/validation_packs/devcockpitcore_validation_pack_result.json": "4e317acc0dd87f9f967491ef8a6835a6641cfa20698f94c8217982973a42483e",
+        "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json": "04ff02e2b3f902bdde71b518b03fd0af35da0acb363b6cd45b785508d1a1feff",
+        "samples/status_snapshots/devcockpitcore_status.json": "47639af41850c6820e760c9a50f21451134a8a37074692f48e4cc95cb4ffe1b6",
+        "adapters/devcockpitcore.json": "ea8b911495aa0635f8f94cd2069fcc182604bb2d934698c9f16f92e7ddaea87c",
+        "docs/runtime-state.md": "380d2108c4b1646d5a716012f92662b2c61f378516e6b1fa10be82f8fbcf2ab3",
+        "docs/project-context.md": "e7aca57218bf705e46fd1dc7799f39baef51927303e259f86547f5f706ec48a8",
+        "samples/evidence_freshness/evidence_freshness_receipt_v1.json": "6cce105ebdaa26a1f43d44f487b18abb6a660d11d167e7aae8583c98fbf77aa2"
+      },
+      "accepted_external_safety_dependencies": {
+        "artifacts/review/h3-current-observation-safety-boundary-v1/README.md": "f56a208bf4f5844f584bade64630d7c693fe6b407b1299984c1b47ff57b7f22a",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "d495d854f797eb8cee57f4c142124554f85a1f30b4570bec721b27046adcf713",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95"
+      }
     },
+    "measured_repository_module_closure": [
+      "src/dev_cockpit/__init__.py",
+      "src/dev_cockpit/current_observation.py",
+      "src/dev_cockpit/dashboard.py",
+      "src/dev_cockpit/evidence_freshness.py",
+      "src/dev_cockpit/gate_classifier.py",
+      "src/dev_cockpit/report_authority.py",
+      "src/dev_cockpit/report_authority_v2.py",
+      "src/dev_cockpit/report_normalizer.py",
+      "src/dev_cockpit/supervision_packet.py"
+    ],
+    "declared_repository_module_closure": [
+      "src/dev_cockpit/__init__.py",
+      "src/dev_cockpit/current_observation.py",
+      "src/dev_cockpit/dashboard.py",
+      "src/dev_cockpit/evidence_freshness.py",
+      "src/dev_cockpit/gate_classifier.py",
+      "src/dev_cockpit/report_authority.py",
+      "src/dev_cockpit/report_authority_v2.py",
+      "src/dev_cockpit/report_normalizer.py",
+      "src/dev_cockpit/supervision_packet.py"
+    ],
+    "repository_module_closure_assertion": "exact",
     "committed_derived_files_are_comparison_oracles": true,
     "producer_inputs_exclude_committed_derived_files": true
   },
@@ -159,7 +196,19 @@
     ],
     "staging_roots_outside_repository": true,
     "output_mapping_path_set_exact": true,
-    "normal_verification_writes_no_tracked_files": true
+    "normal_verification_writes_no_tracked_files": true,
+    "repository_module_closure": [
+      "src/dev_cockpit/__init__.py",
+      "src/dev_cockpit/current_observation.py",
+      "src/dev_cockpit/dashboard.py",
+      "src/dev_cockpit/evidence_freshness.py",
+      "src/dev_cockpit/gate_classifier.py",
+      "src/dev_cockpit/report_authority.py",
+      "src/dev_cockpit/report_authority_v2.py",
+      "src/dev_cockpit/report_normalizer.py",
+      "src/dev_cockpit/supervision_packet.py"
+    ],
+    "repository_module_closure_assertion": "exact"
   },
   "cross_binding": {
     "source_manifest_packet": "verified",
@@ -206,7 +255,7 @@
     "safety_boundary_readback_sha256": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95",
     "accepted_historical_and_production_baselines": "verified by safety-boundary generator"
   },
-  "binding_inventory_sha256": "008f47df9fa22eb63b76a4b22e1c727e5adc11a563f56302004a78356ca18692",
+  "binding_inventory_sha256": "8eca291799daaf27f53daaf076bf6a3ca9c2a2bc2fecdc46c28a6adf58ba3936",
   "canonical_state": {
     "real_observation_performed": true,
     "real_current_claim_eligibility": false,

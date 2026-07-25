@@ -16,9 +16,6 @@ import re
 import sys
 from typing import Any, Iterable
 
-from .cross_project_smoke import load_smoke, run_cross_project_smoke
-
-
 POLICY_SCHEMA_VERSION = "evidence_freshness_policy.v1"
 OBSERVATIONS_SCHEMA_VERSION = "evidence_freshness_observations.v1"
 RECEIPT_SCHEMA_VERSION = "evidence_freshness_receipt.v1"
@@ -1176,6 +1173,8 @@ def _collect_live_observations(
     repo_root: Path,
     observed_at: str,
 ) -> list[dict[str, Any]]:
+    from .cross_project_smoke import load_smoke, run_cross_project_smoke
+
     smoke_path = _resolve_contained_file(
         repo_root,
         policy["cross_project_smoke_path"],

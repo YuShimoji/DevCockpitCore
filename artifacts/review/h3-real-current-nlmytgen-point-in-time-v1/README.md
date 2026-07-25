@@ -33,6 +33,13 @@ two independent temporary staging roots. It requires the generated mapping
 to equal the declared derived-output path set, rejects repository-contained
 destinations, and reports deterministic drift when a fixed input is mutated.
 
+The generator also measures its clean-interpreter repository-local Python
+module closure. The exact declared set is bound with raw-byte SHA-256 in the
+inventory and readback. Evidence Freshness loads cross-project smoke support
+only for its genuine live-observation caller, so the H3-G02 reconstruction
+does not load cross_project_smoke, adapters, git_status, status_snapshot, or
+validation_pack.
+
 Run the package generator without arguments to verify committed bytes. Use
 `--output-dir` only for temporary/staging output; the tracked package path is
 rejected as an output destination.

@@ -13,6 +13,21 @@ ROOT = Path(__file__).resolve().parents[3]
 if str(ROOT / "src") not in sys.path:
     sys.path.insert(0, str(ROOT / "src"))
 
+
+def _loaded_repo_module_paths() -> set[str]:
+    paths: set[str] = set()
+    for module in sys.modules.values():
+        module_path = getattr(module, "__file__", None)
+        if not module_path:
+            continue
+        path = Path(module_path).resolve()
+        if path.suffix == ".py" and path.is_relative_to(ROOT):
+            paths.add(path.relative_to(ROOT).as_posix())
+    return paths
+
+
+_MODULE_CLOSURE_BASELINE = _loaded_repo_module_paths()
+
 from dev_cockpit.current_observation import load_current_observation
 from dev_cockpit.dashboard import (
     build_dashboard_model,
@@ -35,6 +50,10 @@ from dev_cockpit.supervision_packet import (
 )
 
 
+class DependencyClosureError(RuntimeError):
+    """Raised when the measured H3-G02 producer-module closure drifts."""
+
+
 PACKAGE = Path(__file__).resolve().parent
 PACKAGE_REL = "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1"
 ARTIFACT_ID = "h3-real-current-nlmytgen-point-in-time-v1"
@@ -44,19 +63,8 @@ ASSESSED_AT = "2026-07-25T03:05:47.2597223+09:00"
 OBSERVATION_ARTIFACT_ID = "h3-g02-real-nlmytgen-observation-v1"
 AUTHORITY_ARTIFACT_ID = "h3-g02-real-nlmytgen-authority-envelope-v2"
 
-FIXED_CAPTURED_INPUTS = (
-    f"{PACKAGE_REL}/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
-    f"{PACKAGE_REL}/receipt/current_observation_v1.json",
-    f"{PACKAGE_REL}/manifest/task_report_manifest_v1.json",
-)
-
-IMMUTABLE_PRODUCER_DEPENDENCIES = (
-    f"{PACKAGE_REL}/README.md",
-    f"{PACKAGE_REL}/generate_package.py",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/README.md",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json",
+REPOSITORY_LOCAL_PRODUCER_MODULES = (
+    "src/dev_cockpit/__init__.py",
     "src/dev_cockpit/current_observation.py",
     "src/dev_cockpit/dashboard.py",
     "src/dev_cockpit/evidence_freshness.py",
@@ -65,6 +73,17 @@ IMMUTABLE_PRODUCER_DEPENDENCIES = (
     "src/dev_cockpit/report_authority_v2.py",
     "src/dev_cockpit/report_normalizer.py",
     "src/dev_cockpit/supervision_packet.py",
+)
+
+FIXED_CAPTURED_INPUTS = (
+    f"{PACKAGE_REL}/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+    f"{PACKAGE_REL}/receipt/current_observation_v1.json",
+    f"{PACKAGE_REL}/manifest/task_report_manifest_v1.json",
+)
+
+IMMUTABLE_NON_MODULE_DEPENDENCIES = (
+    f"{PACKAGE_REL}/README.md",
+    f"{PACKAGE_REL}/generate_package.py",
     "samples/validation_packs/devcockpitcore_validation_pack_result.json",
     "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
     "samples/status_snapshots/devcockpitcore_status.json",
@@ -74,6 +93,18 @@ IMMUTABLE_PRODUCER_DEPENDENCIES = (
     "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
 )
 
+ACCEPTED_EXTERNAL_SAFETY_DEPENDENCIES = (
+    "artifacts/review/h3-current-observation-safety-boundary-v1/README.md",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json",
+)
+
+IMMUTABLE_PRODUCER_DEPENDENCIES = (
+    REPOSITORY_LOCAL_PRODUCER_MODULES
+    + IMMUTABLE_NON_MODULE_DEPENDENCIES
+    + ACCEPTED_EXTERNAL_SAFETY_DEPENDENCIES
+)
 NORMALIZATION_PATH = f"{PACKAGE_REL}/normalization/report_normalization_v1.json"
 PACKET_JSON_PATH = f"{PACKAGE_REL}/packet/cross_project_supervision_packet_v1.json"
 PACKET_MD_PATH = f"{PACKAGE_REL}/packet/cross_project_supervision_packet_v1.md"
@@ -98,6 +129,25 @@ REGENERATED_DERIVED_OUTPUTS = (
     READBACK_PATH,
 )
 BASE_REGENERATED_DERIVED_OUTPUTS = REGENERATED_DERIVED_OUTPUTS[:-2]
+
+
+def _assert_repository_module_closure(
+    actual_paths: set[str] | None = None,
+) -> tuple[str, ...]:
+    if actual_paths is None:
+        actual = _loaded_repo_module_paths() - _MODULE_CLOSURE_BASELINE
+        declared = set(REPOSITORY_LOCAL_PRODUCER_MODULES) - _MODULE_CLOSURE_BASELINE
+    else:
+        actual = set(actual_paths)
+        declared = set(REPOSITORY_LOCAL_PRODUCER_MODULES)
+    if actual != declared:
+        unexpected = sorted(actual - declared)
+        missing = sorted(declared - actual)
+        raise DependencyClosureError(
+            "repository module dependency closure mismatch: "
+            f"unexpected={unexpected}; missing={missing}"
+        )
+    return tuple(sorted(REPOSITORY_LOCAL_PRODUCER_MODULES))
 
 
 def generate(*, output_dir: str | Path | None = None) -> dict[str, bytes]:
@@ -213,10 +263,17 @@ def _reconstruct(reconstruction_root: Path) -> dict[str, bytes]:
         dashboard_readback,
         dashboard_html_bytes,
     )
+    module_closure = _assert_repository_module_closure()
 
     fixed_bindings = _bindings(reconstruction_root, FIXED_CAPTURED_INPUTS)
-    dependency_bindings = _bindings(
-        reconstruction_root, IMMUTABLE_PRODUCER_DEPENDENCIES
+    module_bindings = _bindings(
+        reconstruction_root, REPOSITORY_LOCAL_PRODUCER_MODULES
+    )
+    data_bindings = _bindings(
+        reconstruction_root, IMMUTABLE_NON_MODULE_DEPENDENCIES
+    )
+    safety_bindings = _bindings(
+        reconstruction_root, ACCEPTED_EXTERNAL_SAFETY_DEPENDENCIES
     )
     derived_bindings = {
         path: sha256(_read_bytes(reconstruction_root, path)).hexdigest()
@@ -224,7 +281,10 @@ def _reconstruct(reconstruction_root: Path) -> dict[str, bytes]:
     }
     inventory = _build_inventory(
         fixed_bindings=fixed_bindings,
-        dependency_bindings=dependency_bindings,
+        module_closure=module_closure,
+        module_bindings=module_bindings,
+        data_bindings=data_bindings,
+        safety_bindings=safety_bindings,
         derived_bindings=derived_bindings,
     )
     inventory_bytes = _serialize(inventory)
@@ -234,7 +294,10 @@ def _reconstruct(reconstruction_root: Path) -> dict[str, bytes]:
         authority=authority,
         manifest=manifest,
         fixed_bindings=fixed_bindings,
-        dependency_bindings=dependency_bindings,
+        module_closure=module_closure,
+        module_bindings=module_bindings,
+        data_bindings=data_bindings,
+        safety_bindings=safety_bindings,
         derived_bindings=derived_bindings,
         inventory_bytes=inventory_bytes,
     )
@@ -259,12 +322,17 @@ def _reconstruct(reconstruction_root: Path) -> dict[str, bytes]:
 def _build_inventory(
     *,
     fixed_bindings: dict[str, str],
-    dependency_bindings: dict[str, str],
+    module_closure: tuple[str, ...],
+    module_bindings: dict[str, str],
+    data_bindings: dict[str, str],
+    safety_bindings: dict[str, str],
     derived_bindings: dict[str, str],
 ) -> dict[str, Any]:
     combined = {
         **fixed_bindings,
-        **dependency_bindings,
+        **module_bindings,
+        **data_bindings,
+        **safety_bindings,
         **derived_bindings,
     }
     return {
@@ -278,7 +346,14 @@ def _build_inventory(
         "base_revision": DEVCOCKPIT_BASE_REVISION,
         "source_revision": SOURCE_REVISION,
         "fixed_captured_inputs": fixed_bindings,
-        "immutable_producer_dependencies": dependency_bindings,
+        "immutable_producer_dependencies": {
+            "repository_local_producer_modules": {
+                "paths": list(module_closure),
+                "raw_bytes_sha256": module_bindings,
+            },
+            "non_module_producer_data_and_documents": data_bindings,
+            "accepted_external_safety_dependencies": safety_bindings,
+        },
         "regenerated_derived_outputs": derived_bindings,
         "self_binding_exclusions": {
             "inventory": INVENTORY_PATH,
@@ -297,7 +372,10 @@ def _build_readback(
     authority: dict[str, Any],
     manifest: dict[str, Any],
     fixed_bindings: dict[str, str],
-    dependency_bindings: dict[str, str],
+    module_closure: tuple[str, ...],
+    module_bindings: dict[str, str],
+    data_bindings: dict[str, str],
+    safety_bindings: dict[str, str],
     derived_bindings: dict[str, str],
     inventory_bytes: bytes,
 ) -> dict[str, Any]:
@@ -317,12 +395,31 @@ def _build_readback(
         },
         "package_file_classification": {
             "fixed_captured_inputs": list(FIXED_CAPTURED_INPUTS),
-            "immutable_producer_dependencies": list(IMMUTABLE_PRODUCER_DEPENDENCIES),
+            "immutable_producer_dependencies": {
+                "repository_local_producer_modules": list(
+                    REPOSITORY_LOCAL_PRODUCER_MODULES
+                ),
+                "non_module_producer_data_and_documents": list(
+                    IMMUTABLE_NON_MODULE_DEPENDENCIES
+                ),
+                "accepted_external_safety_dependencies": list(
+                    ACCEPTED_EXTERNAL_SAFETY_DEPENDENCIES
+                ),
+            },
             "regenerated_derived_outputs": list(REGENERATED_DERIVED_OUTPUTS),
         },
         "inputs": {
             "fixed_captured": fixed_bindings,
-            "immutable_dependencies": dependency_bindings,
+            "immutable_dependencies": {
+                "repository_local_producer_modules": module_bindings,
+                "non_module_producer_data_and_documents": data_bindings,
+                "accepted_external_safety_dependencies": safety_bindings,
+            },
+            "measured_repository_module_closure": list(module_closure),
+            "declared_repository_module_closure": list(
+                REPOSITORY_LOCAL_PRODUCER_MODULES
+            ),
+            "repository_module_closure_assertion": "exact",
             "committed_derived_files_are_comparison_oracles": True,
             "producer_inputs_exclude_committed_derived_files": True,
         },
@@ -394,6 +491,8 @@ def _build_readback(
             "staging_roots_outside_repository": True,
             "output_mapping_path_set_exact": True,
             "normal_verification_writes_no_tracked_files": True,
+            "repository_module_closure": list(module_closure),
+            "repository_module_closure_assertion": "exact",
         },
         "cross_binding": {
             "source_manifest_packet": "verified",
@@ -423,11 +522,11 @@ def _build_readback(
             ),
         },
         "historical_invariance": {
-            "safety_boundary_inventory_sha256": dependency_bindings[
+            "safety_boundary_inventory_sha256": safety_bindings[
                 "artifacts/review/h3-current-observation-safety-boundary-v1/"
                 "binding_inventory_v1.json"
             ],
-            "safety_boundary_readback_sha256": dependency_bindings[
+            "safety_boundary_readback_sha256": safety_bindings[
                 "artifacts/review/h3-current-observation-safety-boundary-v1/"
                 "safety_boundary_machine_readback_v1.json"
             ],
@@ -499,8 +598,12 @@ def _verify_cross_bindings(
 
 def verify_committed_package() -> dict[str, str]:
     expected = generate()
+    return _verify_committed_outputs(expected)
+
+
+def _verify_committed_outputs(outputs: dict[str, bytes]) -> dict[str, str]:
     result: dict[str, str] = {}
-    for path, data in expected.items():
+    for path, data in outputs.items():
         relative = path.removeprefix(f"{PACKAGE_REL}/")
         committed = PACKAGE / relative
         actual = committed.read_bytes()
