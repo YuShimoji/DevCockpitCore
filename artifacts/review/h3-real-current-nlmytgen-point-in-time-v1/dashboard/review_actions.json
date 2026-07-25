@@ -1,22 +1,2140 @@
 {
-  "schema_version": "devcockpit_review_actions.v1",
+  "schema_version": "devcockpit_local_dashboard.v1",
   "generated_at": "2026-07-25T03:05:47.2597223+09:00",
   "producer": "dev_cockpit.dashboard",
-  "source_dashboard": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/devcockpitcore_dashboard.html",
-  "package": {
-    "json_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.json",
-    "markdown_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.md",
+  "project": {
+    "name": "DevCockpitCore",
+    "key": "devcockpitcore",
+    "branch": "main",
+    "head": "2e5e924",
+    "active_artifact": "unknown",
+    "artifact_next": "unknown"
+  },
+  "output": {
+    "repo_relative_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/devcockpitcore_dashboard.html",
+    "open_command": "Start-Process .\\artifacts\\review\\h3-real-current-nlmytgen-point-in-time-v1\\dashboard\\devcockpitcore_dashboard.html",
+    "access_mode": "local_static_file",
     "access_state": "worker_generated_not_user_opened",
     "access_evidence_level": "file_generated_by_dashboard_command"
   },
-  "summary": {
-    "total": 18,
-    "blocker": 0,
-    "warning": 14,
-    "info": 4,
-    "locked_by_gate": 1
+  "action_package": {
+    "json_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.json",
+    "markdown_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.md",
+    "schema_version": "devcockpit_review_actions.v1",
+    "access_state": "worker_generated_not_user_opened",
+    "access_evidence_level": "file_generated_by_dashboard_command"
   },
-  "actions": [
+  "priority_readback": {
+    "repo_relative_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/priority_readback.json",
+    "schema_version": "devcockpit_priority_readback.v1",
+    "access_state": "worker_generated_not_user_opened",
+    "access_evidence_level": "file_generated_by_dashboard_command"
+  },
+  "sources": [
+    {
+      "label": "validation_pack_result",
+      "repo_relative_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+      "state": "loaded",
+      "schema_version": "validation_pack_result.v1",
+      "generated_at": "2026-07-06T07:55:56Z"
+    },
+    {
+      "label": "cross_project_smoke_result",
+      "repo_relative_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "state": "loaded",
+      "schema_version": "cross_project_smoke_result.v1",
+      "generated_at": "2026-07-06T07:56:16Z"
+    },
+    {
+      "label": "status_snapshot",
+      "repo_relative_path": "samples/status_snapshots/devcockpitcore_status.json",
+      "state": "loaded",
+      "schema_version": "status_snapshot.v1",
+      "generated_at": "2026-07-06T07:55:33Z"
+    },
+    {
+      "label": "adapter_manifest",
+      "repo_relative_path": "adapters/devcockpitcore.json",
+      "state": "loaded",
+      "schema_version": "adapter_manifest.v1",
+      "generated_at": ""
+    },
+    {
+      "label": "runtime_state",
+      "repo_relative_path": "docs/runtime-state.md",
+      "state": "loaded",
+      "schema_version": "text"
+    },
+    {
+      "label": "project_context",
+      "repo_relative_path": "docs/project-context.md",
+      "state": "loaded",
+      "schema_version": "text"
+    },
+    {
+      "label": "evidence_freshness_receipt",
+      "repo_relative_path": "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+      "state": "loaded",
+      "schema_version": "evidence_freshness_receipt.v1",
+      "generated_at": "2026-07-12T00:00:00Z",
+      "capture_id": "efr-cbae922571043527b800",
+      "hashes_verified": false
+    },
+    {
+      "label": "cross_project_supervision_packet",
+      "repo_relative_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json",
+      "state": "loaded",
+      "schema_version": "cross_project_supervision_packet.v1",
+      "generated_at": "2026-07-25T03:05:47.2597223+09:00",
+      "artifact_id": "cross-project-supervision-packet-v1",
+      "binding_mode": "source_bound_manifest_reprojection",
+      "manifest_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json"
+    },
+    {
+      "label": "supervision_report_authority_envelope",
+      "repo_relative_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/authority/supervision_report_authority_envelope_v2.json",
+      "state": "loaded",
+      "schema_version": "supervision_report_authority_envelope.v2",
+      "generated_at": "2026-07-25T03:05:47.2597223+09:00",
+      "artifact_id": "h3-g02-real-nlmytgen-authority-envelope-v2",
+      "binding_mode": "source_manifest_packet_observation_reprojection",
+      "manifest_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json",
+      "packet_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json"
+    },
+    {
+      "label": "supervision_current_observation",
+      "repo_relative_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json",
+      "state": "loaded",
+      "schema_version": "supervision_current_observation.v1",
+      "generated_at": "2026-07-24T18:05:26.800637+00:00",
+      "artifact_id": "h3-g02-real-nlmytgen-observation-v1",
+      "binding_mode": "strict_read_only_observation_receipt"
+    }
+  ],
+  "freshness": {
+    "loaded_count": "10/10",
+    "latest_generated_at": "2026-07-25T03:05:47.2597223+09:00",
+    "source_summary": "10 loaded, 0 missing"
+  },
+  "source_freshness": {
+    "loaded_count": "10/10",
+    "latest_generated_at": "2026-07-25T03:05:47.2597223+09:00",
+    "source_summary": "10 loaded, 0 missing"
+  },
+  "evidence_freshness": {
+    "schema_version": "evidence_freshness_receipt.v1",
+    "capture_id": "efr-cbae922571043527b800",
+    "assessed_at": "2026-07-12T00:00:00Z",
+    "observation_mode": "injected_deterministic_observations",
+    "authority": {
+      "classification": "point_in_time_non_live",
+      "point_in_time": true,
+      "live": false,
+      "tracked_example": true,
+      "authoritative_for_live_state": false,
+      "may_support_current_state_at_assessed_at": false,
+      "statement": "Tracked deterministic example; never authoritative for live state."
+    },
+    "source_counts": {
+      "fresh": 3,
+      "stale": 4,
+      "unknown": 1,
+      "total": 8
+    },
+    "current_state_claim_eligible": {
+      "eligible": 0,
+      "ineligible": 8
+    },
+    "required_missing": 0,
+    "required_invalid": 0,
+    "statement": "Tracked deterministic example; never authoritative for live state.",
+    "point_in_time": true,
+    "live": false
+  },
+  "evidence_freshness_receipt": {
+    "schema_version": "evidence_freshness_receipt.v1",
+    "capture_id": "efr-cbae922571043527b800",
+    "assessed_at": "2026-07-12T00:00:00Z",
+    "producer": "dev_cockpit.evidence_freshness",
+    "policy": {
+      "schema_version": "evidence_freshness_policy.v1",
+      "policy_id": "devcockpitcore-24-hour-v1",
+      "threshold_seconds": 86400,
+      "threshold_hours": 24.0,
+      "temporal_boundary": "age_seconds <= threshold_seconds",
+      "cross_project_smoke_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke.json",
+      "tracked_sources": [
+        {
+          "project_id": "devcockpitcore",
+          "source_id": "cross-project-smoke-sample",
+          "required": true,
+          "path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          "source_kind": "tracked_point_in_time_artifact",
+          "schema_path": [
+            "schema_version"
+          ],
+          "timestamp_kind": "generated_at",
+          "timestamp_path": [
+            "generated_at"
+          ],
+          "revision_path": [
+            "projects",
+            0,
+            "status_snapshot",
+            "head"
+          ]
+        },
+        {
+          "project_id": "devcockpitcore",
+          "source_id": "intent-comparison-manifest-v2",
+          "required": true,
+          "path": "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
+          "source_kind": "tracked_point_in_time_artifact",
+          "schema_path": [
+            "schema_version"
+          ],
+          "timestamp_kind": "observed_at",
+          "timestamp_path": [
+            "observed_at"
+          ],
+          "revision_path": [
+            "source_commit"
+          ]
+        },
+        {
+          "project_id": "devcockpitcore",
+          "source_id": "status-snapshot-sample",
+          "required": true,
+          "path": "samples/status_snapshots/devcockpitcore_status.json",
+          "source_kind": "tracked_point_in_time_artifact",
+          "schema_path": [
+            "schema_version"
+          ],
+          "timestamp_kind": "generated_at",
+          "timestamp_path": [
+            "generated_at"
+          ],
+          "revision_path": [
+            "repo",
+            "head"
+          ]
+        },
+        {
+          "project_id": "devcockpitcore",
+          "source_id": "validation-pack-sample",
+          "required": true,
+          "path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+          "source_kind": "tracked_point_in_time_artifact",
+          "schema_path": [
+            "schema_version"
+          ],
+          "timestamp_kind": "generated_at",
+          "timestamp_path": [
+            "generated_at"
+          ],
+          "revision_path": [
+            "repo",
+            "head"
+          ]
+        }
+      ],
+      "policy_content_sha256": "732261f29b8f5b653a7821f38704b3842080c07d35f582773d914551c0ef8fc7",
+      "future_timestamp_state": "unknown",
+      "missing_or_invalid_timestamp_state": "unknown",
+      "revision_mismatch_state": "stale"
+    },
+    "authority": {
+      "classification": "point_in_time_non_live",
+      "point_in_time": true,
+      "live": false,
+      "tracked_example": true,
+      "authoritative_for_live_state": false,
+      "may_support_current_state_at_assessed_at": false,
+      "statement": "Tracked deterministic example; never authoritative for live state."
+    },
+    "observation_mode": "injected_deterministic_observations",
+    "remote_parity_evidence": {
+      "basis": "local_tracking_reference_no_fetch",
+      "fetch_performed": false,
+      "live_remote_state_claimed": false
+    },
+    "projects": [
+      {
+        "project_id": "clippipegen",
+        "required": false,
+        "available": true,
+        "path": "../ClipPipeGen",
+        "schema_version": "status_snapshot.v1",
+        "observed_at": "2026-07-12T00:00:00Z",
+        "branch": "main",
+        "head_revision": "1111111111111111111111111111111111111111",
+        "worktree_state": "dirty",
+        "before_head_revision": "1111111111111111111111111111111111111111",
+        "after_head_revision": "1111111111111111111111111111111111111111",
+        "before_worktree_state": "dirty",
+        "after_worktree_state": "dirty",
+        "upstream": "origin/main",
+        "remote_parity": {
+          "status": "in_sync",
+          "ahead": 0,
+          "behind": 0,
+          "tracking_ref": "origin/main",
+          "evidence_basis": "local_tracking_reference_no_fetch",
+          "fetch_performed": false
+        },
+        "observation_unchanged": true,
+        "target_repo_modified": false,
+        "before_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "after_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "reason_codes": []
+      },
+      {
+        "project_id": "devcockpitcore",
+        "required": true,
+        "available": true,
+        "path": ".",
+        "schema_version": "status_snapshot.v1",
+        "observed_at": "2026-07-12T00:00:00Z",
+        "branch": "main",
+        "head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "worktree_state": "clean",
+        "before_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "after_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "before_worktree_state": "clean",
+        "after_worktree_state": "clean",
+        "upstream": "origin/main",
+        "remote_parity": {
+          "status": "in_sync",
+          "ahead": 0,
+          "behind": 0,
+          "tracking_ref": "origin/main",
+          "evidence_basis": "local_tracking_reference_no_fetch",
+          "fetch_performed": false
+        },
+        "observation_unchanged": true,
+        "target_repo_modified": false,
+        "before_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "after_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "reason_codes": []
+      },
+      {
+        "project_id": "nlmytgen",
+        "required": false,
+        "available": true,
+        "path": "../NLMYTGen",
+        "schema_version": "status_snapshot.v1",
+        "observed_at": "2026-07-12T00:00:00Z",
+        "branch": "master",
+        "head_revision": "2222222222222222222222222222222222222222",
+        "worktree_state": "clean",
+        "before_head_revision": "2222222222222222222222222222222222222222",
+        "after_head_revision": "2222222222222222222222222222222222222222",
+        "before_worktree_state": "clean",
+        "after_worktree_state": "clean",
+        "upstream": "origin/master",
+        "remote_parity": {
+          "status": "unknown",
+          "ahead": null,
+          "behind": null,
+          "tracking_ref": "origin/master",
+          "evidence_basis": "local_tracking_reference_no_fetch",
+          "fetch_performed": false
+        },
+        "observation_unchanged": true,
+        "target_repo_modified": false,
+        "before_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "after_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "reason_codes": []
+      },
+      {
+        "project_id": "writingpage",
+        "required": false,
+        "available": false,
+        "path": "../WritingPage",
+        "schema_version": null,
+        "observed_at": "2026-07-12T00:00:00Z",
+        "branch": null,
+        "head_revision": null,
+        "worktree_state": "unknown",
+        "before_head_revision": null,
+        "after_head_revision": null,
+        "before_worktree_state": null,
+        "after_worktree_state": null,
+        "upstream": null,
+        "remote_parity": {
+          "status": "unknown",
+          "ahead": null,
+          "behind": null,
+          "tracking_ref": null,
+          "evidence_basis": "local_tracking_reference_no_fetch",
+          "fetch_performed": false
+        },
+        "observation_unchanged": null,
+        "target_repo_modified": null,
+        "before_sha256": null,
+        "after_sha256": null,
+        "reason_codes": [
+          "optional_project_missing"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "project_id": "clippipegen",
+        "source_id": "clippipegen.live_status_observation",
+        "source_kind": "live_project_observation",
+        "required": false,
+        "availability": "available",
+        "schema_version": "status_snapshot.v1",
+        "source_path": "git-observation:../ClipPipeGen",
+        "content_sha256": "26cc50320d94b1b1e98df78e9020cbfbe33d1aa66853e6913467b72ac4d297a3",
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": null,
+        "observed_at": "2026-07-12T00:00:00Z",
+        "timestamp_field": "observed_at",
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": 0,
+        "fresh_through": "2026-07-13T00:00:00Z",
+        "temporal_state": "fresh",
+        "source_revision": "1111111111111111111111111111111111111111",
+        "observed_revision": "1111111111111111111111111111111111111111",
+        "revision_binding_state": "match",
+        "freshness_state": "fresh",
+        "reason_codes": [
+          "receipt_not_authoritative_for_live_state",
+          "revision_match",
+          "timestamp_within_threshold",
+          "worktree_not_clean_or_unknown"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "cross-project-smoke-sample",
+        "source_kind": "tracked_point_in_time_artifact",
+        "required": true,
+        "availability": "available",
+        "schema_version": "cross_project_smoke_result.v1",
+        "source_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        "content_sha256": "55d248ef4133f87867836bd57b2a60ed2b2b05964a8ae84c4a645b4069df60fb",
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": "2026-07-06T07:56:16Z",
+        "observed_at": null,
+        "timestamp_field": "generated_at",
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": 489824,
+        "fresh_through": "2026-07-07T07:56:16Z",
+        "temporal_state": "stale",
+        "source_revision": "2e5e924",
+        "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "revision_binding_state": "mismatch",
+        "freshness_state": "stale",
+        "reason_codes": [
+          "receipt_not_authoritative_for_live_state",
+          "revision_mismatch",
+          "timestamp_threshold_exceeded"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "devcockpitcore.live_status_observation",
+        "source_kind": "live_project_observation",
+        "required": true,
+        "availability": "available",
+        "schema_version": "status_snapshot.v1",
+        "source_path": "git-observation:.",
+        "content_sha256": "5914ab9662ecadb36287eb0a6b8c6308e764fc4cf383f9fd5b29c30282d773f0",
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": null,
+        "observed_at": "2026-07-12T00:00:00Z",
+        "timestamp_field": "observed_at",
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": 0,
+        "fresh_through": "2026-07-13T00:00:00Z",
+        "temporal_state": "fresh",
+        "source_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "revision_binding_state": "match",
+        "freshness_state": "fresh",
+        "reason_codes": [
+          "receipt_not_authoritative_for_live_state",
+          "revision_match",
+          "timestamp_within_threshold"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "intent-comparison-manifest-v2",
+        "source_kind": "tracked_point_in_time_artifact",
+        "required": true,
+        "availability": "available",
+        "schema_version": "intent_comparison_manifest.v2",
+        "source_path": "samples/dashboard/intent_comparison/intent_comparison_manifest.json",
+        "content_sha256": "1c3a8f13aee8dfd48113f8201180f7d3a254f270358367d9e018b12342b189bd",
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": null,
+        "observed_at": "2026-07-06T07:56:16Z",
+        "timestamp_field": "observed_at",
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": 489824,
+        "fresh_through": "2026-07-07T07:56:16Z",
+        "temporal_state": "stale",
+        "source_revision": "2e5e924",
+        "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "revision_binding_state": "mismatch",
+        "freshness_state": "stale",
+        "reason_codes": [
+          "receipt_not_authoritative_for_live_state",
+          "revision_mismatch",
+          "timestamp_threshold_exceeded"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "status-snapshot-sample",
+        "source_kind": "tracked_point_in_time_artifact",
+        "required": true,
+        "availability": "available",
+        "schema_version": "status_snapshot.v1",
+        "source_path": "samples/status_snapshots/devcockpitcore_status.json",
+        "content_sha256": "311de6f138c588ee137f72275edd085be2e30f1eb6a41beff525ec95bedb3958",
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": "2026-07-06T07:55:33Z",
+        "observed_at": null,
+        "timestamp_field": "generated_at",
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": 489867,
+        "fresh_through": "2026-07-07T07:55:33Z",
+        "temporal_state": "stale",
+        "source_revision": "2e5e924",
+        "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "revision_binding_state": "mismatch",
+        "freshness_state": "stale",
+        "reason_codes": [
+          "receipt_not_authoritative_for_live_state",
+          "revision_mismatch",
+          "timestamp_threshold_exceeded"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      },
+      {
+        "project_id": "devcockpitcore",
+        "source_id": "validation-pack-sample",
+        "source_kind": "tracked_point_in_time_artifact",
+        "required": true,
+        "availability": "available",
+        "schema_version": "validation_pack_result.v1",
+        "source_path": "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        "content_sha256": "91bc955113ecc00c5ddb008eeb447a30efe9eba74be6b2e3babef649cbbcf313",
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": "2026-07-06T07:55:56Z",
+        "observed_at": null,
+        "timestamp_field": "generated_at",
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": 489844,
+        "fresh_through": "2026-07-07T07:55:56Z",
+        "temporal_state": "stale",
+        "source_revision": "2e5e924",
+        "observed_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+        "revision_binding_state": "mismatch",
+        "freshness_state": "stale",
+        "reason_codes": [
+          "receipt_not_authoritative_for_live_state",
+          "revision_mismatch",
+          "timestamp_threshold_exceeded"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      },
+      {
+        "project_id": "nlmytgen",
+        "source_id": "nlmytgen.live_status_observation",
+        "source_kind": "live_project_observation",
+        "required": false,
+        "availability": "available",
+        "schema_version": "status_snapshot.v1",
+        "source_path": "git-observation:../NLMYTGen",
+        "content_sha256": "ec5099e92f06eb7f5743dc84b3ab5818f4f8fe59c42be8014cb394cc6e5cca4b",
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": null,
+        "observed_at": "2026-07-12T00:00:00Z",
+        "timestamp_field": "observed_at",
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": 0,
+        "fresh_through": "2026-07-13T00:00:00Z",
+        "temporal_state": "fresh",
+        "source_revision": "2222222222222222222222222222222222222222",
+        "observed_revision": "2222222222222222222222222222222222222222",
+        "revision_binding_state": "match",
+        "freshness_state": "fresh",
+        "reason_codes": [
+          "receipt_not_authoritative_for_live_state",
+          "revision_match",
+          "timestamp_within_threshold"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      },
+      {
+        "project_id": "writingpage",
+        "source_id": "writingpage.live_status_observation",
+        "source_kind": "live_project_observation",
+        "required": false,
+        "availability": "missing",
+        "schema_version": null,
+        "source_path": "git-observation:../WritingPage",
+        "content_sha256": null,
+        "hash_basis": "canonical_json_utf8_v1",
+        "generated_at": null,
+        "observed_at": null,
+        "timestamp_field": null,
+        "assessed_at": "2026-07-12T00:00:00Z",
+        "age_seconds": null,
+        "fresh_through": null,
+        "temporal_state": "unknown",
+        "source_revision": null,
+        "observed_revision": null,
+        "revision_binding_state": "unknown",
+        "freshness_state": "unknown",
+        "reason_codes": [
+          "optional_project_missing"
+        ],
+        "current_state_claim_eligible": false,
+        "authority_classification": "point_in_time_non_live"
+      }
+    ],
+    "summary": {
+      "project_counts": {
+        "observed": 3,
+        "missing_required": 0,
+        "missing_optional": 1,
+        "total": 4
+      },
+      "source_counts": {
+        "fresh": 3,
+        "stale": 4,
+        "unknown": 1,
+        "total": 8
+      },
+      "current_state_claim_eligible": {
+        "eligible": 0,
+        "ineligible": 8
+      },
+      "required_missing": 0,
+      "required_invalid": 0
+    },
+    "scope_boundary": {
+      "target_repositories_observed_read_only": true,
+      "target_repo_commands": "read_only_git_status_rev_parse_log_and_local_tracking_parity",
+      "fetch_performed": false,
+      "default_validation_executed": false,
+      "target_repo_modified": false,
+      "all_available_observations_unchanged": true,
+      "target_observations": [
+        {
+          "project_id": "clippipegen",
+          "required": false,
+          "available": true,
+          "before_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "after_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "before_head_revision": "1111111111111111111111111111111111111111",
+          "after_head_revision": "1111111111111111111111111111111111111111",
+          "before_worktree_state": "dirty",
+          "after_worktree_state": "dirty",
+          "observation_unchanged": true,
+          "target_repo_modified": false
+        },
+        {
+          "project_id": "devcockpitcore",
+          "required": true,
+          "available": true,
+          "before_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "after_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "before_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+          "after_head_revision": "2fe1c659046a68a914891b9268899971a10a4b43",
+          "before_worktree_state": "clean",
+          "after_worktree_state": "clean",
+          "observation_unchanged": true,
+          "target_repo_modified": false
+        },
+        {
+          "project_id": "nlmytgen",
+          "required": false,
+          "available": true,
+          "before_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "after_sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+          "before_head_revision": "2222222222222222222222222222222222222222",
+          "after_head_revision": "2222222222222222222222222222222222222222",
+          "before_worktree_state": "clean",
+          "after_worktree_state": "clean",
+          "observation_unchanged": true,
+          "target_repo_modified": false
+        },
+        {
+          "project_id": "writingpage",
+          "required": false,
+          "available": false,
+          "before_sha256": null,
+          "after_sha256": null,
+          "before_head_revision": null,
+          "after_head_revision": null,
+          "before_worktree_state": null,
+          "after_worktree_state": null,
+          "observation_unchanged": null,
+          "target_repo_modified": null
+        }
+      ]
+    }
+  },
+  "supervision_packet": {
+    "schema_version": "cross_project_supervision_packet.v1",
+    "artifact_id": "cross-project-supervision-packet-v1",
+    "generated_at": "2026-07-25T03:05:47.2597223+09:00",
+    "producer": "dev_cockpit.supervision_packet",
+    "source_bindings": [
+      {
+        "project_key": "nlmytgen",
+        "report_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+        "required": true,
+        "evidence_class": "authentic_owner_authorized_point_in_time_report",
+        "authority_basis": "owner_authorized_current_checkout_observation",
+        "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+        "binding_status": "matched"
+      }
+    ],
+    "coverage": {
+      "project_count": 1,
+      "report_count": 1,
+      "active_task_count": 1,
+      "closed_or_informational_count": 0,
+      "required_report_count": 1,
+      "manifest_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json",
+      "manifest_artifact_id": "h3-g02-real-nlmytgen-report-manifest-v1",
+      "live_coverage": false,
+      "coverage_statement": "Owner-authorized authentic point-in-time report coverage from explicit manifest binding; not live/current coverage."
+    },
+    "attention_policy": [
+      {
+        "precedence": 1,
+        "key": "true_stop_or_required_failure",
+        "label": "True stop or required acceptance failure"
+      },
+      {
+        "precedence": 2,
+        "key": "user_authorization_or_material_decision",
+        "label": "User action, authorization, or material decision gate"
+      },
+      {
+        "precedence": 3,
+        "key": "awaiting_supervisor_acceptance",
+        "label": "Completed work awaiting supervisor acceptance or integration"
+      },
+      {
+        "precedence": 4,
+        "key": "active_safe_continuation",
+        "label": "Active safe continuation"
+      },
+      {
+        "precedence": 5,
+        "key": "unknown_requiring_review",
+        "label": "Unknown state requiring review"
+      },
+      {
+        "precedence": 6,
+        "key": "closed_or_informational",
+        "label": "Closed or informational"
+      }
+    ],
+    "global_attention_queue": [
+      {
+        "task_id": "task-d2ec75bacb888e49",
+        "project_key": "nlmytgen",
+        "thread_id": "nlmytgen-h3-g02-real-current-observation-v1",
+        "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+        "slice_id": "real-current-point-in-time-observation-v1",
+        "artifact_id": "h3-g02-nlmytgen-source-report-v1",
+        "attention_class": "true_stop_or_required_failure",
+        "attention_precedence": 1,
+        "global_rank": 1,
+        "required": true,
+        "outcome_summary": "This file is a fresh owner-authorized point-in-time source report for the exact NLMYTGen checkout identified below.",
+        "current_state": "point-in-time-source-report-exported",
+        "next_state": {
+          "owner": "DevCockpitCore",
+          "recommended_slice": "devcockpitcore-h3-g02-real-current-observation-v1",
+          "user_work": "none",
+          "agent_work": "review classification"
+        },
+        "gate_decision": "blocked_safety_boundary",
+        "gate_stop_class": "SAFETY_BOUNDARY",
+        "evidence_class": "authentic_owner_authorized_point_in_time_report",
+        "authority_basis": "owner_authorized_current_checkout_observation",
+        "evidence_references": [
+          {
+            "kind": "source_report",
+            "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+            "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba"
+          },
+          {
+            "kind": "derived_contracts",
+            "report_normalization_schema": "report_normalization.v1",
+            "gate_classification_schema": "gate_classification.v1",
+            "gate_decision": "blocked_safety_boundary"
+          }
+        ],
+        "source_report_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+        "source_report_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+        "executable": false
+      }
+    ],
+    "project_worksets": [
+      {
+        "project_key": "nlmytgen",
+        "project_local_first_task_id": "task-d2ec75bacb888e49",
+        "active_task_ids": [
+          "task-d2ec75bacb888e49"
+        ],
+        "user_or_supervisor_gate": "task-d2ec75bacb888e49",
+        "safe_continuation": "none",
+        "closed_or_informational_task_ids": [],
+        "global_rank_references": [
+          {
+            "task_id": "task-d2ec75bacb888e49",
+            "global_rank": 1
+          }
+        ]
+      }
+    ],
+    "closed_or_informational": [],
+    "scope_boundary": {
+      "observer_first": true,
+      "explicit_manifest_only": true,
+      "directory_latest_report_discovery": false,
+      "conversation_or_clipboard_inference": false,
+      "sibling_repository_writeback": false,
+      "target_repository_writeback": false,
+      "execution_schedule": false,
+      "executable": false,
+      "global_rank_meaning": "attention_and_review_priority_only"
+    }
+  },
+  "supervision_report_authority_envelope": {
+    "schema_version": "supervision_report_authority_envelope.v2",
+    "artifact_id": "h3-g02-real-nlmytgen-authority-envelope-v2",
+    "producer": "dev_cockpit.report_authority",
+    "identity": {
+      "task_id": "task-d2ec75bacb888e49",
+      "project_key": "nlmytgen",
+      "thread_id": "nlmytgen-h3-g02-real-current-observation-v1",
+      "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+      "slice_id": "real-current-point-in-time-observation-v1",
+      "artifact_id": "h3-g02-nlmytgen-source-report-v1"
+    },
+    "bindings": {
+      "source_report": {
+        "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+        "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+        "hash_basis": "canonical_utf8_lf_sha256_v1"
+      },
+      "manifest": {
+        "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json",
+        "content_sha256": "769f6b9ff944af2ca7e2700b2626da38ef42dacea4c1927c54e87f51610c3836",
+        "hash_basis": "raw_bytes_sha256_v1"
+      },
+      "packet": {
+        "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json",
+        "content_sha256": "ac388e512c5c2f208271bb734c12f0a9b5ab59d0b6d39b38247dd649a9e829ea",
+        "hash_basis": "raw_bytes_sha256_v1"
+      },
+      "current_observation": {
+        "path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json",
+        "content_sha256": "9725b060c2b89caa17d19bbc49ff6cb0b184043f60de11f90ac1cf47f8963555",
+        "hash_basis": "raw_bytes_sha256_v1",
+        "artifact_id": "h3-g02-real-nlmytgen-observation-v1"
+      }
+    },
+    "report": {
+      "source_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+      "observed_at": "2026-07-25T03:04:11.2232688+09:00",
+      "evidence_class": "authentic_owner_authorized_point_in_time_report",
+      "authority_basis": "owner_authorized_current_checkout_observation",
+      "observer_permission_scope": "allowed_for_DevCockpitCore_H3_current_claim",
+      "repository_identity": "https://github.com/YuShimoji/NLMYTGen.git"
+    },
+    "observation": {
+      "artifact_id": "h3-g02-real-nlmytgen-observation-v1",
+      "project_key": "nlmytgen",
+      "repository_identity": "https://github.com/YuShimoji/NLMYTGen.git",
+      "authorization_scope": "allowed_for_DevCockpitCore_H3_current_claim",
+      "first_observed_at": "2026-07-24T18:05:26.457472+00:00",
+      "reobserved_at": "2026-07-24T18:05:26.800637+00:00",
+      "before_head_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+      "after_head_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+      "before_worktree_sha256": "3dc2722b895738bb273610c2da62665eff437fb0803ac9858c012e5138393212",
+      "after_worktree_sha256": "3dc2722b895738bb273610c2da62665eff437fb0803ac9858c012e5138393212",
+      "actual": true,
+      "clean": false,
+      "stable": true
+    },
+    "assessment": {
+      "assessed_at": "2026-07-25T03:05:47.2597223+09:00",
+      "threshold_seconds": 86400,
+      "temporal_boundary": "age_seconds <= threshold_seconds"
+    },
+    "authority": {
+      "authentic_owner_attached_point_in_time_evidence": true,
+      "transport_source_binding_state": "valid",
+      "report_permission_state": "sufficient_for_h3_current_claim",
+      "observation_authorization_state": "sufficient_for_h3_current_claim",
+      "permission_conjunction_state": "satisfied",
+      "report_temporal_state": "fresh",
+      "reobservation_temporal_state": "fresh",
+      "chronology_state": "valid",
+      "revision_binding_state": "match",
+      "current_claim_eligibility": false,
+      "live_coverage": false,
+      "reason_codes": [
+        "current_observation_receipt_valid",
+        "dual_authorization_conjunction_satisfied",
+        "observation_authorization_explicitly_allows_h3_current_claim",
+        "observer_only_non_executable",
+        "point_in_time_observation_does_not_establish_live_coverage",
+        "reobservation_timestamp_within_threshold",
+        "report_permission_explicitly_allows_h3_current_claim",
+        "report_reobservation_assessment_chronology_valid",
+        "report_timestamp_within_threshold",
+        "repository_project_revision_cross_binding_valid",
+        "revision_match",
+        "source_manifest_packet_binding_valid",
+        "worktree_not_clean"
+      ]
+    },
+    "provenance": {
+      "package_binding_state": "verified",
+      "current_observation_receipt_state": "verified",
+      "repository_project_revision_cross_binding_state": "verified",
+      "overall_current_claim_provenance_state": "verified"
+    },
+    "scope_boundary": {
+      "observer_only": true,
+      "non_executable": true,
+      "executable": false,
+      "sibling_repository_writeback": false,
+      "target_repository_writeback": false,
+      "execution_schedule": false,
+      "live_monitoring": false
+    }
+  },
+  "priority_policy": [
+    {
+      "precedence": 1,
+      "key": "true_stop_or_required_failure",
+      "label": "True stop or required acceptance failure"
+    },
+    {
+      "precedence": 2,
+      "key": "user_authorization_or_material_decision",
+      "label": "User action, authorization, or material decision gate"
+    },
+    {
+      "precedence": 3,
+      "key": "awaiting_supervisor_acceptance",
+      "label": "Completed work awaiting supervisor acceptance or integration"
+    },
+    {
+      "precedence": 4,
+      "key": "active_safe_continuation",
+      "label": "Active safe continuation"
+    },
+    {
+      "precedence": 5,
+      "key": "unknown_requiring_review",
+      "label": "Unknown state requiring review"
+    },
+    {
+      "precedence": 6,
+      "key": "closed_or_informational",
+      "label": "Closed or informational"
+    }
+  ],
+  "priority_items": [
+    {
+      "condition_key": "supervision_packet:task-d2ec75bacb888e49",
+      "precedence": 1,
+      "project_key": "nlmytgen",
+      "thread_id": "nlmytgen-h3-g02-real-current-observation-v1",
+      "lane_id": "SUPERVISION_EVIDENCE_EXPORT",
+      "slice_id": "real-current-point-in-time-observation-v1",
+      "artifact_id": "h3-g02-nlmytgen-source-report-v1",
+      "attention_class": "true_stop_or_required_failure",
+      "global_rank_meaning": "attention_and_review_priority_only",
+      "project_local_first": true,
+      "required": true,
+      "state": {
+        "key": "blocked",
+        "ja": "停止",
+        "en": "Blocked"
+      },
+      "action": {
+        "ja": "nlmytgen: This file is a fresh owner-authorized point-in-time source report for the exact NLMYTGen checkout identified below.",
+        "en": "This file is a fresh owner-authorized point-in-time source report for the exact NLMYTGen checkout identified below."
+      },
+      "reason": {
+        "ja": "現在: point-in-time-source-report-exported",
+        "en": "Current state: point-in-time-source-report-exported"
+      },
+      "decision": {
+        "ja": "確認分類: true_stop_or_required_failure",
+        "en": "Attention class: true_stop_or_required_failure"
+      },
+      "desired_outcome": {
+        "ja": "devcockpitcore-h3-g02-real-current-observation-v1",
+        "en": "devcockpitcore-h3-g02-real-current-observation-v1"
+      },
+      "owner": {
+        "id": "devcockpitcore",
+        "ja": "DevCockpitCore",
+        "en": "DevCockpitCore"
+      },
+      "raw_condition": "blocked_safety_boundary",
+      "primary_evidence_id": "task-d2ec75bacb888e49.source_report",
+      "primary_evidence_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+      "evidence_refs": [
+        {
+          "source_id": "task-d2ec75bacb888e49.source_report",
+          "source_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+          "freshness_state": "fresh",
+          "temporal_state": "fresh",
+          "revision_binding_state": "match",
+          "current_state_claim_eligible": false,
+          "assessed_at": "2026-07-25T03:05:47.2597223+09:00",
+          "fresh_through": null,
+          "content_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+          "authority_classification": "verified_authentic_owner_attached_point_in_time_evidence",
+          "evidence_population": "packet_report",
+          "reason_codes": [
+            "SAFETY_BOUNDARY",
+            "current_observation_receipt_valid",
+            "dual_authorization_conjunction_satisfied",
+            "observation_authorization_explicitly_allows_h3_current_claim",
+            "observer_only_non_executable",
+            "point_in_time_observation_does_not_establish_live_coverage",
+            "reobservation_timestamp_within_threshold",
+            "report_permission_explicitly_allows_h3_current_claim",
+            "report_reobservation_assessment_chronology_valid",
+            "report_timestamp_within_threshold",
+            "repository_project_revision_cross_binding_valid",
+            "revision_match",
+            "source_manifest_packet_binding_valid",
+            "true_stop_or_required_failure",
+            "worktree_not_clean"
+          ],
+          "authority_envelope_schema_version": "supervision_report_authority_envelope.v2",
+          "authenticity_state": "authentic",
+          "transport_source_binding_state": "valid",
+          "provenance_authenticity_state": "verified",
+          "permission_state": "satisfied",
+          "observer_permission_scope": "allowed_for_DevCockpitCore_H3_current_claim",
+          "observation_state": "actual_stable",
+          "source_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+          "observed_revision": "21194b60f6824eaedaddacf05bb920e1a324936a",
+          "live_coverage": false
+        }
+      ],
+      "review_action_refs": [],
+      "source_report_sha256": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
+      "claim_class": "derived",
+      "evidence_claim_class": "observed_report",
+      "display_copy_claim_class": "editorial",
+      "ranking_policy_claim_class": "policy",
+      "executable": false,
+      "blocked_by_gate": true,
+      "safe_next_surface": "local_review",
+      "priority_id": "task-d2ec75bacb888e49",
+      "rank": 1,
+      "informational_only": false
+    }
+  ],
+  "informational_items": [],
+  "selected_priority_id": "task-d2ec75bacb888e49",
+  "selected_closed_evidence_id": null,
+  "packet_attention": {
+    "loaded": true,
+    "status": "stop",
+    "stop": 1,
+    "decision": 0,
+    "active": 0,
+    "closed": 0,
+    "all_closed": false,
+    "executable": false
+  },
+  "user_visual_acceptance": "accepted",
+  "validation_pack": {
+    "summary": {
+      "result": "warn",
+      "done": 16,
+      "total": 16,
+      "unknown": 0,
+      "meter": "############~###",
+      "missing": 0,
+      "passed": 15,
+      "warnings": 1,
+      "failed": 0,
+      "skipped": 0
+    },
+    "health": {
+      "status": "yellow",
+      "warnings": [
+        "pseudo_git_tag_scan: findings present"
+      ],
+      "blockers": [],
+      "stop_class": "INTEGRATE_AND_CONTINUE"
+    },
+    "gate_input": {
+      "recommended_gate_decision": "integrate_and_continue",
+      "stop_class": "INTEGRATE_AND_CONTINUE",
+      "user_work": "none",
+      "supervisor_should_generate_prompt": false
+    },
+    "checks": [
+      {
+        "check_key": "python_compile",
+        "kind": "python",
+        "result": "pass",
+        "done": 2,
+        "total": 2,
+        "unknown": 0,
+        "meter": "##",
+        "severity": "required",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": []
+      },
+      {
+        "check_key": "unittest_discover",
+        "kind": "python",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": [
+          "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-m",
+          "unittest",
+          "discover"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "exit=0 duration_seconds=14.727 stdout='' stderr='............................................................................................................................................................................................................................................................................................................\\n----------------------------------------------------------------------\\nRan 300 tests in 14.574s\\n\\nOK\\n'"
+        ]
+      },
+      {
+        "check_key": "adapter_manifest_validation",
+        "kind": "schema",
+        "result": "pass",
+        "done": 4,
+        "total": 4,
+        "unknown": 0,
+        "meter": "####",
+        "severity": "required",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": []
+      },
+      {
+        "check_key": "status_snapshot_help",
+        "kind": "cli",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": [
+          "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-m",
+          "dev_cockpit.status_snapshot",
+          "--help"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "exit=0 duration_seconds=0.09 stdout='usage: status_snapshot.py [-h] --repo REPO --adapter ADAPTER [--output OUTPUT]\\n                          [--pretty] [--no-write]\\n\\nProduce a read-only repository status snapshot.\\n\\noptions:\\n  -h, --help         show this help message and exit\\n  --repo REPO        Target repository path to inspect.\\n  --adapter ADAPTER  Adapter JSON path.\\n  --output OUTPUT    Output JSON path. Required unless --no-write is used.\\n  --pretty           Write indented JSON.\\n  --no-write         Print JSON and skip output file writes.\\n' stderr=''"
+        ]
+      },
+      {
+        "check_key": "report_normalizer_help",
+        "kind": "cli",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": [
+          "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-m",
+          "dev_cockpit.report_normalizer",
+          "--help"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "exit=0 duration_seconds=0.066 stdout='usage: report_normalizer.py [-h] (--input INPUT | --stdin) [--output OUTPUT]\\n                            [--pretty]\\n\\nNormalize an AGENT_REPORT-like text report.\\n\\noptions:\\n  -h, --help       show this help message and exit\\n  --input INPUT    Input report text path.\\n  --stdin          Read report text from stdin.\\n  --output OUTPUT  Output JSON path. Omit to write to stdout.\\n  --pretty         Write indented JSON.\\n' stderr=''"
+        ]
+      },
+      {
+        "check_key": "gate_classifier_help",
+        "kind": "cli",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": [
+          "C:\\Users\\<redacted>\\AppData\\Local\\Programs\\Python\\Python311\\python.exe",
+          "-m",
+          "dev_cockpit.gate_classifier",
+          "--help"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "exit=0 duration_seconds=0.066 stdout='usage: gate_classifier.py [-h] --report-normalization REPORT_NORMALIZATION\\n                          [--status-snapshot STATUS_SNAPSHOT]\\n                          [--adapter ADAPTER] [--output OUTPUT] [--pretty]\\n\\nClassify a report_normalization.v1 JSON readback.\\n\\noptions:\\n  -h, --help            show this help message and exit\\n  --report-normalization REPORT_NORMALIZATION\\n                        Required report normalization JSON path.\\n  --status-snapshot STATUS_SNAPSHOT\\n                        Optional status_snapshot.v1 JSON path.\\n  --adapter ADAPTER     Optional adapter_manifest.v1 JSON path.\\n  --output OUTPUT       Output JSON path. Omit to write to stdout.\\n  --pretty              Write indented JSON.\\n' stderr=''"
+        ]
+      },
+      {
+        "check_key": "json_parse",
+        "kind": "json",
+        "result": "pass",
+        "done": 41,
+        "total": 41,
+        "unknown": 0,
+        "meter": "#########################################",
+        "severity": "required",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": []
+      },
+      {
+        "check_key": "git_diff_check",
+        "kind": "git",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "exit=0 duration_seconds=0.036 stdout='' stderr=''"
+        ]
+      },
+      {
+        "check_key": "git_diff_cached_check",
+        "kind": "git",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "warning",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "exit=0 duration_seconds=0.026 stdout='' stderr=''"
+        ]
+      },
+      {
+        "check_key": "git_status",
+        "kind": "git",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "warning",
+        "command": [
+          "git",
+          "status",
+          "--short",
+          "--branch"
+        ],
+        "exit_code": 0,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "exit=0 duration_seconds=0.079 stdout='## main...origin/main\\n M README.md\\n M docs/PROJECT_COCKPIT.md\\n M docs/PROJECT_PIPELINE.mmd\\n M docs/project-context.md\\n M docs/runtime-state.md\\n M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\\n M samples/dashboard/README.md\\n M samples/dashboard/devcockpitcore_dashboard.html\\n M samples/dashboard/devcockpitcore_review_actions.json\\n M samples/dashboard/devcockpitcore_review_actions.md\\n M samples/status_snapshots/devcockpitcore_status.json\\n M samples/validation_packs/devcockpitcore_validation_pack_result.json\\n M src/dev_cockpit/dashboard.py\\n M tests/test_dashboard.py\\n' stderr=''",
+          "## main...origin/main\n M README.md\n M docs/PROJECT_COCKPIT.md\n M docs/PROJECT_PIPELINE.mmd\n M docs/project-context.md\n M docs/runtime-state.md\n M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json\n M samples/dashboard/README.md\n M samples/dashboard/devcockpitcore_dashboard.html\n M samples/dashboard/devcockpitcore_review_actions.json\n M samples/dashboard/devcockpitcore_review_actions.md\n M samples/status_snapshots/devcockpitcore_status.json\n M samples/validation_packs/devcockpitcore_validation_pack_result.json\n M src/dev_cockpit/dashboard.py\n M tests/test_dashboard.py\n"
+        ]
+      },
+      {
+        "check_key": "conflict_marker_scan",
+        "kind": "scan",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": []
+      },
+      {
+        "check_key": "prompt_residue_scan",
+        "kind": "scan",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "warning",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": []
+      },
+      {
+        "check_key": "pseudo_git_tag_scan",
+        "kind": "scan",
+        "result": "warn",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "~",
+        "severity": "warning",
+        "command": null,
+        "exit_code": null,
+        "findings": [
+          {
+            "path": "samples/reports/agent_report_adapter_manifest_v1_redacted.txt",
+            "pseudo_git_tag": [
+              "::git-commit",
+              "::git-push",
+              "::git-stage"
+            ]
+          }
+        ],
+        "missing": 0,
+        "notes": []
+      },
+      {
+        "check_key": "raw_local_path_scan",
+        "kind": "scan",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": [
+          "redacted local path references observed: 1"
+        ]
+      },
+      {
+        "check_key": "mojibake_scan",
+        "kind": "scan",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "warning",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": []
+      },
+      {
+        "check_key": "forbidden_implementation_scan",
+        "kind": "scan",
+        "result": "pass",
+        "done": 1,
+        "total": 1,
+        "unknown": 0,
+        "meter": "#",
+        "severity": "required",
+        "command": null,
+        "exit_code": null,
+        "findings": [],
+        "missing": 0,
+        "notes": []
+      }
+    ]
+  },
+  "cross_project_smoke": {
+    "summary": {
+      "result": "warn",
+      "done": 5,
+      "total": 5,
+      "unknown": 0,
+      "meter": "~~~~~",
+      "passed": 0,
+      "warnings": 5,
+      "failed": 0,
+      "skipped": 0,
+      "missing": 0
+    },
+    "health": {
+      "status": "yellow",
+      "warnings": [
+        "devcockpitcore: warn",
+        "nlmytgen: warn",
+        "writingpage: warn",
+        "clippipegen: warn",
+        "report hygiene warnings present"
+      ],
+      "blockers": [],
+      "stop_class": "INTEGRATE_AND_CONTINUE"
+    },
+    "readiness": {
+      "foundation_automation_readiness": "cross_project_smoke_available",
+      "execution_automation_readiness": "out_of_scope",
+      "notes": [
+        "status producer, adapters, report normalizer, gate classifier, validation pack, and cross-project smoke are foundation tooling",
+        "target repositories are observed through read-only status snapshots only",
+        "controlled execution automation remains a future design slice"
+      ]
+    },
+    "gate_input": {
+      "recommended_gate_decision": "integrate_and_continue",
+      "stop_class": "INTEGRATE_AND_CONTINUE",
+      "user_work": "none",
+      "supervisor_should_generate_prompt": false
+    },
+    "projects": [
+      {
+        "project_key": "devcockpitcore",
+        "project": "DevCockpitCore",
+        "adapter_path": "adapters/devcockpitcore.json",
+        "required": true,
+        "repo_resolution": {
+          "candidates": [
+            {
+              "candidate": ".",
+              "exists": true,
+              "redacted_path": "C:\\Users\\<redacted>\\DevCockpitCore"
+            }
+          ],
+          "selected": ".",
+          "exists": true,
+          "redacted_selected": "C:\\Users\\<redacted>\\DevCockpitCore"
+        },
+        "adapter_validation": {
+          "result": "pass",
+          "warnings": []
+        },
+        "status_snapshot": {
+          "generated": true,
+          "path": "C:\\Users\\<redacted>\\DevCockpitCore",
+          "schema_version": "status_snapshot.v1",
+          "branch": "main",
+          "head": "2e5e924",
+          "worktree": {
+            "state": "dirty",
+            "short_status": [
+              " M README.md",
+              " M docs/PROJECT_COCKPIT.md",
+              " M docs/PROJECT_PIPELINE.mmd",
+              " M docs/project-context.md",
+              " M docs/runtime-state.md",
+              " M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+              " M samples/dashboard/README.md",
+              " M samples/dashboard/devcockpitcore_dashboard.html",
+              " M samples/dashboard/devcockpitcore_review_actions.json",
+              " M samples/dashboard/devcockpitcore_review_actions.md",
+              " M samples/status_snapshots/devcockpitcore_status.json",
+              " M samples/validation_packs/devcockpitcore_validation_pack_result.json",
+              " M src/dev_cockpit/dashboard.py",
+              " M tests/test_dashboard.py"
+            ]
+          },
+          "remote_parity": {
+            "ahead": 0,
+            "behind": 0,
+            "raw": "0\t0",
+            "status": "in_sync"
+          },
+          "health": "yellow",
+          "warnings": [
+            "worktree is dirty"
+          ]
+        },
+        "scope_boundary": {
+          "target_repo_modified": false,
+          "target_repo_commands": "read_only_git_status_only",
+          "default_validation_executed": false
+        },
+        "result": "warn",
+        "done": 4,
+        "total": 4,
+        "unknown": 0,
+        "meter": "###~",
+        "missing": 0
+      },
+      {
+        "project_key": "nlmytgen",
+        "project": "NLMYTGen",
+        "adapter_path": "adapters/nlmytgen.json",
+        "required": false,
+        "repo_resolution": {
+          "candidates": [
+            {
+              "candidate": "../NLMYTGen",
+              "exists": true,
+              "redacted_path": "C:\\Users\\<redacted>\\NLMYTGen"
+            }
+          ],
+          "selected": "../NLMYTGen",
+          "exists": true,
+          "redacted_selected": "C:\\Users\\<redacted>\\NLMYTGen"
+        },
+        "adapter_validation": {
+          "result": "pass",
+          "warnings": []
+        },
+        "status_snapshot": {
+          "generated": true,
+          "path": "C:\\Users\\<redacted>\\NLMYTGen",
+          "schema_version": "status_snapshot.v1",
+          "branch": "codex/episode-002-thumbnail-visual-proof-v1",
+          "head": "6846359",
+          "worktree": {
+            "state": "clean",
+            "short_status": []
+          },
+          "remote_parity": {
+            "ahead": 0,
+            "behind": 0,
+            "raw": "0\t0",
+            "status": "in_sync"
+          },
+          "health": "yellow",
+          "warnings": [
+            "current branch 'codex/episode-002-thumbnail-visual-proof-v1' differs from adapter default 'master'"
+          ]
+        },
+        "scope_boundary": {
+          "target_repo_modified": false,
+          "target_repo_commands": "read_only_git_status_only",
+          "default_validation_executed": false
+        },
+        "result": "warn",
+        "done": 4,
+        "total": 4,
+        "unknown": 0,
+        "meter": "###~",
+        "missing": 0
+      },
+      {
+        "project_key": "writingpage",
+        "project": "WritingPage",
+        "adapter_path": "adapters/writingpage.json",
+        "required": false,
+        "repo_resolution": {
+          "candidates": [
+            {
+              "candidate": "../WritingPage",
+              "exists": true,
+              "redacted_path": "C:\\Users\\<redacted>\\WritingPage"
+            }
+          ],
+          "selected": "../WritingPage",
+          "exists": true,
+          "redacted_selected": "C:\\Users\\<redacted>\\WritingPage"
+        },
+        "adapter_validation": {
+          "result": "pass",
+          "warnings": []
+        },
+        "status_snapshot": {
+          "generated": true,
+          "path": "C:\\Users\\<redacted>\\WritingPage",
+          "schema_version": "status_snapshot.v1",
+          "branch": "main",
+          "head": "fbc1949",
+          "worktree": {
+            "state": "clean",
+            "short_status": []
+          },
+          "remote_parity": {
+            "ahead": 0,
+            "behind": 0,
+            "raw": "0\t0",
+            "status": "in_sync"
+          },
+          "health": "yellow",
+          "warnings": [
+            "runtime state document is absent"
+          ]
+        },
+        "scope_boundary": {
+          "target_repo_modified": false,
+          "target_repo_commands": "read_only_git_status_only",
+          "default_validation_executed": false
+        },
+        "result": "warn",
+        "done": 4,
+        "total": 4,
+        "unknown": 0,
+        "meter": "###~",
+        "missing": 0
+      },
+      {
+        "project_key": "clippipegen",
+        "project": "ClipPipeGen",
+        "adapter_path": "adapters/clippipegen.json",
+        "required": false,
+        "repo_resolution": {
+          "candidates": [
+            {
+              "candidate": "../ClipPipeGen",
+              "exists": true,
+              "redacted_path": "C:\\Users\\<redacted>\\ClipPipeGen"
+            }
+          ],
+          "selected": "../ClipPipeGen",
+          "exists": true,
+          "redacted_selected": "C:\\Users\\<redacted>\\ClipPipeGen"
+        },
+        "adapter_validation": {
+          "result": "pass",
+          "warnings": []
+        },
+        "status_snapshot": {
+          "generated": true,
+          "path": "C:\\Users\\<redacted>\\ClipPipeGen",
+          "schema_version": "status_snapshot.v1",
+          "branch": "main",
+          "head": "cef2012",
+          "worktree": {
+            "state": "clean",
+            "short_status": []
+          },
+          "remote_parity": {
+            "ahead": 0,
+            "behind": 0,
+            "raw": "0\t0",
+            "status": "in_sync"
+          },
+          "health": "yellow",
+          "warnings": [
+            "runtime state document is absent",
+            "project context document is absent"
+          ]
+        },
+        "scope_boundary": {
+          "target_repo_modified": false,
+          "target_repo_commands": "read_only_git_status_only",
+          "default_validation_executed": false
+        },
+        "result": "warn",
+        "done": 4,
+        "total": 4,
+        "unknown": 0,
+        "meter": "###~",
+        "missing": 0
+      }
+    ]
+  },
+  "status_snapshot": {
+    "repo": {
+      "path": ".",
+      "exists": true,
+      "is_git_repo": true,
+      "branch": "main",
+      "head": "2e5e924",
+      "upstream": "origin/main",
+      "latest_commit": "2e5e924 feat: add compact dashboard handoff",
+      "remote_parity": {
+        "ahead": 0,
+        "behind": 0,
+        "raw": "0\t0",
+        "status": "in_sync"
+      },
+      "worktree": {
+        "state": "dirty",
+        "short_status": [
+          " M README.md",
+          " M docs/PROJECT_COCKPIT.md",
+          " M docs/PROJECT_PIPELINE.mmd",
+          " M docs/project-context.md",
+          " M docs/runtime-state.md",
+          " M samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+          " M samples/dashboard/README.md",
+          " M samples/dashboard/devcockpitcore_dashboard.html",
+          " M samples/dashboard/devcockpitcore_review_actions.json",
+          " M samples/dashboard/devcockpitcore_review_actions.md",
+          " M samples/status_snapshots/devcockpitcore_status.json",
+          " M samples/validation_packs/devcockpitcore_validation_pack_result.json",
+          " M src/dev_cockpit/dashboard.py",
+          " M tests/test_dashboard.py"
+        ]
+      }
+    },
+    "project_state": {
+      "runtime_state_path": "docs/runtime-state.md",
+      "runtime_state_exists": true,
+      "project_context_path": "docs/project-context.md",
+      "project_context_exists": true,
+      "active_artifact": "dashboard-latest-brief-checkpoint-v1",
+      "next_action": "Open samples/dashboard/devcockpitcore_dashboard.html for Latest Brief review, or harden the accepted single bounded C4 validation-pack probe",
+      "user_work": "local dashboard latest-brief visual review",
+      "render_gate": "not_applicable"
+    },
+    "health": {
+      "status": "yellow",
+      "stop_class": "INTEGRATE_AND_CONTINUE",
+      "notes": [
+        "worktree is dirty"
+      ]
+    }
+  },
+  "runtime_state": {
+    "updated_at": "2026-07-23",
+    "projection_kind": "repository_restart_and_artifact_access",
+    "current_review_artifact": "h3-report-authority-envelope-v1",
+    "current_review_artifact_path": "artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html",
+    "priority_readback_path": "artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_priority_readback.json",
+    "authority_envelope_path": "artifacts/review/h3-report-authority-envelope-v1/supervision_report_authority_envelope_v1.json",
+    "authority_readback_path": "artifacts/review/h3-report-authority-envelope-v1/authority_envelope_machine_readback_v1.json",
+    "authority_binding_inventory_path": "artifacts/review/h3-report-authority-envelope-v1/binding_inventory_v1.json",
+    "supervision_packet_path": "artifacts/review/h2-authentic-single-report-round-trip-v1/cross_project_supervision_packet_v1.json",
+    "supervision_packet_manifest_path": "artifacts/review/h2-authentic-single-report-round-trip-v1/task_report_manifest_v1.json",
+    "selected_information_architecture": "A_priority_review_console",
+    "selection_state": "closed",
+    "user_visual_acceptance": "accepted",
+    "tracked_receipt_capture_id": "efr-cbae922571043527b800",
+    "tracked_receipt_assessed_at": "2026-07-12T00:00:00Z",
+    "tracked_receipt_authority": "point_in_time_non_live",
+    "blocking_issue_count": "0",
+    "durable_context_path": "docs/project-context.md",
+    "layout_research_path": "docs/design/DASHBOARD_LAYOUT_RESEARCH_V1.md",
+    "production_dashboard_path": "samples/dashboard/devcockpitcore_dashboard.html",
+    "production_generator_path": "src/dev_cockpit/dashboard.py",
+    "review_actions_json_path": "samples/dashboard/devcockpitcore_review_actions.json",
+    "review_actions_markdown_path": "samples/dashboard/devcockpitcore_review_actions.md",
+    "production_capture_manifest_path": "samples/dashboard/production_capture/production_capture_manifest.json",
+    "production_capture_readback_path": "samples/dashboard/production_capture/production_capture_readback.json",
+    "production_contact_sheet_path": "samples/dashboard/production_capture/screenshots/priority-review-console-contact-sheet.png",
+    "supervision_packet_markdown_path": "samples/supervision_packets/cross_project_supervision_packet_v1.md",
+    "supervision_packet_design_path": "docs/design/CROSS_PROJECT_SUPERVISION_PACKET_V1.md",
+    "capability_state": "bounded_c3_c4",
+    "evidence_freshness_policy_path": "samples/evidence_freshness/evidence_freshness_policy_v1.json",
+    "evidence_freshness_receipt_json_path": "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+    "evidence_freshness_receipt_markdown_path": "samples/evidence_freshness/evidence_freshness_receipt_v1.md",
+    "h2_round_trip_readback_path": "artifacts/review/h2-authentic-single-report-round-trip-v1/h2_authentic_round_trip_readback_v1.json",
+    "h2_source_report_path": "artifacts/review/h2-authentic-single-report-round-trip-v1/source/AGENT_REPORT_H2_SOURCE_V1.md",
+    "h2_source_revision": "d38075b97efabc99d1a23e8e0afafd5d44f1e2de",
+    "h2_source_sha256": "d93f15b3f3441aee6d741adbfd54b285e1850e645998f34fb5384a223d82a65b",
+    "h2_state": "h2_authentic_single_report_round_trip_verified_non_live_v1",
+    "h3_state": "h3_report_authority_envelope_contract_verified_without_live_promotion_v1",
+    "h3_1_state": "h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1",
+    "h3_1_readback_path": "artifacts/review/h3-current-observation-ingress-v1/current_observation_ingress_machine_readback_v1.json",
+    "h3_1_safety_boundary_state": "h3_current_observation_environment_isolated_dirty_negative_contract_v1",
+    "h3_1_safety_boundary_readback_path": "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json",
+    "h3_1_safety_boundary_binding_path": "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
+    "real_current_observation_attempted": "true",
+    "real_current_observation_receipt_created": "false",
+    "h3_real_current_evaluation_state": "historical_blocked_source_worktree_dirty_no_package_v1",
+    "h3_real_current_candidate_revision": "649ada5050be5b9b2153c50c938d855797d5c19f",
+    "h3_real_current_worktree_entry_count": "52",
+    "h3_real_current_worktree_sha256": "fbfb42256576b212df3a69c2a7dba645eb25dfbd928e8a79335bb5be8546ee78",
+    "h3_real_current_assessed_at": "not_created",
+    "h4_started": "false",
+    "current_claim_eligibility": "false",
+    "live_coverage": "false",
+    "local_runtime_bootstrap": "uv venv --python 3.11 .venv",
+    "`stable": "true`; V2 and Dashboard retain `current_claim_eligibility: false`,",
+    "`live_coverage": "false`. The deterministic fixture and production Dashboard",
+    "$env": "PYTHONPATH = \"src\""
+  },
+  "project_context_available": true,
+  "health": {
+    "tone": "yellow",
+    "label": "Yellow",
+    "warnings": [
+      "smoke: clippipegen: warn",
+      "smoke: devcockpitcore: warn",
+      "smoke: nlmytgen: warn",
+      "smoke: report hygiene warnings present",
+      "smoke: summary result is warn",
+      "smoke: writingpage: warn",
+      "status: worktree is dirty",
+      "validation: pseudo_git_tag_scan: findings present",
+      "validation: summary result is warn"
+    ],
+    "blockers": [],
+    "stop_class": "INTEGRATE_AND_CONTINUE",
+    "summary": "warnings only"
+  },
+  "safe_to_run": [
+    "Open the generated static file: Start-Process .\\artifacts\\review\\h3-real-current-nlmytgen-point-in-time-v1\\dashboard\\devcockpitcore_dashboard.html",
+    "Regenerate dashboard: PYTHONPATH=src python -m dev_cockpit.dashboard",
+    "Regenerate validation evidence with the fixed default validation pack.",
+    "Regenerate smoke evidence with the fixed default cross-project smoke.",
+    "Run compileall and unittest locally before treating a slice as reviewed."
+  ],
+  "safe_local_actions": [
+    {
+      "kind": "OPEN_ONLY",
+      "label": "Open generated dashboard",
+      "command": "Start-Process .\\artifacts\\review\\h3-real-current-nlmytgen-point-in-time-v1\\dashboard\\devcockpitcore_dashboard.html",
+      "effect": "Local browser opens the generated HTML file; no server or repository writes."
+    },
+    {
+      "kind": "LOCAL_GENERATE",
+      "label": "Regenerate dashboard",
+      "command": "PYTHONPATH=src python -m dev_cockpit.dashboard --output samples/dashboard/devcockpitcore_dashboard.html",
+      "effect": "Rebuilds the static HTML from existing local evidence files."
+    },
+    {
+      "kind": "LOCAL_CHECK",
+      "label": "Run local tests",
+      "command": "PYTHONPATH=src python -m unittest discover",
+      "effect": "Runs DevCockpitCore unit tests in the current checkout only."
+    }
+  ],
+  "locked_lanes": [
+    "Arbitrary command runner",
+    "General execution loop",
+    "Scheduler or background daemon",
+    "Web server or remote dashboard",
+    "Database or credential handling",
+    "External service notifications",
+    "Target repository writeback",
+    "C5/C6 capability expansion",
+    "Public publication or production-ready claims"
+  ],
+  "review_next": [
+    "Review warning rows and confirm they are expected observer-only residue.",
+    "Validation checks: 16/16 complete, 15 pass, 1 warn, 0 fail.",
+    "Cross-project rows: 5/5 complete, 0 pass, 5 warn, 0 fail.",
+    "Open details only when a warning needs source evidence."
+  ],
+  "review_checkpoints": [
+    {
+      "label": "1. Priority Comprehension",
+      "state": "0 blocker(s), 9 warning signal(s)",
+      "prompt": "Confirm rank 1 exposes action, reason, state, owner, and next operation.",
+      "evidence": "Priority Lane / Active Decision"
+    },
+    {
+      "label": "2. Selection Synchronization",
+      "state": "priority, decision, and evidence share one selected ID",
+      "prompt": "Confirm click and keyboard selection keep the decision and evidence inspector synchronized.",
+      "evidence": "Priority Review Console"
+    },
+    {
+      "label": "3. Evidence Eligibility",
+      "state": "validation warn / smoke warn",
+      "prompt": "Verify the receipt's freshness, revision binding, authority, and current-claim eligibility.",
+      "evidence": "Evidence Inspector / receipt ledger"
+    }
+  ],
+  "decision_meters": [
+    {
+      "title": "Stop Gate",
+      "primary_value": "0 blockers",
+      "summary": "Continue: warnings only.",
+      "why": "Start here because blockers decide whether the review can continue.",
+      "detail_href": "#detail-stop-gate",
+      "action_href": "#detail-stop-gate",
+      "action_label": "No blocker action",
+      "evidence_path": "Health, Gate, Readiness",
+      "tone": "green",
+      "progress": {
+        "done": 0,
+        "total": 18,
+        "label": "0/18 actions are blockers",
+        "tone": "green"
+      }
+    },
+    {
+      "title": "Warning Debt",
+      "primary_value": "14 warnings",
+      "summary": "Largest group: Cross-Project Smoke.",
+      "why": "This points to the warning bucket most likely to need the next judgment.",
+      "detail_href": "#detail-warning-debt",
+      "action_href": "#smoke-003",
+      "action_label": "Review action",
+      "evidence_path": "Cross-Project Smoke",
+      "tone": "yellow",
+      "progress": {
+        "done": 14,
+        "total": 18,
+        "label": "14/18 actions carry warnings",
+        "tone": "yellow"
+      }
+    },
+    {
+      "title": "Evidence Freshness",
+      "primary_value": "10/10",
+      "summary": "Latest source: 2026-07-25T03:05:47.2597223....",
+      "why": "Use this before trusting the dashboard as a current handoff surface.",
+      "detail_href": "#detail-evidence-freshness",
+      "action_href": "#checkpoint-015",
+      "evidence_path": "Sources and Access",
+      "tone": "green",
+      "progress": {
+        "done": 10,
+        "total": 10,
+        "label": "10/10 configured sources loaded",
+        "tone": "green"
+      }
+    },
+    {
+      "title": "Review Queue",
+      "primary_value": "18 actions",
+      "summary": "14 warnings, 4 info.",
+      "why": "This keeps the next decisions visible while preserving non-executable actions.",
+      "detail_href": "#detail-review-actions",
+      "action_href": "#locked-gate-018",
+      "evidence_path": "samples/dashboard/devcockpitcore_review_actions.json",
+      "tone": "yellow",
+      "progress": {
+        "done": 14,
+        "total": 18,
+        "label": "14/18 actions need triage",
+        "tone": "yellow"
+      }
+    },
+    {
+      "title": "Project Smoke",
+      "primary_value": "warn",
+      "summary": "5/5 complete, 0 pass, 5 warn, 0 fail",
+      "why": "This separates cross-project observer warnings from local implementation work.",
+      "detail_href": "#detail-project-smoke",
+      "action_href": "#smoke-003",
+      "evidence_path": "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+      "tone": "warn",
+      "progress": {
+        "done": 5,
+        "total": 5,
+        "label": "5/5 complete, 0 pass, 5 warn, 0 fail",
+        "tone": "warn"
+      }
+    },
+    {
+      "title": "Access Readiness",
+      "primary_value": "Local",
+      "summary": "Repo is dirty; open as static file.",
+      "why": "Use this to confirm review access without adding a server, scheduler, or writeback path.",
+      "detail_href": "#detail-source-files",
+      "action_href": "#status-014",
+      "evidence_path": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/devcockpitcore_dashboard.html",
+      "tone": "green",
+      "progress": {
+        "done": 10,
+        "total": 10,
+        "label": "10/10 access sources present",
+        "tone": "green"
+      }
+    }
+  ],
+  "review_stack": [
+    {
+      "title": "Check Stop Gate",
+      "reason": "No blockers are reported; confirm this before reviewing warning debt.",
+      "href": "#detail-stop-gate",
+      "link_label": "Open stop gate",
+      "evidence": "Health, Gate, Readiness"
+    },
+    {
+      "title": "Review Cross-Project Smoke",
+      "reason": "6 warning item(s) make this the largest current review bucket.",
+      "href": "#detail-project-smoke",
+      "link_label": "Open warning detail",
+      "evidence": "Cross-Project Smoke"
+    },
+    {
+      "title": "Use Review Queue",
+      "reason": "14 warning actions are ready for freeform review.",
+      "href": "#detail-review-actions",
+      "link_label": "Open action queue",
+      "evidence": "Review Actions"
+    }
+  ],
+  "frontpage_report": {
+    "kind": "frontpage_report",
+    "headline": "Continue locally; the useful attention is warning judgment, not blocker hunting.",
+    "annotation": "The largest review bucket is cross-project smoke rows; read it as review debt and confirm whether it is expected observer residue.",
+    "runway": [
+      {
+        "label": "Continue",
+        "value": "No blocker stop",
+        "href": "#detail-stop-gate",
+        "tone": "green"
+      },
+      {
+        "label": "Warnings",
+        "value": "6 item(s) need judgment",
+        "href": "#detail-project-smoke",
+        "tone": "yellow"
+      },
+      {
+        "label": "Proof",
+        "value": "10/10 sources ready",
+        "href": "#detail-evidence-freshness",
+        "tone": "green"
+      }
+    ],
+    "primary_action": {
+      "label": "Review warning detail",
+      "href": "#detail-project-smoke"
+    },
+    "secondary_link": {
+      "label": "Why no blocker?",
+      "href": "#detail-stop-gate"
+    },
+    "aside": {
+      "label": "Not urgent",
+      "text": "execution expansion stays locked; expected fixture residue belongs in review debt unless source evidence changes."
+    }
+  },
+  "latest_brief": {
+    "kind": "frontpage_report",
+    "headline": "Continue locally; the useful attention is warning judgment, not blocker hunting.",
+    "annotation": "The largest review bucket is cross-project smoke rows; read it as review debt and confirm whether it is expected observer residue.",
+    "runway": [
+      {
+        "label": "Continue",
+        "value": "No blocker stop",
+        "href": "#detail-stop-gate",
+        "tone": "green"
+      },
+      {
+        "label": "Warnings",
+        "value": "6 item(s) need judgment",
+        "href": "#detail-project-smoke",
+        "tone": "yellow"
+      },
+      {
+        "label": "Proof",
+        "value": "10/10 sources ready",
+        "href": "#detail-evidence-freshness",
+        "tone": "green"
+      }
+    ],
+    "primary_action": {
+      "label": "Review warning detail",
+      "href": "#detail-project-smoke"
+    },
+    "secondary_link": {
+      "label": "Why no blocker?",
+      "href": "#detail-stop-gate"
+    },
+    "aside": {
+      "label": "Not urgent",
+      "text": "execution expansion stays locked; expected fixture residue belongs in review debt unless source evidence changes."
+    }
+  },
+  "warning_triage": [
+    {
+      "source": "Blockers",
+      "severity": "green",
+      "count": 0,
+      "items": [
+        "No blockers reported in current evidence."
+      ]
+    },
+    {
+      "source": "Validation Pack",
+      "severity": "warn",
+      "count": 2,
+      "items": [
+        "pseudo_git_tag_scan: findings present",
+        "validation summary result is warn"
+      ]
+    },
+    {
+      "source": "Cross-Project Smoke",
+      "severity": "warn",
+      "count": 6,
+      "items": [
+        "devcockpitcore: warn",
+        "nlmytgen: warn",
+        "writingpage: warn",
+        "clippipegen: warn",
+        "report hygiene warnings present",
+        "cross-project smoke summary result is warn"
+      ]
+    },
+    {
+      "source": "Project Rows",
+      "severity": "warn",
+      "count": 5,
+      "items": [
+        "devcockpitcore: worktree is dirty",
+        "nlmytgen: current branch 'codex/episode-002-thumbnail-visual-proof-v1' differs from adapter default 'master'",
+        "writingpage: runtime state document is absent",
+        "clippipegen: runtime state document is absent",
+        "clippipegen: project context document is absent"
+      ]
+    },
+    {
+      "source": "Status Snapshot",
+      "severity": "warn",
+      "count": 1,
+      "items": [
+        "worktree is dirty"
+      ]
+    },
+    {
+      "source": "Source Files",
+      "severity": "green",
+      "count": 0,
+      "items": [
+        "All configured source files loaded."
+      ]
+    }
+  ],
+  "review_actions": [
     {
       "action_id": "validation-001",
       "source_type": "validation_pack",
@@ -287,5 +2405,18 @@
       "blocked_by_gate": true,
       "safe_next_surface": "dashboard_only"
     }
+  ],
+  "review_action_summary": {
+    "total": 18,
+    "blocker": 0,
+    "warning": 14,
+    "info": 4,
+    "locked_by_gate": 1
+  },
+  "designer_notes": [
+    "Judge whether the first screen makes warning ownership and access state obvious.",
+    "Keep warning text tied to source JSON paths so reviewers can audit it.",
+    "Use proposal panels for future actions; do not turn them into executable controls.",
+    "Preserve a single-file offline artifact for low-friction operator review."
   ]
 }

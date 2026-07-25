@@ -4,15 +4,39 @@ import argparse
 from hashlib import sha256
 import json
 from pathlib import Path
+import shutil
+import sys
+import tempfile
 from typing import Any
 
-from dev_cockpit.current_observation import load_current_observation
-from dev_cockpit.report_authority_v2 import load_authority_envelope_v2
-from dev_cockpit.supervision_packet import load_packet_with_manifest
-
-
 ROOT = Path(__file__).resolve().parents[3]
+if str(ROOT / "src") not in sys.path:
+    sys.path.insert(0, str(ROOT / "src"))
+
+from dev_cockpit.current_observation import load_current_observation
+from dev_cockpit.dashboard import (
+    build_dashboard_model,
+    dumps_review_actions,
+    priority_readback,
+    render_dashboard,
+    render_review_actions_markdown,
+)
+from dev_cockpit.report_authority_v2 import (
+    build_authority_envelope_v2,
+    dumps_authority_envelope_v2,
+)
+from dev_cockpit.report_normalizer import dumps_normalization, normalize_report
+from dev_cockpit.supervision_packet import (
+    SupervisionPacketError,
+    build_supervision_packet,
+    dumps_packet,
+    load_manifest,
+    render_packet_markdown,
+)
+
+
 PACKAGE = Path(__file__).resolve().parent
+PACKAGE_REL = "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1"
 ARTIFACT_ID = "h3-real-current-nlmytgen-point-in-time-v1"
 DEVCOCKPIT_BASE_REVISION = "e7bbe331ecaa2cc21fbffede5013337bd0934c77"
 SOURCE_REVISION = "21194b60f6824eaedaddacf05bb920e1a324936a"
@@ -20,94 +44,311 @@ ASSESSED_AT = "2026-07-25T03:05:47.2597223+09:00"
 OBSERVATION_ARTIFACT_ID = "h3-g02-real-nlmytgen-observation-v1"
 AUTHORITY_ARTIFACT_ID = "h3-g02-real-nlmytgen-authority-envelope-v2"
 
-BOUND_PATHS = (
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/manifest/task_report_manifest_v1.json",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.md",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/normalization/report_normalization_v1.json",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/authority/supervision_report_authority_envelope_v2.json",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/devcockpitcore_dashboard.html",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.json",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/review_actions.md",
-    "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/dashboard/priority_readback.json",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json",
+FIXED_CAPTURED_INPUTS = (
+    f"{PACKAGE_REL}/source/AGENT_REPORT_G02_NLMYTGEN_V1.md",
+    f"{PACKAGE_REL}/receipt/current_observation_v1.json",
+    f"{PACKAGE_REL}/manifest/task_report_manifest_v1.json",
 )
 
+IMMUTABLE_PRODUCER_DEPENDENCIES = (
+    f"{PACKAGE_REL}/README.md",
+    f"{PACKAGE_REL}/generate_package.py",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/README.md",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json",
+    "src/dev_cockpit/current_observation.py",
+    "src/dev_cockpit/dashboard.py",
+    "src/dev_cockpit/evidence_freshness.py",
+    "src/dev_cockpit/gate_classifier.py",
+    "src/dev_cockpit/report_authority.py",
+    "src/dev_cockpit/report_authority_v2.py",
+    "src/dev_cockpit/report_normalizer.py",
+    "src/dev_cockpit/supervision_packet.py",
+    "samples/validation_packs/devcockpitcore_validation_pack_result.json",
+    "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+    "samples/status_snapshots/devcockpitcore_status.json",
+    "adapters/devcockpitcore.json",
+    "docs/runtime-state.md",
+    "docs/project-context.md",
+    "samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+)
 
-def generate(*, output_dir: str | Path | None = None) -> dict[str, dict[str, Any]]:
-    package = _build_package()
+NORMALIZATION_PATH = f"{PACKAGE_REL}/normalization/report_normalization_v1.json"
+PACKET_JSON_PATH = f"{PACKAGE_REL}/packet/cross_project_supervision_packet_v1.json"
+PACKET_MD_PATH = f"{PACKAGE_REL}/packet/cross_project_supervision_packet_v1.md"
+AUTHORITY_PATH = f"{PACKAGE_REL}/authority/supervision_report_authority_envelope_v2.json"
+DASHBOARD_PATH = f"{PACKAGE_REL}/dashboard/devcockpitcore_dashboard.html"
+REVIEW_ACTIONS_JSON_PATH = f"{PACKAGE_REL}/dashboard/review_actions.json"
+REVIEW_ACTIONS_MD_PATH = f"{PACKAGE_REL}/dashboard/review_actions.md"
+PRIORITY_READBACK_PATH = f"{PACKAGE_REL}/dashboard/priority_readback.json"
+INVENTORY_PATH = f"{PACKAGE_REL}/binding_inventory_v2.json"
+READBACK_PATH = f"{PACKAGE_REL}/package_readback_v2.json"
+
+REGENERATED_DERIVED_OUTPUTS = (
+    NORMALIZATION_PATH,
+    PACKET_JSON_PATH,
+    PACKET_MD_PATH,
+    AUTHORITY_PATH,
+    DASHBOARD_PATH,
+    REVIEW_ACTIONS_JSON_PATH,
+    REVIEW_ACTIONS_MD_PATH,
+    PRIORITY_READBACK_PATH,
+    INVENTORY_PATH,
+    READBACK_PATH,
+)
+BASE_REGENERATED_DERIVED_OUTPUTS = REGENERATED_DERIVED_OUTPUTS[:-2]
+
+
+def generate(*, output_dir: str | Path | None = None) -> dict[str, bytes]:
+    """Reconstruct all declared derived outputs in a clean external staging root."""
+
     if output_dir is not None:
-        _write_staging(Path(output_dir), package)
-    return package
+        _validate_output_destination(Path(output_dir))
+    with tempfile.TemporaryDirectory(prefix="dcc-h3-g02-repro-") as temp_dir:
+        reconstruction_root = Path(temp_dir) / "reconstruction-root"
+        _prepare_reconstruction_root(reconstruction_root)
+        outputs = _reconstruct(reconstruction_root)
+    if output_dir is not None:
+        _write_mapping(Path(output_dir), outputs)
+    return outputs
 
 
-def _build_package() -> dict[str, dict[str, Any]]:
-    bindings = {
-        path: _sha256(ROOT / path)
-        for path in BOUND_PATHS
-    }
-    observation = load_current_observation(ROOT / BOUND_PATHS[1])
-    packet = load_packet_with_manifest(
-        ROOT / BOUND_PATHS[3],
-        ROOT / BOUND_PATHS[2],
-        repo_root=ROOT,
+def _prepare_reconstruction_root(destination: Path) -> None:
+    if destination.exists():
+        raise RuntimeError(f"reconstruction root must be new: {destination}")
+    for relative_path in FIXED_CAPTURED_INPUTS + IMMUTABLE_PRODUCER_DEPENDENCIES:
+        source = ROOT / relative_path
+        if not source.is_file():
+            raise RuntimeError(f"required reconstruction input is missing: {relative_path}")
+        target = destination / relative_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, target)
+
+
+def _reconstruct(reconstruction_root: Path) -> dict[str, bytes]:
+    manifest_path = FIXED_CAPTURED_INPUTS[2]
+    manifest = load_manifest(reconstruction_root / manifest_path)
+    generated_at = str(manifest["generated_at"])
+    if generated_at != ASSESSED_AT:
+        raise RuntimeError(
+            f"manifest timestamp changed: expected {ASSESSED_AT}, got {generated_at}"
+        )
+
+    source_path = FIXED_CAPTURED_INPUTS[0]
+    source_text = (reconstruction_root / source_path).read_text(encoding="utf-8")
+    normalization = normalize_report(
+        source_text,
+        input_path=source_path,
+        input_kind="agent_report_text",
+        generated_at=generated_at,
     )
-    envelope = load_authority_envelope_v2(
-        ROOT / BOUND_PATHS[6],
-        manifest_path=ROOT / BOUND_PATHS[2],
-        packet_path=ROOT / BOUND_PATHS[3],
-        current_observation_path=ROOT / BOUND_PATHS[1],
-        repo_root=ROOT,
-        assessed_at=ASSESSED_AT,
-        expected_artifact_id=AUTHORITY_ARTIFACT_ID,
+    normalization_bytes = dumps_normalization(normalization, pretty=True).encode("utf-8")
+
+    packet = build_supervision_packet(
+        manifest,
+        repo_root=reconstruction_root,
+        manifest_path=manifest_path,
+        generated_at=generated_at,
+    )
+    packet_json_bytes = dumps_packet(packet, pretty=True).encode("utf-8")
+    packet_md_bytes = render_packet_markdown(packet).encode("utf-8")
+
+    _write_bytes(reconstruction_root, NORMALIZATION_PATH, normalization_bytes)
+    _write_bytes(reconstruction_root, PACKET_JSON_PATH, packet_json_bytes)
+    _write_bytes(reconstruction_root, PACKET_MD_PATH, packet_md_bytes)
+
+    authority = build_authority_envelope_v2(
+        manifest_path=manifest_path,
+        packet_path=PACKET_JSON_PATH,
+        current_observation_path=FIXED_CAPTURED_INPUTS[1],
+        repo_root=reconstruction_root,
+        assessed_at=generated_at,
+        artifact_id=AUTHORITY_ARTIFACT_ID,
         expected_observation_artifact_id=OBSERVATION_ARTIFACT_ID,
     )
-    dashboard_readback = _strict_json(ROOT / BOUND_PATHS[10])
-    manifest = _strict_json(ROOT / BOUND_PATHS[2])
-    source_report_hash = _sha256(ROOT / BOUND_PATHS[0])
-    if manifest["reports"][0]["content_sha256"] != source_report_hash:
-        raise RuntimeError("manifest report hash does not match captured source report")
+    authority_bytes = dumps_authority_envelope_v2(authority, pretty=True).encode("utf-8")
+    _write_bytes(reconstruction_root, AUTHORITY_PATH, authority_bytes)
 
-    _verify_cross_bindings(observation, packet, envelope, dashboard_readback)
-    authority = dict(envelope["authority"])
-    derived = observation["observation"]["derived"]
-    before = observation["observation"]["before"]
-    after = observation["observation"]["after"]
-    readback = {
-        "schema_version": "h3_real_current_nlmytgen_point_in_time_machine_readback.v1",
+    dashboard_model = build_dashboard_model(
+        repo_root=reconstruction_root,
+        validation_result_path="samples/validation_packs/devcockpitcore_validation_pack_result.json",
+        cross_project_smoke_result_path="samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json",
+        status_snapshot_path="samples/status_snapshots/devcockpitcore_status.json",
+        adapter_path="adapters/devcockpitcore.json",
+        runtime_state_path="docs/runtime-state.md",
+        project_context_path="docs/project-context.md",
+        freshness_receipt_path="samples/evidence_freshness/evidence_freshness_receipt_v1.json",
+        output_path=DASHBOARD_PATH,
+        review_actions_json_path=REVIEW_ACTIONS_JSON_PATH,
+        review_actions_md_path=REVIEW_ACTIONS_MD_PATH,
+        priority_readback_path=PRIORITY_READBACK_PATH,
+        supervision_packet_path=PACKET_JSON_PATH,
+        supervision_manifest_path=manifest_path,
+        supervision_authority_envelope_path=AUTHORITY_PATH,
+        supervision_authority_assessed_at=generated_at,
+        supervision_current_observation_path=FIXED_CAPTURED_INPUTS[1],
+        supervision_authority_artifact_id=AUTHORITY_ARTIFACT_ID,
+        supervision_current_observation_artifact_id=OBSERVATION_ARTIFACT_ID,
+        verify_freshness_hashes=False,
+        generated_at=generated_at,
+    )
+    dashboard_html_bytes = render_dashboard(dashboard_model).encode("utf-8")
+    review_actions_bytes = dumps_review_actions(dashboard_model, pretty=True).encode("utf-8")
+    review_actions_md_bytes = render_review_actions_markdown(dashboard_model).encode("utf-8")
+    dashboard_readback = priority_readback(dashboard_model)
+    priority_bytes = _serialize(dashboard_readback)
+    _write_bytes(reconstruction_root, DASHBOARD_PATH, dashboard_html_bytes)
+    _write_bytes(reconstruction_root, REVIEW_ACTIONS_JSON_PATH, review_actions_bytes)
+    _write_bytes(reconstruction_root, REVIEW_ACTIONS_MD_PATH, review_actions_md_bytes)
+    _write_bytes(reconstruction_root, PRIORITY_READBACK_PATH, priority_bytes)
+
+    observation = load_current_observation(
+        reconstruction_root / FIXED_CAPTURED_INPUTS[1]
+    )
+    _verify_cross_bindings(
+        observation,
+        packet,
+        authority,
+        dashboard_readback,
+        dashboard_html_bytes,
+    )
+
+    fixed_bindings = _bindings(reconstruction_root, FIXED_CAPTURED_INPUTS)
+    dependency_bindings = _bindings(
+        reconstruction_root, IMMUTABLE_PRODUCER_DEPENDENCIES
+    )
+    derived_bindings = {
+        path: sha256(_read_bytes(reconstruction_root, path)).hexdigest()
+        for path in BASE_REGENERATED_DERIVED_OUTPUTS
+    }
+    inventory = _build_inventory(
+        fixed_bindings=fixed_bindings,
+        dependency_bindings=dependency_bindings,
+        derived_bindings=derived_bindings,
+    )
+    inventory_bytes = _serialize(inventory)
+    readback = _build_readback(
+        observation=observation,
+        packet=packet,
+        authority=authority,
+        manifest=manifest,
+        fixed_bindings=fixed_bindings,
+        dependency_bindings=dependency_bindings,
+        derived_bindings=derived_bindings,
+        inventory_bytes=inventory_bytes,
+    )
+    readback_bytes = _serialize(readback)
+    outputs = {
+        NORMALIZATION_PATH: normalization_bytes,
+        PACKET_JSON_PATH: packet_json_bytes,
+        PACKET_MD_PATH: packet_md_bytes,
+        AUTHORITY_PATH: authority_bytes,
+        DASHBOARD_PATH: dashboard_html_bytes,
+        REVIEW_ACTIONS_JSON_PATH: review_actions_bytes,
+        REVIEW_ACTIONS_MD_PATH: review_actions_md_bytes,
+        PRIORITY_READBACK_PATH: priority_bytes,
+        INVENTORY_PATH: inventory_bytes,
+        READBACK_PATH: readback_bytes,
+    }
+    if set(outputs) != set(REGENERATED_DERIVED_OUTPUTS):
+        raise RuntimeError("generated output mapping does not match declared derived outputs")
+    return outputs
+
+
+def _build_inventory(
+    *,
+    fixed_bindings: dict[str, str],
+    dependency_bindings: dict[str, str],
+    derived_bindings: dict[str, str],
+) -> dict[str, Any]:
+    combined = {
+        **fixed_bindings,
+        **dependency_bindings,
+        **derived_bindings,
+    }
+    return {
+        "schema_version": "h3_real_current_nlmytgen_point_in_time_binding_inventory.v2",
         "artifact_id": ARTIFACT_ID,
-        "mission_id": "dcc-h3-g02-real-nlmytgen-observation",
+        "hash_basis": "repository_relative_path_and_raw_bytes_sha256_v1",
+        "binding_set_scope": (
+            "classified repository-relative paths and raw-byte SHA-256 only; "
+            "not a repository-wide tree hash"
+        ),
+        "base_revision": DEVCOCKPIT_BASE_REVISION,
+        "source_revision": SOURCE_REVISION,
+        "fixed_captured_inputs": fixed_bindings,
+        "immutable_producer_dependencies": dependency_bindings,
+        "regenerated_derived_outputs": derived_bindings,
+        "self_binding_exclusions": {
+            "inventory": INVENTORY_PATH,
+            "package_readback": READBACK_PATH,
+            "reason": "generated metadata cannot hash itself without circularity",
+        },
+        "binding_set_sha256": _binding_set_sha256(combined),
+        "bindings": combined,
+    }
+
+
+def _build_readback(
+    *,
+    observation: dict[str, Any],
+    packet: dict[str, Any],
+    authority: dict[str, Any],
+    manifest: dict[str, Any],
+    fixed_bindings: dict[str, str],
+    dependency_bindings: dict[str, str],
+    derived_bindings: dict[str, str],
+    inventory_bytes: bytes,
+) -> dict[str, Any]:
+    observation_data = observation["observation"]
+    before = observation_data["before"]
+    after = observation_data["after"]
+    derived = observation_data["derived"]
+    envelope_authority = authority["authority"]
+    return {
+        "schema_version": "h3_real_current_nlmytgen_point_in_time_machine_readback.v2",
+        "artifact_id": ARTIFACT_ID,
+        "mission_id": "dcc-h3-g02-derived-output-reproducibility",
         "devcockpitcore_base_revision": DEVCOCKPIT_BASE_REVISION,
         "transition": {
-            "from": "owner_existing_dirty_nlmytgen_checkout_without_real_h3_package",
-            "to": "stable_dirty_authentic_point_in_time_negative_package",
+            "from": "committed-derived-files-as-reprojection-inputs",
+            "to": "non_circular_fixed_input_and_dependency_reconstruction",
+        },
+        "package_file_classification": {
+            "fixed_captured_inputs": list(FIXED_CAPTURED_INPUTS),
+            "immutable_producer_dependencies": list(IMMUTABLE_PRODUCER_DEPENDENCIES),
+            "regenerated_derived_outputs": list(REGENERATED_DERIVED_OUTPUTS),
+        },
+        "inputs": {
+            "fixed_captured": fixed_bindings,
+            "immutable_dependencies": dependency_bindings,
+            "committed_derived_files_are_comparison_oracles": True,
+            "producer_inputs_exclude_committed_derived_files": True,
         },
         "source": {
             "project_key": observation["project_key"],
             "repository_identity": observation["repository"]["identity"],
             "source_revision": before["head_revision"],
-            "report_sha256": source_report_hash,
+            "report_sha256": fixed_bindings[FIXED_CAPTURED_INPUTS[0]],
             "report_observed_at": _report_field(
-                ROOT / BOUND_PATHS[0], "observed_at"
+                ROOT / FIXED_CAPTURED_INPUTS[0], "observed_at"
             ),
             "source_branch": _report_field(
-                ROOT / BOUND_PATHS[0], "source_branch"
+                ROOT / FIXED_CAPTURED_INPUTS[0], "source_branch"
             ),
             "evidence_class": "authentic_owner_authorized_point_in_time_report",
             "authority_basis": "owner_authorized_current_checkout_observation",
             "report_permission": _report_field(
-                ROOT / BOUND_PATHS[0], "observer_only_permission"
+                ROOT / FIXED_CAPTURED_INPUTS[0], "observer_only_permission"
             ),
             "tests_executed": False,
             "remote_freshness_established": False,
         },
         "observation": {
             "artifact_id": observation["artifact_id"],
-            "first_observed_at": observation["observation"]["first_observed_at"],
-            "reobserved_at": observation["observation"]["reobserved_at"],
+            "first_observed_at": observation_data["first_observed_at"],
+            "reobserved_at": observation_data["reobserved_at"],
             "before_head_revision": before["head_revision"],
             "after_head_revision": after["head_revision"],
             "before_worktree_sha256": before["worktree_sha256"],
@@ -120,51 +361,81 @@ def _build_package() -> dict[str, dict[str, Any]]:
             "observation_authorization": observation["authorization"]["scope"],
         },
         "authority": {
-            "report_permission": envelope["report"]["observer_permission_scope"],
-            "observation_authorization": envelope["observation"]["authorization_scope"],
-            "authentic_owner_attached_point_in_time_evidence": authority[
+            "report_permission": authority["report"]["observer_permission_scope"],
+            "observation_authorization": authority["observation"]["authorization_scope"],
+            "authentic_owner_attached_point_in_time_evidence": envelope_authority[
                 "authentic_owner_attached_point_in_time_evidence"
             ],
-            "current_claim_eligibility": authority["current_claim_eligibility"],
-            "reason_codes": authority["reason_codes"],
-            "live_coverage": authority["live_coverage"],
-            "executable": envelope["scope_boundary"]["executable"],
-            "provenance": envelope["provenance"],
+            "current_claim_eligibility": envelope_authority["current_claim_eligibility"],
+            "reason_codes": envelope_authority["reason_codes"],
+            "live_coverage": envelope_authority["live_coverage"],
+            "executable": authority["scope_boundary"]["executable"],
+            "provenance": authority["provenance"],
             "evidence_validity": "valid",
             "observed_result": "pass",
             "decision_effect": "none",
         },
         "chronology": {
-            "report_observed_at": envelope["report"]["observed_at"],
-            "first_observed_at": envelope["observation"]["first_observed_at"],
-            "reobserved_at": envelope["observation"]["reobserved_at"],
-            "assessed_at": envelope["assessment"]["assessed_at"],
-            "state": authority["chronology_state"],
+            "report_observed_at": authority["report"]["observed_at"],
+            "first_observed_at": authority["observation"]["first_observed_at"],
+            "reobserved_at": authority["observation"]["reobserved_at"],
+            "assessed_at": authority["assessment"]["assessed_at"],
+            "fixed_timestamp_source": "manifest.generated_at",
+            "state": envelope_authority["chronology_state"],
+        },
+        "reconstruction": {
+            "fixed_timestamp": manifest["generated_at"],
+            "canonical_producers": [
+                "report_normalizer",
+                "supervision_packet",
+                "report_authority_v2",
+                "dashboard",
+            ],
+            "staging_roots_outside_repository": True,
+            "output_mapping_path_set_exact": True,
+            "normal_verification_writes_no_tracked_files": True,
         },
         "cross_binding": {
             "source_manifest_packet": "verified",
             "current_observation_receipt": "verified",
             "repository_project_revision": "verified",
             "authority_envelope_reprojection": "verified",
-            "dashboard_readback_projection": "verified",
+            "dashboard_declared_authority_projection": (
+                "verified_complete_priority_readback_projection"
+            ),
+            "dashboard_html_state_markers": "verified_structural_markers",
         },
         "derived_outputs": {
             "fixed_input_reprojection": True,
             "target_repository_reobserved_for_regeneration": False,
+            "paths": list(REGENERATED_DERIVED_OUTPUTS),
+            "output_sha256": derived_bindings,
+            "self_binding_exclusions": {
+                "binding_inventory": INVENTORY_PATH,
+                "package_readback": READBACK_PATH,
+            },
             "byte_identical_regeneration_evidence": (
-                "tests.test_h3_g02_real_package.H3G02RealPackageTests.test_fixed_inputs_rebuild_derived_outputs_byte_identically"
+                "tests.test_h3_g02_real_package."
+                "H3G02RealPackageTests.test_two_independent_staging_builds_match"
             ),
-            "paths": list(BOUND_PATHS),
+            "comparison_oracle_scope": (
+                "committed derived bytes are compared only after reconstruction"
+            ),
         },
         "historical_invariance": {
-            "safety_boundary_inventory_sha256": _sha256(
-                ROOT / "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json"
+            "safety_boundary_inventory_sha256": dependency_bindings[
+                "artifacts/review/h3-current-observation-safety-boundary-v1/"
+                "binding_inventory_v1.json"
+            ],
+            "safety_boundary_readback_sha256": dependency_bindings[
+                "artifacts/review/h3-current-observation-safety-boundary-v1/"
+                "safety_boundary_machine_readback_v1.json"
+            ],
+            "accepted_historical_and_production_baselines": (
+                "verified by safety-boundary generator"
             ),
-            "safety_boundary_readback_sha256": _sha256(
-                ROOT / "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json"
-            ),
-            "accepted_historical_and_production_baselines": "verified by safety-boundary generator",
         },
+        "binding_inventory_sha256": sha256(inventory_bytes).hexdigest(),
         "canonical_state": {
             "real_observation_performed": True,
             "real_current_claim_eligibility": False,
@@ -183,103 +454,125 @@ def _build_package() -> dict[str, dict[str, Any]]:
             "credentials_or_secrets_retained": False,
         },
     }
-    inventory = {
-        "schema_version": "h3_real_current_nlmytgen_point_in_time_binding_inventory.v1",
-        "artifact_id": ARTIFACT_ID,
-        "hash_basis": "repository_relative_path_and_raw_bytes_sha256_v1",
-        "base_revision": DEVCOCKPIT_BASE_REVISION,
-        "source_revision": SOURCE_REVISION,
-        "source_tree_scope": "BOUND_PATHS only; not a repository-wide tree hash",
-        "source_tree_sha256": _binding_tree_sha256(bindings),
-        "bindings": bindings,
-    }
-    inventory_payload = _serialize(inventory)
-    readback["binding_inventory_sha256"] = sha256(inventory_payload).hexdigest()
-    return {
-        "binding_inventory_v1.json": inventory,
-        "package_readback_v1.json": readback,
-    }
 
 
 def _verify_cross_bindings(
     observation: dict[str, Any],
     packet: dict[str, Any],
-    envelope: dict[str, Any],
+    authority: dict[str, Any],
     dashboard_readback: dict[str, Any],
+    dashboard_html: bytes,
 ) -> None:
     source_revision = observation["observation"]["before"]["head_revision"]
     identity = observation["repository"]["identity"]
     if observation["observation"]["after"]["head_revision"] != source_revision:
-        raise RuntimeError("observation revision changed during package reprojection")
-    if envelope["report"]["source_revision"] != source_revision:
+        raise RuntimeError("observation revision changed during package reconstruction")
+    if observation["observation"]["after"]["worktree_sha256"] != observation["observation"]["before"]["worktree_sha256"]:
+        raise RuntimeError("observation worktree changed during package reconstruction")
+    if authority["report"]["source_revision"] != source_revision:
         raise RuntimeError("report and observation revisions differ")
-    if envelope["report"]["repository_identity"] != identity:
-        raise RuntimeError("envelope repository identity differs from receipt")
-    if packet["source_bindings"][0]["content_sha256"] != envelope["bindings"]["source_report"]["content_sha256"]:
-        raise RuntimeError("packet and envelope source report bindings differ")
-    projection = dashboard_readback["supervision_report_authority_envelope"]
-    if projection["authority"] != envelope["authority"]:
-        raise RuntimeError("Dashboard authority projection differs from envelope")
-    if projection["observation"] != envelope["observation"]:
-        raise RuntimeError("Dashboard observation projection differs from envelope")
-    if projection["scope_boundary"]["executable"] is not False:
+    if authority["report"]["repository_identity"] != identity:
+        raise RuntimeError("authority repository identity differs from receipt")
+    if packet["source_bindings"][0]["content_sha256"] != authority["bindings"]["source_report"]["content_sha256"]:
+        raise RuntimeError("packet and authority source report bindings differ")
+    expected_projection = {
+        "loaded": True,
+        "schema_version": authority["schema_version"],
+        "artifact_id": authority["artifact_id"],
+        "identity": authority["identity"],
+        "report": authority["report"],
+        "observation": authority["observation"],
+        "assessment": authority["assessment"],
+        "authority": authority["authority"],
+        "scope_boundary": authority["scope_boundary"],
+        "provenance": authority["provenance"],
+    }
+    if dashboard_readback.get("supervision_report_authority_envelope") != expected_projection:
+        raise RuntimeError("Dashboard authority projection is incomplete or differs from authority")
+    if dashboard_readback["surface"]["executable"] is not False:
         raise RuntimeError("Dashboard executable boundary is not false")
+    html_text = dashboard_html.decode("utf-8").lower()
+    for marker in ("worktree_not_clean", "live coverage", "claim-ineligible"):
+        if marker not in html_text:
+            raise RuntimeError(f"Dashboard HTML missing state marker: {marker}")
 
 
-def verify_committed_package(
-    package: dict[str, dict[str, Any]] | None = None,
-) -> dict[str, str]:
-    expected = package if package is not None else _build_package()
+def verify_committed_package() -> dict[str, str]:
+    expected = generate()
     result: dict[str, str] = {}
-    for name, value in expected.items():
-        path = PACKAGE / name
-        actual = path.read_bytes()
-        encoded = _serialize(value)
-        if actual != encoded:
+    for path, data in expected.items():
+        relative = path.removeprefix(f"{PACKAGE_REL}/")
+        committed = PACKAGE / relative
+        actual = committed.read_bytes()
+        if actual != data:
             raise RuntimeError(
-                f"committed {name} does not match fixed inputs; refusing to overwrite tracked package"
+                f"committed {relative} does not match reconstructed bytes; "
+                "refusing to overwrite tracked package"
             )
-        result[name] = sha256(actual).hexdigest()
+        result[relative] = sha256(actual).hexdigest()
     return result
 
 
-def _write_staging(output_dir: Path, package: dict[str, dict[str, Any]]) -> None:
+def _write_mapping(output_dir: Path, outputs: dict[str, bytes]) -> None:
+    _validate_output_destination(output_dir)
     destination = output_dir.resolve()
-    if destination == PACKAGE.resolve():
-        raise ValueError("staging output must not be the tracked outcome package")
     destination.mkdir(parents=True, exist_ok=True)
-    for name, value in package.items():
-        (destination / name).write_bytes(_serialize(value))
+    for path, data in outputs.items():
+        relative = path.removeprefix(f"{PACKAGE_REL}/")
+        target = destination / relative
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(data)
+    actual_paths = {
+        path.relative_to(destination).as_posix()
+        for path in destination.rglob("*")
+        if path.is_file()
+    }
+    expected_paths = {
+        path.removeprefix(f"{PACKAGE_REL}/") for path in outputs
+    }
+    if actual_paths != expected_paths:
+        raise RuntimeError(
+            f"staging path set differs: expected {sorted(expected_paths)}, "
+            f"actual {sorted(actual_paths)}"
+        )
 
 
-def _strict_json(path: Path) -> dict[str, Any]:
-    def pairs(items: list[tuple[str, Any]]) -> dict[str, Any]:
-        result: dict[str, Any] = {}
-        for key, value in items:
-            if key in result:
-                raise RuntimeError(f"duplicate JSON key {key!r} in {path}")
-            result[key] = value
-        return result
+def _validate_output_destination(output_dir: Path) -> None:
+    destination = output_dir.resolve()
+    root = ROOT.resolve()
+    if _is_relative_to(destination, root):
+        raise ValueError(
+            "staging output must be outside the repository, including the tracked package"
+        )
 
-    value = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=pairs)
-    if not isinstance(value, dict):
-        raise RuntimeError(f"{path} must contain one JSON object")
-    return value
+
+def _bindings(root: Path, paths: tuple[str, ...]) -> dict[str, str]:
+    return {path: sha256(_read_bytes(root, path)).hexdigest() for path in paths}
+
+
+def _read_bytes(root: Path, relative_path: str) -> bytes:
+    path = root / relative_path
+    if not path.is_file():
+        raise RuntimeError(f"reconstruction output is missing: {relative_path}")
+    return path.read_bytes()
+
+
+def _write_bytes(root: Path, relative_path: str, data: bytes) -> None:
+    path = root / relative_path
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(data)
 
 
 def _report_field(path: Path, key: str) -> str:
-    prefix = f"- {key}: `"
+    tick = chr(96)
+    prefix = f"- {key}: {tick}"
     for line in path.read_text(encoding="utf-8").splitlines():
-        if line.startswith(prefix) and line.endswith("`"):
+        if line.startswith(prefix) and line.endswith(tick):
             return line[len(prefix):-1]
     raise RuntimeError(f"report field {key!r} is missing")
 
 
-def _sha256(path: Path) -> str:
-    return sha256(path.read_bytes()).hexdigest()
-
-
-def _binding_tree_sha256(bindings: dict[str, str]) -> str:
+def _binding_set_sha256(bindings: dict[str, str]) -> str:
     digest = sha256()
     for path in sorted(bindings):
         digest.update(path.encode("utf-8"))
@@ -293,15 +586,23 @@ def _serialize(value: dict[str, Any]) -> bytes:
     return (json.dumps(value, ensure_ascii=True, indent=2) + "\n").encode("utf-8")
 
 
+def _is_relative_to(path: Path, parent: Path) -> bool:
+    try:
+        path.relative_to(parent)
+    except ValueError:
+        return False
+    return True
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Build or verify the fixed-input H3-G02 outcome package."
+        description="Reconstruct or verify the fixed-input H3-G02 outcome package."
     )
     parser.add_argument("--output-dir", type=Path)
     args = parser.parse_args()
     if args.output_dir is not None:
-        package = generate(output_dir=args.output_dir)
-        print(f"staged {len(package)} package files in {args.output_dir.resolve()}")
+        outputs = generate(output_dir=args.output_dir)
+        print(f"staged {len(outputs)} derived outputs in {args.output_dir.resolve()}")
     else:
         hashes = verify_committed_package()
         for name, digest in hashes.items():
