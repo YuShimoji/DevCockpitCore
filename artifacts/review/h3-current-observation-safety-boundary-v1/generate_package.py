@@ -4,7 +4,7 @@ import argparse
 from hashlib import sha256
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -185,13 +185,49 @@ def _verify_preserved_baselines() -> dict[str, Any]:
     }
 
 
+class TreePathCollisionError(ValueError):
+    """Raised when distinct tree paths collapse to one normalized key."""
+
+
+def _tree_file_entries(root: Path) -> tuple[tuple[str, Path], ...]:
+    """Return relative POSIX identities paired with resolved file locators."""
+
+    discovered: list[tuple[str, Path]] = []
+    for path in root.rglob("*"):
+        if path.is_file():
+            relative = path.relative_to(root).as_posix()
+            discovered.append((relative, path.resolve()))
+    return _ordered_tree_entries(discovered)
+
+
+def _ordered_tree_entries(
+    entries: Iterable[tuple[str, Path]],
+) -> tuple[tuple[str, Path], ...]:
+    """Order entries by a host-independent case-normalized POSIX identity."""
+
+    keyed: list[tuple[str, str, Path]] = []
+    seen: dict[str, str] = {}
+    for relative, locator in entries:
+        normalized = relative.casefold()
+        previous = seen.get(normalized)
+        if previous is not None:
+            first, second = sorted((previous, relative))
+            raise TreePathCollisionError(
+                "case-normalized tree path collision: "
+                f"{first!r} conflicts with {second!r}"
+            )
+        seen[normalized] = relative
+        keyed.append((normalized, relative, locator))
+    keyed.sort(key=lambda entry: entry[0])
+    return tuple((relative, locator) for _, relative, locator in keyed)
+
+
 def _tree_sha256(root: Path) -> str:
     digest = sha256()
-    for path in sorted(item for item in root.rglob("*") if item.is_file()):
-        relative = path.relative_to(root).as_posix()
+    for relative, locator in _tree_file_entries(root):
         digest.update(relative.encode("utf-8"))
         digest.update(b"\0")
-        digest.update(path.read_bytes())
+        digest.update(locator.read_bytes())
         digest.update(b"\0")
     return digest.hexdigest()
 

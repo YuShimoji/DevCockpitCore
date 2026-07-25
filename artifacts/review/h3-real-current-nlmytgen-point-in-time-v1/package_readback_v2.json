@@ -87,9 +87,9 @@
       },
       "accepted_external_safety_dependencies": {
         "artifacts/review/h3-current-observation-safety-boundary-v1/README.md": "f56a208bf4f5844f584bade64630d7c693fe6b407b1299984c1b47ff57b7f22a",
-        "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
-        "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "d495d854f797eb8cee57f4c142124554f85a1f30b4570bec721b27046adcf713",
-        "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95"
+        "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "641f3547e9818005ea17b22d8c3514a5219374c21445180b57864ec58fe61060",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "3289e336d049134e3d1de01a9a3d25a75ac44ee373f75c031aa8504bc0412009",
+        "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "5855462d1e9dc4eba48a0989354ce6acaacaa9af8122b420686e7b490133b53f"
       }
     },
     "measured_repository_module_closure": [
@@ -251,11 +251,11 @@
     "comparison_oracle_scope": "committed derived bytes are compared only after reconstruction"
   },
   "historical_invariance": {
-    "safety_boundary_inventory_sha256": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
-    "safety_boundary_readback_sha256": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95",
+    "safety_boundary_inventory_sha256": "641f3547e9818005ea17b22d8c3514a5219374c21445180b57864ec58fe61060",
+    "safety_boundary_readback_sha256": "5855462d1e9dc4eba48a0989354ce6acaacaa9af8122b420686e7b490133b53f",
     "accepted_historical_and_production_baselines": "verified by safety-boundary generator"
   },
-  "binding_inventory_sha256": "8eca291799daaf27f53daaf076bf6a3ca9c2a2bc2fecdc46c28a6adf58ba3936",
+  "binding_inventory_sha256": "d1b7c9888b627c97a871daa8d2d6e765aa79a4c92c7bd7c68c1098b43445f063",
   "canonical_state": {
     "real_observation_performed": true,
     "real_current_claim_eligibility": false,

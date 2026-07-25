@@ -95,8 +95,8 @@
     "main_integration_performed": false,
     "h4_started": false
   },
-  "source_tree_sha256": "f7564533bb6904283559b317fb8107b86dc8dd2bb1b66eecf1a3392d892dbd74",
-  "binding_inventory_sha256": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
+  "source_tree_sha256": "13fea3803cc15d5e81bca48d666ccca213ac1deac6cd01e4453342a0e7c4ebef",
+  "binding_inventory_sha256": "641f3547e9818005ea17b22d8c3514a5219374c21445180b57864ec58fe61060",
   "source_tree_scope": "BOUND_PATHS only; not a repository-wide tree hash",
   "focused_evidence_semantics": "test names are evidence locators, not execution receipts",
   "canonical_state_semantics": "declared package state, not an observed execution result"

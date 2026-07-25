@@ -22,6 +22,50 @@ READBACK = PACKAGE / "safety_boundary_machine_readback_v1.json"
 
 
 class CurrentObservationSafetyBoundaryArtifactTests(unittest.TestCase):
+    def test_tree_hash_uses_case_normalized_posix_order_for_mixed_case_tree(
+        self,
+    ) -> None:
+        namespace = runpy.run_path(str(PACKAGE / "generate_package.py"))
+        with tempfile.TemporaryDirectory(prefix="safety-mixed-case-tree-") as temporary:
+            root = Path(temporary)
+            contents = {
+                "Zebra.TXT": b"zebra\n",
+                "alpha.txt": b"alpha\n",
+                "Bravo.txt": b"bravo\n",
+            }
+            for relative, value in contents.items():
+                (root / relative).write_bytes(value)
+
+            entries = namespace["_tree_file_entries"](root)
+            self.assertEqual(
+                ["alpha.txt", "Bravo.txt", "Zebra.TXT"],
+                [relative for relative, _ in entries],
+            )
+            expected = sha256()
+            for relative in ("alpha.txt", "Bravo.txt", "Zebra.TXT"):
+                expected.update(relative.encode("utf-8"))
+                expected.update(b"\0")
+                expected.update(contents[relative])
+                expected.update(b"\0")
+            self.assertEqual(
+                expected.hexdigest(), namespace["_tree_sha256"](root)
+            )
+
+    def test_tree_hash_rejects_case_normalized_path_collision(self) -> None:
+        namespace = runpy.run_path(str(PACKAGE / "generate_package.py"))
+        with tempfile.TemporaryDirectory(prefix="safety-collision-tree-") as temporary:
+            root = Path(temporary)
+            first = root / "first.bin"
+            second = root / "second.bin"
+            first.write_bytes(b"first\n")
+            second.write_bytes(b"second\n")
+            entries = (("README.md", first), ("Readme.md", second))
+            with self.assertRaisesRegex(
+                namespace["TreePathCollisionError"],
+                r"case-normalized tree path collision: 'README\.md' conflicts with 'Readme\.md'",
+            ):
+                namespace["_ordered_tree_entries"](entries)
+
     def test_artifact_is_strict_bound_deterministic_and_preserves_history(
         self,
     ) -> None:

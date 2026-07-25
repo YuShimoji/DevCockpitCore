@@ -48,9 +48,9 @@
     },
     "accepted_external_safety_dependencies": {
       "artifacts/review/h3-current-observation-safety-boundary-v1/README.md": "f56a208bf4f5844f584bade64630d7c693fe6b407b1299984c1b47ff57b7f22a",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "d495d854f797eb8cee57f4c142124554f85a1f30b4570bec721b27046adcf713",
-      "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95"
+      "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "641f3547e9818005ea17b22d8c3514a5219374c21445180b57864ec58fe61060",
+      "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "3289e336d049134e3d1de01a9a3d25a75ac44ee373f75c031aa8504bc0412009",
+      "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "5855462d1e9dc4eba48a0989354ce6acaacaa9af8122b420686e7b490133b53f"
     }
   },
   "regenerated_derived_outputs": {
@@ -68,7 +68,7 @@
     "package_readback": "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/package_readback_v2.json",
     "reason": "generated metadata cannot hash itself without circularity"
   },
-  "binding_set_sha256": "f56acb4add2c79dda85470a603f5e9f026f5d9c6267f30ef79bfcaa0ba745c53",
+  "binding_set_sha256": "c8d0e16ad192fb35995d5a490e77dc88669de14901cde9a582284dcc2aa5801e",
   "bindings": {
     "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/source/AGENT_REPORT_G02_NLMYTGEN_V1.md": "b85eedaf111d5e99cb847e945b4f3e92a31c2e3304acb35d68d91ee9e99c97ba",
     "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/receipt/current_observation_v1.json": "9725b060c2b89caa17d19bbc49ff6cb0b184043f60de11f90ac1cf47f8963555",
@@ -92,9 +92,9 @@
     "docs/project-context.md": "e7aca57218bf705e46fd1dc7799f39baef51927303e259f86547f5f706ec48a8",
     "samples/evidence_freshness/evidence_freshness_receipt_v1.json": "6cce105ebdaa26a1f43d44f487b18abb6a660d11d167e7aae8583c98fbf77aa2",
     "artifacts/review/h3-current-observation-safety-boundary-v1/README.md": "f56a208bf4f5844f584bade64630d7c693fe6b407b1299984c1b47ff57b7f22a",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "77025304691d1133dc204ec1791f590b724cd431403069b56eece00900812e67",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "d495d854f797eb8cee57f4c142124554f85a1f30b4570bec721b27046adcf713",
-    "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "a6483c6a4a1988f96f55d17d6ff2b6aac5bc70a936f5671b9d506b414dbaaa95",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/binding_inventory_v1.json": "641f3547e9818005ea17b22d8c3514a5219374c21445180b57864ec58fe61060",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/generate_package.py": "3289e336d049134e3d1de01a9a3d25a75ac44ee373f75c031aa8504bc0412009",
+    "artifacts/review/h3-current-observation-safety-boundary-v1/safety_boundary_machine_readback_v1.json": "5855462d1e9dc4eba48a0989354ce6acaacaa9af8122b420686e7b490133b53f",
     "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/normalization/report_normalization_v1.json": "39b29952ecea0a607c6320448dd62837150a79b9df76e279e6ff5a389f0d9cac",
     "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.json": "ac388e512c5c2f208271bb734c12f0a9b5ab59d0b6d39b38247dd649a9e829ea",
     "artifacts/review/h3-real-current-nlmytgen-point-in-time-v1/packet/cross_project_supervision_packet_v1.md": "023d119e5ce5a1ee69010f5b1a854bf8afe5835e0114936c8b069051d791988c",
