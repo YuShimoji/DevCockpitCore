@@ -1,0 +1,121 @@
+{
+  "schema_version": "report_normalization.v1",
+  "generated_at": "2026-07-26T07:38:05.567842+00:00",
+  "producer": "dev_cockpit.report_normalizer",
+  "source": {
+    "input_path": "artifacts/review/h4-g01-authentic-two-project-review-v1/source/AGENT_REPORT_H4_G01_CLIPPIPEGEN.md",
+    "input_kind": "manifest_bound_agent_report",
+    "bytes": 3769,
+    "lines": 54
+  },
+  "routing": {
+    "route": "ClipPipeGen",
+    "direction": "WORKER->SUPERVISOR",
+    "thread": "clippipegen-h4-g01-authentic-review-v1",
+    "lane": "PROJECT_REVIEW",
+    "slice": "m6-rights-readiness-review-v1",
+    "epoch": "CLIPPIPEGEN-H4-G01-2026-07-26-01",
+    "base": "a3771bc59cd58b05c00a570e1074118ace3dc15a",
+    "base_revision": "a3771bc59cd58b05c00a570e1074118ace3dc15a",
+    "artifact": "h4-g01-clippipegen-source-report-v1",
+    "turn": null,
+    "target": null,
+    "artifact_current": null,
+    "artifact_next": null,
+    "reply": null,
+    "confidence": null,
+    "thread_id": "clippipegen-h4-g01-authentic-review-v1",
+    "lane_id": "PROJECT_REVIEW",
+    "slice_id": "m6-rights-readiness-review-v1",
+    "artifact_id": "h4-g01-clippipegen-source-report-v1",
+    "dialect": "canonical_v7"
+  },
+  "progress": {
+    "lane": "authentic-project-review",
+    "meter": "###--",
+    "done": 3,
+    "total": 5,
+    "current": "out13-integrated-baseline-observed-clean",
+    "next": "m6-rights-readiness-review",
+    "blocker": "none",
+    "user_work": "none"
+  },
+  "action": {
+    "decision": "continue",
+    "now_owner": "Agent",
+    "deliverable": "h4-g01-clippipegen-source-report-v1",
+    "trigger": "manifest-bound two-project observer review"
+  },
+  "status": {
+    "reported": null,
+    "blocked": null,
+    "acceptance": "point-in-time",
+    "stop": "none",
+    "branch": "codex/s1-two-source-common-context-probe-v1",
+    "worktree": "clean",
+    "health": "yellow",
+    "gates_done": 3,
+    "gates_total": 5,
+    "stop_class": "NONE",
+    "estimate_agent": null,
+    "estimate_user": null
+  },
+  "sections": {
+    "outcome": "This report records an owner-authorized point-in-time observation of ClipPipeGen for the H4 two-project Priority Review Console. The exact source revision is `a3771bc59cd58b05c00a570e1074118ace3dc15a`. The paired receipt reports `actual: true`, `clean: true`, and `stable: true`.\n\nThe report is observer-only, non-live, and non-executable. It does not establish rights clearance, production readiness, publication approval, release approval, or an authorization to modify ClipPipeGen.\n\n## Source Binding\n\n- project_key: `clippipegen`\n- repository_identity: `https://github.com/YuShimoji/ClipPipeGen.git`\n- source_revision: `a3771bc59cd58b05c00a570e1074118ace3dc15a`\n- observed_at: `2026-07-26T07:38:05.429125+00:00`\n- reobserved_at: `2026-07-26T07:38:05.567842+00:00`\n- source_branch: `codex/s1-two-source-common-context-probe-v1`\n- local_upstream_relation: `unknown`\n- remote_freshness: `unknown; no fetch was performed`\n- worktree_state: `clean`\n- worktree_entry_count: `0`\n- worktree_aggregate_sha256: `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855`\n- observer_only_permission: `allowed_for_DevCockpitCore_H4_point_in_time_review`\n- current_claim_eligibility: `false`\n- live_coverage: `false`\n- executable: `false`\n\n## Declared Project State\n\nThe adapter's optional `docs/runtime-state.md` input is absent and is represented as a structured warning. The available `docs/project-context.md` declares slice `OUT-13`, phase `integrated_main_baseline_verified`, and a next product concern of M6 rights readiness after the recorded M4 integration and M5 verification work.\n\nThat document also contains a historical branch and revision reference. The fresh Git observation above is authoritative for this report's exact branch and revision. The document remains useful for product direction only.",
+    "what_changed": null,
+    "artifacts": [],
+    "commands_and_results": [],
+    "validation": [
+      "The strict current-observation receipt schema validation passed.",
+      "Repository identity and top-level checks matched the configured read-only adapter.",
+      "The before and after snapshots matched in revision, aggregate worktree hash, and aggregate entry count.",
+      "Source tests, builds, installs, media actions, network synchronization, and Git mutations were not performed.",
+      "No missing optional document was converted into a hard stop."
+    ],
+    "completion_matrix": null,
+    "continuation_state": "The smallest safe continuation is a project-local review of the M6 rights-readiness evidence while keeping later material decisions with the rights owner. The clean aggregate remains visible even when another project in the same packet is dirty.",
+    "user_side_work": "None is required for this observer review package. Any later rights, editorial, production, publication, or release decision remains a separate owner-controlled gate.",
+    "agent_side_work": null,
+    "handoff_gate": "The observer-only intake gate is passed for this exact report and receipt. The report remains point-in-time, non-live, non-executable, and ineligible for product or release authority.",
+    "extra": {}
+  },
+  "normalized_outcome": {
+    "decision": "continue",
+    "summary": "This report records an owner-authorized point-in-time observation of ClipPipeGen for the H4 two-project Priority Review Console.",
+    "commits": [],
+    "pushed": null,
+    "worktree": null,
+    "remote_parity": null,
+    "tests": []
+  },
+  "handoff": {
+    "handoff_gate": null,
+    "handoff_reason": null,
+    "supervisor_should_generate_prompt": false
+  },
+  "next": {
+    "artifact_next": "m6-rights-readiness-review",
+    "recommended_next_slice": "m6-rights-readiness-review",
+    "next_owner": "Agent",
+    "minimal_next_task": "The smallest safe continuation is a project-local review of the M6 rights-readiness evidence while keeping later material decisions with the rights owner."
+  },
+  "residue_audit": {
+    "contains_paste_ready_prompt": false,
+    "contains_pseudo_git_tags": false,
+    "pseudo_git_tags": [],
+    "contains_absolute_user_paths": false,
+    "absolute_user_paths_redacted": false,
+    "absolute_user_path_count": 0,
+    "contains_runner_or_scheduler_instruction": false,
+    "risky_automation_residues": [],
+    "contains_execution_automation_overclaim": false,
+    "contains_production_readiness_overclaim": false,
+    "notes": []
+  },
+  "health": {
+    "normalization_status": "green",
+    "warnings": [],
+    "stop_class": "NONE",
+    "unknown_fields": []
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": "supervision_current_observation.v1",
+  "artifact_id": "h4-g01-nlmytgen-current-observation-v1",
+  "producer": "dev_cockpit.current_observation",
+  "project_key": "nlmytgen",
+  "repository": {
+    "identity": "https://github.com/YuShimoji/NLMYTGen.git",
+    "identity_sha256": "b684226bac29bffb8d58257d6d7a51ecbd6e77f9a992d0f41831102a817350f0",
+    "identity_basis": "sanitized_remote_origin_v1"
+  },
+  "authorization": {
+    "scope": "allowed_for_DevCockpitCore_H4_point_in_time_review"
+  },
+  "observation": {
+    "first_observed_at": "2026-07-26T07:38:04.651497+00:00",
+    "reobserved_at": "2026-07-26T07:38:04.801608+00:00",
+    "before": {
+      "head_revision": "aad0043d1218cdfae8027160cd57651b04fec2ef",
+      "worktree_state": "dirty",
+      "worktree_sha256": "01b5f76b48bcf9304f46a93c946a924892a7e8afed7829b48defa5315e5aa306",
+      "worktree_entry_count": 21
+    },
+    "after": {
+      "head_revision": "aad0043d1218cdfae8027160cd57651b04fec2ef",
+      "worktree_state": "dirty",
+      "worktree_sha256": "01b5f76b48bcf9304f46a93c946a924892a7e8afed7829b48defa5315e5aa306",
+      "worktree_entry_count": 21
+    },
+    "derived": {
+      "actual": true,
+      "clean": false,
+      "stable": true
+    }
+  },
+  "scope_boundary": {
+    "read_only": true,
+    "fetch_performed": false,
+    "pull_performed": false,
+    "checkout_performed": false,
+    "merge_performed": false,
+    "rebase_performed": false,
+    "stash_performed": false,
+    "reset_performed": false,
+    "clean_performed": false,
+    "write_performed": false,
+    "target_repository_writeback": false,
+    "stage_performed": false,
+    "commit_performed": false,
+    "push_performed": false,
+    "arbitrary_command_execution": false
+  }
+}

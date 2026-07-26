@@ -1,0 +1,52 @@
+{
+  "schema_version": "supervision_current_observation.v1",
+  "artifact_id": "h4-g01-clippipegen-current-observation-v1",
+  "producer": "dev_cockpit.current_observation",
+  "project_key": "clippipegen",
+  "repository": {
+    "identity": "https://github.com/YuShimoji/ClipPipeGen.git",
+    "identity_sha256": "25030944112351793886f3256f5a8d3e9b4e262874b4b88f9d0cae178f3ad239",
+    "identity_basis": "sanitized_remote_origin_v1"
+  },
+  "authorization": {
+    "scope": "allowed_for_DevCockpitCore_H4_point_in_time_review"
+  },
+  "observation": {
+    "first_observed_at": "2026-07-26T07:38:05.429125+00:00",
+    "reobserved_at": "2026-07-26T07:38:05.567842+00:00",
+    "before": {
+      "head_revision": "a3771bc59cd58b05c00a570e1074118ace3dc15a",
+      "worktree_state": "clean",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_entry_count": 0
+    },
+    "after": {
+      "head_revision": "a3771bc59cd58b05c00a570e1074118ace3dc15a",
+      "worktree_state": "clean",
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_entry_count": 0
+    },
+    "derived": {
+      "actual": true,
+      "clean": true,
+      "stable": true
+    }
+  },
+  "scope_boundary": {
+    "read_only": true,
+    "fetch_performed": false,
+    "pull_performed": false,
+    "checkout_performed": false,
+    "merge_performed": false,
+    "rebase_performed": false,
+    "stash_performed": false,
+    "reset_performed": false,
+    "clean_performed": false,
+    "write_performed": false,
+    "target_repository_writeback": false,
+    "stage_performed": false,
+    "commit_performed": false,
+    "push_performed": false,
+    "arbitrary_command_execution": false
+  }
+}

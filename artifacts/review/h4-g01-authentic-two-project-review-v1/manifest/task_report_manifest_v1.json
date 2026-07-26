@@ -1,0 +1,23 @@
+{
+  "schema_version": "task_report_manifest.v1",
+  "artifact_id": "h4-g01-authentic-two-project-review-v1",
+  "generated_at": "2026-07-26T07:38:05.567842+00:00",
+  "reports": [
+    {
+      "project_key": "clippipegen",
+      "report_path": "artifacts/review/h4-g01-authentic-two-project-review-v1/source/AGENT_REPORT_H4_G01_CLIPPIPEGEN.md",
+      "required": true,
+      "evidence_class": "authentic_owner_authorized_point_in_time_report",
+      "authority_basis": "owner_authorized_current_checkout_observation",
+      "content_sha256": "1227b491604d2b82f9150de7f43632151cb80c33497ce8e839c60c8dc3cc549e"
+    },
+    {
+      "project_key": "nlmytgen",
+      "report_path": "artifacts/review/h4-g01-authentic-two-project-review-v1/source/AGENT_REPORT_H4_G01_NLMYTGEN.md",
+      "required": true,
+      "evidence_class": "authentic_owner_authorized_point_in_time_report",
+      "authority_basis": "owner_authorized_current_checkout_observation",
+      "content_sha256": "296c4afc27d8c2a7120bb08cbfc9201878723386305cb1af0fe19f7481358651"
+    }
+  ]
+}

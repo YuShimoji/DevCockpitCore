@@ -1,0 +1,121 @@
+{
+  "schema_version": "report_normalization.v1",
+  "generated_at": "2026-07-26T07:38:05.567842+00:00",
+  "producer": "dev_cockpit.report_normalizer",
+  "source": {
+    "input_path": "artifacts/review/h4-g01-authentic-two-project-review-v1/source/AGENT_REPORT_H4_G01_NLMYTGEN.md",
+    "input_kind": "manifest_bound_agent_report",
+    "bytes": 4118,
+    "lines": 54
+  },
+  "routing": {
+    "route": "NLMYTGen",
+    "direction": "WORKER->SUPERVISOR",
+    "thread": "nlmytgen-h4-g01-authentic-review-v1",
+    "lane": "PROJECT_REVIEW",
+    "slice": "factory-contract-v2-extraction-review-v1",
+    "epoch": "NLMYTGEN-H4-G01-2026-07-26-01",
+    "base": "aad0043d1218cdfae8027160cd57651b04fec2ef",
+    "base_revision": "aad0043d1218cdfae8027160cd57651b04fec2ef",
+    "artifact": "h4-g01-nlmytgen-source-report-v1",
+    "turn": null,
+    "target": null,
+    "artifact_current": null,
+    "artifact_next": null,
+    "reply": null,
+    "confidence": null,
+    "thread_id": "nlmytgen-h4-g01-authentic-review-v1",
+    "lane_id": "PROJECT_REVIEW",
+    "slice_id": "factory-contract-v2-extraction-review-v1",
+    "artifact_id": "h4-g01-nlmytgen-source-report-v1",
+    "dialect": "canonical_v7"
+  },
+  "progress": {
+    "lane": "authentic-project-review",
+    "meter": "###--",
+    "done": 3,
+    "total": 5,
+    "current": "three-real-topic-evidence-observed-dirty",
+    "next": "factory-contract-v2-extraction-review",
+    "blocker": "none",
+    "user_work": "none"
+  },
+  "action": {
+    "decision": "continue",
+    "now_owner": "Agent",
+    "deliverable": "h4-g01-nlmytgen-source-report-v1",
+    "trigger": "manifest-bound two-project observer review"
+  },
+  "status": {
+    "reported": null,
+    "blocked": null,
+    "acceptance": "point-in-time",
+    "stop": "none",
+    "branch": "codex/nlmytgen-third-real-topic-factory-v1",
+    "worktree": "dirty",
+    "health": "yellow",
+    "gates_done": 3,
+    "gates_total": 5,
+    "stop_class": "NONE",
+    "estimate_agent": null,
+    "estimate_user": null
+  },
+  "sections": {
+    "outcome": "This report records an owner-authorized point-in-time observation of NLMYTGen for the H4 two-project Priority Review Console. The exact source revision is `aad0043d1218cdfae8027160cd57651b04fec2ef`. The paired receipt reports `actual: true`, `clean: false`, and `stable: true`; the dirty aggregate is valid source evidence and is kept separate from the repository document's declared project state.\n\nThe report is observer-only, non-live, and non-executable. It does not establish current-claim eligibility, product acceptance, rights clearance, production readiness, publication approval, or release approval.\n\n## Source Binding\n\n- project_key: `nlmytgen`\n- repository_identity: `https://github.com/YuShimoji/NLMYTGen.git`\n- source_revision: `aad0043d1218cdfae8027160cd57651b04fec2ef`\n- observed_at: `2026-07-26T07:38:04.651497+00:00`\n- reobserved_at: `2026-07-26T07:38:04.801608+00:00`\n- source_branch: `codex/nlmytgen-third-real-topic-factory-v1`\n- local_upstream_relation: `ahead 0 / behind 0` against the locally available upstream ref\n- remote_freshness: `unknown; no fetch was performed`\n- worktree_state: `dirty`\n- worktree_entry_count: `21`\n- worktree_aggregate_sha256: `01b5f76b48bcf9304f46a93c946a924892a7e8afed7829b48defa5315e5aa306`\n- observer_only_permission: `allowed_for_DevCockpitCore_H4_point_in_time_review`\n- current_claim_eligibility: `false`\n- live_coverage: `false`\n- executable: `false`\n\n## Declared Project State\n\nThe source repository's `docs/runtime-state.md` declares project state `nlmytgen-third-real-topic-gui-render-validated-v1`, product state `three-distinct-real-topics-through-one-clean-gui-and-video-pipeline`, product gate `factory-contract-v2-extraction`, and recommended next move `derive-factory-contract-v2-from-three-observed-topics`.\n\nThose declarations describe the repository's durable handoff. The observed Git aggregate is dirty, so this report does not promote the document's clean-after-handoff expectation into a fresh clean claim. The observed evidence covers three topics only. A fourth render remains outside this review slice.",
+    "what_changed": null,
+    "artifacts": [],
+    "commands_and_results": [],
+    "validation": [
+      "The strict current-observation receipt schema validation passed.",
+      "Repository identity and top-level checks matched the configured read-only adapter.",
+      "The before and after snapshots matched in revision, aggregate worktree hash, and aggregate entry count.",
+      "Source tests, builds, installs, GUI actions, YMM4 actions, rendering, network synchronization, and Git mutations were not performed.",
+      "Dirty path names are absent from this report and the receipt."
+    ],
+    "completion_matrix": null,
+    "continuation_state": "The smallest safe continuation is a read-only review of the Factory Contract v2 extraction evidence derived from the three observed topics. The dirty aggregate remains project-local evidence; it does not suppress ClipPipeGen's independent safe continuation in the shared packet.",
+    "user_side_work": "None is required for this observer review package. Human perceptual, rights, production, publication, and release decisions remain separate future gates owned by their respective reviewers.",
+    "agent_side_work": null,
+    "handoff_gate": "The observer-only intake gate is passed for this exact report and receipt. The report remains point-in-time, non-live, non-executable, and ineligible for product or release authority.",
+    "extra": {}
+  },
+  "normalized_outcome": {
+    "decision": "continue",
+    "summary": "This report records an owner-authorized point-in-time observation of NLMYTGen for the H4 two-project Priority Review Console.",
+    "commits": [],
+    "pushed": null,
+    "worktree": null,
+    "remote_parity": null,
+    "tests": []
+  },
+  "handoff": {
+    "handoff_gate": null,
+    "handoff_reason": null,
+    "supervisor_should_generate_prompt": false
+  },
+  "next": {
+    "artifact_next": "factory-contract-v2-extraction-review",
+    "recommended_next_slice": "factory-contract-v2-extraction-review",
+    "next_owner": "Agent",
+    "minimal_next_task": "The smallest safe continuation is a read-only review of the Factory Contract v2 extraction evidence derived from the three observed topics."
+  },
+  "residue_audit": {
+    "contains_paste_ready_prompt": false,
+    "contains_pseudo_git_tags": false,
+    "pseudo_git_tags": [],
+    "contains_absolute_user_paths": false,
+    "absolute_user_paths_redacted": false,
+    "absolute_user_path_count": 0,
+    "contains_runner_or_scheduler_instruction": false,
+    "risky_automation_residues": [],
+    "contains_execution_automation_overclaim": false,
+    "contains_production_readiness_overclaim": false,
+    "notes": []
+  },
+  "health": {
+    "normalization_status": "green",
+    "warnings": [],
+    "stop_class": "NONE",
+    "unknown_fields": []
+  }
+}

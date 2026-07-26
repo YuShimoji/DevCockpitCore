@@ -1,0 +1,146 @@
+{
+  "artifact_id": "h4-g01-authentic-two-project-review-v1",
+  "derived_outputs_sha256": {
+    "dashboard/devcockpitcore_dashboard.html": "aa43b4ae1f61baf5db8df6e74b0b32ca6e9798b8dddd9f4daa5ca389d36551e6",
+    "dashboard/priority_readback.json": "8ffb1eeb7fcdd718bc8ca4aa5b2001ec958833f5927e6585ac969b2a110e2903",
+    "dashboard/review_actions.json": "9938b9df7c63f6583bef6a50dbffb9de3b997d090c28065dc7bd0de1f81818e3",
+    "dashboard/review_actions.md": "5cbd25c04f6fa88fd391670dd93c98cdddbdde5b20163599c3f156aa1b5dc4d0",
+    "gates/clippipegen_gate_classification_v1.json": "7c9ca4f018fbea534e5308a9a395ba69d0cbe8d909a61c455905e6ddfe52cadb",
+    "gates/nlmytgen_gate_classification_v1.json": "edf149dc22fa720a69983b40662970b02b5243a374af3c93fd2af1a6c446202e",
+    "normalization/clippipegen_report_normalization_v1.json": "80325f63450ce65cb36783a5e88073be45c90e45c0919b82cd5698a29ce46a6e",
+    "normalization/nlmytgen_report_normalization_v1.json": "19756ab8cdbb21312a958b8e697b206af47ed0baefcb6368c3a54be62834576a",
+    "packet/cross_project_supervision_packet_v1.json": "1c8771c37569973d5bdcd7dc0bcda2c8721153adba0d646039cd6568a074b246",
+    "packet/cross_project_supervision_packet_v1.md": "37fc29230ca37751dddc90f4dff6211aba4bc02cb49e050a674c3737de71ee0d"
+  },
+  "devcockpitcore_base": {
+    "revision": "363c10d8740fd7a10a502bf926f54c8eb5aebc58",
+    "tree": "97a08b570ac75ad2e177edb75e9755078afd3f90"
+  },
+  "generated_at": "2026-07-26T07:38:05.567842+00:00",
+  "inputs": {
+    "committed_derived_files_are_comparison_oracles": true,
+    "fixed_captured_inputs_sha256": {
+      "artifacts/review/h4-g01-authentic-two-project-review-v1/manifest/task_report_manifest_v1.json": "8117b4336db0b6d27af3f78a09e09e37e8ab0e8306b63b0499317ab9ba0c667b",
+      "artifacts/review/h4-g01-authentic-two-project-review-v1/receipts/clippipegen_current_observation_v1.json": "ec437b8d68637f95741d1478dfdaca7c78db6f7ac51194325f74b442bbf72629",
+      "artifacts/review/h4-g01-authentic-two-project-review-v1/receipts/nlmytgen_current_observation_v1.json": "44667fb6c9d04392795639d3aa6ed9b71015f562086ba92bb41c6f26179cee26",
+      "artifacts/review/h4-g01-authentic-two-project-review-v1/source/AGENT_REPORT_H4_G01_CLIPPIPEGEN.md": "1227b491604d2b82f9150de7f43632151cb80c33497ce8e839c60c8dc3cc549e",
+      "artifacts/review/h4-g01-authentic-two-project-review-v1/source/AGENT_REPORT_H4_G01_NLMYTGEN.md": "296c4afc27d8c2a7120bb08cbfc9201878723386305cb1af0fe19f7481358651"
+    },
+    "producer_dependencies_sha256": {
+      "artifacts/review/h4-g01-authentic-two-project-review-v1/generate_package.py": "c9c04c8e617775c6c2701278929fbe93a47dc23399fcb8e06e58e85260443ae0",
+      "src/dev_cockpit/__init__.py": "341cd9ded0849bb1553fa017b8349cf39dc1a225982dc04d41131ac0c31d6b54",
+      "src/dev_cockpit/current_observation.py": "51053e76c2629deb68e78de1f5a7400f4402df558c318e10f16612ac63b7410e",
+      "src/dev_cockpit/dashboard.py": "4fab28d4cda14acdc0c3dccfdf0eef88f02fc9ec7bd87ae88d4be8011248a1ea",
+      "src/dev_cockpit/evidence_freshness.py": "f9350524d746c4eb1e74b930a563b9e8dee49d3a67ce98c7a1847f60a9b11f2c",
+      "src/dev_cockpit/gate_classifier.py": "6e1fa14c38084e414e48d58dbd76ac5bbdf5b29e17385ce03e0cf44374cd591c",
+      "src/dev_cockpit/report_authority.py": "d9e079b2ac4122d4f8ebfc3a2f19cb4e6da0da6306dbd3ae3990499814816836",
+      "src/dev_cockpit/report_authority_v2.py": "e78e35517e850617e3364bee4a17bd178f969393554041db0e5770452bf7a18d",
+      "src/dev_cockpit/report_normalizer.py": "6ae4a5ea2e7165a38f93b1d6005325f43878a4cdb8ed4b6932422d86a4af6c3a",
+      "src/dev_cockpit/supervision_packet.py": "5250f6dd0bbace28831735fdc012c9bb7f7f8af566545aec211f361bafa63d68"
+    },
+    "producer_inputs_exclude_committed_derived_files": true,
+    "reconstruction_data_sha256": {
+      "adapters/clippipegen.json": "287856b05445310f754abfcdbabdcfd49f4c73f69ebdb9e6ae5a219b363d9394",
+      "adapters/devcockpitcore.json": "ea8b911495aa0635f8f94cd2069fcc182604bb2d934698c9f16f92e7ddaea87c",
+      "adapters/nlmytgen.json": "2fb4f6f677d401f1978eb519a990d4a86fc79acc55aff905fc5dc7d329df9d58",
+      "docs/project-context.md": "e7aca57218bf705e46fd1dc7799f39baef51927303e259f86547f5f706ec48a8",
+      "docs/runtime-state.md": "380d2108c4b1646d5a716012f92662b2c61f378516e6b1fa10be82f8fbcf2ab3",
+      "samples/cross_project_smokes/devcockpitcore_cross_project_smoke_result.json": "04ff02e2b3f902bdde71b518b03fd0af35da0acb363b6cd45b785508d1a1feff",
+      "samples/evidence_freshness/evidence_freshness_receipt_v1.json": "6cce105ebdaa26a1f43d44f487b18abb6a660d11d167e7aae8583c98fbf77aa2",
+      "samples/status_snapshots/devcockpitcore_status.json": "47639af41850c6820e760c9a50f21451134a8a37074692f48e4cc95cb4ffe1b6",
+      "samples/validation_packs/devcockpitcore_validation_pack_result.json": "4e317acc0dd87f9f967491ef8a6835a6641cfa20698f94c8217982973a42483e"
+    }
+  },
+  "mission_id": "dcc-h4-g01-authentic-two-project-review",
+  "packet": {
+    "active_task_count": 2,
+    "all_tasks_executable": false,
+    "artifact_id": "cross-project-supervision-packet-v1",
+    "global_rank_meaning": "attention_and_review_priority_only",
+    "project_count": 2,
+    "project_keys": [
+      "clippipegen",
+      "nlmytgen"
+    ],
+    "report_count": 2
+  },
+  "priority_console": {
+    "global_rank_meaning": "attention_and_review_priority_only",
+    "priority_item_count": 2,
+    "schema_version": "devcockpit_priority_readback.v1",
+    "selected_priority_id": "task-4d33ffccee3d295b",
+    "user_visual_acceptance": "accepted"
+  },
+  "schema_version": "h4_g01_authentic_two_project_review_readback.v1",
+  "scope_boundary": {
+    "deployment": false,
+    "executable": false,
+    "human_acceptance_conferred": false,
+    "live": false,
+    "main_integration": false,
+    "observer_only": true,
+    "point_in_time": true,
+    "production_authority_conferred": false,
+    "publication_authority_conferred": false,
+    "release_authority_conferred": false,
+    "rights_clearance_conferred": false,
+    "source_repository_writeback": false
+  },
+  "sources": [
+    {
+      "actual": true,
+      "clean": true,
+      "continue_allowed": true,
+      "executable": false,
+      "gate_decision": "integrate_and_continue",
+      "live_coverage": false,
+      "project_key": "clippipegen",
+      "recommended_next_slice": "m6-rights-readiness-review",
+      "remote_freshness": "unknown",
+      "repository_identity": "https://github.com/YuShimoji/ClipPipeGen.git",
+      "source_branch": "codex/s1-two-source-common-context-probe-v1",
+      "source_revision": "a3771bc59cd58b05c00a570e1074118ace3dc15a",
+      "stable": true,
+      "tests_executed": false,
+      "worktree_entry_count": 0,
+      "worktree_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_state": "clean"
+    },
+    {
+      "actual": true,
+      "clean": false,
+      "continue_allowed": true,
+      "executable": false,
+      "gate_decision": "integrate_and_continue",
+      "live_coverage": false,
+      "project_key": "nlmytgen",
+      "recommended_next_slice": "factory-contract-v2-extraction-review",
+      "remote_freshness": "unknown",
+      "repository_identity": "https://github.com/YuShimoji/NLMYTGen.git",
+      "source_branch": "codex/nlmytgen-third-real-topic-factory-v1",
+      "source_revision": "aad0043d1218cdfae8027160cd57651b04fec2ef",
+      "stable": true,
+      "tests_executed": false,
+      "worktree_entry_count": 21,
+      "worktree_sha256": "01b5f76b48bcf9304f46a93c946a924892a7e8afed7829b48defa5315e5aa306",
+      "worktree_state": "dirty"
+    }
+  ],
+  "warnings": [
+    {
+      "code": "optional_runtime_state_missing",
+      "effect": "project context remains available; no hard stop",
+      "project_key": "clippipegen"
+    },
+    {
+      "code": "dirty_point_in_time_observation",
+      "effect": "clean claim remains false; other project worksets remain visible",
+      "project_key": "nlmytgen"
+    },
+    {
+      "code": "remote_freshness_unknown",
+      "effect": "no live or current-remote claim",
+      "project_key": "all"
+    }
+  ]
+}
