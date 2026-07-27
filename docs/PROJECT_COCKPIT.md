@@ -1,10 +1,10 @@
 # DevCockpitCore Project Cockpit
 
-updated_at: 2026-07-24
+updated_at: 2026-07-27
 snapshot_kind: persisted_navigation_snapshot
-latest_readiness_report_path: docs/handoffs/2026-07-24-remote-sync-development-readiness-supervisor-report-v4.md
-last_local_readiness_observed_at: 2026-07-24T10:17:04.8527261+09:00
-last_local_readiness_state: development_ready_with_known_non_blocking_warning
+latest_readiness_report_path: docs/handoffs/2026-07-27-full-repository-sync-supervisor-handoff-v5.md
+last_local_readiness_observed_at: 2026-07-27T20:17:35+09:00
+last_local_readiness_state: development_ready_on_handoff_branch_with_known_warning_and_remote_ref_divergence
 current_review_artifact: h3-report-authority-envelope-v1
 current_review_artifact_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_dashboard.html
 priority_readback_path: artifacts/review/h3-report-authority-envelope-v1/dashboard/devcockpitcore_priority_readback.json
@@ -19,9 +19,9 @@ tracked_receipt_capture_id: efr-cbae922571043527b800
 tracked_receipt_assessed_at: 2026-07-12T00:00:00Z
 tracked_receipt_authority: point_in_time_non_live
 blocking_issue_count: 0
-current_development_axis: current_observation_ingress_readiness
-current_local_slice: h3_current_observation_ingress_operationally_verified_without_real_project_promotion_v1
-recommended_next_horizon: separately_authorized_real_report_and_observation_gate_before_any_H4_work
+current_development_axis: remote_ref_reconciliation_and_h4_candidate_review_boundary
+current_local_slice: cross_terminal_handoff_v5_without_main_or_h4_integration
+recommended_next_horizon: owner_review_of_h4_candidate_then_separate_mainline_integration_decision
 
 ## About This Snapshot
 
@@ -33,23 +33,31 @@ Supervisor carries current development direction.
 
 ## Latest Point-In-Time Readiness Verification
 
-At `2026-07-24T10:17:04.8527261+09:00`, the local handoff branch
-`codex/remote-sync-readiness-2026-07-22` resolved to `af76d83e2e66264d37fce16d3148bbbbd4ac26cc`.
-Fetched `origin/main` remains at `24abbbd8a90fd8422165afeb05ad306732dba572`; the
-handoff branch is one commit ahead of that unchanged mainline. The repository
-virtual environment reported Python 3.11.14. Compilation, the isolated H3
-deterministic generator test, the full 455-test suite, all four adapter
-manifests, and the default validation pack passed after the restart-doc
-contract repair. Protected baseline hashes remained unchanged.
+At `2026-07-27T20:17:35+09:00`, the clean local handoff branch
+`codex/remote-sync-readiness-2026-07-22` resolved to
+`8ce7283ac1828445333f28a6c8955e48a8f31d66` and matched its upstream at
+`0/0`. A fresh `git fetch --prune origin` resolved `origin/main` to
+`363c10d8740fd7a10a502bf926f54c8eb5aebc58`. The handoff branch and mainline
+are not fast-forward related at their tips: the handoff branch is three
+commits ahead and six commits behind `origin/main`, with merge base
+`24abbbd8a90fd8422165afeb05ad306732dba572`. No pull, merge, rebase, reset,
+stash, checkout, or conflict resolution was performed.
+
+The repository-local Python 3.11 environment completed the default validation
+pack: 16 checks, 15 passes, one known pseudo-Git-tag fixture warning, and zero
+failures. Its unit-test check ran 455 tests successfully. The production
+Dashboard SHA-256 remained
+`376521d0367ddfb2e8fa2e6f3c1020baa88f1fa5a3587f7bad9fbeabca7215e1`,
+the priority readback remained
+`fb0d4ad091af5e4204c4fee15bd71231e7b3371d8399e920ca0ad0b81d85fe29`,
+and the tracked worktree remained clean.
 
 The warning is the existing pseudo-Git-tag fixture finding in
 `samples/reports/agent_report_adapter_manifest_v1_redacted.txt`; it is not a
-runtime, schema, or source-integrity failure. No real-project current
-observation was performed, so `current_claim_eligibility`, `live_coverage`, and
-`executable` remain false and H4 remains unstarted. See the
-[2026-07-24 cross-terminal supervisor handoff](handoffs/2026-07-24-remote-sync-development-readiness-supervisor-report-v4.md)
-for commands, evidence boundaries, residual ownership, and the conditional
-roadmap.
+runtime, schema, or source-integrity failure. See the
+[2026-07-27 cross-terminal supervisor handoff](handoffs/2026-07-27-full-repository-sync-supervisor-handoff-v5.md)
+for exact branch/ref state, portable versus terminal-local boundaries,
+residual ownership, and the next integration decision.
 
 ## Product State
 
@@ -106,15 +114,14 @@ gate classification, packet generation, source-bound full narrative
 reprojection, and package-local Priority Review Console projection are
 verified.
 
-H3 is complete. `supervision_report_authority_envelope.v1` now binds the H2
+H3 V1 is complete. `supervision_report_authority_envelope.v1` binds the H2
 source, manifest, packet, identity, revision, report time, assessment time,
 permission, and observer-only scope as a separate exact-key sidecar. Its loader
 re-reads and reprojects every derived claim before Dashboard projection. The
 real H2 report remains authentic owner-attached point-in-time evidence, but its
 H2-only permission, absent authorized re-observation, and unobserved current
 revision keep `current_claim_eligibility: false`; `live_coverage` and
-`executable` also remain false. H4 has not started. A real current claim needs
-a new fresh report/observation that explicitly permits the H3/current use.
+`executable` also remain false.
 
 H3.1 is also complete as an ingress-readiness slice.
 `supervision_current_observation.v1` provides an exact-key public producer for
@@ -127,12 +134,24 @@ ingress rejects every partial source set and reprojects all four sources before
 use. A temporary-Git public-CLI proof reaches synthetic current eligibility
 while live coverage and executable remain false.
 
-No real project repository was observed for H3.1 and no real current claim was
-promoted. The H2 and H3 V1 packages, canonical packet, accepted production
-Dashboard, priority readback, and capture remain the preserved baselines. H4
-has not started. The next gate is a separately authorized fresh report plus
-observation using the exact H3/current scope; H4 remains unavailable until an
-independent contract authorizes it.
+Fetched `origin/main` now contains the separately authorized H3-G02 real
+NLMYTGen point-in-time package. It binds source revision
+`21194b60f6824eaedaddacf05bb920e1a324936a` with
+`actual: true`, `clean: false`, and `stable: true`. The package is valid
+negative observation evidence with `worktree_not_clean`;
+`current_claim_eligibility`, `live_coverage`, and `executable` remain false.
+The accepted production Dashboard and historical H2/H3 baselines remain
+separate.
+
+The fetched feature ref
+`origin/codex/h4-g01-authentic-two-project-review-v1` resolves to
+`2e3b015943de9018093b3f6067321beedcbb6c3e` on top of `origin/main`. It
+contains a two-project NLMYTGen/ClipPipeGen point-in-time review candidate.
+That candidate is not merged to main or this handoff branch and confers no
+live, execution, human-acceptance, rights, production, deployment, release, or
+publication authority. The current bottleneck is owner review of that exact
+candidate followed by a separate integration decision; this synchronization
+task does not make either decision.
 
 Resume through this Cockpit for human navigation, `docs/runtime-state.md` for
 the machine-facing projection, and `docs/project-context.md` for durable
@@ -251,8 +270,10 @@ current eligibility `false`, live coverage `false`, and executable `false`.
 H3.1 adds a second, explicitly versioned path without changing that H3 V1
 result. The public CLI proof reaches current eligibility `true` only for an
 ephemeral controlled Git repository and retains live/executable false. No
-synthetic source is tracked as project evidence. H4 multi-project work is not
-started.
+synthetic source is tracked as project evidence. The current checkout does not
+contain H4 work; the fetched H4-G01 feature ref is a separate unmerged
+point-in-time review candidate and does not change the accepted production
+surface or authority boundary.
 
 `QD-PACKET-UNKNOWN-KEY-01` is closed. The packet root, every active or closed
 task, and every `task.next_state` now reject missing or unexpected keys before

@@ -1,6 +1,6 @@
 # DevCockpitCore Runtime State
 
-updated_at: 2026-07-24
+updated_at: 2026-07-27
 projection_kind: repository_restart_and_artifact_access
 last_local_validation_state: yellow_non_blocking_15_pass_1_known_warning_0_fail
 current_review_artifact: h3-report-authority-envelope-v1
@@ -114,6 +114,17 @@ separately authorized fresh report and observation with the exact
 durable boundaries, the Local Validation Entry below for repository checks,
 and direct Git and generated-evidence readback for current facts.
 
+The 2026-07-27 remote-ref reconciliation found later evidence outside this
+checkout's tracked projection. Fetched `origin/main` integrates an H3-G02 real
+NLMYTGen point-in-time negative observation: the source was actual, dirty, and
+stable, so the package is valid while current eligibility, live coverage, and
+execution remain false. A separate H4-G01 feature ref contains an authentic
+two-project review candidate, but that candidate is not integrated into main
+or this checkout and grants no human, rights, production, deployment, release,
+or publication approval. Exact branch and revision identities belong in
+`docs/PROJECT_COCKPIT.md` and the latest handoff rather than this bounded
+machine projection.
+
 ## Artifact Access
 
 The current review entrance is the H3 package-local A / Priority Review Console
@@ -200,9 +211,9 @@ permission is explicitly limited to H2. The H3 Envelope therefore records
 current revision, `current_claim_eligibility: false`, and
 `live_coverage: false`. The deterministic fixture and production Dashboard
 remain unchanged. H3.1 proves only that authorized current-observation ingress
-is operational against a controlled temporary repository. H4 is not started;
-no real later state may be inferred without a new explicitly authorized report
-and observation.
+is operational against a controlled temporary repository in this checkout.
+The fetched H3-G02 and H4-G01 refs described above are separate point-in-time
+evidence states; they do not establish live coverage or executable authority.
 
 This projection and the other repository documents are navigation and decision
 records, not live workflow authority. Verify Git, tests, generated readback, and
@@ -210,7 +221,7 @@ the receipt authority boundary directly. A dated handoff may explain why a
 decision was made but does not supersede this projection or live evidence.
 
 The latest cross-terminal handoff is
-[`docs/handoffs/2026-07-24-remote-sync-development-readiness-supervisor-report-v4.md`](handoffs/2026-07-24-remote-sync-development-readiness-supervisor-report-v4.md).
+[`docs/handoffs/2026-07-27-full-repository-sync-supervisor-handoff-v5.md`](handoffs/2026-07-27-full-repository-sync-supervisor-handoff-v5.md).
 
 ## Local Validation Entry
 
